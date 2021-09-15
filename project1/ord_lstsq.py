@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.model_selection import train_test_split as tts
+import sys
 np.random.seed(136)
 
 
@@ -17,27 +18,34 @@ def make_design_matrix(x, y, max_pow=3):
     for i in range(1, max_pow + 1):
         for j in range(i + 1):
             Vandermonde = np.c_[Vandermonde, x ** (i - j) * y ** (j)]  # column concatenation
-    return Vandermonde[:, 1:]
+    return Vandermonde  # [:, 1:]
 
 
 class Regression:
     def __init__(self, x, f, *args, P=5, train_size=0.8, reg_method="ord_lstsq", resampling=None, scaling=None, **kwargs):
-        if "__iter__" in dir(x):
-            self.x = x
-        else:
-            self.x = (x,)
+        self.x = x
 
         X = make_design_matrix(*x, P)
         y = f(*x, *args, **kwargs)
+        self.y = y
+        self.f = f
+
+
         self.X_train, self.X_test, self.y_train, self.y_test = tts(X, y, train_size=train_size)
         print(f"Setting up design matrix with {X.shape[1]} features")
 
-        self.method = f"self.{reg_method}()"
+        self.fitted = False
+        self.method = eval(f"self.{reg_method}")
 
-    def regression(self):
-        exec(self.method)
+    def fit(self, *args, **kwargs):
+        if self.fitted:
+            print("Model is already fitted!")
+            return
+        else:
+            self.fitted = True
+            self.method(*args, **kwargs)
 
-    def ord_lstsq(self, *args, **kwargs):
+    def ord_lstsq(self):
         self.beta = np.linalg.pinv(self.X_train.T @ self.X_train) @ self.X_train.T @ self.y_train
         self.train_prediction = self.X_train @ self.beta
         self.test_prediction = self.X_test @ self.beta
@@ -60,17 +68,41 @@ class Regression:
             yp = self.train_prediction
         return 1 - sum((y - yp) ** 2) / sum((y - np.mean(y)) ** 2)
 
+    def plot(self):
+        print("Nei fuck off")
+        sys.exit()
+        from mpl_toolkits.mplot3d import Axes3D
+        import matplotlib.pyplot as plt
 
+        fig = plt.figure()
+        ax = fig.gca(projection="3d")
+
+        N = len(self.x[0])
+        N = int(np.sqrt(N))
+        x_ = self.x[0]#.reshape((N, N))
+        y_ = self.x[1]#.reshape((N, N))
+        x_, y_ = np.meshgrid(x_, y_)
+
+        z_ = self.X_train @ self.test_prediction
+        print(z_.shape)
+
+        z_ = self.y.reshape((N, N))
+        surf = ax.plot_surface(x_, y_, z_, cmap="coolwarm", lw=0, antialiased=False)
+        fig.colorbar(surf)
+        plt.show()
 
 
 N = 100
-P = 5
+try:
+    P = int(sys.argv[1])
+except:
+    P = 5
 x = np.sort(np.random.uniform(size=N))
 y = np.sort(np.random.uniform(size=N))
 
-Model = Regression((x, y), FrankeFunction, P=P, eps0=0.1)
-Model.regression()
-
+Model = Regression((x, y), FrankeFunction, P=P, eps0=0)
+Model.fit()
+print(Model.X_train, Model.beta + 1)
 print("Performance of model:")
 print(f"MSE train: {Model.MSE()}")
 print(f"MSE test: {Model.MSE(True)}")
