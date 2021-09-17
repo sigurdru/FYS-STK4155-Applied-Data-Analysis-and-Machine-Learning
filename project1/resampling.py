@@ -1,13 +1,10 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import sys
-import os
-import time
-
-
-def main():
+def NoResampling(X, z, resampling_iter, lmd_range, reg_method):
     pass
 
 
-if __name__ == "__main__":
-    main()
+def Bootstrap(X, z, resampling_iter, lmd_range, reg_method):
+    pass
+
+
+def cross_validation(X, z, resampling_iter, lmd_range, reg_method):
+    pass
