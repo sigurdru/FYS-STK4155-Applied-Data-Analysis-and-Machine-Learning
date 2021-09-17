@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.model_selection import train_test_split as tts
+from sklearn.preprocessing import MinMaxScaler as MScaler, StandardScaler as SScaler, Normalizer as NScaler
 import sys
 np.random.seed(136)
 
@@ -31,8 +32,16 @@ class Regression:
         self.f = f
 
 
-        self.X_train, self.X_test, self.y_train, self.y_test = tts(X, y, train_size=train_size)
         print(f"Setting up design matrix with {X.shape[1]} features")
+        self.X_train, self.X_test, self.y_train, self.y_test = tts(X, y, train_size=train_size)
+        if scaling is not None:
+            if scaling in ["M", "S", "N"]:
+                scaler = eval(f"{scaling}Scaler()")
+                scaler.fit(self.X_train)
+                self.X_train = scaler.transform(self.X_train)
+                self.X_test = scaler.transform(self.X_test)
+                self.y_train = scaler.transform(self.y_train)
+                self.y_test = scaler.transform(self.y_test)
 
         self.fitted = False
         self.method = eval(f"self.{reg_method}")
@@ -100,9 +109,8 @@ except:
 x = np.sort(np.random.uniform(size=N))
 y = np.sort(np.random.uniform(size=N))
 
-Model = Regression((x, y), FrankeFunction, P=P, eps0=0)
+Model = Regression((x, y), FrankeFunction, P=P, eps0=0, scaling="S")
 Model.fit()
-print(Model.X_train, Model.beta + 1)
 print("Performance of model:")
 print(f"MSE train: {Model.MSE()}")
 print(f"MSE test: {Model.MSE(True)}")
