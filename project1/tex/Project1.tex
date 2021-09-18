@@ -1,0 +1,117 @@
+\documentclass[reprint, english,notitlepage,nofootinbib]{revtex4-1}  % defines the basic parameters of the document
+% if you want a single-column, remove reprint
+
+% allows special characters (including æøå)
+\usepackage[utf8]{inputenc}
+%\usepackage [norsk]{babel} %if you write norwegian
+\usepackage[english]{babel}  %if you write english
+
+
+%% note that you may need to download some of these packages manually, it depends on your setup.
+%% I recommend downloading TeXMaker, because it includes a large library of the most common packages.
+
+\usepackage{physics,amssymb}  % mathematical symbols (physics imports amsmath)
+\usepackage{graphicx}         % include graphics such as plots
+\usepackage{xcolor}           % set colors
+\usepackage{hyperref}         % automagic cross-referencing (this is GODLIKE)
+\usepackage{tikz}             % draw figures manually
+\usepackage{listings}         % display code
+\usepackage{subfigure}        % imports a lot of cool and useful figure commands
+\usepackage{verbatim}
+\usepackage{adjustbox}
+
+
+% defines the color of hyperref objects
+% Blending two colors:  blue!80!black  =  80% blue and 20% black
+\hypersetup{ % this is just my personal choice, feel free to change things
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}}
+
+%% Defines the style of the programming listing
+%% This is actually my personal template, go ahead and change stuff if you want
+\lstset{ %
+	inputpath=,
+	backgroundcolor=\color{white!88!black},
+	basicstyle={\ttfamily\scriptsize},
+	commentstyle=\color{magenta},
+	language=Python,
+	morekeywords={True,False},
+	tabsize=4,
+	stringstyle=\color{green!55!black},
+	frame=single,
+	keywordstyle=\color{blue},
+	showstringspaces=false,
+	columns=fullflexible,
+	keepspaces=true}
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\newcommand{\ihat}{\boldsymbol{\hat{\textbf{\i}}}}
+\newcommand{\jhat}{\boldsymbol{\hat{\textbf{\j}}}}
+\newcommand{\khat}{\boldsymbol{\hat{\textbf{k}}}}
+\newcommand{\del}[1]{\textbf{#1)}}
+\newcommand{\svar}[1]{\underline{\underline{{#1}}}}
+\newcommand{\vc}[1]{\mathbf{#1}}
+
+\graphicspath{{../output/}} % search for figures in this dir
+
+
+
+\begin{document}
+
+
+\begin{titlepage}
+	\begin{center}
+	\textbf{Analysis of Different Regression Method}
+
+	\vspace{0.2cm}
+	Håkon Olav Torvik, Vetle Viknes and Sigurd Sørlie Rustad
+
+	\vspace{0.5cm}
+	\includegraphics[scale=0.5]{../../pictures/UIO}
+	\vspace{0.8cm}
+
+	University of Oslo\\
+	Norway\\
+	\today	\\
+	\end{center}
+	\tableofcontents
+	\clearpage
+\end{titlepage}
+
+\begin{abstract}
+
+\end{abstract}
+\maketitle                              % creates the title
+
+
+\section{Introduction}
+
+\section{Theory}
+
+\subsection*{Hei}
+\section{Methods}
+
+\section{Results}
+
+
+\section{Discussion}
+
+
+\section{Conclusion}
+
+
+\section{Appendix}
+\subsection{Hei}
+
+\onecolumngrid
+\vspace{1cm} % some extra space
+
+\begin{thebibliography}{}
+\bibitem[]{ref} Ref.
+
+\end{thebibliography}
+
+
+\end{document}

@@ -2,16 +2,28 @@ import numpy as np
 from sklearn.model_selection import train_test_split as tts
 from sklearn.preprocessing import MinMaxScaler as MScaler, StandardScaler as SScaler, Normalizer as NScaler
 import sys
+
+import plot
 np.random.seed(136)
 
 
-def FrankeFunction(x, y, eps0, *args, **kwargs):
+def FrankeFunction(x, y, eps0=None, *args, **kwargs):
+    """
+    Returns Franke Function with or without noise
+
+    Args:
+        x (array): Array with x-values
+        y (array): Array with y-values
+    """
     term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
     term2 = 0.75*np.exp(-((9*x+1)**2)/49.0 - 0.1*(9*y+1))
     term3 = 0.5*np.exp(-(9*x-7)**2/4.0 - 0.25*((9*y-3)**2))
     term4 = -0.2*np.exp(-(9*x-4)**2 - (9*y-7)**2)
-    noise = eps0 * np.random.normal(size=x.shape)
-    return term1 + term2 + term3 + term4 + noise
+    if eps0 != None:
+        noise = eps0 * np.random.normal(size=x.shape)
+        return term1 + term2 + term3 + term4 + noise
+    else:
+        return term1 + term2 + term3 + term4
 
 
 def make_design_matrix(x, y, max_pow=3):
@@ -100,19 +112,22 @@ class Regression:
         fig.colorbar(surf)
         plt.show()
 
+if __name__=='__main__':
+    """
+    Testing
+    """
+    N = 100
+    try:
+        P = int(sys.argv[1])
+    except:
+        P = 3
+    x = np.sort(np.random.uniform(size=N))
+    y = np.sort(np.random.uniform(size=N))
 
-N = 100
-try:
-    P = int(sys.argv[1])
-except:
-    P = 5
-x = np.sort(np.random.uniform(size=N))
-y = np.sort(np.random.uniform(size=N))
-
-Model = Regression((x, y), FrankeFunction, P=P, eps0=0, scaling="S")
-Model.fit()
-print("Performance of model:")
-print(f"MSE train: {Model.MSE()}")
-print(f"MSE test: {Model.MSE(True)}")
-print(f"R2 train: {Model.R2()}")
-print(f"R2 test: {Model.R2(True)}")
+    Model = Regression((x, y), FrankeFunction, P=P, eps0=0, scaling="S")
+    Model.fit()
+    print("Performance of model:")
+    print(f"MSE train: {Model.MSE()}")
+    print(f"MSE test: {Model.MSE(True)}")
+    print(f"R2 train: {Model.R2()}")
+    print(f"R2 test: {Model.R2(True)}")
