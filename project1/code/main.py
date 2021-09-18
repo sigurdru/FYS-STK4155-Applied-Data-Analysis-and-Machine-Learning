@@ -1,44 +1,64 @@
+import argparse
+import ord_lstsq, plot
 import numpy as np
-import sys
 
-np.random.seed(136)
+parser = argparse.ArgumentParser(
+    description='Explore different regression methods' \
+                +'and evaluate which one is best.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter
+)
+
+parser.add_argument('-m', '--method',
+    type=str,
+    choices=['LeastSquare', 'Ridge', 'Lasso'],
+    help='Choose which method you want to use.'
+)
+
+parser.add_argument('-p', '--polynomial',
+    type=int,
+    default=3,
+    choices=[3, 4, 5],
+    help='Choose polynomial degree, max 5.'
+)
+
+parser.add_argument('-n', '--num_points',
+    type=int,
+    default=100,
+    help='Choose number of gridpoints'    
+)
+
+parser.add_argument('-s', '--scaling',
+    type=str,
+    default=None,
+    choices=['M', 'S', 'N'],
+    help='Provide what scaling you want.'
+)
+
+parser.add_argument('-r', '--resampling',
+    type=str,
+    default=None,
+    choices=['M', 'S', 'N'],
+    help='Provide what scaling you want.'
+)
+
+parser.add_argument('-lam', '--lambda',
+    type=float,
+    default=0,
+    help='Choose a lambda'    
+)
 
 
-def FrankeFunction(x, y, eps0=0):
-    term1 = 0.75 * np.exp(-(0.25 * (9 * x - 2)**2) - 0.25 * ((9 * y - 2)**2))
-    term2 = 0.75 * np.exp(-((9 * x + 1)**2) / 49.0 - 0.1 * (9 * y + 1))
-    term3 = 0.5 * np.exp(-((9 * x - 7)**2) / 4.0 - 0.25 * ((9 * y - 3)**2))
-    term4 = -0.2 * np.exp(-((9 * x - 4)**2) - (9 * y - 7)**2)
-    noise = eps0 * np.random.normal(size=x.shape)
-    return term1 + term2 + term3 + term4 + noise
 
+args = parser.parse_args()
 
-def create_X(x, y, n):
-    if len(x.shape) > 1:
-        x = np.ravel(x)
-        y = np.ravel(y)
+n = args.num_points
+p = args.polynomial
 
-    N = len(x)
-    l = int((n+1)*(n+2)/2)  # Number of elements in beta
-    X = np.ones((N, l))
+x = np.sort(np.random.uniform(size=n))
+y = np.sort(np.random.uniform(size=n))
+Model = ord_lstsq.Regression((x, y), ord_lstsq.FrankeFunction, P=p, eps0=0, scaling="S")
+Model.fit()
 
-    for i in range(1, n+1):
-        q = int((i)*(i+1)/2)
-        for k in range(i+1):
-            X[:, q+k] = (x**(i-k))*(y**k)
-
-    return X
-
-
-def main():
-    N = 100
-    P = 5
-    x = np.sort(np.random.uniform(size=N))
-    y = np.sort(np.random.uniform(size=N))
-    x, y = np.meshgrid(x, y)
-
-    X = create_X(x, y, P)
-    print(X.shape)
 
 if __name__ == "__main__":
     main()

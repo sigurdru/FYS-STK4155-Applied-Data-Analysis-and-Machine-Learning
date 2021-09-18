@@ -19,7 +19,7 @@ def FrankeFunction(x, y, eps0=None, *args, **kwargs):
     term2 = 0.75*np.exp(-((9*x+1)**2)/49.0 - 0.1*(9*y+1))
     term3 = 0.5*np.exp(-(9*x-7)**2/4.0 - 0.25*((9*y-3)**2))
     term4 = -0.2*np.exp(-(9*x-4)**2 - (9*y-7)**2)
-    if eps0 != None:
+    if eps0:
         noise = eps0 * np.random.normal(size=x.shape)
         return term1 + term2 + term3 + term4 + noise
     else:
@@ -46,14 +46,13 @@ class Regression:
 
         print(f"Setting up design matrix with {X.shape[1]} features")
         self.X_train, self.X_test, self.y_train, self.y_test = tts(X, y, train_size=train_size)
-        if scaling is not None:
-            if scaling in ["M", "S", "N"]:
-                scaler = eval(f"{scaling}Scaler()")
-                scaler.fit(self.X_train)
-                self.X_train = scaler.transform(self.X_train)
-                self.X_test = scaler.transform(self.X_test)
-                self.y_train = scaler.transform(self.y_train)
-                self.y_test = scaler.transform(self.y_test)
+        if scaling:
+            scaler = eval(f"{scaling}Scaler()")
+            scaler.fit(self.X_train)
+            self.X_train = scaler.transform(self.X_train)
+            self.X_test = scaler.transform(self.X_test)
+            self.y_train = scaler.transform(self.y_train)
+            self.y_test = scaler.transform(self.y_test)
 
         self.fitted = False
         self.method = eval(f"self.{reg_method}")
@@ -88,29 +87,6 @@ class Regression:
             y = self.y_train
             yp = self.train_prediction
         return 1 - sum((y - yp) ** 2) / sum((y - np.mean(y)) ** 2)
-
-    def plot(self):
-        print("Nei fuck off")
-        sys.exit()
-        from mpl_toolkits.mplot3d import Axes3D
-        import matplotlib.pyplot as plt
-
-        fig = plt.figure()
-        ax = fig.gca(projection="3d")
-
-        N = len(self.x[0])
-        N = int(np.sqrt(N))
-        x_ = self.x[0]#.reshape((N, N))
-        y_ = self.x[1]#.reshape((N, N))
-        x_, y_ = np.meshgrid(x_, y_)
-
-        z_ = self.X_train @ self.test_prediction
-        print(z_.shape)
-
-        z_ = self.y.reshape((N, N))
-        surf = ax.plot_surface(x_, y_, z_, cmap="coolwarm", lw=0, antialiased=False)
-        fig.colorbar(surf)
-        plt.show()
 
 if __name__=='__main__':
     """
