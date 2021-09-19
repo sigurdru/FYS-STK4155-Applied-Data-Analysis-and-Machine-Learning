@@ -16,7 +16,7 @@ def parameter_range(inp, method, lmb=False):
         func = "np.arange"
 
     if method == "value":
-        return str(ntype(inp))
+        return f"({ntype(inp)},)"  # tuple with single element
     elif method == "list":
         return str(sorted([ntype(i) for i in inp.split(",")]))
 
@@ -109,6 +109,12 @@ def parse_args(args=None):
             default=None,
             help="Path to SRTM data file")
 
+    add_arg("-e", "--epsilon",
+            type=float,
+            default=0,
+            help="Scale value of noice for Franke Function",
+            )
+
     if args is None:
         args = parser.parse_args()
     else:
@@ -117,9 +123,67 @@ def parse_args(args=None):
     args.polynomial = parameter_range(args.polynomial, args.polynomial_conversion)
     args.lmb = parameter_range(args.lmb, args.lambda_conversion, True)
 
-    print("Runtime arguments:", args)
+    print("Runtime arguments:", args, "\n")
 
     args.polynomial = eval(args.polynomial)
     args.lmb = eval(args.lmb)
 
     return args
+
+
+def FrankeFunction(x, y, eps0=0):
+    """
+    Franke Function with noise.
+
+    Parameters:
+        x, y: array-like
+            x,y-values
+        eps0: flaot
+            scale value for noise. Defaults to 0
+    Returns:
+        z: ndarray
+            z-values
+    """
+    term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
+    term2 = 0.75*np.exp(-((9*x+1)**2)/49.0 - 0.1*(9*y+1))
+    term3 = 0.5*np.exp(-(9*x-7)**2/4.0 - 0.25*((9*y-3)**2))
+    term4 = -0.2*np.exp(-(9*x-4)**2 - (9*y-7)**2)
+    noise = eps0 * np.random.normal(size=x.shape)
+    return term1 + term2 + term3 + term4 + noise
+
+
+def create_X(x, y, n):
+    """
+    Sets up design matrix
+
+    Parameters:
+        x, y: array-like
+            Are flattened if not already
+        n: int
+            max polynomial degree
+    Returns:
+        X: 2darray
+            Includes intercept.
+    """
+    if not 1 in x.shape:
+        x = np.ravel(x)
+        y = np.ravel(y)
+
+    N = len(x)
+    l = (n + 1) * (n + 2) // 2  # Number of elements in beta
+    X = np.ones((N, l))
+
+    for i in range(1, n + 1):
+        q = i * (i + 1) // 2
+        for k in range(i + 1):
+            X[:, q + k] = (x ** (i - k)) * (y ** k)
+    return X
+
+
+def MSE(y, y_predict):
+    return sum((y - y_predict) ** 2) / len(y)
+
+
+def R2(y, y_predict):
+    return 1 - sum((y - y_predict) ** 2) / sum((y - np.mean(y)) ** 2)
+
