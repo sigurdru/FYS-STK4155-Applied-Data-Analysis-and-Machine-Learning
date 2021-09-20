@@ -1,24 +1,34 @@
-\documentclass[reprint, english,notitlepage,nofootinbib]{revtex4-1}  % defines the basic parameters of the document
+\documentclass[reprint,english,notitlepage,aps,nobalancelastpage,nofootinbib]{revtex4-1}  % defines the basic parameters of the document
 % if you want a single-column, remove reprint
 
 % allows special characters (including æøå)
 \usepackage[utf8]{inputenc}
 %\usepackage [norsk]{babel} %if you write norwegian
 \usepackage[english]{babel}  %if you write english
+\usepackage[T1]{fontenc}
 
 
 %% note that you may need to download some of these packages manually, it depends on your setup.
 %% I recommend downloading TeXMaker, because it includes a large library of the most common packages.
 
 \usepackage{physics,amssymb}  % mathematical symbols (physics imports amsmath)
-\usepackage{graphicx}         % include graphics such as plots
+\usepackage{graphicx, bm}         % include graphics such as plots
+\usepackage{upgreek}
+\usepackage{float}
 \usepackage{xcolor}           % set colors
-\usepackage{hyperref}         % automagic cross-referencing (this is GODLIKE)
+\usepackage[hidelinks]{hyperref}         % automagic cross-referencing (this is GODLIKE)
 \usepackage{tikz}             % draw figures manually
 \usepackage{listings}         % display code
 \usepackage{subfigure}        % imports a lot of cool and useful figure commands
 \usepackage{verbatim}
 \usepackage{adjustbox}
+\usepackage{mathpazo}
+\usepackage{siunitx}
+\usepackage{kantlipsum}
+\usepackage{bigints}
+\usepackage{multirow}
+\usepackage{geometry}
+\usepackage{algorithm2e}
 
 
 % defines the color of hyperref objects
@@ -53,6 +63,12 @@
 \newcommand{\del}[1]{\textbf{#1)}}
 \newcommand{\svar}[1]{\underline{\underline{{#1}}}}
 \newcommand{\vc}[1]{\mathbf{#1}}
+\renewcommand{\deg}{^{\circ}}
+\newcommand{\hksqrt}[2][]{\ \mathpalette\DHLhksqrt{[#1]{#2\,}}}
+\def\DHLhksqrt#1#2{\setbox0=\hbox{$#1\sqrt#2$}\dimen0=\ht0
+	\advance\dimen0-0.3\ht0
+	\setbox2=\hbox{\vrule height\ht0 depth -\dimen0}
+	{\box0\lower0.65pt\box2}}
 
 \graphicspath{{../output/}} % search for figures in this dir
 
@@ -81,12 +97,14 @@
 \end{titlepage}
 
 \begin{abstract}
-
+	Test
 \end{abstract}
-\maketitle                              % creates the title
+
+%\maketitle                              % creates the title
 
 
 \section{Introduction}
+\kant % This is libsum and will be removed when real text is written
 
 \section{Theory}
 
