@@ -66,7 +66,7 @@ def parse_args(args=None):
 
     add_arg('-s', '--scaling',
             type=str,
-            default='None',
+            default='S',
             choices=['None', 'M', 'S', 'N'],
             help='Scaling method: None, MinMax, Standard, Normalizer.',
             )
@@ -81,7 +81,7 @@ def parse_args(args=None):
     add_arg("-ri", "--resampling-iter",
             type=int,
             default=None,
-            help="Unused for NoResampling, B for Bootstrap, k for CV",
+            help="Unused for NoResampling, B for Bootstrap, k.fold for CV",
             )
 
     add_arg('-l', '--lmb',
@@ -107,7 +107,8 @@ def parse_args(args=None):
     add_arg("-df", "--data-file",
             type=str,
             default=None,
-            help="Path to SRTM data file")
+            help="Path to SRTM data file",
+            )
 
     add_arg("-e", "--epsilon",
             type=float,
@@ -115,10 +116,7 @@ def parse_args(args=None):
             help="Scale value of noice for Franke Function",
             )
 
-    if args is None:
-        args = parser.parse_args()
-    else:
-        args = parser.parse_args(args)
+    args = parser.parse_args(args)
 
     args.polynomial = parameter_range(args.polynomial, args.polynomial_conversion)
     args.lmb = parameter_range(args.lmb, args.lambda_conversion, True)
@@ -186,4 +184,3 @@ def MSE(y, y_predict):
 
 def R2(y, y_predict):
     return 1 - sum((y - y_predict) ** 2) / sum((y - np.mean(y)) ** 2)
-
