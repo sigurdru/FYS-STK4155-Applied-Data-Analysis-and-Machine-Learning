@@ -2,7 +2,7 @@ import numpy as np
 from sklearn import linear_model
 
 
-def OLS(X, z, lmd=0):
+def Ordinary_least_squares(X, z, lmd=0):
     return np.linalg.pinv(X.T @ X) @ X.T @ z
 
 
