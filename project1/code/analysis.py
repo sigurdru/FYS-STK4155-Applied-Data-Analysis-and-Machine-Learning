@@ -16,6 +16,7 @@ reg_conv = {"OLS": regression.Ordinary_least_squares, "Ridge": regression.Ridge,
 resampling_conv = {"None": resampling.NoResampling, "Boot": resampling.Bootstrap, "CV": resampling.cross_validation}
 scale_conv = {"None": NoneScaler(), "S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 
+
 def tmp_func_name(args):
     N = args.num_points
     P = args.polynomial  # polynomial degrees
@@ -24,19 +25,19 @@ def tmp_func_name(args):
     x = np.sort(np.random.uniform(size=N))
     y = np.sort(np.random.uniform(size=N))
     x, y = np.meshgrid(x, y)
-    z = utils.FrankeFunction(x, y, eps0=args.epsilon).flatten()
+    z = utils.FrankeFunction(x, y, eps0=args.epsilon)
     MSEs = np.zeros(len(P))
     MSE_train = np.zeros(len(P))
 
     for i, p in enumerate(P):
         print("p =", p)
         X = utils.create_X(x, y, p)
-        
+
         resampl = resampling_conv[args.resampling]
 
         data = resampl(X, z, args.tts, args.resampling_iter, args.lmb, reg_conv[args.method], scaler)
-        MSEs[i] = data["test_MSE"] 
-        MSE_train[i] = data["train_MSE"] 
+        MSEs[i] = data["test_MSE"]
+        MSE_train[i] = data["train_MSE"]
 
     plt.plot(P, MSEs, "bo--", label="test MSE")
     plt.plot(P, MSE_train, "ro--", label="Train MSE")
@@ -52,11 +53,15 @@ def bias_var_tradeoff(args):
     x = np.sort(np.random.normal(size=N))
     y = np.sort(np.random.normal(size=N))
     x, y = np.meshgrid(x, y)
-    z = utils.FrankeFunction(x, y, eps0=args.epsilon).ravel().reshape(-1, 1)
+    z = utils.FrankeFunction(x, y, eps0=args.epsilon)
 
-    errors = np.zeros(len(P))
-    biases = np.zeros(len(P))
-    vars = np.zeros(len(P))
+    test_errors = np.zeros(len(P), dtype=float)
+    test_biases = np.zeros(len(P), dtype=float)
+    test_vars = np.zeros(len(P), dtype=float)
+
+    train_errors = np.zeros(len(P), dtype=float)
+    train_biases = np.zeros(len(P), dtype=float)
+    train_vars = np.zeros(len(P), dtype=float)
 
     for i, p in enumerate(P):
         print("p = ", p)
@@ -65,13 +70,20 @@ def bias_var_tradeoff(args):
         resamp = resampling_conv[args.resampling]
 
         data = resamp(X, z, args.tts, args.resampling_iter,  args.lmb, reg_conv[args.method], scaler)
-        
-        errors[i] = data["error"]
-        biases[i] = data["bias"]
-        vars[i] = data["variance"]
 
-    plt.plot(P, errors, "bo--", label="Error")
-    plt.plot(P, biases, "ro--", label="Bias")
-    plt.plot(P, vars, "go--", label="Variance")
+        test_errors[i] = data["test_MSE"]
+        test_biases[i] = data["test_bias"]
+        test_vars[i] = data["test_variance"]
+
+        train_errors[i] = data["train_MSE"]
+        train_biases[i] = data["train_bias"]
+        train_vars[i] = data["train_variance"]
+
+    plt.plot(P, test_errors, "bo-", label="test Error")
+    plt.plot(P, test_biases, "ro-", label="test Bias")
+    plt.plot(P, test_vars, "go-", label="test Variance")
+    plt.plot(P, train_errors, "bo--", label="train Error")
+    plt.plot(P, train_biases, "ro--", label="train Bias")
+    plt.plot(P, train_vars, "go--", label="train Variance")
     plt.legend()
     plt.show()
