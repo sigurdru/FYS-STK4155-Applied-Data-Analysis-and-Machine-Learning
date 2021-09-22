@@ -77,6 +77,22 @@ def Plot_FrankeFunction(fname):
     fig.savefig(os.path.join(path_plots, fname + '.pdf'))
     plt.close()
 
+def Plot_error(pol_deg, MSE_test, MSE_train, args):
+    """Plot mean square error as a function of polynomial degree
+    for test and train data
+
+    Args:
+        pol_deg (array): array of polynomial degree
+        MSE_test (array): array of test mean square error
+        MSE_train (array): array of train mean square error
+        args (argparse): argparse containing information of method used
+    """
+    plt.plot(pol_deg, MSEs, "bo--", label="test MSE")
+    plt.plot(pol_deg, MSE_train, "ro--", label="Train MSE")
+    plt.legend()
+    plt.show()
+
+
 def plot(self):
     print("Nei fuck off")
     sys.exit()

@@ -5,6 +5,7 @@ from sklearn.utils import resample
 import utils
 import regression
 import resampling
+import plot
 
 
 class NoneScaler(StandardScaler):
