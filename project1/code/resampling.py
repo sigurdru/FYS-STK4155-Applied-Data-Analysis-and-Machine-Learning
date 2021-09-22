@@ -15,11 +15,16 @@ def NoResampling(X, z, ttsplit, unused_iter_variable, lmd_range, reg_method, sca
 
 
     beta = reg_method(X_train, z_train)
-    test_prediction = X_test @ beta
-    
-    data = ddict(None)
-    data["test_MSE"] = utils.MSE(z_test, test_prediction)
-    data["train_MSE"] = utils.MSE(z_train, X_train @ beta)
+    z_pred = X_test @ beta
+
+    # data = ddict(None)
+    data = {}
+    # data["test_MSE"] = utils.MSE(z_test, test_prediction)
+    # data["train_MSE"] = utils.MSE(z_train, X_train @ beta)
+
+    data["error"] = np.mean( np.mean((z_test - z_pred) ** 2, axis=1, keepdims=True) )
+    data["bias"] = np.mean( (z_test - np.mean(z_pred, axis=1, keepdims=True)) ** 2 )
+    data["variance"] = np.mean( np.var(z_pred, axis=1, keepdims=True) )
     return data
 
 def Bootstrap(X, z, ttsplit, B, lmd_range, reg_method, scaler):
@@ -30,7 +35,7 @@ def Bootstrap(X, z, ttsplit, B, lmd_range, reg_method, scaler):
 
     if B is None:
         B = len(z_train)
-    
+
     data = ddict(None)
     z_pred = np.empty((z_test.shape[0], B))
     for i in range(B):
