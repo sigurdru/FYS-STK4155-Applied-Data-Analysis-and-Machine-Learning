@@ -147,7 +147,7 @@ def FrankeFunction(x, y, eps0=0):
     term3 = 0.5*np.exp(-(9*x-7)**2/4.0 - 0.25*((9*y-3)**2))
     term4 = -0.2*np.exp(-(9*x-4)**2 - (9*y-7)**2)
     noise = eps0 * np.random.normal(size=x.shape)
-    return term1 + term2 + term3 + term4 + noise
+    return (term1 + term2 + term3 + term4 + noise).ravel().reshape(-1, 1)
 
 
 def create_X(x, y, n):
