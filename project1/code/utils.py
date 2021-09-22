@@ -178,9 +178,17 @@ def create_X(x, y, n):
     return X
 
 
-def MSE(y, y_predict):
-    return sum((y - y_predict) ** 2) / len(y)
+def MSE(y, y_pred):
+    return sum((y - y_pred) ** 2) / len(y)
 
+def MSE_boot(y, y_pred):
+    return np.mean( np.mean((y - y_pred) ** 2, axis=1, keepdims=True) )
 
-def R2(y, y_predict):
-    return 1 - sum((y - y_predict) ** 2) / sum((y - np.mean(y)) ** 2)
+def R2(y, y_pred):
+    return 1 - sum((y - y_pred) ** 2) / sum((y - np.mean(y)) ** 2)
+
+def Bias(y, y_pred):
+    return np.mean( (y - np.mean(y_pred, axis=1, keepdims=True)) ** 2 )
+
+def Variance(y, y_pred):
+    return np.mean( np.var(y_pred, axis=1, keepdims=True) )
