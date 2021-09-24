@@ -2,26 +2,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
 from sklearn.utils import resample
+from sklearn.model_selection import train_test_split as tts
 import utils
 import regression
 import resampling
 import plot
 
-
-class NoneScaler(StandardScaler):
-    """ To have the option of no scaling of the data """
-    def transform(self, X):
-        return X
-
 reg_conv = {"OLS": regression.Ordinary_least_squares, "Ridge": regression.Ridge, "Lasso":regression.Lasso}
 resampling_conv = {"None": resampling.NoResampling, "Boot": resampling.Bootstrap, "CV": resampling.cross_validation}
-scale_conv = {"None": NoneScaler(), "S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
+scale_conv = {"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 
 
 def tmp_func_name(args):
     N = args.num_points
     P = args.polynomial  # polynomial degrees
-    scaler = scale_conv[args.scaling]
+    if args.scaling != "None": 
+        scaler = scale_conv[args.scaling]
 
     x = np.sort(np.random.uniform(size=N))
     y = np.sort(np.random.uniform(size=N))
@@ -29,23 +25,32 @@ def tmp_func_name(args):
     z = utils.FrankeFunction(x, y, eps0=args.epsilon)
     MSEs = np.zeros(len(P))
     MSE_train = np.zeros(len(P))
-
+    R2s = np.zeros(len(P))
+    R2_train = np.zeros(len(P))
+    resampl = resampling_conv[args.resampling]
     for i, p in enumerate(P):
         print("p =", p)
         X = utils.create_X(x, y, p)
-
-        resampl = resampling_conv[args.resampling]
-
-        data = resampl(X, z, args.tts, args.resampling_iter, args.lmb, reg_conv[args.method], scaler)
+        # Scaling
+        if args.scaling != "None": 
+            scaler.fit(X)
+            scaler.fit(z)
+        all_data = tts(X, z, test_size=args.tts)
+        data = resampl(all_data, args.resampling_iter, args.lmb, reg_conv[args.method])
         MSEs[i] = data["test_MSE"]
         MSE_train[i] = data["train_MSE"]
+        R2s[i] = data["test_R2"]
+        R2_train[i] = data["train_R2"]
     #Plotting the error, see output folder!
-    plot.Plot_error(pol_deg=P, MSE_test=MSEs, MSE_train=MSE_train, args=args)
+    plot.Plot_error(MSE_test=MSEs, MSE_train=MSE_train, args=args)
+    plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
 
 def bias_var_tradeoff(args):
     N = args.num_points
     P = args.polynomial
-    scaler = scale_conv[args.scaling]
+    if args.scaling != "None":
+        scaler = scale_conv[args.scaling]
+
 
     x = np.sort(np.random.normal(size=N))
     y = np.sort(np.random.normal(size=N))
@@ -63,10 +68,14 @@ def bias_var_tradeoff(args):
     for i, p in enumerate(P):
         print("p = ", p)
         X = utils.create_X(x, y, p)
-
+        # Scaling
+        if args.scaling != "None":
+            scaler.fit(X)
+            scaler.fit(z)
+        all_data = tts(X, z, test_size=args.tts)
         resamp = resampling_conv[args.resampling]
 
-        data = resamp(X, z, args.tts, args.resampling_iter,  args.lmb, reg_conv[args.method], scaler)
+        data = resamp(all_data, args.resampling_iter,  args.lmb, reg_conv[args.method])
 
         test_errors[i] = data["test_MSE"]
         test_biases[i] = data["test_bias"]
@@ -75,12 +84,5 @@ def bias_var_tradeoff(args):
         train_errors[i] = data["train_MSE"]
         train_biases[i] = data["train_bias"]
         train_vars[i] = data["train_variance"]
-
-    plt.plot(P, test_errors, "bo-", label="test Error")
-    plt.plot(P, test_biases, "ro-", label="test Bias")
-    plt.plot(P, test_vars, "go-", label="test Variance")
-    plt.plot(P, train_errors, "bo--", label="train Error")
-    plt.plot(P, train_biases, "ro--", label="train Bias")
-    plt.plot(P, train_vars, "go--", label="train Variance")
-    plt.legend()
-    plt.show()
+    plot.Plot_bias_var_tradeoff(test_errors, test_biases, test_vars, train_errors,
+                                train_biases, train_vars, args)

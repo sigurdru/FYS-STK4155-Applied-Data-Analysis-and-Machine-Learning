@@ -112,7 +112,7 @@ def parse_args(args=None):
 
     add_arg("-e", "--epsilon",
             type=float,
-            default=0,
+            default=1,
             help="Scale value of noice for Franke Function",
             )
 

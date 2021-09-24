@@ -6,15 +6,8 @@ import utils
 import numpy as np
 
 
-def NoResampling(X, z, ttsplit, unused_iter_variable, lmd_range, reg_method, scaler):
-    X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
-
-    # Scaling
-    scaler.fit(X_train)
-    X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
-    z_test = (z_test - np.mean(z_train)) / np.std(z_train)
-    z_train = (z_train - np.mean(z_train)) / np.std(z_train)
+def NoResampling(all_data, unused_iter_variable, lmd_range, reg_method):
+    X_train, X_test, z_train, z_test = all_data
 
     beta = reg_method(X_train, z_train)
     test_pred = X_test @ beta
@@ -23,15 +16,14 @@ def NoResampling(X, z, ttsplit, unused_iter_variable, lmd_range, reg_method, sca
     data = {}
     data["test_MSE"] = utils.MSE(z_test, test_pred)
     data["train_MSE"] = utils.MSE(z_train, train_pred)
-
+    data["test_R2"] = utils.R2(z_test, test_pred)
+    data["train_R2"] = utils.R2(z_train, train_pred)
+    
     return data
 
 
-def Bootstrap(X, z, ttsplit, B, lmd_range, reg_method, scaler):
-    X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
-    scaler.fit(X_train)
-    X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
+def Bootstrap(all_data, B, lmd_range, reg_method):
+    X_train, X_test, z_train, z_test = all_data
 
     if B is None:
         B = len(z_train)
@@ -55,3 +47,36 @@ def Bootstrap(X, z, ttsplit, B, lmd_range, reg_method, scaler):
 
 def cross_validation(X, z, ttsplit, k, lmd_range, reg_method, scaler):
     pass
+
+
+if __name__=='__main__':
+    """
+    Here we test the different methods! :)
+    """
+    from sklearn.linear_model import LinearRegression
+    import regression
+    #Setup
+    n = 10
+    p = 9
+    eps = 0
+    ttsplit = 0.2
+    x = np.sort(np.random.uniform(size=n))
+    y = np.sort(np.random.uniform(size=n))
+    x, y = np.meshgrid(x, y)
+    z = utils.FrankeFunction(x, y, eps0=eps)
+    X = utils.create_X(x, y, p)
+
+    all_data= tts(X, z, test_size=ttsplit)
+    X_train, X_test, z_train, z_test = all_data
+    #Testing
+    data = NoResampling(all_data, 0, 0, regression.Ordinary_least_squares)
+    MSE_test = data["test_MSE"]
+    
+    regOLS = LinearRegression(fit_intercept=False)
+    regOLS.fit(X_train, z_train)
+    OLS_predict = regOLS.predict(X_test)
+    MSE_test_sk = utils.MSE(z_test, OLS_predict)
+    print('Test error')
+    print(MSE_test, MSE_test_sk)
+
+

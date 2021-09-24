@@ -3,11 +3,11 @@ from sklearn import linear_model
 
 
 def Ordinary_least_squares(X, z, lmd=0):
-    return np.linalg.pinv(X.T @ X) @ X.T @ z
+    return np.linalg.pinv(X.T @ X) @ (X.T @ z)
 
 
 def Ridge(X, z, lmd):
-    return np.linalg.pinv(X.T @ X - lmd * np.eye(X.shape[1])) @ X.T @ z
+    return np.linalg.pinv(X.T @ X + lmd * np.eye(X.shape[1])) @ X.T @ z
 
 
 def Lasso(X, z, lmd):
