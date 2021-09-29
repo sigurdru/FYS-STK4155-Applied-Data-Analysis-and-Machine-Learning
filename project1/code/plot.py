@@ -111,7 +111,9 @@ def Plot_error(MSE_test, MSE_train, args):
             + '_pol' + str(max(args.polynomial))
     fname = fname.replace('.','-')  # remove dots from fname
     title = 'Mean square error for ' \
-            + args.method
+            + args.method + " using " \
+            + args.resampling  + " with " \
+            + f"iter = {args.resampling_iter}"  
     xlabel = 'Polynomial degree'
     ylabel = 'MSE'
     set_ax_info(ax, xlabel, ylabel, title)
