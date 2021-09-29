@@ -23,10 +23,14 @@ def split_scale(X, z, ttsplit, scaler):
 
 def resample(x, z):
     """
-    Must be implemented by us.
-    This is not yet done, so use sk-learn
+    Resamples x and z with replacement
     """
-    return sk_resample(x, z)
+    N= x.shape[0]
+    idxs = np.random.randint(0, N, size=(N,))
+    x = x[idxs]
+    z = z[idxs]
+    return x, z
+
 
 def k_fold():
     pass
