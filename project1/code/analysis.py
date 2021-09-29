@@ -16,7 +16,7 @@ scale_conv = {"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 def tmp_func_name(args):
     N = args.num_points
     P = args.polynomial  # polynomial degrees
-    if args.scaling != "None": 
+    if args.scaling != "None":
         scaler = scale_conv[args.scaling]
 
     x = np.sort(np.random.uniform(size=N))
@@ -32,7 +32,7 @@ def tmp_func_name(args):
         print("p =", p)
         X = utils.create_X(x, y, p)
         # Scaling
-        if args.scaling != "None": 
+        if args.scaling != "None":
             scaler.fit(X)
             scaler.fit(z)
         all_data = tts(X, z, test_size=args.tts)
@@ -52,8 +52,8 @@ def bias_var_tradeoff(args):
         scaler = scale_conv[args.scaling]
 
 
-    x = np.sort(np.random.normal(size=N))
-    y = np.sort(np.random.normal(size=N))
+    x = np.sort(np.random.uniform(size=N))
+    y = np.sort(np.random.uniform(size=N))
     x, y = np.meshgrid(x, y)
     z = utils.FrankeFunction(x, y, eps0=args.epsilon)
 
