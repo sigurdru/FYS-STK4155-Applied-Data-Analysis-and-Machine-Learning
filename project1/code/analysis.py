@@ -17,6 +17,7 @@ scale_conv = {"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 def simple_regression(args):
     """
     Run regression. Basically Ex1
+    For Ridge and Lasso, a single lambda-value is used
 
     Can be used with any regression method
     Can be used with any resampling method
@@ -43,15 +44,15 @@ def simple_regression(args):
         print("p =", p)
         X = utils.create_X(x, y, p)
 
-        data = resampl(X, z, args.tts, args.resampling_iter, args.lmb, reg_conv[args.method], scaler)
+        data = resampl(X, z, args.tts, args.resampling_iter, args.lmb[0], reg_conv[args.method], scaler)
         MSEs[i] = data["test_MSE"]
         MSE_train[i] = data["train_MSE"]
-        R2s[i] = data["test_R2"]
-        R2_train[i] = data["train_R2"]
+        # R2s[i] = data["test_R2"]
+        # R2_train[i] = data["train_R2"]
 
     # Plotting the error, see output folder!
     plot.Plot_error(MSE_test=MSEs, MSE_train=MSE_train, args=args)
-    plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
+    # plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
 
 
 def bias_var_tradeoff(args):
