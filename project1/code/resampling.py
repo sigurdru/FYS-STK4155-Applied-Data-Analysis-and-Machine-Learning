@@ -24,7 +24,7 @@ def split_scale(X, z, ttsplit, scaler):
 def NoResampling(X, z, ttsplit, unused_iter_variable, lmd_range, reg_method, scaler):
     X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
 
-    beta = reg_method(X_train, z_train)
+    beta = reg_method(X_train, z_train, lmd_range[0])
     test_pred = X_test @ beta
     train_pred = X_train @ beta
 
@@ -48,7 +48,7 @@ def Bootstrap(X, z, ttsplit, B, lmd_range, reg_method, scaler):
     train_pred = np.empty((z_train.shape[0], B))
     for i in range(B):
         x, z = resample(X_train, z_train)
-        beta = reg_method(x, z)
+        beta = reg_method(x, z, lmd_range[0])
         test_pred[:, i] = (X_test @ beta).ravel()
         train_pred[:, i] = (X_train @ beta).ravel()
 
@@ -73,7 +73,7 @@ if __name__=='__main__':
     #Setup
     n = 10
     p = 9
-    eps = 0
+    eps = 1
     ttsplit = 0.2
     x = np.sort(np.random.uniform(size=n))
     y = np.sort(np.random.uniform(size=n))

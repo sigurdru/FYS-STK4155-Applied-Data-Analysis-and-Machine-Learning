@@ -14,7 +14,7 @@ resampling_conv = {"None": resampling.NoResampling, "Boot": resampling.Bootstrap
 scale_conv = {"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 
 
-def tmp_func_name(args):
+def no_resamp(args):
     N = args.num_points
     P = args.polynomial  # polynomial degrees
     scaler = scale_conv[args.scaling]

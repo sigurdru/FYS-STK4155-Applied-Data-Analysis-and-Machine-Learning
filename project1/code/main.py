@@ -1,5 +1,5 @@
 import utils
-from analysis import bias_var_tradeoff, tmp_func_name
+from analysis import bias_var_tradeoff, no_resamp
 
 utils.np.random.seed(136)
 
@@ -7,7 +7,7 @@ utils.np.random.seed(136)
 def main():
     args = utils.parse_args()
     if args.resampling == "None":
-        tmp_func_name(args)
+        no_resamp(args)
     else:
         bias_var_tradeoff(args)
 
