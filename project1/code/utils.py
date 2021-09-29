@@ -112,14 +112,20 @@ def parse_args(args=None):
 
     add_arg("-e", "--epsilon",
             type=float,
-            default=1,
+            default=0.2,
             help="Scale value of noice for Franke Function",
             )
 
     add_arg("--show",
-            type=bool,
-            default=False,
-            help="Whether to show plots, or just save fig")
+            dest="show",
+            action="store_true",
+            )
+
+    add_arg("--noshow",
+            action="store_false",
+            dest="show",
+            )
+    parser.set_defaults(show=False)
 
     args = parser.parse_args(args)
 
