@@ -47,13 +47,13 @@ def parse_args(args=None):
 
     add_arg('-p', '--polynomial',
             type=str,
-            default="3",
+            default="10",
             help='Polynomial degree.',
             )
 
     add_arg('-pc', '--polynomial-conversion',
             type=str,
-            default="value",
+            default="range",
             choices=["value", "list", "range"],
             help="How to transform polynomial input",
             )
