@@ -33,6 +33,7 @@ def set_ax_info(ax, xlabel, ylabel, title=None, zlabel=None):
     if zlabel == None:
         ax.set_xlabel(xlabel, fontsize=20)
         ax.set_ylabel(ylabel, fontsize=20)
+        ax.set_title(title, fontsize=20)
         ax.tick_params(axis='both', which='major', labelsize=15)
         ax.ticklabel_format(style='plain')
         ax.legend(fontsize=15)
@@ -77,30 +78,40 @@ def Plot_FrankeFunction(fname):
     fig.savefig(os.path.join(path_plots, fname + '.pdf'))
     plt.close()
 
-def plot(self):
-    print("Nei fuck off")
-    sys.exit()
-    from mpl_toolkits.mplot3d import Axes3D
-    import matplotlib.pyplot as plt
+def Plot_error(pol_deg, MSE_test, MSE_train, args):
+    """Plot mean square error as a function of polynomial degree
+    for test and train data
 
-    fig = plt.figure()
-    ax = fig.gca(projection="3d")
+    Args:
+        pol_deg (array): array of polynomial degree
+        MSE_test (array): array of test mean square error
+        MSE_train (array): array of train mean square error
+        args (argparse): argparse containing information of method used
+    """
+    #Plot the data
+    fig, ax = plt.subplots()
+    ax.plot(pol_deg, MSE_test, "bo--", label="test MSE")
+    ax.plot(pol_deg, MSE_train, "ro--", label="Train MSE")
+    #general formalities
+    fname = 'MSE_' + args.method \
+            + '_n' + str(args.num_points) \
+            + '_eps' +str(args.epsilon) \
+            + '_pol' +str(max(args.polynomial)) 
+    title = 'Mean square error for ' \
+            + args.method
+    xlabel = 'Polynomial degree'
+    ylabel = 'Error'
+    set_ax_info(ax, xlabel, ylabel, title)
+    #save figure
+    fig.savefig(os.path.join(path_plots, fname + '.pdf'))
+    plt.close()
 
-    N = len(self.x[0])
-    N = int(np.sqrt(N))
-    x_ = self.x[0]  # .reshape((N, N))
-    y_ = self.x[1]  # .reshape((N, N))
-    x_, y_ = np.meshgrid(x_, y_)
 
-    z_ = self.X_train @ self.test_prediction
-    print(z_.shape)
-
-    z_ = self.y.reshape((N, N))
-    surf = ax.plot_surface(
-        x_, y_, z_, cmap="coolwarm", lw=0, antialiased=False)
-    fig.colorbar(surf)
-    plt.show()
-
+def Plot_error(args):
+    """
+    Up next: plot error, variance and bias
+    """
+    pass
 
 if __name__ == "__main__":
     """

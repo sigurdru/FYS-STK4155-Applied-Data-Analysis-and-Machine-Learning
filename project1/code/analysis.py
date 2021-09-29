@@ -5,6 +5,7 @@ from sklearn.utils import resample
 import utils
 import regression
 import resampling
+import plot
 
 
 class NoneScaler(StandardScaler):
@@ -38,12 +39,8 @@ def tmp_func_name(args):
         data = resampl(X, z, args.tts, args.resampling_iter, args.lmb, reg_conv[args.method], scaler)
         MSEs[i] = data["test_MSE"]
         MSE_train[i] = data["train_MSE"]
-
-    plt.plot(P, MSEs, "bo--", label="test MSE")
-    plt.plot(P, MSE_train, "ro--", label="Train MSE")
-    plt.legend()
-    plt.show()
-
+    #Plotting the error, see output folder!
+    plot.Plot_error(pol_deg=P, MSE_test=MSEs, MSE_train=MSE_train, args=args)
 
 def bias_var_tradeoff(args):
     N = args.num_points
