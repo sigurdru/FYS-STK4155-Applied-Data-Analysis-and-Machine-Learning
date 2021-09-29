@@ -17,8 +17,7 @@ scale_conv = {"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 def tmp_func_name(args):
     N = args.num_points
     P = args.polynomial  # polynomial degrees
-    if args.scaling != "None":
-        scaler = scale_conv[args.scaling]
+    scaler = scale_conv[args.scaling]
 
     x = np.sort(np.random.uniform(size=N))
     y = np.sort(np.random.uniform(size=N))
@@ -35,12 +34,8 @@ def tmp_func_name(args):
     for i, p in enumerate(P):
         print("p =", p)
         X = utils.create_X(x, y, p)
-        # Scaling
-        if args.scaling != "None":
-            scaler.fit(X)
-            scaler.fit(z)
-        all_data = tts(X, z, test_size=args.tts)
-        data = resampl(all_data, args.resampling_iter, args.lmb, reg_conv[args.method])
+
+        data = resampl(X, z, args.tts, args.resampling_iter, args.lmb, reg_conv[args.method], scaler)
         MSEs[i] = data["test_MSE"]
         MSE_train[i] = data["train_MSE"]
         R2s[i] = data["test_R2"]
@@ -54,8 +49,7 @@ def tmp_func_name(args):
 def bias_var_tradeoff(args):
     N = args.num_points
     P = args.polynomial
-    if args.scaling != "None":
-        scaler = scale_conv[args.scaling]
+    scaler = scale_conv[args.scaling]
 
     x = np.sort(np.random.uniform(size=N))
     y = np.sort(np.random.uniform(size=N))
@@ -67,14 +61,10 @@ def bias_var_tradeoff(args):
     for i, p in enumerate(P):
         print("p = ", p)
         X = utils.create_X(x, y, p)
-        # Scaling
-        if args.scaling != "None":
-            scaler.fit(X)
-            scaler.fit(z)
-        all_data = tts(X, z, test_size=args.tts)
+
         resamp = resampling_conv[args.resampling]
 
-        data = resamp(all_data, args.resampling_iter,  args.lmb, reg_conv[args.method])
+        data = resamp(X, z, args.tts, args.resampling_iter,  args.lmb, reg_conv[args.method], scaler)
 
         results["test_errors"][i] = data["test_MSE"]
         results["test_biases"][i] = data["test_bias"]
@@ -85,3 +75,5 @@ def bias_var_tradeoff(args):
         results["train_vars"][i] = data["train_variance"]
 
     plot.Plot_bias_var_tradeoff(results, args)
+
+    
