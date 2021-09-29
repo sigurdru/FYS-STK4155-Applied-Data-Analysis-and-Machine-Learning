@@ -21,7 +21,7 @@ def split_scale(X, z, ttsplit, scaler):
     return X_train, X_test, z_train, z_test
 
 
-def NoResampling(X, z, ttsplit, unused_iter_variable, lmd_range, reg_method, scaler):
+def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler):
     X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
 
     beta = reg_method(X_train, z_train, lmd_range[0])
@@ -37,7 +37,7 @@ def NoResampling(X, z, ttsplit, unused_iter_variable, lmd_range, reg_method, sca
     return data
 
 
-def Bootstrap(X, z, ttsplit, B, lmd_range, reg_method, scaler):
+def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
     X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
 
     if B is None:
@@ -48,7 +48,7 @@ def Bootstrap(X, z, ttsplit, B, lmd_range, reg_method, scaler):
     train_pred = np.empty((z_train.shape[0], B))
     for i in range(B):
         x, z = resample(X_train, z_train)
-        beta = reg_method(x, z, lmd_range[0])
+        beta = reg_method(x, z, lmb)
         test_pred[:, i] = (X_test @ beta).ravel()
         train_pred[:, i] = (X_train @ beta).ravel()
 
@@ -60,7 +60,7 @@ def Bootstrap(X, z, ttsplit, B, lmd_range, reg_method, scaler):
     data["train_variance"] = utils.Variance(z_train, train_pred)
     return data
 
-def cross_validation(X, z, ttsplit, k, lmd_range, reg_method, scaler):
+def cross_validation(X, z, ttsplit, k, lmb, reg_method, scaler):
     pass
 
 
