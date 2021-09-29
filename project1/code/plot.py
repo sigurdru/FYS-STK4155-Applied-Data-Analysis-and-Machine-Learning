@@ -186,10 +186,34 @@ def Plot_bias_var_tradeoff(datas, args):
             + '_eps' + str(args.epsilon)
     show(fig, fname, args)
 
+def Plot_BVT_lambda(results, args):
+    """ Plot test MSE as function of lambda, for different polynomial degrees
+
+    Args:
+        results: (defaultdict) contains 1 2D array with test errors
+                First index goes over poly-degree
+                2nd index goes over lambda
+    """
+    fig, ax = plt.subplots()
+
+    lmbs = args.lmb
+    for i, p in enumerate(args.polynomial):
+        ax.plot(np.log10(lmbs), results["test_MSE"][i], label=f"Polynomial degree: {p}")
+
+    xlabel = "log10(lambda-parameter)"
+    ylabel = "Error"
+    title = f"Error as function of lambda-parameter using {args.method}"
+    set_ax_info(ax, xlabel, ylabel, title)
+    fname = "LBVT_" + args.method \
+            + "_n" + str(args.num_points) \
+            + "_eps" + str(args.epsilon)
+    fname = fname.replace(".", "_|") 
+
+    show(fig, fname, args)
 
 if __name__ == "__main__":
     """
-    Testing
+    Plotting analytical Franke with no noise
     """
     class Argparse:
         def __init__(self):
