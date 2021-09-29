@@ -47,13 +47,13 @@ def parse_args(args=None):
 
     add_arg('-p', '--polynomial',
             type=str,
-            default="3",
+            default="5",
             help='Polynomial degree.',
             )
 
     add_arg('-pc', '--polynomial-conversion',
             type=str,
-            default="value",
+            default="range",
             choices=["value", "list", "range"],
             help="How to transform polynomial input",
             )
@@ -115,6 +115,11 @@ def parse_args(args=None):
             default=1,
             help="Scale value of noice for Franke Function",
             )
+
+    add_arg("--show",
+            type=bool,
+            default=False,
+            help="Whether to show plots, or just save fig")
 
     args = parser.parse_args(args)
 
