@@ -622,7 +622,7 @@ TSWLatexianTemp*
 # REVTeX puts footnotes in the bibliography by default, unless the nofootinbib
 # option is specified. Footnotes are the stored in a file with suffix Notes.bib.
 # Uncomment the next line to have this generated file ignored.
-#*Notes.bib
+*Notes.bib
 
 ### TeX Patch ###
 # LIPIcs / OASIcs
@@ -1043,4 +1043,3 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,c++,julia,macos,python,pycharm,visualstudio,visualstudiocode,tex
-
