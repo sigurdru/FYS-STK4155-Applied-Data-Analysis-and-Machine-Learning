@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split as tts
 from collections import defaultdict as ddict
 
-from sklearn.utils import resample
+from sklearn.utils import resample as sk_resample
 import utils
 import numpy as np
 
@@ -19,6 +19,17 @@ def split_scale(X, z, ttsplit, scaler):
     z_train = (z_train - np.mean(z_train)) / np.std(z_train)
 
     return X_train, X_test, z_train, z_test
+
+
+def resample(x, z):
+    """
+    Must be implemented by us.
+    This is not yet done, so use sk-learn
+    """
+    return sk_resample(x, z)
+
+def k_fold():
+    pass
 
 
 def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler):
