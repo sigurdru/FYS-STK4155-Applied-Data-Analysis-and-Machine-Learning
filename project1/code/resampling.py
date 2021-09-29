@@ -1,4 +1,4 @@
-from sklearn.model_selection import train_test_split as tts
+from sklearn.model_selection import train_test_split as tts, KFold
 from collections import defaultdict as ddict
 
 from sklearn.utils import resample as sk_resample
@@ -10,7 +10,13 @@ def split_scale(X, z, ttsplit, scaler):
     """
     Split and scale data
     """
-    X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
+    if ttsplit != 0:
+        X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
+    else:
+        X_train = X
+        z_train = z
+        X_test = X
+        z_test = 0
 
     scaler.fit(X_train)
     X_train = scaler.transform(X_train)
@@ -32,14 +38,26 @@ def resample(x, z):
     return x, z
 
 
-def k_fold():
-    pass
+def k_fold(x, k):
+    N = x.shape[0]
+    length = N // k + 1
+    indices = np.arange(N)
+    np.random.shuffle(indices)
+    splits = np.arange(0, N, length)
 
+    tests = []
+    trains = []
+
+    for i in range(k - 1):
+        tests.append(indices[splits[i]: splits[i] + length])
+        trains.append(np.delete(indices, np.arange(splits[i], splits[i] + length, 1)))
+    
+    return trains, tests
 
 def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler):
     X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
 
-    beta = reg_method(X_train, z_train, lmd_range[0])
+    beta = reg_method(X_train, z_train, lmb)
     test_pred = X_test @ beta
     train_pred = X_train @ beta
 
@@ -75,8 +93,32 @@ def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
     data["train_variance"] = utils.Variance(z_train, train_pred)
     return data
 
-def cross_validation(X, z, ttsplit, k, lmb, reg_method, scaler):
-    pass
+def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
+    X, _, z, _ = split_scale(X, z, 0, scaler)
+
+    data = {}
+    T = np.empty(k)
+    t = np.empty(k)
+    # kfold = KFold(n_splits = k)
+    for i, (train_inds, test_inds) in enumerate(zip(*k_fold(X, k))):
+    # for i, (train_inds, test_inds) in enumerate(kfold.split(X)):
+        x_train = X[train_inds]
+        z_train = z[train_inds]
+
+        x_test = X[test_inds]
+        z_test = z[test_inds]
+
+        beta = reg_method(x_train, z_train, lmb)
+        test_pred = x_test @ beta
+        train_pred = x_train @ beta
+
+
+        T[i] = utils.MSE(z_test, test_pred)
+        t[i] = utils.MSE(z_train, train_pred)
+    data["test_MSE"] = np.mean(t)
+    data["train_MSE"] = np.mean(T)
+    return data
+
 
 
 if __name__=='__main__':
