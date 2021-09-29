@@ -6,11 +6,11 @@ def parameter_range(inp, method, lmb=False):
     """
     For polynomial degree and lambda parameter.
     Returns a string of a single value, a list, or an arange/logspace
-    Must be evaluated later. This is done in main.
     """
     if lmb:
         ntype = float
         func = "np.logspace"
+        inp = inp.replace("m", "-")
     else:
         ntype = int
         func = "np.arange"
@@ -203,3 +203,4 @@ def Bias(y, y_pred):
 
 def Variance(y, y_pred):
     return np.mean( np.var(y_pred, axis=1, keepdims=True) )
+    
