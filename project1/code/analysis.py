@@ -26,14 +26,12 @@ def simple_regression(args):
 
     Plot MSE for train and test as function of complexity
     """
-    N = args.num_points
     P = args.polynomial  # polynomial degrees
     scaler = scale_conv[args.scaling]
 
-    x = np.sort(np.random.uniform(size=N))
-    y = np.sort(np.random.uniform(size=N))
-    x, y = np.meshgrid(x, y)
-    z = utils.FrankeFunction(x, y, eps0=args.epsilon)
+    x, y, z = utils.load_data(args)
+
+    plot.Plot_FrankeFunction(x, y, z, args)
 
     MSEs = np.zeros(len(P))
     MSE_train = np.zeros(len(P))
@@ -67,14 +65,10 @@ def bias_var_tradeoff(args):
 
     Plots MSE, bias and variance for train and test as function of comlpexity
     """
-    N = args.num_points
     P = args.polynomial
     scaler = scale_conv[args.scaling]
 
-    x = np.sort(np.random.uniform(size=N))
-    y = np.sort(np.random.uniform(size=N))
-    x, y = np.meshgrid(x, y)
-    z = utils.FrankeFunction(x, y, eps0=args.epsilon)
+    x, y, z = utils.load_data(args)
 
     results = defaultdict(lambda: np.zeros(len(P), dtype=float))
     resamp = resampling_conv[args.resampling]
@@ -106,15 +100,11 @@ def lambda_BVT(args):
 
     Plots MSE for test as function of complexity and lambda-parameter
     """
-    N = args.num_points
     P = args.polynomial
     lmbs = args.lmb
     scaler = scale_conv[args.scaling]
 
-    x = np.sort(np.random.uniform(size=N))
-    y = np.sort(np.random.uniform(size=N))
-    x, y = np.meshgrid(x, y)
-    z = utils.FrankeFunction(x, y, eps0=args.epsilon)
+    x, y, z = utils.load_data(args)
 
     results = defaultdict(lambda: np.zeros((len(P), len(lmbs)), dtype=float))
     resamp = resampling_conv[args.resampling]
