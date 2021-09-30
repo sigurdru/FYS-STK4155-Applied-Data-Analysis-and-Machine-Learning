@@ -1,26 +1,21 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from collections import defaultdict
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
 from sklearn.utils import resample
 from sklearn.model_selection import train_test_split as tts
+from regression import Ordinary_least_squares, Ridge, Lasso
+from resampling import NoResampling, Bootstrap, cross_validation
 import utils
-from collections import defaultdict
-import regression
-import resampling
 import plot
 
-class NoneScaler():
-    """
-    This is so we have the option of no transformation
-    """
+class NoneScaler(StandardScaler):
+    """ This is so we have the option of no transformation """
     def transform(x):
         return x
-    def fit(X):
-        pass
 
-reg_conv = {"OLS": regression.Ordinary_least_squares, "Ridge": regression.Ridge, "Lasso":regression.Lasso}
-resampling_conv = {"None": resampling.NoResampling, "Boot": resampling.Bootstrap, "CV": resampling.cross_validation}
-scale_conv = {"None":NoneScaler(),"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
+reg_conv = {"OLS": Ordinary_least_squares, "Ridge": Ridge, "Lasso":Lasso}
+resampling_conv = {"None": NoResampling, "Boot": Bootstrap, "CV": cross_validation}
+scale_conv = {"None": NoneScaler(),"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 
 
 def simple_regression(args):
@@ -56,12 +51,12 @@ def simple_regression(args):
         data = resampl(X, z, args.tts, args.resampling_iter, args.lmb[0], reg_conv[args.method], scaler)
         MSEs[i] = data["test_MSE"]
         MSE_train[i] = data["train_MSE"]
-        # R2s[i] = data["test_R2"]
-        # R2_train[i] = data["train_R2"]
+        R2s[i] = data["test_R2"]
+        R2_train[i] = data["train_R2"]
 
     # Plotting the error, see output folder!
     plot.Plot_error(MSE_test=MSEs, MSE_train=MSE_train, args=args)
-    # plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
+    plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
 
 
 def bias_var_tradeoff(args):
