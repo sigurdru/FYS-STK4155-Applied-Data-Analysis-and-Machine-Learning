@@ -9,9 +9,18 @@ import regression
 import resampling
 import plot
 
+class NoneScaler():
+    """
+    This is so we have the option of no transformation
+    """
+    def transform(x):
+        return x
+    def fit(X):
+        pass
+
 reg_conv = {"OLS": regression.Ordinary_least_squares, "Ridge": regression.Ridge, "Lasso":regression.Lasso}
 resampling_conv = {"None": resampling.NoResampling, "Boot": resampling.Bootstrap, "CV": resampling.cross_validation}
-scale_conv = {"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
+scale_conv = {"None":NoneScaler(),"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 
 
 def no_resamp(args):

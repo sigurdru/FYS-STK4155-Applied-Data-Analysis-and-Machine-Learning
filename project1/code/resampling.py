@@ -21,7 +21,7 @@ def split_scale(X, z, ttsplit, scaler):
     return X_train, X_test, z_train, z_test
 
 
-def NoResampling(X, z, ttsplit, unused_iter_variable, lmd_range, reg_method, scaler):
+def NoResampling(X, z, ttsplit, unused_iter_variable, lmd_range, reg_method, scaler, Testing=False):
     X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
 
     beta = reg_method(X_train, z_train, lmd_range[0])
@@ -33,9 +33,10 @@ def NoResampling(X, z, ttsplit, unused_iter_variable, lmd_range, reg_method, sca
     data["train_MSE"] = utils.MSE(z_train, train_pred)
     data["test_R2"] = utils.R2(z_test, test_pred)
     data["train_R2"] = utils.R2(z_train, train_pred)
-
-    return data
-
+    if Testing == False:
+        return data
+    else:
+        return data, X_train, X_test, z_train, z_test, beta
 
 def Bootstrap(X, z, ttsplit, B, lmd_range, reg_method, scaler):
     X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
