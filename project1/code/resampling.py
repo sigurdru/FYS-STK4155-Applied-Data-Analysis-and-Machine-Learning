@@ -38,7 +38,7 @@ def resample(x, z):
     return x, z
 
 
-def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler):
+def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler, Testing=False):
     X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
 
     beta = reg_method(X_train, z_train, lmb)
@@ -50,7 +50,7 @@ def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler):
     data["train_MSE"] = utils.MSE(z_train, train_pred)
     data["test_R2"] = utils.R2(z_test, test_pred)
     data["train_R2"] = utils.R2(z_train, train_pred)
-    if Testing == False:
+    if not Testing:
         return data
     else:
         return data, X_train, X_test, z_train, z_test, beta
@@ -100,7 +100,6 @@ def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
     data["train_MSE"] = np.mean(train_pred)
     data["test_MSE"] = np.mean(test_pred)
     return data
-
 
 
 if __name__=='__main__':
