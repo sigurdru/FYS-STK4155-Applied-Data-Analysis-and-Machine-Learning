@@ -1,5 +1,22 @@
-import argparse
 import numpy as np
+import argparse
+import ast
+
+
+def get_directly_implemented_funcs(module):
+    """
+    Returns the functions implemented in the given module.
+    The functions has to be directly implemented (not imported),
+    and declared using def.
+    The returned dict has the name of the functions as keys, 
+    and reference to them as values.
+    """
+    s = open(f"{module.__name__}.py").read()
+    flist = {}
+    for f in ast.parse(s).body:
+        if isinstance(f, ast.FunctionDef):
+            flist[f.name] = eval("module." + f.name)
+    return flist
 
 
 def parameter_range(inp, method, lmb=False):
@@ -30,6 +47,12 @@ def parse_args(args=None):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     add_arg = parser.add_argument
+
+    add_arg("-a", "--analyse",
+            type=str,
+            default="simple_regression",
+            help="what analysis function to run",
+            )
 
     add_arg('-m', '--method',
             type=str,
