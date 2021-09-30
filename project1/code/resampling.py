@@ -38,22 +38,6 @@ def resample(x, z):
     return x, z
 
 
-def k_fold(x, k):
-    N = x.shape[0]
-    length = N // k + 1
-    indices = np.arange(N)
-    np.random.shuffle(indices)
-    splits = np.arange(0, N, length)
-
-    tests = []
-    trains = []
-
-    for i in range(k - 1):
-        tests.append(indices[splits[i]: splits[i] + length])
-        trains.append(np.delete(indices, np.arange(splits[i], splits[i] + length, 1)))
-    
-    return trains, tests
-
 def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler):
     X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
 
@@ -97,11 +81,11 @@ def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
     X, _, z, _ = split_scale(X, z, 0, scaler)
 
     data = {}
-    T = np.empty(k)
-    t = np.empty(k)
-    # kfold = KFold(n_splits = k)
-    for i, (train_inds, test_inds) in enumerate(zip(*k_fold(X, k))):
-    # for i, (train_inds, test_inds) in enumerate(kfold.split(X)):
+    train_pred = np.empty(k)
+    test_pred = np.empty(k)
+    
+    kfold = KFold(n_splits = k)
+    for i, (train_inds, test_inds) in enumerate(kfold.split(X)):
         x_train = X[train_inds]
         z_train = z[train_inds]
 
@@ -109,14 +93,11 @@ def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
         z_test = z[test_inds]
 
         beta = reg_method(x_train, z_train, lmb)
-        test_pred = x_test @ beta
-        train_pred = x_train @ beta
+        train_pred[i] = utils.MSE(z_train, x_train @ beta)
+        test_pred[i] = utils.MSE(z_test, x_test @ beta)
 
-
-        T[i] = utils.MSE(z_test, test_pred)
-        t[i] = utils.MSE(z_train, train_pred)
-    data["test_MSE"] = np.mean(t)
-    data["train_MSE"] = np.mean(T)
+    data["train_MSE"] = np.mean(train_pred)
+    data["test_MSE"] = np.mean(test_pred)
     return data
 
 
