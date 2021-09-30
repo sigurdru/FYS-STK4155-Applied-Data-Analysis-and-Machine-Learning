@@ -1,9 +1,6 @@
-from sklearn.model_selection import train_test_split as tts, KFold
-from collections import defaultdict as ddict
-
-from sklearn.utils import resample as sk_resample
-import utils
 import numpy as np
+from sklearn.model_selection import train_test_split as tts, KFold
+import utils
 
 
 def split_scale(X, z, ttsplit, scaler):
@@ -79,13 +76,13 @@ def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
     return data
 
 def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
-    X, _, z, _ = split_scale(X, z, 0, scaler)
+    X, _, z, _ = split_scale(X, z, 0, scaler)  # In this case only scales
 
     data = {}
     train_pred = np.empty(k)
     test_pred = np.empty(k)
     
-    kfold = KFold(n_splits = k)
+    kfold = KFold(n_splits = k)  # Use sklearns kfold method
     for i, (train_inds, test_inds) in enumerate(kfold.split(X)):
         x_train = X[train_inds]
         z_train = z[train_inds]

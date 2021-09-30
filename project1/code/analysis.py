@@ -1,7 +1,6 @@
 import numpy as np
 from collections import defaultdict
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
-from sklearn.utils import resample
 from sklearn.model_selection import train_test_split as tts
 from regression import Ordinary_least_squares, Ridge, Lasso
 from resampling import NoResampling, Bootstrap, cross_validation
