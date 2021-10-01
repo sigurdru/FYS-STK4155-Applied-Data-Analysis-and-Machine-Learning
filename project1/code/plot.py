@@ -64,8 +64,9 @@ def Plot_FrankeFunction(x, y, z, args):
     """
 
     if 1 in z.shape:
-        n = int(np.sqrt(z.shape[0]))
-        z = z.reshape((n, n))
+        nx = x.shape[0]
+        ny = x.shape[1]
+        z = z.reshape((nx, ny))
 
     fig = plt.figure()
     ax = fig.gca(projection="3d")
@@ -73,7 +74,6 @@ def Plot_FrankeFunction(x, y, z, args):
     surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
                        linewidth=0, antialiased=False)
     # Customize the z axis.
-    ax.set_zlim(-0.10, 1.40)
     ax.zaxis.set_major_locator(LinearLocator(10))
     ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
 

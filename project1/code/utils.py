@@ -1,5 +1,23 @@
-import argparse
 import numpy as np
+import argparse
+import imageio
+import ast
+
+
+def get_directly_implemented_funcs(module):
+    """
+    Returns the functions implemented in the given module.
+    The functions has to be directly implemented (not imported),
+    and declared using def.
+    The returned dict has the name of the functions as keys, 
+    and reference to them as values.
+    """
+    s = open(f"{module.__name__}.py").read()
+    flist = {}
+    for f in ast.parse(s).body:
+        if isinstance(f, ast.FunctionDef):
+            flist[f.name] = eval("module." + f.name)
+    return flist
 
 
 def parameter_range(inp, method, lmb=False):
@@ -30,6 +48,12 @@ def parse_args(args=None):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     add_arg = parser.add_argument
+
+    add_arg("-a", "--analyse",
+            type=str,
+            default="simple_regression",
+            help="what analysis function to run",
+            )
 
     add_arg('-m', '--method',
             type=str,
@@ -159,6 +183,30 @@ def FrankeFunction(x, y, eps0=0):
     term4 = -0.2*np.exp(-(9*x-4)**2 - (9*y-7)**2)
     noise = eps0 * np.random.normal(size=x.shape)
     return (term1 + term2 + term3 + term4 + noise).ravel().reshape(-1, 1)
+
+def load_data(args):
+    N = args.num_points
+    if args.dataset == "Franke":
+        x = np.sort(np.random.uniform(size=N))
+        y = np.sort(np.random.uniform(size=N))
+        x, y = np.meshgrid(x, y)
+        z = FrankeFunction(x, y, eps0=args.epsilon)
+    
+    elif args.dataset == "SRTM":
+        if args.data_file is None:
+            path = "./../DataFiles/SRTM_data_Norway_1.tif"
+        else:
+            path = args.data_file
+
+        terrain = imageio.imread(path)
+        nx, ny = terrain.shape
+        x = np.sort(np.random.uniform(size=nx))
+        y = np.sort(np.random.uniform(size=ny))
+        x, y = np.meshgrid(x, y)
+
+        z = terrain.ravel().reshape(-1, 1)
+
+    return x, y, z
 
 
 def create_X(x, y, n):
