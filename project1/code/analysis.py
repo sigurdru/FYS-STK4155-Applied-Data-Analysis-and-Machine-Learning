@@ -6,14 +6,9 @@ from resampling import NoResampling, Bootstrap, cross_validation
 import utils
 import plot
 
-class NoneScaler(StandardScaler):
-    """ This is so we have the option of no transformation """
-    def transform(self, x):
-        return x
-
 reg_conv = {"OLS": Ordinary_least_squares, "Ridge": Ridge, "Lasso":Lasso}
 resampling_conv = {"None": NoResampling, "Boot": Bootstrap, "CV": cross_validation}
-scale_conv = {"None": NoneScaler(),"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
+scale_conv = {"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 
 
 def simple_regression(args):

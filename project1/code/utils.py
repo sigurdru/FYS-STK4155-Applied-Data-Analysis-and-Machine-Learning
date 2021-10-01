@@ -91,7 +91,7 @@ def parse_args(args=None):
     add_arg('-s', '--scaling',
             type=str,
             default='S',
-            choices=['None', 'M', 'S', 'N'],
+            choices=['M', 'S', 'N'],
             help='Scaling method: None, MinMax, Standard, Normalizer.',
             )
 
@@ -184,6 +184,19 @@ def FrankeFunction(x, y, eps0=0):
     noise = eps0 * np.random.normal(size=x.shape)
     return (term1 + term2 + term3 + term4 + noise).ravel().reshape(-1, 1)
 
+
+def f_test(x, eps=0):
+    """
+    Returns the function used for testing of the methods, with noise.
+
+    Args:
+        x (array): array of x values
+        eps (float): size of error
+    """
+    value = np.exp(x)
+    value += eps*np.random.normal(0, 1, size=len(x))
+    return value.reshape(-1, 1)
+
 def load_data(args):
     N = args.num_points
     if args.dataset == "Franke":
@@ -191,7 +204,10 @@ def load_data(args):
         y = np.sort(np.random.uniform(size=N))
         x, y = np.meshgrid(x, y)
         z = FrankeFunction(x, y, eps0=args.epsilon)
-    
+    elif args.dataset == "Test":
+        x = np.sort(np.random.uniform(size=N))
+        y = 0
+        z = f_test(x, eps=args.epsilon)
     elif args.dataset == "SRTM":
         if args.data_file is None:
             path = "./../DataFiles/SRTM_data_Norway_1.tif"
@@ -211,7 +227,6 @@ def load_data(args):
         x, y = np.meshgrid(x, y)
 
         z = terrain.ravel().reshape(-1, 1)
-
     return x, y, z
 
 
@@ -228,6 +243,11 @@ def create_X(x, y, n):
         X: 2darray
             Includes intercept.
     """
+    if y == 0:
+        X = np.zeros((len(x), n))
+        for i in range(n):
+            X[:, i] = x**n
+        return X
     if not 1 in x.shape:
         x = np.ravel(x)
         y = np.ravel(y)

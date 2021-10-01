@@ -1,3 +1,4 @@
+from collections import defaultdict
 import numpy as np
 from sklearn.model_selection import train_test_split as tts, KFold
 import utils
@@ -77,9 +78,13 @@ def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
 def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
     X, _, z, _ = split_scale(X, z, 0, scaler)  # In this case only scales
 
-    data = {}
+    data = defaultdict(lambda: 0)
     train_pred = np.empty(k)
     test_pred = np.empty(k)
+    # test_bias = np.empty(k)
+    # train_bias = np.empty(k)
+    # train_var = np.empty(k)
+    # test_var = np.empty(k)
     
     kfold = KFold(n_splits = k)  # Use sklearns kfold method
     for i, (train_inds, test_inds) in enumerate(kfold.split(X)):
@@ -90,11 +95,15 @@ def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
         z_test = z[test_inds]
 
         beta = reg_method(x_train, z_train, lmb)
+        train_p = x_train @ beta
+        test_p = x_test @ beta
         train_pred[i] = utils.MSE(z_train, x_train @ beta)
         test_pred[i] = utils.MSE(z_test, x_test @ beta)
+        # test_bias[i] = utils.Bias(z_test, test_p)
 
     data["train_MSE"] = np.mean(train_pred)
     data["test_MSE"] = np.mean(test_pred)
+    # data["test_bias"] = np.mean(test_bias)
     return data
 
 
