@@ -9,7 +9,7 @@ import plot
 
 class NoneScaler(StandardScaler):
     """ This is so we have the option of no transformation """
-    def transform(x):
+    def transform(self, x):
         return x
 
 reg_conv = {"OLS": Ordinary_least_squares, "Ridge": Ridge, "Lasso":Lasso}
@@ -58,7 +58,7 @@ def simple_regression(args):
     plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
 
 
-def bias_var_tradeoff(args):
+def bias_var_tradeoff(args, testing=False):
     """
     Perform bias-variance trade-off analysis
     For Ridge and Lasso, a single lambda-value is used
@@ -93,8 +93,10 @@ def bias_var_tradeoff(args):
         results["train_errors"][i] = data["train_MSE"]
         results["train_biases"][i] = data["train_bias"]
         results["train_vars"][i] = data["train_variance"]
-
-    plot.Plot_bias_var_tradeoff(results, args)
+    if testing == False:
+        plot.Plot_bias_var_tradeoff(results, args)
+    else:
+        return results
 
 
 def lambda_BVT(args):

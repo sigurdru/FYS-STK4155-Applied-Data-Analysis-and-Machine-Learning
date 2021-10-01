@@ -95,19 +95,26 @@
 	\tableofcontents
 	\clearpage
 \end{titlepage}
-
-\begin{abstract}
-\end{abstract}
-
 %\maketitle                              % creates the title
 
-
+\onecolumngrid
 \section{Introduction}
-Regression analysis is a statistical method for fitting a function to data. It is useful for building mathematical models to explain observations. There are several regression methods to achieve this, all with their strengths and weaknesses. We will in this paper study 3 different methods; ordinary least squares, Ridge and Lasso regression.
+
+Regression analysis is a statistical method for fitting a function to data. It is useful for building mathematical models to explain observations. There are several regression methods to achieve this, all with their strengths and weaknesses. We will in this paper study three different methods; ordinary least squares, Ridge and Lasso regression. All the code, results and instructions on running the code can be found in our GitHub repository here\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}
 
 Larger datasets contain more information, giving more accurate models. However, real-world datasets usually have a fixed size, and getting more is practically impossible. For smaller datasets it is then useful to have tools mitigating the effects of little data. Resampling methods does this by running the same data through the regression, without over-fitting the model to the sample data. In addition to the regression methods, we will also study the effect of bootstrapping and cross-validating the data. 
 
-In order to study this, we need data to analyze. Franke's function is a two-dimensional function resembling a topographical data. We will first do a polynomial fit with $x$ and $y$ dependence of this function. Because it is an analytical function, we can generate as much data as we need. We will therefore also do the same on topographical data from the real world, where the amount of data is limited. 
+In order to study this, we need data to analyze. We are going to use two data sets to study the different methods. One data set we will generate ourselves using the Franke function, given by equation \eqref{eq:FF}. To make the data more realistic we also add normally distributed noise. The other data is real terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning
+/tree/master/doc/Projects/2021/Project1/DataFiles}}.
+
+\begin{align}
+\begin{split}
+\label{eq:FF}
+f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10}) \\
+& + \frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2)
+\end{split}
+\end{align}
+
 
 \section{Ordinary Least Square}
 
@@ -126,6 +133,7 @@ In order to study this, we need data to analyze. Franke's function is a two-dime
 
 \section{Analysis of real data}
 
+\section{Testing}
 
 \begin{thebibliography}{}
 \bibitem[]{ref} Ref.

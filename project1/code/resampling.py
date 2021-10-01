@@ -14,7 +14,6 @@ def split_scale(X, z, ttsplit, scaler):
         z_train = z
         X_test = X
         z_test = 0
-
     scaler.fit(X_train)
     X_train = scaler.transform(X_train)
     X_test = scaler.transform(X_test)
