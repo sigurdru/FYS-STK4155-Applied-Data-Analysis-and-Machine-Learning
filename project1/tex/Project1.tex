@@ -29,7 +29,7 @@
 \usepackage{multirow}
 \usepackage{geometry}
 \usepackage{algorithm2e}
-
+\usepackage{amsmath}
 
 % defines the color of hyperref objects
 % Blending two colors:  blue!80!black  =  80% blue and 20% black
@@ -70,6 +70,11 @@
 	\setbox2=\hbox{\vrule height\ht0 depth -\dimen0}
 	{\box0\lower0.65pt\box2}}
 
+\newcommand{\expy}{\mathbb{E}[\mathbf{\tilde{y}}]}
+\newcommand{\closed}[1]{\left({#1}\right)}
+\newcommand{\bracket}[1]{\left[{#1}\right]}
+
+
 \graphicspath{{../output/}} % search for figures in this dir
 
 
@@ -102,7 +107,7 @@
 
 Regression analysis is a statistical method for fitting a function to data. It is useful for building mathematical models to explain observations. There are several regression methods to achieve this, all with their strengths and weaknesses. We will in this paper study three different methods; ordinary least squares, Ridge and Lasso regression. All the code, results and instructions on running the code can be found in our GitHub repository here\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}
 
-Larger datasets contain more information, giving more accurate models. However, real-world datasets usually have a fixed size, and getting more is practically impossible. For smaller datasets it is then useful to have tools mitigating the effects of little data. Resampling methods does this by running the same data through the regression, without over-fitting the model to the sample data. In addition to the regression methods, we will also study the effect of bootstrapping and cross-validating the data. 
+Larger datasets contain more information, giving more accurate models. However, real-world datasets usually have a fixed size, and getting more is practically impossible. For smaller datasets it is then useful to have tools mitigating the effects of little data. Resampling methods does this by running the same data through the regression, without over-fitting the model to the sample data. In addition to the regression methods, we will also study the effect of bootstrapping and cross-validating the data.
 
 In order to study this, we need data to analyze. We are going to use two data sets to study the different methods. One data set we will generate ourselves using the Franke function, given by equation \eqref{eq:FF}. To make the data more realistic we also add normally distributed noise. The other data is real terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning
 /tree/master/doc/Projects/2021/Project1/DataFiles}}.
@@ -121,6 +126,53 @@ f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{
 
 \section{Bias-variance trade-off and Bootstrapping}
 
+\subsection*{Bias-variance trade-off decomposition}
+We assume that our true data is generated from a noisy model with nromally distributed noise $\epsilon$ with a mean of zero and standard deviation $\sigma^2$, i.e.
+\begin{align*}
+  \mathbf{y} &= f(\mathbf{x}) + \bm{\epsilon}
+\end{align*}
+
+We have approximated this function with our design matrix $\mathbf{X}$ and our parameters $\bm{\beta}$ such that our model becomes $\mathbf{\tilde{y}}=\mathbf{X}\bm{\beta}$, where the values of $\bm{\beta}$ were obtained by optimizing the mean squared error via the cost function, given by
+
+\begin{align*}
+  C(\mathbf{X}, \bm{\beta}) &= \frac{1}{n} \sum_{i=0}^{n-1} (y_i - \tilde{y}_i) = \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right]
+\end{align*}
+
+where $\mathbb{E}$ is the expected value. % Note sample value
+
+We want to show that the above expression can be written as
+
+\begin{align*}
+  \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expy)^2 + \frac{1}{n}\sum_i (\tilde{y}_i - \expy )^2 + \sigma^2
+\end{align*}
+
+We begin by inserting our model expression for $\mathbf{y}$ and adding and subtracting $\expy$ inside the expected value, before we square the expression.
+\begin{align*}
+  \mathbb{E}\bracket{(\mathbf{y} - \mathbf{\tilde{y}})^2} &= \mathbb{E}\bracket{(f(\mathbf{x}) + \bm{\epsilon} - \mathbf{\tilde{y}} - \expy + \expy)^2} = \mathbb{E}\bracket{\closed{(f(\mathbf{x}) - \expy) + \bm{\epsilon} + (\expy - \mathbf{\tilde{y}}) }^2 } \\
+  &= \mathbb{E}\bracket{(f(\mathbf{x}) - \expy)^2 + \bm{\epsilon}^2 + (\expy - \mathbf{\tilde{y}})^2} \\
+  &\quad+ \mathbb{E}\bracket{2\bm{\epsilon} (f(\mathbf{x}) - \expy) + 2\bm{\epsilon}(\expy - \mathbf{\tilde{y}}) + 2 (f(\mathbf{x}) - \expy)(\expy - \mathbf{\tilde{y}})}
+\end{align*}
+
+where the cross terms have been written on a separate line since the expected value is linear. Next we will focus on the cross-terms. Since $\bm{\epsilon}$ is normally distributed, it's expected value is simply the mean, which is zero in our case. The two cross terms involving $\bm{\epsilon}$ is therefore zero, so we only need to consider
+\begin{align*}
+  \mathbb{E}\bracket{(f(\mathbf{x}) - \expy)(\expy - \mathbf{\tilde{y}})} &= \mathbb{E}\bracket{f(\mathbf{x})\expy} - \mathbb{E}\bracket{f(\mathbf{x})\mathbf{\tilde{y}}} - \mathbb{E}\bracket{\expy\expy} + \mathbb{E}\bracket{\mathbf{\tilde{y}}\expy}
+\end{align*}
+Since the expected value of an expected value is just the expected value itself the last two terms in the above equation both become $\expy^2$, canceling each other out. Using that $f(\mathbf{x})$ is a deterministic function, we have $\mathbb{E}[f(\mathbf{x})]=f(\mathbf{x})$. Expressing $f(\mathbf{x})$ in terms of its expected value, we can write the first two terms in the above equation as
+\begin{align*}
+  \mathbb{E}\bracket{f(\mathbf{x})\expy} - \mathbb{E}\bracket{f(\mathbf{x})\mathbf{\tilde{y}}} &= \mathbb{E}\bracket{\mathbb{E}\bracket{f(\mathbf{x})}\expy} - \mathbb{E}\bracket{\mathbb{E}\bracket{f(\mathbf{x})}\mathbf{\tilde{y}}} \\
+  &= \mathbb{E}\bracket{f(\mathbf{x})}\expy - \mathbb{E}\bracket{f(\mathbf{x})}\expy = 0
+\end{align*}
+
+Hence, all the cross terms in the expected value cancel out, and we're left with
+\begin{align*}
+  \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \mathbb{E}\bracket{\closed{f(\mathbf{x})-\expy}^2} + \mathbb{E}\bracket{\closed{\expy - \mathbf{\tilde{y}}}^2} + \mathbb{E}\bracket{\bm{\epsilon}^2}
+\end{align*}
+
+Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as sums we finally arrive at
+\begin{align*}
+  \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expy)^2 + \frac{1}{n}\sum_i (\tilde{y}_i - \expy )^2 + \sigma^2
+\end{align*}
+which is what we wanted to show. git
 
 \section{Cross-validation}
 
