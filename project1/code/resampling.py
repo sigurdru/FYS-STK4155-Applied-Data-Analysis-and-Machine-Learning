@@ -66,7 +66,6 @@ def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
         beta = reg_method(x, z, lmb)
         test_pred[:, i] = (X_test @ beta).ravel()
         train_pred[:, i] = (X_train @ beta).ravel()
-
     data["test_MSE"] = utils.MSE_boot(z_test, test_pred)
     data["test_bias"] = utils.Bias(z_test, test_pred)
     data["test_variance"] = utils.Variance(z_test, test_pred)

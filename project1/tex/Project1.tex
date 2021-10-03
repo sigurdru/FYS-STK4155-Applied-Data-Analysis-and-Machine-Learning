@@ -75,7 +75,7 @@
 \newcommand{\bracket}[1]{\left[{#1}\right]}
 
 
-\graphicspath{{../output/}} % search for figures in this dir
+\graphicspath{{../output/plots/}} % search for figures in this dir
 
 
 
@@ -186,6 +186,21 @@ which is what we wanted to show. git
 \section{Analysis of real data}
 
 \section{Testing}
+In order to make sure our algorithms are running correctly, it is necessary to test our algorithms. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
+\begin{equation}
+	\label{eq:exp}
+	f_\text{Test}(x) = exp(x) + \epsilon.
+\end{equation}
+Here $\epsilon$ denotes normally distributed noise, and $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
+
+\begin{figure}[!htb]
+	\includegraphics[width=\linewidth]{Testing_data.pdf}
+	\caption{Here you we have plotted the testing data along with the analytical function.}
+	\label{fig:TestingData}
+\end{figure}
+
+First off we want to test the regression methods we have written.
+
 
 \begin{thebibliography}{}
 \bibitem[]{ref} Ref.
