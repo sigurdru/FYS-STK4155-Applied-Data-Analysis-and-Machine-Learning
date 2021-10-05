@@ -75,7 +75,7 @@
 \newcommand{\bracket}[1]{\left[{#1}\right]}
 
 
-\graphicspath{{../output/}} % search for figures in this dir
+\graphicspath{{../output/plots/}} % search for figures in this dir
 
 
 
@@ -109,8 +109,8 @@ Regression analysis is a statistical method for fitting a function to data. It i
 
 Larger datasets contain more information, giving more accurate models. However, real-world datasets usually have a fixed size, and getting more is practically impossible. For smaller datasets it is then useful to have tools mitigating the effects of little data. Resampling methods does this by running the same data through the regression, without over-fitting the model to the sample data. In addition to the regression methods, we will also study the effect of bootstrapping and cross-validating the data.
 
-In order to study this, we need data to analyze. We are going to use two data sets to study the different methods. One data set we will generate ourselves using the Franke function, given by equation \eqref{eq:FF}. To make the data more realistic we also add normally distributed noise. The other data is real terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning
-/tree/master/doc/Projects/2021/Project1/DataFiles}}.
+In order to study this, we need data to analyze. We will use two datasets to study the different methods. One dataset we will generate ourselves using the Franke function, given by equation \eqref{eq:FF}. To make the data more realistic we also add normally distributed noise. The other data is real terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning
+/tree/master/doc/Projects/2021/Project1/DataFiles}}. Our model for both datasets will be a polynomial fit with an $x$ and $y$ dependence of the form $[x,y,x^2,y^2,xy,\dots]$.
 
 \begin{align}
 \begin{split}
@@ -122,6 +122,33 @@ f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{
 
 
 \section{Ordinary Least Square}
+
+Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We pick $N = 100$ randomly distributed points for $x$ and $y$, where our domain is $x,y\in[0,1]$. As mentioned in the introduction we add stochastic noise to the function, using the normal distribution $\epsilon \cdot N(0,1)$. Here $\epsilon$ is just a variable we can use to scale the noise, we choose $\epsilon = 0.2$. This gives us the dataset visualized in figure \ref{fig:FF_dataset}.
+
+\begin{figure}[!htb]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Frank_anal_eps_0.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Frank_anal_eps_0_2.pdf}
+	\endminipage
+	\caption{Here we have displayed our data along with the analytical function. The left figure shows the analytical Franke function plotted, and the right hand figure is the Franke function plotted with noise, i.e. the data we use.}\label{fig:FF_dataset}
+\end{figure}
+
+When we perform ordinary least square (OLS) regression we assume that our data follows a model such that
+\begin{equation}
+	\vc{z} = X \boldsymbol{\beta} + \boldsymbol{\epsilon}
+\end{equation}
+Where $\vc{z}$ is our data, $X$ is our design matrix given by our model, $\boldsymbol{\beta}$ are parameters in the model and $\boldsymbol{\epsilon}$ is stochastic noise. One challenge in our case is that our data is two-dimensional, i.e. $\vc{z}$ has dimensions $(N,N)$. We create a workaround by mapping our two-dimensional data, to a one dimensional $(N^2,1)$ vector. This is an important note, and we will do this throughout the report. Note that our design matrix $X$ will have dimensions $(N^2,P)$ where $P$ are the number of features.
+
+As mentioned in the introduction our model will be a polynomial fit with an $x$ and $y$ dependence of the form $[x,y,x^2,y^2,xy,\dots]$. This gives us $P = (p + 1)(p + 2)/2$ number of features, where $p$ is our maximum polynomial degree. Now for a given model
+\begin{equation*}
+	\boldsymbol{\tilde{z}} = X\mathbf{\tilde{y}},
+\end{equation*}
+we will have a mean square error (MSE) given by
+\begin{equation*}
+	C(\boldsymbol{\beta}) = \frac{1}{N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i) = \frac{1}{N}\left\{(\vc{z} - X\boldsymbol{\beta})^T(\vc{z} - X\boldsymbol{\beta})\right\}
+\end{equation*}
 
 
 \section{Bias-variance trade-off and Bootstrapping}
@@ -188,6 +215,36 @@ In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of
 \section{Analysis of real data}
 
 \section{Testing}
+In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
+\begin{equation}
+	\label{eq:exp}
+	f_\text{Test}(x) = exp(x) + \epsilon.
+\end{equation}
+Here $\epsilon$ denotes normally distributed noise, and $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
+
+\begin{figure}[!htb]
+	\includegraphics[width=\linewidth]{Testing_data.pdf}
+	\caption{Here you we have plotted the testing data along with the analytical function.}
+	\label{fig:TestingData}
+\end{figure}
+
+First off we want to test the regression methods we have written. 
+\begin{figure}[!htb]
+	\includegraphics[width=\linewidth]{Testing_OLS.pdf}
+	\caption{A really Awesome Image}
+	\label{fig:test_OLS}
+\end{figure}
+\begin{figure}[!htb]
+	\includegraphics[width=\linewidth]{Testing_Lasso.pdf}
+	\caption{A really Awesome Image}
+	\label{fig:test_Lasso}
+\end{figure}
+\begin{figure}[!htb]
+	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
+	\caption{A really Awesome Image}
+	\label{fig:test_ridge}
+\end{figure}
+
 
 \begin{thebibliography}{}
 \bibitem[]{ref} Ref.

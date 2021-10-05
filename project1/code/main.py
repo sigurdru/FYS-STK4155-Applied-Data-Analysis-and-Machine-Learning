@@ -35,5 +35,5 @@ def terrain():
     # plt.ylabel('Y')
     # plt.show()
 if __name__ == "__main__":
-    # main()
-    terrain()
+    main()
+    # terrain()
