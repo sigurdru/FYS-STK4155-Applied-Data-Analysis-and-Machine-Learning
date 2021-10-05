@@ -80,7 +80,8 @@ def Plot_FrankeFunction(x, y, z, args):
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)
     #general formalities
-    fname = f"Frak_anal_eps_{args.epsilon}"
+    fname = f"Frank_anal_eps_{args.epsilon}"
+    fname = fname.replace('.', '_')  # remove dots from fname
     title = 'Analytical plot of Franke\'s function'
     xlabel = '$x$'
     ylabel = '$y$'
@@ -109,7 +110,7 @@ def Plot_error(MSE_test, MSE_train, args):
             + '_n' + str(args.num_points) \
             + '_eps' + str(args.epsilon) \
             + '_pol' + str(max(args.polynomial))
-    fname = fname.replace('.','-')  # remove dots from fname
+    fname = fname.replace('.','_')  # remove dots from fname
     title = 'Mean square error for ' \
             + args.method + " using " \
             + args.resampling  + " with " \
@@ -141,7 +142,7 @@ def Plot_R2(R2_test, R2_train, args):
             + '_n' + str(args.num_points) \
             + '_eps' + str(args.epsilon) \
             + '_pol' + str(max(args.polynomial))
-    fname = fname.replace('.', '-') # remove dots from fname
+    fname = fname.replace('.', '_') # remove dots from fname
     title = 'R2 score for ' \
             + args.method
     xlabel = 'Polynomial degree'
@@ -209,13 +210,16 @@ def Plot_BVT_lambda(results, args):
     fname = "LBVT_" + args.method \
             + "_n" + str(args.num_points) \
             + "_eps" + str(args.epsilon)
-    fname = fname.replace(".", "_|") 
+    fname = fname.replace(".", "_") 
 
     show(fig, fname, args)
 
 if __name__ == "__main__":
     """
-    Plotting analytical Franke with no noise
+    Here we can plot Franke function with or withot noise,
+    simply change the self.epsilon value to the desired noise.
+    Then run python3 plot.py, and it will generate a file with the appropriate
+    name.
     """
     class Argparse:
         def __init__(self):
@@ -226,6 +230,6 @@ if __name__ == "__main__":
     x = np.sort(np.random.uniform(size=N))
     y = np.sort(np.random.uniform(size=N))
     x, y = np.meshgrid(x, y)
-    z = utils.FrankeFunction(x, y)
     args = Argparse()
+    z = utils.FrankeFunction(x, y, eps0 = args.epsilon)
     Plot_FrankeFunction(x, y, z, args)
