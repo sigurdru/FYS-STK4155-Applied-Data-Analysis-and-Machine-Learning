@@ -71,6 +71,7 @@
 	{\box0\lower0.65pt\box2}}
 
 \newcommand{\expy}{\mathbb{E}[\mathbf{\tilde{y}}]}
+\newcommand{\expz}{\mathbb{E}[\mathbf{\tilde{z}}]}
 \newcommand{\closed}[1]{\left({#1}\right)}
 \newcommand{\bracket}[1]{\left[{#1}\right]}
 
@@ -137,6 +138,7 @@ Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We p
 
 When we perform ordinary least square (OLS) regression we assume that our data follows a model such that
 \begin{equation}
+\label{eq:z_true_data}
 	\vc{z} = X \boldsymbol{\beta} + \boldsymbol{\epsilon}
 \end{equation}
 Where $\vc{z}$ is our data, $X$ is our design matrix given by our model, $\boldsymbol{\beta}$ are parameters in the model and $\boldsymbol{\epsilon}$ is stochastic noise. One challenge in our case is that our data is two-dimensional, i.e. $\vc{z}$ has dimensions $(n,n)$. We create a workaround by mapping our two-dimensional data, to a one dimensional $(n^2,1)$ vector. This is an important note, and we will do this throughout the report. Note that our design matrix $X$ will have dimensions $(n^2,p)$ where $p$ are the number of features.
@@ -171,8 +173,70 @@ There are many quantities we can use to evaluate our results, however we have de
 \end{figure}
 
 \section{Bias-variance trade-off and Bootstrapping}
+With our data model given in equation \eqref{eq:z_true_data} we find our model by considering the cost function, given as
+\begin{align*}
+  C(\bm{\beta}) &= \frac{1}{N} \sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \mathbb{E}[(\mathbf{z}-\mathbf{\tilde{z}})^2]
+\end{align*}
+where $\mathbb{E}$ is the expected value. % Sample value
 
-\subsection*{Bias-variance trade-off decomposition}
+We can show that this can be written as \footnote{The derivation is given in Appendix A}
+
+\begin{align}
+\label{eq:bias_var_tradeoff}
+  \mathbb{E}[(\mathbf{z}-\mathbf{\tilde{z}})^2] &= \frac{1}{N}\sum_i (f_i - \expz)^2 + \frac{1}{N}\sum_i (\tilde{z}_i - \expz)^2 + \sigma^2
+\end{align}
+where $f_i$ is the true data value at point $i$.
+
+In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of the bias, the second term represents the variance while the last term represents the variance of the irreducable error $\epsilon$. When performing linear regression the variance is a measurement on how much our model changes with different training sets. High variance will therefore occur if a different training set resulted in very different values of the individual estimators, $\bm{\beta}$. This will be the case for overfitting when our model is essentially trying to reproduce variations from the noise. The bias provides information about the difference between our model and the true data values. If our model is missing out on underlying structures in our data we would get a high bias. High bias will thus be the case for an underfitted model. Our goal is therefore to minimize the bias and variance in our model.    
+
+
+\section{Cross-validation}
+
+
+\section{Ridge Regression}
+
+
+\section{Lasso regression}
+
+
+\section{Analysis of real data}
+
+\section{Testing}
+In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
+\begin{equation}
+	\label{eq:exp}
+	f_\text{Test}(x) = exp(x) + \epsilon.
+\end{equation}
+Here $\epsilon$ denotes normally distributed noise, and $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{Testing_data.pdf}
+	\caption{Here you we have plotted the testing data along with the analytical function.}
+	\label{fig:TestingData}
+\end{figure}
+
+First off we want to test the regression methods we have written.
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{Testing_OLS.pdf}
+	\caption{A really Awesome Image}
+	\label{fig:test_OLS}
+\end{figure}
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{Testing_Lasso.pdf}
+	\caption{A really Awesome Image}
+	\label{fig:test_Lasso}
+\end{figure}
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
+	\caption{A really Awesome Image}
+	\label{fig:test_ridge}
+\end{figure}
+
+
+\appendix
+
+\section{Bias-variance Decomposition}
+
 We assume that our true data is generated from a noisy model with nromally distributed noise $\epsilon$ with a mean of zero and standard deviation $\sigma^2$, i.e.
 \begin{align*}
   \mathbf{y} &= f(\mathbf{x}) + \bm{\epsilon}
@@ -181,8 +245,9 @@ We assume that our true data is generated from a noisy model with nromally distr
 We have approximated this function with our design matrix $\mathbf{X}$ and our parameters $\bm{\beta}$ such that our model becomes $\mathbf{\tilde{y}}=\mathbf{X}\bm{\beta}$, where the values of $\bm{\beta}$ were obtained by optimizing the mean squared error via the cost function, given by
 
 \begin{align*}
-  C(\mathbf{X}, \bm{\beta}) &= \frac{1}{n} \sum_{i=0}^{n-1} (y_i - \tilde{y}_i) = \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right]
+  C(\mathbf{X}, \bm{\beta}) &= \frac{1}{n} \sum_{i=0}^{n-1} (y_i - \tilde{y}_i)^2 = \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right]
 \end{align*}
+
 
 where $\mathbb{E}$ is the expected value. % Note sample value
 
@@ -214,53 +279,12 @@ Hence, all the cross terms in the expected value cancel out, and we're left with
   \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \mathbb{E}\bracket{\closed{f(\mathbf{x})-\expy}^2} + \mathbb{E}\bracket{\closed{\expy - \mathbf{\tilde{y}}}^2} + \mathbb{E}\bracket{\bm{\epsilon}^2}
 \end{align*}
 
-Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as sums we finally arrive at
-\begin{align*}
-  \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expy)^2 + \frac{1}{n}\sum_i (\tilde{y}_i - \expy )^2 + \sigma^2
-\end{align*}
-which is what we wanted to show. git
+Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as sums with the notation $f(\mathbf{x}_i)=f_i$, we get the desired expression. Since we have chosen $\mathbf{z}$ as our data variable we replace all the $y$ variables with $z$, yielding
+\begin{align}
+  \mathbb{E}\left[(\mathbf{z} - \mathbf{\tilde{z}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expz)^2 + \frac{1}{n}\sum_i (\tilde{z}_i - \expz )^2 + \sigma^2
+\end{align}
+which is what we wanted to show.
 
-\section{Cross-validation}
-
-
-\section{Ridge Regression}
-
-
-\section{Lasso regression}
-
-
-\section{Analysis of real data}
-
-\section{Testing}
-In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
-\begin{equation}
-	\label{eq:exp}
-	f_\text{Test}(x) = exp(x) + \epsilon.
-\end{equation}
-Here $\epsilon$ denotes normally distributed noise, and $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
-
-\begin{figure}[!htb]
-	\includegraphics[width=\linewidth]{Testing_data.pdf}
-	\caption{Here you we have plotted the testing data along with the analytical function.}
-	\label{fig:TestingData}
-\end{figure}
-
-First off we want to test the regression methods we have written. 
-\begin{figure}[!htb]
-	\includegraphics[width=\linewidth]{Testing_OLS.pdf}
-	\caption{A really Awesome Image}
-	\label{fig:test_OLS}
-\end{figure}
-\begin{figure}[!htb]
-	\includegraphics[width=\linewidth]{Testing_Lasso.pdf}
-	\caption{A really Awesome Image}
-	\label{fig:test_Lasso}
-\end{figure}
-\begin{figure}[!htb]
-	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
-	\caption{A really Awesome Image}
-	\label{fig:test_ridge}
-\end{figure}
 
 
 \begin{thebibliography}{}
