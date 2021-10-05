@@ -279,9 +279,9 @@ def plot_test_func():
     print('Plotting testing function, see ' + fname + '.pdf')
     fig.savefig(plot.os.path.join(path_plots, fname + '.pdf'))
 
-plot_test_func()
-test_OLS()
-test_Ridge()
-test_Lasso()
-# test_BV()
+# plot_test_func()
+# test_OLS()
+# test_Ridge()
+# test_Lasso()
+test_BV()
 

@@ -24,13 +24,13 @@ def terrain():
     import matplotlib.pyplot as plt
     import numpy as np
     # Load the terrain
-    terrain1 = imread('SRTM_data_Norway_1.tif')
+    terrain1 = imread('../DataFiles/SRTM_data_Norway_1.tif')
     # Show the terrain
     plt.figure()
     plt.title('Terrain over Norway 1')
     print(type(terrain1))
     print(np.shape(terrain1))
-    # plt.imshow(terrain1, cmap='gray')
+    plt.imshow(terrain1, cmap='gray')
     # plt.xlabel('X')
     # plt.ylabel('Y')
     # plt.show()

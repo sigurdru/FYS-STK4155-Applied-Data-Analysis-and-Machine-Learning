@@ -243,7 +243,7 @@ def create_X(x, y, n):
         X: 2darray
             Includes intercept.
     """
-    if y == 0:
+    if type(y) == int:
         X = np.zeros((len(x), n))
         for i in range(n):
             X[:, i] = x**n

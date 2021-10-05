@@ -123,7 +123,7 @@ f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{
 
 \section{Ordinary Least Square}
 
-Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We pick $N = 100$ randomly distributed points for $x$ and $y$, where our domain is $x,y\in[0,1]$. As mentioned in the introduction we add stochastic noise to the function, using the normal distribution $\epsilon \cdot N(0,1)$. Here $\epsilon$ is just a variable we can use to scale the noise, we choose $\epsilon = 0.2$. This gives us the dataset visualized in figure \ref{fig:FF_dataset}.
+Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We pick $n = 100$ randomly distributed points for $x$ and $y$, where our domain is $x,y\in[0,1]$. As mentioned in the introduction we add stochastic noise to the function, using the normal distribution $\epsilon \cdot N(0,1)$. Here $\epsilon$ is just a variable we can use to scale the noise. Choosing $\epsilon = 0.2$, gives us the dataset visualized in figure \ref{fig:FF_dataset}. !!!KOMMENTER SCALING!!!
 
 \begin{figure}[!htb]
 	\minipage{0.49\textwidth}
@@ -139,17 +139,36 @@ When we perform ordinary least square (OLS) regression we assume that our data f
 \begin{equation}
 	\vc{z} = X \boldsymbol{\beta} + \boldsymbol{\epsilon}
 \end{equation}
-Where $\vc{z}$ is our data, $X$ is our design matrix given by our model, $\boldsymbol{\beta}$ are parameters in the model and $\boldsymbol{\epsilon}$ is stochastic noise. One challenge in our case is that our data is two-dimensional, i.e. $\vc{z}$ has dimensions $(N,N)$. We create a workaround by mapping our two-dimensional data, to a one dimensional $(N^2,1)$ vector. This is an important note, and we will do this throughout the report. Note that our design matrix $X$ will have dimensions $(N^2,P)$ where $P$ are the number of features.
+Where $\vc{z}$ is our data, $X$ is our design matrix given by our model, $\boldsymbol{\beta}$ are parameters in the model and $\boldsymbol{\epsilon}$ is stochastic noise. One challenge in our case is that our data is two-dimensional, i.e. $\vc{z}$ has dimensions $(n,n)$. We create a workaround by mapping our two-dimensional data, to a one dimensional $(n^2,1)$ vector. This is an important note, and we will do this throughout the report. Note that our design matrix $X$ will have dimensions $(n^2,p)$ where $p$ are the number of features.
 
-As mentioned in the introduction our model will be a polynomial fit with an $x$ and $y$ dependence of the form $[x,y,x^2,y^2,xy,\dots]$. This gives us $P = (p + 1)(p + 2)/2$ number of features, where $p$ is our maximum polynomial degree. Now for a given model
+As mentioned in the introduction our model will be a polynomial fit with an $x$ and $y$ dependence of the form $[x,y,x^2,y^2,xy,\dots]$. This gives us $p = (P + 1)(P + 2)/2$ number of features, where $P$ is our maximum polynomial degree. Now for a given model
 \begin{equation*}
-	\boldsymbol{\tilde{z}} = X\mathbf{\tilde{y}},
+	\boldsymbol{\tilde{z}} = X\boldsymbol{\tilde{\beta}},
 \end{equation*}
 we will have a mean square error (MSE) given by
 \begin{equation*}
-	C(\boldsymbol{\beta}) = \frac{1}{N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i) = \frac{1}{N}\left\{(\vc{z} - X\boldsymbol{\beta})^T(\vc{z} - X\boldsymbol{\beta})\right\}
+	C(\boldsymbol{\beta}) = \frac{1}{2N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \frac{1}{2N}\left\{(\vc{z} - X\boldsymbol{\tilde{\beta}})^T(\vc{z} - X\boldsymbol{\tilde{\beta}})\right\}.
 \end{equation*}
+We call $C(\boldsymbol{\beta})$ our cost function, and is the quantity we want to minimize. The minima can be found by doing the derivative with respect to all the parameters, and set the result to zero
+\begin{equation*}
+	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
+\end{equation*}
+We can rewrite this as
+\begin{equation*}
+	X^T\vc{z} = X^TX\boldsymbol{\tilde{\beta}} \implies \boldsymbol{\tilde{\beta}} = (X^TX)^{-1} X^T \vc{z} \equiv \boldsymbol{\hat{\beta}}
+\end{equation*}
+Thus $\boldsymbol{\hat{\beta}}$ are the parameters that minimizes the cost function. Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
 
+There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. We can then plot the quantities as a function of polynomial degree as you can see in figure \ref{fig:OLS_R2_and_MSE}.
+\begin{figure}
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n100_eps0_2_pol5.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{R2_OLS_n100_eps0_2_pol5.pdf}
+	\endminipage
+	\caption{Here we have }\label{fig:OLS_R2_and_MSE}
+\end{figure}
 
 \section{Bias-variance trade-off and Bootstrapping}
 
