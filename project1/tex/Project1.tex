@@ -168,11 +168,13 @@ Hence, all the cross terms in the expected value cancel out, and we're left with
   \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \mathbb{E}\bracket{\closed{f(\mathbf{x})-\expy}^2} + \mathbb{E}\bracket{\closed{\expy - \mathbf{\tilde{y}}}^2} + \mathbb{E}\bracket{\bm{\epsilon}^2}
 \end{align*}
 
-Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as sums we finally arrive at
-\begin{align*}
+Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as sums with the notation $f(\mathbf{x}_i)=f_i$, we finally arrive at
+\begin{align} \label{eq:bias_var_tradeoff}
   \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expy)^2 + \frac{1}{n}\sum_i (\tilde{y}_i - \expy )^2 + \sigma^2
-\end{align*}
-which is what we wanted to show. git
+\end{align}
+which is what we wanted to show.
+
+In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of the bias, while the second term represents the variance.
 
 \section{Cross-validation}
 
