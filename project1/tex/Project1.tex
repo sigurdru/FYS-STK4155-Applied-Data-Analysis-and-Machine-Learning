@@ -110,17 +110,20 @@ Regression analysis is a statistical method for fitting a function to data. It i
 
 The mathematical model obtained from regression analysis can be used to predict an outcome, given some previously untested input. To build an accurate model, one has to train it on a lot of data. Real-world datasets usually have a fixed size, and getting more data can be practically impossible. Training the model on the same data over and over will usually lead to overfitting, where the model exactly predicts the training set, but performs very poorly on new data. It is therefore useful to have tools to avoid this for small datasets. Resampling methods are such tools. In addition to the regression methods, we will also study the effect of bootstrapping and cross-validating the data.
 
-In order to study this, we need data to analyze. We will in this paper test the methods on two datasets. One dataset we will generate ourselves using a noisy analytical bivariate function, while other is real-world terrain data. To both we will be performing a polynomial fit in $x$ and $y$ dependance of the form $[1, x, y, x^2, xy, y^2, \dots]$.
-
-%Tenke me heller plassere dette i Exersice 6 hvor det skal brukes, og ikke i introduksjonen. here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}.
+In order to study this, we need data to analyze. We will in this paper test the methods on two datasets. One dataset we will generate ourselves using a noisy analytical bivariate function, the Franke function \eqref{eq:FF}, while other is real-world terrain data. To both we will be performing a polynomial fit in $x$ and $y$ dependance of the form $[1, x, y, x^2, xy, y^2, \dots]$.
 
 \begin{align}
 	\begin{split}\label{eq:FF}
-		f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10})
+		f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10})
 		\\
-		& + \frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2)
+		+ &\frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2)
 	\end{split}
 \end{align}
+
+We will begin with using the simplest regression method, ordinary least squares (OLS) to fit polynomials up to fifth order on the Franke function. At first we will not resample the data, only test our implementation and do some basic analysis. We will then add the resampling methods, Bootstrapping and Cross-Validation. Then we will do the same analyses as before, but using the more complex regression methods Ridge and Lasso. At the end we will do all the same using the terrain data. This paper will not study the effects of different scaling methods, train-test split ratios and amount of noise, though all will be used.
+
+%Tenke me heller plassere dette i Exersice 6 hvor det skal brukes, og ikke i introduksjonen. here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}.
+
 
 
 \section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
