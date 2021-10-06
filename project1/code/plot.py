@@ -215,6 +215,38 @@ def Plot_BVT_lambda(results, args):
 
     show(fig, fname, args)
 
+
+def Plot_VarOLS(args):
+    """Here we plot the parameters for different polynomials
+    with confidence intervals. 
+    """
+    p = np.array([1, 3, 5])
+    n = 100
+    sigma_sq = args.epsilon
+    x = np.sort(np.random.uniform(0, 1, n))
+    y = np.sort(np.random.uniform(0, 1, n))
+    x,y = np.meshgrid(x,y)
+    z = utils.FrankeFunction(x, y, sigma_sq)
+    for i in p:
+        X = utils.create_X(x, y, i)
+        XTXinverse = np.linalg.pinv(X.T @ X)
+        beta = XTXinverse @ X.T @ z
+        variance_beta = sigma_sq*XTXinverse
+        sigma_sq_beta = np.diag(variance_beta)
+        upper = beta[:,0] + 2*np.sqrt(sigma_sq_beta)
+        lower = beta[:,0] - 2*np.sqrt(sigma_sq_beta)
+        beta_index = np.arange(0,len(beta), 1)
+        fig, ax = plt.subplots()
+        ax.scatter(beta_index, beta, label = r'$\beta$(index)')
+        ax.fill_between(beta_index, lower, upper, alpha = 0.2, label = r'$\pm 2\sigma$')
+        xlabel = r'index'
+        ylabel = r'$\beta$'
+        title = r'$\beta$-values with confidence interval for p = %i' %(i)
+        set_ax_info(ax, xlabel, ylabel, title)
+        fname = 'Var_OLS_poldeg_' + str(i)
+        show(fig,fname, args)
+        print('Plotting variance in beta: See ' + fname + '.pdf')
+
 if __name__ == "__main__":
     """
     Here we can plot Franke function with or withot noise,
@@ -223,9 +255,9 @@ if __name__ == "__main__":
     name.
     """
     class Argparse:
-        def __init__(self):
+        def __init__(self, eps = 0):
             self.show = True
-            self.epsilon = 0
+            self.epsilon = eps
 
     N = 100
     x = np.sort(np.random.uniform(size=N))
@@ -233,4 +265,5 @@ if __name__ == "__main__":
     x, y = np.meshgrid(x, y)
     args = Argparse()
     z = utils.FrankeFunction(x, y, eps0 = args.epsilon)
-    Plot_FrankeFunction(x, y, z, args)
+    # Plot_FrankeFunction(x, y, z, args)
+    Plot_VarOLS()
