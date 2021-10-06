@@ -6,9 +6,15 @@ from resampling import NoResampling, Bootstrap, cross_validation
 import utils
 import plot
 
+
+class NoneScaler(StandardScaler):
+    def transform(self, x):
+        return x
+
+
 reg_conv = {"OLS": Ordinary_least_squares, "Ridge": Ridge, "Lasso":Lasso}
 resampling_conv = {"None": NoResampling, "Boot": Bootstrap, "CV": cross_validation}
-scale_conv = {"S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
+scale_conv = {"None": NoneScaler(), "S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 
 
 def simple_regression(args):
@@ -26,7 +32,7 @@ def simple_regression(args):
 
     x, y, z = utils.load_data(args)
 
-    plot.Plot_FrankeFunction(x, y, z, args)
+    # plot.Plot_FrankeFunction(x, y, z, args)
 
     MSEs = np.zeros(len(P))
     MSE_train = np.zeros(len(P))
@@ -95,7 +101,7 @@ def bias_var_tradeoff(args, testing=False):
 
 def lambda_BVT(args):
     """
-    Perform bias-variance trade-off analysis for different 
+    Perform bias-variance trade-off analysis for different
     values of lambda, as per last paragraph of Ex4
 
     Should be used with Ridge or Lasso as regression methods
@@ -121,5 +127,5 @@ def lambda_BVT(args):
             data = resamp(X, z, args.tts, args.resampling_iter, lmb, reg_conv[args.method], scaler)
 
             results["test_MSE"][i][k] = data["test_MSE"]
-    
+
     plot.Plot_BVT_lambda(results, args)

@@ -9,7 +9,7 @@ def get_directly_implemented_funcs(module):
     Returns the functions implemented in the given module.
     The functions has to be directly implemented (not imported),
     and declared using def.
-    The returned dict has the name of the functions as keys, 
+    The returned dict has the name of the functions as keys,
     and reference to them as values.
     """
     s = open(f"{module.__name__}.py").read()
@@ -91,7 +91,7 @@ def parse_args(args=None):
     add_arg('-s', '--scaling',
             type=str,
             default='S',
-            choices=['M', 'S', 'N'],
+            choices=["None", 'M', 'S', 'N'],
             help='Scaling method: None, MinMax, Standard, Normalizer.',
             )
 
@@ -219,7 +219,7 @@ def load_data(args):
         ystart = 0
 
         terrain = imageio.imread(path)
-        terrain = terrain[xstart: N, ystart:N] # to not deal with too large image, only NxN 
+        terrain = terrain[xstart: N, ystart:N] # to not deal with too large image, only NxN
 
         nx, ny = terrain.shape
         x = np.sort(np.random.uniform(size=nx))
@@ -277,4 +277,4 @@ def Bias(y, y_pred):
 
 def Variance(y, y_pred):
     return np.mean( np.var(y_pred, axis=1, keepdims=True) )
-    
+
