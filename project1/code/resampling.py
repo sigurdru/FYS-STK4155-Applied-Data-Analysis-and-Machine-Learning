@@ -3,7 +3,6 @@ import numpy as np
 from sklearn.model_selection import train_test_split as tts, KFold
 import utils
 
-
 def split_scale(X, z, ttsplit, scaler):
     """
     Split and scale data
@@ -17,6 +16,11 @@ def split_scale(X, z, ttsplit, scaler):
     Returns:
         X_train, X_test, z_train, z_test, 2darrays: Scaled train and test data
     """
+    scaler.fit(X)
+    X = scaler.transform(X)
+    scaler.fit(z)
+    z = scaler.transform(z)
+
     if ttsplit != 0:
         X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
     else:
@@ -39,7 +43,7 @@ def resample(x, z):
     """
     Resamples x and z with replacement
     """
-    N= x.shape[0]
+    N = x.shape[0]
     idxs = np.random.randint(0, N, size=(N,))
     x = x[idxs]
     z = z[idxs]
@@ -71,14 +75,17 @@ def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
     data = {}
     test_pred = np.empty((z_test.shape[0], B))
     train_pred = np.empty((z_train.shape[0], B))
+
     for i in range(B):
         x, z = resample(X_train, z_train)
         beta = reg_method(x, z, lmb)
         test_pred[:, i] = (X_test @ beta).ravel()
         train_pred[:, i] = (X_train @ beta).ravel()
+
     data["test_MSE"] = utils.MSE_boot(z_test, test_pred)
     data["test_bias"] = utils.Bias(z_test, test_pred)
     data["test_variance"] = utils.Variance(z_test, test_pred)
+
     data["train_MSE"] = utils.MSE_boot(z_train, train_pred)
     data["train_bias"] = utils.Bias(z_train, train_pred)
     data["train_variance"] = utils.Variance(z_train, train_pred)
@@ -145,5 +152,3 @@ if __name__=='__main__':
     MSE_test_sk = utils.MSE(z_test, OLS_predict)
     print('Test error')
     print(MSE_test, MSE_test_sk)
-
-

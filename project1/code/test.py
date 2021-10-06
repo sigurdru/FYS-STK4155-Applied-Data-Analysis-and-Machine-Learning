@@ -10,7 +10,8 @@ import utils
 import regression
 import plot
 import utils
-utils.np.random.seed(136)
+
+utils.np.random.seed(2018)
 plt.style.use('seaborn')
 plt.rc('text', usetex=True)
 plt.rc('font', family='DejaVu Sans')
@@ -24,23 +25,24 @@ def f(x, eps=0):
         x (array): array of x values
         eps (float): size of error
     """
-    value = np.exp(x)
-    value += eps*np.random.normal(0,1, np.shape(x))
-    return value
+    noise = np.random.normal(0,eps, x.shape)
+    value = np.exp(-x**2) + 1.5 * np.exp(-(x-2)**2) + noise
+    return value.reshape(-1,1)
 
 def create_design_matrix(x,p):
     """
-    Here we create a simple design matrix using a polynomial fit, i.e 
+    Here we create a simple design matrix using a polynomial fit, i.e
     f(x) = a0 + a1*x^2 + a2*x^3 + ... + a(p-1)*x^(p-1)
-    
+
     Args:
         x(array): array of x values
         p(int): max polynomial degree
     """
     X = np.zeros((len(x),p))
     for i in range(p):
-        X[:,i] = x**p
+        X[:,i] = x**i
     return X
+
 def test_OLS():
     """
     Here we perform a test on our ordinary least square method
@@ -49,10 +51,13 @@ def test_OLS():
     #We will divide by zero when taking log :o
     np.seterr(divide='ignore')
     #polynomial degree
-    p_max = 100
+    p_max = 21
     p_array = np.arange(1, p_max, 1)
-    our_MSE = np.zeros(p_max-1)
-    sklearn_MSE = np.zeros(p_max-1)
+    our_MSE_test = np.zeros(p_max-1)
+    our_MSE_train = np.zeros(p_max-1)
+    sklearn_MSE_test = np.zeros(p_max-1)
+    sklearn_MSE_train = np.zeros(p_max-1)
+
     #the noise we want
     eps = 0.2
     #number of data points
@@ -60,21 +65,35 @@ def test_OLS():
     #percentage of data used for testing
     ttsplit = 0.2
     #creating data
-    x = np.sort(np.random.uniform(size=n))
+    x = np.sort(np.random.uniform(-3,3,size=n))
     z = f(x, eps)
+
     for p in p_array:
-        X = create_design_matrix(x, p)  
+        X = create_design_matrix(x, p)
         data, X_train, X_test, z_train, z_test, beta = resampling.NoResampling(X, z, ttsplit, 0, [0],
                                                                            regression.Ordinary_least_squares,
                                                                            scaler=analysis.scale_conv["S"],
                                                                            Testing=True)
-        our_MSE[p-1] = data["test_MSE"]
+        our_MSE_test[p-1] = data["test_MSE"]
+        our_MSE_train[p-1] = data["train_MSE"]
 
-        regOLS = LinearRegression(fit_intercept=True)
+        regOLS = LinearRegression(fit_intercept=False)
         regOLS.fit(X_train, z_train)
-        OLS_predict = regOLS.predict(X_test)
-        sklearn_MSE[p-1] = utils.MSE(z_test, OLS_predict)
-    relative_error = np.abs(our_MSE - sklearn_MSE)
+
+        OLS_predict_test = regOLS.predict(X_test)
+        OLS_predict_train = regOLS.predict(X_train)
+
+        sklearn_MSE_test[p-1] = utils.MSE(z_test, OLS_predict_test)
+        sklearn_MSE_train[p-1] = utils.MSE(z_train, OLS_predict_train)
+
+    plt.plot(p_array, sklearn_MSE_test, label='sklearn MSE test')
+    plt.plot(p_array, sklearn_MSE_train, label='sklearn MSE train')
+    plt.plot(p_array, our_MSE_test, '--',label='our MSE test')
+    plt.plot(p_array, our_MSE_train, '--', label='our MSE train')
+    plt.legend()
+    plt.show()
+
+    relative_error = np.abs(our_MSE_test - sklearn_MSE_test)
     fig, ax = plt.subplots()
     xlabel = 'Polynomial degree'
     ylabel = r'$\log(|$MSE$_{sk}$ - MSE$_{our}$ $|)$'
@@ -204,10 +223,10 @@ def test_BV():
     Test bias variance tradeoff using bootstrap
     """
     #Variables we are going to use
-    N = 50
-    maxdegree = 7
+    N = 200
+    maxdegree = 30
     P = np.arange(1,maxdegree+1,1)
-    eps = 0.2
+    eps = 0.1
     resampling = "Boot"
     ttsplit = 0.2
     resampling_iter = 100
@@ -215,17 +234,19 @@ def test_BV():
     method = "OLS"
     scaling_conv = "S"
     #Using our method
-    args = params(N, P, eps, 
-                resampling, ttsplit, resampling_iter, 
+    args = params(N, P, eps,
+                resampling, ttsplit, resampling_iter,
                 lmb, method, scaling_conv)
     our_results = analysis.bias_var_tradeoff(args, testing=True)
 
+
     #Using sklearn
-    utils.np.random.seed(136)
+    utils.np.random.seed(2018)
     from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import PolynomialFeatures
     from sklearn.utils import resample
-    x = np.random.uniform(0,1,N).reshape(-1,1)
+    # x = np.linspace(-3,3,N).reshape(-1,1)
+    x = np.sort(np.random.uniform(-3, 3, size=N)).reshape(-1,1)
     y = f(x, eps)
     error = np.zeros(maxdegree)
     bias = np.zeros(maxdegree)
@@ -233,23 +254,27 @@ def test_BV():
     x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2)
 
     for degree in range(maxdegree):
-        model = make_pipeline(PolynomialFeatures(degree=degree), LinearRegression(fit_intercept=True))
+        model = make_pipeline(PolynomialFeatures(degree=degree), LinearRegression(fit_intercept=False))
         y_pred = np.empty((y_test.shape[0], resampling_iter))
         for i in range(resampling_iter):  # ling_iter):
             x_, y_ = resample(x_train, y_train)
             y_pred[:, i] = model.fit(x_, y_).predict(x_test).ravel()
-
         error[degree] = np.mean( np.mean((y_test - y_pred)**2, axis=1, keepdims=True) )
         bias[degree] = np.mean( (y_test - np.mean(y_pred, axis=1, keepdims=True))**2 )
         variance[degree] = np.mean( np.var(y_pred, axis=1, keepdims=True) )
+
     # plt.plot(P, error - our_results["test_error"], label='Error')
     # plt.plot(P, bias - our_results["test_biases"], label='bias')
     # plt.plot(P, variance - our_results["test_vars"], label='Variance')
-    plt.plot(P, our_results["test_vars"], label='Our Variance')
-    plt.plot(P, variance, label='Their Variance')
-    plt.plot(P, our_results["test_biases"], label='Our bias')
-    plt.plot(P, bias, label='Their bias')
+    plt.plot(P, error, label='Scikit error')
+    plt.plot(P, variance, label='Scikit Variance')
+    plt.plot(P, bias, label='Scikit bias')
 
+    plt.plot(P, our_results["test_errors"], '--', label='Our error')
+    plt.plot(P, our_results["test_vars"], '--', label='Our Variance')
+    plt.plot(P, our_results["test_biases"], '--', label='Our bias')
+
+    plt.ylim(-0.05, 5)
     plt.legend()
     plt.show()
 
@@ -284,4 +309,3 @@ def plot_test_func():
 # test_Ridge()
 # test_Lasso()
 test_BV()
-
