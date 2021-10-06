@@ -7,6 +7,15 @@ import utils
 def split_scale(X, z, ttsplit, scaler):
     """
     Split and scale data
+    z-data is only scaled if scaler is StandardScaler
+    Also used to scale data for CV, but this does its own splitting.
+    Args:
+        X, 2darray: Full design matrix
+        z, 2darray: dataset
+        ttsplit, float: train/test split ratio
+        scaler, sklearn.preprocessing object: Is fitted to train data, scales train and test
+    Returns:
+        X_train, X_test, z_train, z_test, 2darrays: Scaled train and test data
     """
     if ttsplit != 0:
         X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
@@ -15,11 +24,13 @@ def split_scale(X, z, ttsplit, scaler):
         z_train = z
         X_test = X
         z_test = 0
+
     scaler.fit(X_train)
     X_train = scaler.transform(X_train)
     X_test = scaler.transform(X_test)
-    z_test = (z_test - np.mean(z_train)) / np.std(z_train)
-    z_train = (z_train - np.mean(z_train)) / np.std(z_train)
+    if scaler.__str__() == "StandardScaler()":
+        z_test = (z_test - np.mean(z_train)) / np.std(z_train)
+        z_train = (z_train - np.mean(z_train)) / np.std(z_train)
 
     return X_train, X_test, z_train, z_test
 
@@ -83,7 +94,7 @@ def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
     # train_bias = np.empty(k)
     # train_var = np.empty(k)
     # test_var = np.empty(k)
-    
+
     kfold = KFold(n_splits = k)  # Use sklearns kfold method
     for i, (train_inds, test_inds) in enumerate(kfold.split(X)):
         x_train = X[train_inds]
