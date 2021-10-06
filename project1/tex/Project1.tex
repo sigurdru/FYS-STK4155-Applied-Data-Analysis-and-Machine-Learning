@@ -111,7 +111,7 @@ Regression analysis is a statistical method for fitting a function to data. It i
 Larger datasets contain more information, giving more accurate models. However, real-world datasets usually have a fixed size, and getting more is practically impossible. For smaller datasets it is then useful to have tools mitigating the effects of little data. Resampling methods does this by running the same data through the regression, without over-fitting the model to the sample data. In addition to the regression methods, we will also study the effect of bootstrapping and cross-validating the data.
 
 In order to study this, we need data to analyze. We will use two datasets to study the different methods. One dataset we will generate ourselves using the Franke function, given by equation \eqref{eq:FF}. To make the data more realistic we also add normally distributed noise. The other data is real terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning
-/tree/master/doc/Projects/2021/Project1/DataFiles}}. Our model for both datasets will be a polynomial fit with an $x$ and $y$ dependence of the form $[x,y,x^2,y^2,xy,\dots]$.
+/tree/master/doc/Projects/2021/Project1/DataFiles}}. Our model for both datasets will be a polynomial fit with an $x$ and $y$ dependence of the form $[1,x,y,x^2,y^2,xy,\dots]$.
 
 \begin{align}
 \begin{split}
