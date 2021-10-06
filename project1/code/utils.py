@@ -9,7 +9,7 @@ def get_directly_implemented_funcs(module):
     Returns the functions implemented in the given module.
     The functions has to be directly implemented (not imported),
     and declared using def.
-    The returned dict has the name of the functions as keys, 
+    The returned dict has the name of the functions as keys,
     and reference to them as values.
     """
     s = open(f"{module.__name__}.py").read()
@@ -193,8 +193,9 @@ def f_test(x, eps=0):
         x (array): array of x values
         eps (float): size of error
     """
-    value = np.exp(x)
-    value += eps*np.random.normal(0, 1, size=len(x))
+    noise = np.random.normal(0, eps, x.shape) # size=len(x)
+    value = np.exp(-x**2) + 1.5 * np.exp(-(x-2)**2) + noise
+
     return value.reshape(-1, 1)
 
 def load_data(args):
@@ -205,9 +206,11 @@ def load_data(args):
         x, y = np.meshgrid(x, y)
         z = FrankeFunction(x, y, eps0=args.epsilon)
     elif args.dataset == "Test":
-        x = np.sort(np.random.uniform(size=N))
+        x = np.sort(np.random.uniform(-3, 3, size=N))
         y = 0
-        z = f_test(x, eps=args.epsilon)
+        z = f_test(x, args.epsilon)
+
+
     elif args.dataset == "SRTM":
         if args.data_file is None:
             path = "./../DataFiles/SRTM_data_Norway_1.tif"
@@ -219,7 +222,7 @@ def load_data(args):
         ystart = 0
 
         terrain = imageio.imread(path)
-        terrain = terrain[xstart: N, ystart:N] # to not deal with too large image, only NxN 
+        terrain = terrain[xstart: N, ystart:N] # to not deal with too large image, only NxN
 
         nx, ny = terrain.shape
         x = np.sort(np.random.uniform(size=nx))
@@ -227,6 +230,7 @@ def load_data(args):
         x, y = np.meshgrid(x, y)
 
         z = terrain.ravel().reshape(-1, 1)
+
     return x, y, z
 
 
@@ -246,7 +250,7 @@ def create_X(x, y, n):
     if type(y) == int:
         X = np.zeros((len(x), n))
         for i in range(n):
-            X[:, i] = x**n
+            X[:, i] = x**i
         return X
     if not 1 in x.shape:
         x = np.ravel(x)
@@ -277,4 +281,3 @@ def Bias(y, y_pred):
 
 def Variance(y, y_pred):
     return np.mean( np.var(y_pred, axis=1, keepdims=True) )
-    
