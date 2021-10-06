@@ -1,7 +1,7 @@
 import utils
 import analysis
 
-utils.np.random.seed(136)
+utils.np.random.seed(7132)
 valid_funcs = utils.get_directly_implemented_funcs(analysis)
 
 def main():

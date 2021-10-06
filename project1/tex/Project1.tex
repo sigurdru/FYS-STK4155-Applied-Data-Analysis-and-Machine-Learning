@@ -104,27 +104,31 @@
 %\maketitle                              % creates the title
 
 \onecolumngrid
-\section{Introduction}
+\section*{Introduction}
 
-Regression analysis is a statistical method for fitting a function to data. It is useful for building mathematical models to explain observations. There are several regression methods to achieve this, all with their strengths and weaknesses. We will in this paper study three different methods; ordinary least squares, Ridge and Lasso regression. All the code, results and instructions on running the code can be found in our GitHub repository here\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}
+Regression analysis is a statistical method for fitting a function to data. It is useful for building mathematical models to explain noisy observations. There are several regression methods to achieve this, all with their strengths and weaknesses. We will in this paper study three different methods; ordinary least squares, Ridge and Lasso regression. All the code, results and instructions on running the code can be found in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}.
 
-Larger datasets contain more information, giving more accurate models. However, real-world datasets usually have a fixed size, and getting more is practically impossible. For smaller datasets it is then useful to have tools mitigating the effects of little data. Resampling methods does this by running the same data through the regression, without over-fitting the model to the sample data. In addition to the regression methods, we will also study the effect of bootstrapping and cross-validating the data.
+The mathematical model obtained from regression analysis can be used to predict an outcome, given some previously untested input. To build an accurate model, one has to train it on a lot of data. Real-world datasets usually have a fixed size, and getting more data can be practically impossible. Training the model on the same data over and over will usually lead to overfitting, where the model exactly predicts the training set, but performs very poorly on new data. It is therefore useful to have tools to avoid this for small datasets. Resampling methods are such tools. In addition to the regression methods, we will also study the effect of bootstrapping and cross-validating the data.
 
-In order to study this, we need data to analyze. We will use two datasets to study the different methods. One dataset we will generate ourselves using the Franke function, given by equation \eqref{eq:FF}. To make the data more realistic we also add normally distributed noise. The other data is real terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning
-/tree/master/doc/Projects/2021/Project1/DataFiles}}. Our model for both datasets will be a polynomial fit with an $x$ and $y$ dependence of the form $[x,y,x^2,y^2,xy,\dots]$.
+In order to study this, we need data to analyze. We will in this paper test the methods on two datasets. One dataset we will generate ourselves using a noisy analytical bivariate function, the Franke function \eqref{eq:FF}, while other is real-world terrain data. To both we will be performing a polynomial fit in $x$ and $y$ dependance of the form $[1, x, y, x^2, xy, y^2, \dots]$.
 
 \begin{align}
-\begin{split}
-\label{eq:FF}
-f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10}) \\
-& + \frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2)
-\end{split}
+	\begin{split}\label{eq:FF}
+		f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10})
+		\\
+		+ &\frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2)
+	\end{split}
 \end{align}
 
+We will begin with using the simplest regression method, ordinary least squares (OLS) to fit polynomials up to fifth order on the Franke function. At first we will not resample the data, only test our implementation and do some basic analysis. We will then add the resampling methods, Bootstrapping and Cross-Validation. Then we will do the same analyses as before, but using the more complex regression methods Ridge and Lasso. At the end we will do all the same using the terrain data. This paper will not study the effects of different scaling methods, train-test split ratios and amount of noise, though all will be used.
 
-\section{Ordinary Least Square}
+%Tenke me heller plassere dette i Exersice 6 hvor det skal brukes, og ikke i introduksjonen. here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}.
 
-Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We pick $n = 100$ randomly distributed points for $x$ and $y$, where our domain is $x,y\in[0,1]$. As mentioned in the introduction we add stochastic noise to the function, using the normal distribution $\epsilon \cdot N(0,1)$. Here $\epsilon$ is just a variable we can use to scale the noise. Choosing $\epsilon = 0.2$, gives us the dataset visualized in figure \ref{fig:FF_dataset}. !!!KOMMENTER SCALING!!!
+
+
+\section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
+
+Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We pick $n = 100$ randomly distributed points for $x$ and $y$, where our domain is $x,y\in[0,1]$. As mentioned in the introduction we add stochastic noise to the function, using the normal distribution $\epsilon \cdot N(0,1)$. Here $\epsilon$ is just a variable we can use to scale the noise. Choosing $\epsilon = 0.2$, gives us the dataset visualized in figure \ref{fig:FF_dataset}. We can choose to scale our data, however, this will have no effect when performing ordinary least squares (OLS). We do decide to scale our data by subtracting by the mean value (standard scaling), however this is only done because it makes our program more universal when performing other regression methods.
 
 \begin{figure}[!htb]
 	\minipage{0.49\textwidth}
@@ -136,7 +140,7 @@ Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We p
 	\caption{Here we have displayed our data along with the analytical function. The left figure shows the analytical Franke function plotted, and the right hand figure is the Franke function plotted with noise, i.e. the data we use.}\label{fig:FF_dataset}
 \end{figure}
 
-When we perform ordinary least square (OLS) regression we assume that our data follows a model such that
+When we do OLS regression we assume that our data follows a model such that
 \begin{equation}
 \label{eq:z_true_data}
 	\vc{z} = X \boldsymbol{\beta} + \boldsymbol{\epsilon}
@@ -149,11 +153,11 @@ As mentioned in the introduction our model will be a polynomial fit with an $x$ 
 \end{equation*}
 we will have a mean square error (MSE) given by
 \begin{equation*}
-	C(\boldsymbol{\beta}) = \frac{1}{2N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \frac{1}{2N}\left\{(\vc{z} - X\boldsymbol{\tilde{\beta}})^T(\vc{z} - X\boldsymbol{\tilde{\beta}})\right\}.
+	C(\boldsymbol{\beta}) = \frac{1}{N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \frac{1}{N}\left\{(\vc{z} - X\boldsymbol{\tilde{\beta}})^T(\vc{z} - X\boldsymbol{\tilde{\beta}})\right\}.
 \end{equation*}
 We call $C(\boldsymbol{\beta})$ our cost function, and is the quantity we want to minimize. The minima can be found by doing the derivative with respect to all the parameters, and set the result to zero
 \begin{equation*}
-	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
+	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
 \end{equation*}
 We can rewrite this as
 \begin{equation*}
@@ -161,18 +165,68 @@ We can rewrite this as
 \end{equation*}
 Thus $\boldsymbol{\hat{\beta}}$ are the parameters that minimizes the cost function. Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
 
-There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. We can then plot the quantities as a function of polynomial degree as you can see in figure \ref{fig:OLS_R2_and_MSE}.
-\begin{figure}
+There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. MSE is given by equation \eqref{eq:MSE} and the $R^2$ score by equation \eqref{eq:R2}.
+\begin{equation}
+	\label{eq:MSE}
+	MSE(\vc{z}, \vc{\tilde{z}}) = \frac{1}{n}\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2
+\end{equation}
+$MSE(\vc{z}, \vc{\tilde{z}})$ is the mean square between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
+\begin{equation}
+	\label{eq:R2}
+	R^2(\vc{z}, \vc{\tilde{z}}) = 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z}_i)^2}
+\end{equation}
+Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$. With this we can plot the quantities as a function of polynomial degree. We expect the MSE to always decrease and $R^2$ to increase for the train data. We expect the same for the test data, however at a certain number of polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}.
+\begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_OLS_n100_eps0_2_pol5.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{R2_OLS_n100_eps0_2_pol5.pdf}
 	\endminipage
-	\caption{Here we have }\label{fig:OLS_R2_and_MSE}
+	\caption{Here we have plotted the MSE and $R^2$ score for OLS. The left figure shows the MSE and right shows the $R^2$ score. The red dotted line is from the train data, and the blue dotted line is from the test data.}\label{fig:OLS_R2_and_MSE}
+\end{figure}
+From figure \ref{fig:OLS_R2_and_MSE} we see that the MSE strictly decrease and $R^2$ score increase. This indicates that we have not reached a point of overfitting yet.
+
+It is also interesting to look at the variance in the parameters. We know that for a set of optimal parameters
+\begin{equation*}
+	\boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^T \vc{z},
+\end{equation*}
+We have the expectation value
+\begin{equation*}
+	\mathbb{E}[\boldsymbol{\hat{\beta}}] = \mathbb{E}[(X^TX)^{-1}X^T \vc{z}] = (X^TX)^{-1}X^T\mathbb{E}[\vc{z}] = (X^TX)^{-1}X^TX\boldsymbol{\hat{\beta}} = \boldsymbol{\hat{\beta}}.
+\end{equation*}
+With this we can calculate the variance in $\boldsymbol{\hat{\beta}}$.
+\begin{align*}
+	\text{Var}(\boldsymbol{\hat{\beta}}) &= \mathbb{E}\left[(\boldsymbol{\hat{\beta}} - \mathbb{E}[\boldsymbol{\hat{\beta}}])(\boldsymbol{\hat{\beta}} - \mathbb{E}[\boldsymbol{\hat{\beta}}])^T\right] \\
+	&= \mathbb{E}\left[((X^TX)^{-1}X^T\vc{z}- \boldsymbol{\hat{\beta}})((X^TX)^{-1}X^T\vc{z}- \boldsymbol{\hat{\beta}})^T\right] \\
+	&= (X^TX)^{-1}X^T \mathbb{E}\left[\vc{z}\vc{z}^T\right]X(X^TX)^{-1}- \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T \\
+	&= (X^TX)^{-1}X^T\left[X\boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^TX^T + \sigma^2 \right] X (X^TX)^{-1} - \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T \\
+	&= \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T + \sigma^2(X^TX)^{-1} - \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T = \sigma^2(X^TX)^{-1}
+\end{align*}
+Here we used $\mathbb{E} (\vc{z}\vc{z}^T) = X \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T X^T + \sigma^2\mathbb{1}$, where $\sigma^2 = \epsilon = 0.2$ is the variance of the noise and $\mathbb{1}$ is the identity. Now we have an estimate for the variance in parameter $\boldsymbol{\hat{\beta}}_{j}$ given by
+\begin{equation}
+	\boldsymbol{\sigma}^2(\boldsymbol{\hat{\beta}}_{j}) = \sigma^2 [(X^TX)^{-1}]_{jj}
+	\label{eq:var_OLS}
+\end{equation}
+Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the different parameters, for different polynomial degrees.
+
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Var_OLS_poldeg_1.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Var_OLS_poldeg_3.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Var_OLS_poldeg_5.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\caption{Here we have plotted the ideal parameters, for different polynomial degrees and with the confidence intervals. Top left figure has polynomial degree $p = 1$, top right $p = 3$ and bottom left $p = 5$. All the plots are of $\boldsymbol{\beta}$ as a function of the index in the vector. The confidence interval are $\pm 2\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$, where $\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$ is given by equation \eqref{eq:var_OLS}.} \label{fig:03-03}
+	\endminipage
 \end{figure}
 
-\section{Bias-variance trade-off and Bootstrapping}
+\section*{Exercise 2: Bias-variance trade-off and resampling techniques}
 With our data model given in equation \eqref{eq:z_true_data} we find our model by considering the cost function, given as
 \begin{align*}
   C(\bm{\beta}) &= \frac{1}{N} \sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \mathbb{E}[(\mathbf{z}-\mathbf{\tilde{z}})^2]
@@ -187,51 +241,19 @@ We can show that this can be written as \footnote{The derivation is given in App
 \end{align}
 where $f_i$ is the true data value at point $i$.
 
-In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of the bias, the second term represents the variance while the last term represents the variance of the irreducable error $\epsilon$. When performing linear regression the variance is a measurement on how much our model changes with different training sets. High variance will therefore occur if a different training set resulted in very different values of the individual estimators, $\bm{\beta}$. This will be the case for overfitting when our model is essentially trying to reproduce variations from the noise. The bias provides information about the difference between our model and the true data values. If our model is missing out on underlying structures in our data we would get a high bias. High bias will thus be the case for an underfitted model. Our goal is therefore to minimize the bias and variance in our model.    
+In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of the bias, the second term represents the variance while the last term represents the variance of the irreducable error $\epsilon$. When performing linear regression the variance is a measurement on how much our model changes with different training sets. High variance will therefore occur if a different training set resulted in very different values of the individual estimators, $\bm{\beta}$. This will be the case for overfitting when our model is essentially trying to reproduce variations from the noise. The bias provides information about the difference between our model and the true data values. If our model is missing out on underlying structures in our data we would get a high bias. High bias will thus be the case for an underfitted model. Our goal is therefore to minimize the bias and variance in our model.
 
 
-\section{Cross-validation}
+\section*{Exercise 3: Cross-validation as resampling techniques, adding more complexity}
 
 
-\section{Ridge Regression}
+\section*{Exercise 4: Ridge Regression on the Franke function with resampling}
 
 
-\section{Lasso regression}
+\section*{Exercise 5: Lasso regression on the Franke function with resampling}
 
 
-\section{Analysis of real data}
-
-\section{Testing}
-In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
-\begin{equation}
-	\label{eq:exp}
-	f_\text{Test}(x) = exp(x) + \epsilon.
-\end{equation}
-Here $\epsilon$ denotes normally distributed noise, and $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
-
-\begin{figure}[H]
-	\includegraphics[width=\linewidth]{Testing_data.pdf}
-	\caption{Here you we have plotted the testing data along with the analytical function.}
-	\label{fig:TestingData}
-\end{figure}
-
-First off we want to test the regression methods we have written.
-\begin{figure}[H]
-	\includegraphics[width=\linewidth]{Testing_OLS.pdf}
-	\caption{A really Awesome Image}
-	\label{fig:test_OLS}
-\end{figure}
-\begin{figure}[H]
-	\includegraphics[width=\linewidth]{Testing_Lasso.pdf}
-	\caption{A really Awesome Image}
-	\label{fig:test_Lasso}
-\end{figure}
-\begin{figure}[H]
-	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
-	\caption{A really Awesome Image}
-	\label{fig:test_ridge}
-\end{figure}
-
+\section*{Exercise 6: Analysis of real data}
 
 \appendix
 
@@ -284,6 +306,32 @@ Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as 
   \mathbb{E}\left[(\mathbf{z} - \mathbf{\tilde{z}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expz)^2 + \frac{1}{n}\sum_i (\tilde{z}_i - \expz )^2 + \sigma^2
 \end{align}
 which is what we wanted to show.
+
+\section{Testing}
+In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
+\begin{equation}
+\label{eq:exp}
+f_\text{Test}(x) = exp(x) + \epsilon.
+\end{equation}
+Here $\epsilon$ denotes normally distributed noise, and $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{Testing_data.pdf}
+	\caption{Here you we have plotted the testing data along with the analytical function.}
+	\label{fig:TestingData}
+\end{figure}
+
+First off we want to test the regression methods we have written.
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Testing_OLS.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
+	\endminipage
+	\caption{HEI EHIEHIAHFIASJDFKASDFJASDKF}
+	\label{fig:test_OLS_Ridge}
+\end{figure}
 
 
 

@@ -48,6 +48,12 @@ def simple_regression(args):
     # Plotting the error, see output folder!
     plot.Plot_error(MSE_test=MSEs, MSE_train=MSE_train, args=args)
     plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
+    if args.method == "OLS" and args.dataset == "Franke":
+        """
+        For the first exer we want to make a plot of the
+        variance in the beta values.
+        """
+        plot.Plot_VarOLS(args)
 
 
 def bias_var_tradeoff(args, testing=False):
