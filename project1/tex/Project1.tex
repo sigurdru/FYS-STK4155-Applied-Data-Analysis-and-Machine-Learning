@@ -104,7 +104,7 @@
 %\maketitle                              % creates the title
 
 \onecolumngrid
-\section{Introduction}
+\section*{Introduction}
 
 Regression analysis is a statistical method for fitting a function to data. It is useful for building mathematical models to explain observations. There are several regression methods to achieve this, all with their strengths and weaknesses. We will in this paper study three different methods; ordinary least squares, Ridge and Lasso regression. All the code, results and instructions on running the code can be found in our GitHub repository here\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}
 
@@ -122,7 +122,7 @@ f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{
 \end{align}
 
 
-\section{Ordinary Least Square}
+\section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
 
 Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We pick $n = 100$ randomly distributed points for $x$ and $y$, where our domain is $x,y\in[0,1]$. As mentioned in the introduction we add stochastic noise to the function, using the normal distribution $\epsilon \cdot N(0,1)$. Here $\epsilon$ is just a variable we can use to scale the noise. Choosing $\epsilon = 0.2$, gives us the dataset visualized in figure \ref{fig:FF_dataset}. We can choose to scale our data, however, this will have no effect when performing ordinary least squares (OLS). We do decide to scale our data by subtracting by the mean value (standard scaling), however this is only done because it makes our program more universal when performing other regression methods.
 
@@ -222,7 +222,7 @@ Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the di
 	\endminipage
 \end{figure}
 
-\section{Bias-variance trade-off and Bootstrapping}
+\section*{Exercise 2: Bias-variance trade-off and resampling techniques}
 With our data model given in equation \eqref{eq:z_true_data} we find our model by considering the cost function, given as
 \begin{align*}
   C(\bm{\beta}) &= \frac{1}{N} \sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \mathbb{E}[(\mathbf{z}-\mathbf{\tilde{z}})^2]
@@ -240,43 +240,16 @@ where $f_i$ is the true data value at point $i$.
 In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of the bias, the second term represents the variance while the last term represents the variance of the irreducable error $\epsilon$. When performing linear regression the variance is a measurement on how much our model changes with different training sets. High variance will therefore occur if a different training set resulted in very different values of the individual estimators, $\bm{\beta}$. This will be the case for overfitting when our model is essentially trying to reproduce variations from the noise. The bias provides information about the difference between our model and the true data values. If our model is missing out on underlying structures in our data we would get a high bias. High bias will thus be the case for an underfitted model. Our goal is therefore to minimize the bias and variance in our model.    
 
 
-\section{Cross-validation}
+\section*{Exercise 3: Cross-validation as resampling techniques, adding more complexity}
 
 
-\section{Ridge Regression}
+\section*{Exercise 4: Ridge Regression on the Franke function with resampling}
 
 
-\section{Lasso regression}
+\section*{Exercise 5: Lasso regression on the Franke function with resampling}
 
 
-\section{Analysis of real data}
-
-\section{Testing}
-In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
-\begin{equation}
-	\label{eq:exp}
-	f_\text{Test}(x) = exp(x) + \epsilon.
-\end{equation}
-Here $\epsilon$ denotes normally distributed noise, and $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
-
-\begin{figure}[H]
-	\includegraphics[width=\linewidth]{Testing_data.pdf}
-	\caption{Here you we have plotted the testing data along with the analytical function.}
-	\label{fig:TestingData}
-\end{figure}
-
-First off we want to test the regression methods we have written.
-\begin{figure}[H]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Testing_OLS.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
-	\endminipage
-	\caption{HEI EHIEHIAHFIASJDFKASDFJASDKF}
-	\label{fig:test_OLS_Ridge}
-\end{figure}
-
+\section*{Exercise 6: Analysis of real data}
 
 \appendix
 
@@ -329,6 +302,32 @@ Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as 
   \mathbb{E}\left[(\mathbf{z} - \mathbf{\tilde{z}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expz)^2 + \frac{1}{n}\sum_i (\tilde{z}_i - \expz )^2 + \sigma^2
 \end{align}
 which is what we wanted to show.
+
+\section{Testing}
+In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
+\begin{equation}
+\label{eq:exp}
+f_\text{Test}(x) = exp(x) + \epsilon.
+\end{equation}
+Here $\epsilon$ denotes normally distributed noise, and $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{Testing_data.pdf}
+	\caption{Here you we have plotted the testing data along with the analytical function.}
+	\label{fig:TestingData}
+\end{figure}
+
+First off we want to test the regression methods we have written.
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Testing_OLS.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
+	\endminipage
+	\caption{HEI EHIEHIAHFIASJDFKASDFJASDKF}
+	\label{fig:test_OLS_Ridge}
+\end{figure}
 
 
 

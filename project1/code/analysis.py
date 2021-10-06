@@ -50,7 +50,7 @@ def simple_regression(args):
     plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
     if args.method == "OLS" and args.dataset == "Franke":
         """
-        For the first ex we want to make a plot of the
+        For the first exer we want to make a plot of the
         variance in the beta values.
         """
         plot.Plot_VarOLS(args)

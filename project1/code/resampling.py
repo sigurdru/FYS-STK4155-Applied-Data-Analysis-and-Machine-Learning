@@ -37,7 +37,6 @@ def resample(x, z):
 
 def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler, Testing=False):
     X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
-
     beta = reg_method(X_train, z_train, lmb)
     test_pred = X_test @ beta
     train_pred = X_train @ beta
