@@ -81,7 +81,7 @@ def Plot_FrankeFunction(x, y, z, args):
     fig.colorbar(surf, shrink=0.5, aspect=5)
     #general formalities
     fname = f"Frank_anal_eps_{args.epsilon}"
-    fname = fname.replace('.', '_')  # remove dots from fname
+    fname = fname.replace('.', '')  # remove dots from fname
     title = 'Analytical plot of Franke\'s function'
     xlabel = '$x$'
     ylabel = '$y$'
@@ -110,12 +110,12 @@ def Plot_error(MSE_test, MSE_train, args):
             + '_n' + str(args.num_points) \
             + '_eps' + str(args.epsilon) \
             + '_pol' + str(max(args.polynomial))
-    fname = fname.replace('.','_')  # remove dots from fname
+    fname = fname.replace('.','')  # remove dots from fname
     title = 'Mean square error for ' + args.method
-    if args.resampling != "None": 
+    if args.resampling != "None":
         title += " using " \
                  + args.resampling  + " with " \
-                 + f"iter = {args.resampling_iter}"  
+                 + f"iter = {args.resampling_iter}"
     xlabel = 'Polynomial degree'
     ylabel = 'MSE'
     set_ax_info(ax, xlabel, ylabel, title)
@@ -143,7 +143,7 @@ def Plot_R2(R2_test, R2_train, args):
             + '_n' + str(args.num_points) \
             + '_eps' + str(args.epsilon) \
             + '_pol' + str(max(args.polynomial))
-    fname = fname.replace('.', '_') # remove dots from fname
+    fname = fname.replace('.', '') # remove dots from fname
     title = 'R2 score for ' \
             + args.method
     xlabel = 'Polynomial degree'
@@ -211,14 +211,14 @@ def Plot_BVT_lambda(results, args):
     fname = "LBVT_" + args.method \
             + "_n" + str(args.num_points) \
             + "_eps" + str(args.epsilon)
-    fname = fname.replace(".", "_") 
+    fname = fname.replace(".", "")
 
     show(fig, fname, args)
 
 
 def Plot_VarOLS(args):
     """Here we plot the parameters for different polynomials
-    with confidence intervals. 
+    with confidence intervals.
     """
     p = np.array([1, 3, 5])
     n = 100
