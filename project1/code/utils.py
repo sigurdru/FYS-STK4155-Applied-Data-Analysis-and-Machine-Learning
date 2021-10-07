@@ -235,8 +235,7 @@ def load_data(args):
 
         terrain = imageio.imread(path)
         # to not deal with too large image, only NxN
-        terrain = terrain[xstart: N, ystart: N]
-
+        terrain = terrain[xstart: xstart + N, ystart: ystart + N]
         nx, ny = terrain.shape
         x = np.sort(np.random.uniform(size=nx))
         y = np.sort(np.random.uniform(size=ny))
