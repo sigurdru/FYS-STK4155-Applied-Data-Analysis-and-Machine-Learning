@@ -127,7 +127,7 @@ We will begin with using the simplest regression method, ordinary least squares 
 
 \section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
 
-We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, \eqref{eq:FF} takes values \(z\in[-0.45, 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is isualized in figure \ref{fig:FF_dataset}.
+We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, \eqref{eq:FF} takes values \(z\in[-0.45, \hspace{1mm} 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is visualized in figure \ref{fig:FF_dataset}.
 
 \begin{figure}[!htb]
 	\minipage{0.49\textwidth}
@@ -143,36 +143,50 @@ It is good practice in regression analysis to scale the data, such that differen
 
 We are fitting a bivariate polynomial of degree $P$. With $P$ as the highest polynomial degree, the polynomial will have $p=(P+1)(P+2) / 2$ terms. It can, without noise, be written
 \begin{equation}\label{eq:zpolynm}
-	z(x, y) = \beta_0 + \beta_1x + \beta_2y + \beta_3x^2 + \beta_4xy + \beta_5y^2 + \dots% = X\boldsymbol{\beta}
+	z(x, y) = \beta_0 + \beta_1x + \beta_2y + \beta_3x^2 + \beta_4xy + \beta_5y^2 + \dots
 \end{equation}
-where the $\beta$-parameters are coefficients for each term. The $x$ and $y$s are collected in a design matrix $X$. The columns of $X$ are the terms, while the rows are all terms for a single datapoint. $X$ thus have size $(n^2\cross p)$. The $\beta$s are collected in a vector $\boldsymbol{\beta}$ of length $p$.
+where the $\beta$-parameters are coefficients for each term. The $x$ and $y$s are collected in a design matrix $X$. The columns of $X$ are the terms, while the rows are all terms for a single datapoint. $X$ thus have size $(n^2\cross p)$. The $\beta$s are collected in a vector $\boldsymbol{\beta}$ of length $p$. This is unknown.
 
 Thus, out model with stochastic noise takes the form
 \begin{equation}
 	\label{eq:z_true_data}
 	\vc{z} = X \boldsymbol{\beta} + \boldsymbol{\epsilon},
 \end{equation}
-%where $\vc{z}$ is our data, $X$ is the design matrix, $\boldsymbol{\beta}$ are parameters in the model and $\boldsymbol{\epsilon}$ is stochastic noise.
+
 One challenge in our case is that our data is two-dimensional, i.e. $\vc{z}$ has dimensions $(n,n)$. We create a workaround by mapping our two-dimensional data, to a one dimensional $(n^2,1)$ vector. This is an important note, and we will do this throughout the report.
 
-%As mentioned in the introduction our model will be a polynomial fit with an $x$ and $y$ dependence of the form $[x,y,x^2,y^2,xy,\dots]$. This gives us $p = (P + 1)(P + 2)/2$ number of features, where $P$ is our maximum polynomial degree. Now for a given model
-We want to create a model to predict $\vc{z}$ given an input.
+We want to create a model to predict $\vc{z}$ given an input. $\boldsymbol{\tilde\beta}$ are the optimal parameters obtained from regression. Our prediction \(\boldsymbol{\tilde{\vc{z}}}\) is then given by
+
 \begin{equation*}
-	\boldsymbol{\tilde{z}} = X\boldsymbol{\tilde{\beta}},
+	\boldsymbol{\tilde{z}} = X\boldsymbol{\tilde{\beta}}.
 \end{equation*}
-we will have a mean square error (MSE) given by
+
+To asses the quality of the model, we need a way to quantify the error. We will use the mean square error (MSE), and R2-score, given by
+
+{\large
+\begin{align*}
+	MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}}) &= \frac{1}{N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \frac{1}{N}\left\{(\vc{z} - X\boldsymbol{\tilde{\beta}})^T(\vc{z} - X\boldsymbol{\tilde{\beta}})\right\}.
+	\\
+	R^2(\boldsymbol{z}, \boldsymbol{\tilde{z}}) &= 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z})^2}, \hspace{3mm} \bar{z} = \frac{1}{n}\sum_{i=0}^{n-1}z_i
+\end{align*}
+}%
+
+In order to find the optimal parameters $\boldsymbol{\tilde{\beta}}$ we need a cost function to minimize. Choosing MSE as the cost-function gives the expresion for OLS-regression.
+%We call $C(\boldsymbol{\beta})$ our cost function, and is the quantity we want to minimize. The minima can be found by
 \begin{equation*}
-	C(\boldsymbol{\beta}) = \frac{1}{N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \frac{1}{N}\left\{(\vc{z} - X\boldsymbol{\tilde{\beta}})^T(\vc{z} - X\boldsymbol{\tilde{\beta}})\right\}.
+	C(\boldsymbol{\beta}) = MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}})
 \end{equation*}
-We call $C(\boldsymbol{\beta})$ our cost function, and is the quantity we want to minimize. The minima can be found by doing the derivative with respect to all the parameters, and set the result to zero
+Minimizing this is done by doing the derivative with respect to all the parameters, and find the zero.
 \begin{equation*}
-	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
+	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} \equiv 0 = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
 \end{equation*}
 We can rewrite this as
 \begin{equation*}
 	X^T\vc{z} = X^TX\boldsymbol{\tilde{\beta}} \implies \boldsymbol{\tilde{\beta}} = (X^TX)^{-1} X^T \vc{z} \equiv \boldsymbol{\hat{\beta}}
 \end{equation*}
-Thus $\boldsymbol{\hat{\beta}}$ are the parameters that minimizes the cost function. Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
+This is OLS-regression. Thus $\boldsymbol{\hat{\beta}}$ are the optimal parameters that minimizes the cost function.
+
+Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
 
 There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. MSE is given by equation \eqref{eq:MSE} and the $R^2$ score by equation \eqref{eq:R2}.
 \begin{equation}
@@ -182,7 +196,7 @@ There are many quantities we can use to evaluate our results, however we have de
 $MSE(\vc{z}, \vc{\tilde{z}})$ is the mean square between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
 \begin{equation}
 	\label{eq:R2}
-	R^2(\vc{z}, \vc{\tilde{z}}) = 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z}_i)^2}
+	R^2(\vc{z}, \vc{\tilde{z}}) =
 \end{equation}
 Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$. With this we can plot the quantities as a function of polynomial degree. We expect the MSE to always decrease and $R^2$ to increase for the train data. We expect the same for the test data, however at a certain number of polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}.
 \begin{figure}[H]
@@ -272,7 +286,7 @@ Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and M
 	\caption{Here we have plotted the bias, variance and MSE for the test and train data. The $x$-axis shows the polynomial degree, and the $y$-axis indicates the bias, variance and MSE. The dotted lines are for the train data and solid lines are the test data.}\label{fig:BV_OLS}
 \end{figure}
 
-As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees. 
+As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees.
 
 \section*{Exercise 3: Cross-validation as resampling techniques, adding more complexity}
 
