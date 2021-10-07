@@ -125,10 +125,9 @@ We will begin with using the simplest regression method, ordinary least squares 
 %Tenke me heller plassere dette i Exersice 6 hvor det skal brukes, og ikke i introduksjonen. here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}.
 
 
-
 \section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
 
-Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We pick $n = 100$ randomly distributed points for $x$ and $y$, where our domain is $x,y\in[0,1]$. As mentioned in the introduction we add stochastic noise to the function, using the normal distribution $\epsilon \cdot N(0,1)$. Here $\epsilon$ is just a variable we can use to scale the noise. Choosing $\epsilon = 0.2$, gives us the dataset visualized in figure \ref{fig:FF_dataset}. We can choose to scale our data, however, this will have no effect when performing ordinary least squares (OLS). We do decide to scale our data by subtracting by the mean value (standard scaling), however this is only done because it makes our program more universal when performing other regression methods.
+We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, \eqref{eq:FF} takes values \(z\in[-0.45, 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is isualized in figure \ref{fig:FF_dataset}.
 
 \begin{figure}[!htb]
 	\minipage{0.49\textwidth}
@@ -137,8 +136,10 @@ Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We p
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{Frank_anal_eps_0_2.pdf}
 	\endminipage
-	\caption{Here we have displayed our data along with the analytical function. The left figure shows the analytical Franke function plotted, and the right hand figure is the Franke function plotted with noise, i.e. the data we use.}\label{fig:FF_dataset}
+	\caption{Here we have displayed our noisy data along with the analytical function. The left figure shows the analytical Franke function, while the right figure is the Franke function with noise.}\label{fig:FF_dataset}
 \end{figure}
+
+It is good practice in regression analysis to scale the data, such that different features take values in the same order of magnitude. There are several different methods for scaling, one of which is StandardScaler. This subtracts from the data the mean, and diving by the standard deviation. This centres the data around $0$ and sets the variance to $1$. Because our $x$ and $y$ is already in the domain $[0, 1]$ with variance 1, this only shifts it down, and has no outcome on the regression results. For $z$ generated using \eqref{eq:FF} the effect is small, but we choose to do this for consistency. Our code allows for different scaling methods, no scaling, Normalizer and MinMax, though these will not be used.
 
 When we do OLS regression we assume that our data follows a model such that
 \begin{equation}
