@@ -145,14 +145,14 @@ We are fitting a bivariate polynomial of degree $P$. With $P$ as the highest pol
 \begin{equation}\label{eq:zpolynm}
 	z(x, y) = \beta_0 + \beta_1x + \beta_2y + \beta_3x^2 + \beta_4xy + \beta_5y^2 + \dots = X\boldsymbol{\beta}
 \end{equation}
-where the $\beta$-parameters are coefficients for each term and $\boldsymbol{\beta}$ a vector with length $p$. $X$ is the design matrix. The columns of $X$ are the terms, while the rows are all terms for a single datapoint. $X$ thus have size $n^2\cross p$.
+where the $\beta$-parameters are coefficients for each term and $\boldsymbol{\beta}$ a vector with length $p$. $X$ is the design matrix. The columns of $X$ are the terms, while the rows are all terms for a single datapoint. $X$ thus have size $(n^2\cross p)$.
 
 With noise, assume that our data follows a model such that
 \begin{equation}
 \label{eq:z_true_data}
 	\vc{z} = X \boldsymbol{\beta} + \boldsymbol{\epsilon},
 \end{equation}
-where $\vc{z}$ is our data, $X$ is the design matrix, $\boldsymbol{\beta}$ are parameters in the model and $\boldsymbol{\epsilon}$ is stochastic noise. One challenge in our case is that our data is two-dimensional, i.e. $\vc{z}$ has dimensions $(n,n)$. We create a workaround by mapping our two-dimensional data, to a one dimensional $(n^2,1)$ vector. This is an important note, and we will do this throughout the report. Note that our design matrix $X$ will have dimensions $(n^2,p)$ where $p$ are the number of features.
+where $\vc{z}$ is our data, $X$ is the design matrix, $\boldsymbol{\beta}$ are parameters in the model and $\boldsymbol{\epsilon}$ is stochastic noise. One challenge in our case is that our data is two-dimensional, i.e. $\vc{z}$ has dimensions $(n,n)$. We create a workaround by mapping our two-dimensional data, to a one dimensional $(n^2,1)$ vector. This is an important note, and we will do this throughout the report.
 
 As mentioned in the introduction our model will be a polynomial fit with an $x$ and $y$ dependence of the form $[x,y,x^2,y^2,xy,\dots]$. This gives us $p = (P + 1)(P + 2)/2$ number of features, where $P$ is our maximum polynomial degree. Now for a given model
 \begin{equation*}
