@@ -84,7 +84,7 @@ def parse_args(args=None):
 
     add_arg('-n', '--num_points',
             type=int,
-            default=100,
+            default=30,
             help='Number of gridpoints along 1 axis',
             )
 
@@ -201,7 +201,7 @@ def f_test(x, eps=0):
 def load_data(args):
     """
     Creates / loads specified dataset.
-    3 possibile datasets: 
+    3 possibile datasets:
         Franke:  Bivariate analytic function we will study
         Test:    Simpler exponential func to test implementation of methods towards scikit-learn
         SRTM:    Real-world terrain data loaded from file
@@ -235,7 +235,7 @@ def load_data(args):
 
         terrain = imageio.imread(path)
         # to not deal with too large image, only NxN
-        terrain = terrain[xstart: N, ystart: N] 
+        terrain = terrain[xstart: N, ystart: N]
 
         nx, ny = terrain.shape
         x = np.sort(np.random.uniform(size=nx))
