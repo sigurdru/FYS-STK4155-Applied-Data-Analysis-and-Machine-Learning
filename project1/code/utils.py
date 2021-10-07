@@ -199,17 +199,29 @@ def f_test(x, eps=0):
     return value.reshape(-1, 1)
 
 def load_data(args):
+    """
+    Creates / loads specified dataset.
+    3 possibile datasets: 
+        Franke:  Bivariate analytic function we will study
+        Test:    Simpler exponential func to test implementation of methods towards scikit-learn
+        SRTM:    Real-world terrain data loaded from file
+    Args:
+        args (argparse): object to store runtime args, specifies dataset and size
+    Returns
+        x, y (2darray): uniformly drawn numbers in domain (0, 1)
+        z    (2darray): function values
+    """
     N = args.num_points
     if args.dataset == "Franke":
         x = np.sort(np.random.uniform(size=N))
         y = np.sort(np.random.uniform(size=N))
         x, y = np.meshgrid(x, y)
-        z = FrankeFunction(x, y, eps0=args.epsilon)
+        z = FrankeFunction(x, y, eps=args.epsilon)
+
     elif args.dataset == "Test":
         x = np.sort(np.random.uniform(-3, 3, size=N))
         y = 0
         z = f_test(x, args.epsilon)
-
 
     elif args.dataset == "SRTM":
         if args.data_file is None:
@@ -222,7 +234,8 @@ def load_data(args):
         ystart = 0
 
         terrain = imageio.imread(path)
-        terrain = terrain[xstart: N, ystart:N] # to not deal with too large image, only NxN
+        # to not deal with too large image, only NxN
+        terrain = terrain[xstart: N, ystart: N] 
 
         nx, ny = terrain.shape
         x = np.sort(np.random.uniform(size=nx))
