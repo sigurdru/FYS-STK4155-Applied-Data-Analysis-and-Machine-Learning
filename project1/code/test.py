@@ -271,8 +271,7 @@ def test_BV():
     ylabel = 'Bias, variance and MSE'
     title = 'Bias Variance Tradeoff comparison for Bootstrap. Using N={}'.format(N)
     fname = 'Testing_OLS_BV_compare' \
-            + '_n' + str(N) \
-            + '_eps' + str(eps)
+            + '_n' + str(N)
 
     ax.plot(P, error, label='SKlearn MSE')
     ax.plot(P, variance, label='SKlearn Variance')
@@ -285,6 +284,7 @@ def test_BV():
     fig.tight_layout()
     print('Plotting BV comparison, see ' + fname + '.pdf')
     plot.show(fig, fname, utils.parse_args())
+    # fig.show()
     # fig.savefig(plot.os.path.join(path_plots, fname + '.pdf'))
 
 
