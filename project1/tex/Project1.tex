@@ -122,6 +122,8 @@ In order to study this, we need data to analyze. We will in this paper test the 
 
 We will begin with using the simplest regression method, ordinary least squares (OLS) to fit polynomials up to fifth order on the Franke function. At first we will not resample the data, only test our implementation and do some basic analysis. We will then add the resampling methods, Bootstrapping and Cross-Validation. Then we will do the same analyses as before, but using the more complex regression methods Ridge and Lasso. At the end we will do all the same using the terrain data. This paper will not study the effects of different scaling methods, train-test split ratios and amount of noise.
 
+We have also written code to test our implementation of the methods, where we compare our results with those obtained using the open-source machine learning package Scikit-learn. The results from this are presented in Appendix \ref{Apx:test}.
+
 %Tenke me heller plassere dette i Exersice 6 hvor det skal brukes, og ikke i introduksjonen. here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}.
 
 
@@ -351,7 +353,7 @@ Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as 
 \end{align}
 which is what we wanted to show.
 
-\section{Testing our implementation}
+\section{Testing our implementation}\label{Apx:test}
 In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
 \begin{equation}
 \label{eq:exp}
