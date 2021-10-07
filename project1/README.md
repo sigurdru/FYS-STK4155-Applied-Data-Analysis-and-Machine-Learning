@@ -17,7 +17,7 @@ cd code
 
 The code is now run by calling the program `main.py`. The arguments are handled
 by the `argparse` module and directions will be printed to the terminal by
-running the program with the `-h` flag (or `--help`):
+running the program with the `-h` flag (or `--help`). The README inside the code directory gives a detailed explanation of each argument, as well as an overwiev of the enitre code. 
 ```
 python3 main.py -h
 ```

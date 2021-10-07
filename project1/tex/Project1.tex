@@ -120,14 +120,16 @@ In order to study this, we need data to analyze. We will in this paper test the 
 	\end{split}
 \end{align}
 
-We will begin with using the simplest regression method, ordinary least squares (OLS) to fit polynomials up to fifth order on the Franke function. At first we will not resample the data, only test our implementation and do some basic analysis. We will then add the resampling methods, Bootstrapping and Cross-Validation. Then we will do the same analyses as before, but using the more complex regression methods Ridge and Lasso. At the end we will do all the same using the terrain data. This paper will not study the effects of different scaling methods, train-test split ratios and amount of noise, though all will be used.
+We will begin with using the simplest regression method, ordinary least squares (OLS) to fit polynomials up to fifth order on the Franke function. At first we will not resample the data, only test our implementation and do some basic analysis. We will then add the resampling methods, Bootstrapping and Cross-Validation. Then we will do the same analyses as before, but using the more complex regression methods Ridge and Lasso. At the end we will do all the same using the terrain data. This paper will not study the effects of different scaling methods, train-test split ratios and amount of noise.
+
+We have also written code to test our implementation of the methods, where we compare our results with those obtained using the open-source machine learning package Scikit-learn. The results from this are presented in Appendix \ref{Apx:test}.
 
 %Tenke me heller plassere dette i Exersice 6 hvor det skal brukes, og ikke i introduksjonen. here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}.
 
 
 \section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
 
-We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, \eqref{eq:FF} takes values \(z\in[-0.45, 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is isualized in figure \ref{fig:FF_dataset}.
+We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, \eqref{eq:FF} takes values \(z\in[-0.45, \hspace{1mm} 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is visualized in figure \ref{fig:FF_dataset}.
 
 \begin{figure}[!htb]
 	\minipage{0.49\textwidth}
@@ -139,52 +141,68 @@ We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0
 	\caption{Here we have displayed our noisy data along with the analytical function. The left figure shows the analytical Franke function, while the right figure is the Franke function with noise.}\label{fig:FF_dataset}
 \end{figure}
 
-It is good practice in regression analysis to scale the data, such that different features take values in the same order of magnitude. There are several different methods for scaling, one of which is StandardScaler. This subtracts from the data the mean, and diving by the standard deviation. This centres the data around $0$ and sets the variance to $1$. Because our $x$ and $y$ is already in the domain $[0, 1]$ with variance 1, this only shifts it down, and has no outcome on the regression results. For $z$ generated using \eqref{eq:FF} the effect is small, but we choose to do this for consistency. Our code allows for different scaling methods, no scaling, Normalizer and MinMax, though these will not be used.
+It is good practice in regression analysis to scale the data, such that different features take values in the same order of magnitude. There are several different methods for scaling, one of which is StandardScaler. This subtracts from the data the mean, and divides by the standard deviation. This centres the data around $0$ and sets the variance to $1$. Because our $x$ and $y$ is already in the domain $[0, 1]$ with variance 1, this only shifts it down, and has no outcome on the regression results. For $z$ generated using \eqref{eq:FF} the effect is small, but we choose to do this for consistency. Our code allows for the following different scaling methods: no scaling, Normalizer and MinMax, though these will not be used.
 
 We are fitting a bivariate polynomial of degree $P$. With $P$ as the highest polynomial degree, the polynomial will have $p=(P+1)(P+2) / 2$ terms. It can, without noise, be written
 \begin{equation}\label{eq:zpolynm}
-	z(x, y) = \beta_0 + \beta_1x + \beta_2y + \beta_3x^2 + \beta_4xy + \beta_5y^2 + \dots% = X\boldsymbol{\beta}
+	z(x, y) = \beta_0 + \beta_1x + \beta_2y + \beta_3x^2 + \beta_4xy + \beta_5y^2 + \dots
 \end{equation}
-where the $\beta$-parameters are coefficients for each term. The $x$ and $y$s are collected in a design matrix $X$. The columns of $X$ are the terms, while the rows are all terms for a single datapoint. $X$ thus have size $(n^2\cross p)$. The $\beta$s are collected in a vector $\boldsymbol{\beta}$ of length $p$.
+where the $\beta$-parameters are coefficients for each term. The $x$ and $y$s are collected in a design matrix $X$. The columns of $X$ are the terms, while the rows are all terms for a single datapoint. $X$ thus have size $(n^2\cross p)$. The $\beta$s are collected in a vector $\boldsymbol{\beta}$ of length $p$. This is unknown.
 
 Thus, out model with stochastic noise takes the form
 \begin{equation}
 	\label{eq:z_true_data}
 	\vc{z} = X \boldsymbol{\beta} + \boldsymbol{\epsilon},
 \end{equation}
-%where $\vc{z}$ is our data, $X$ is the design matrix, $\boldsymbol{\beta}$ are parameters in the model and $\boldsymbol{\epsilon}$ is stochastic noise.
+
 One challenge in our case is that our data is two-dimensional, i.e. $\vc{z}$ has dimensions $(n,n)$. We create a workaround by mapping our two-dimensional data, to a one dimensional $(n^2,1)$ vector. This is an important note, and we will do this throughout the report.
 
-%As mentioned in the introduction our model will be a polynomial fit with an $x$ and $y$ dependence of the form $[x,y,x^2,y^2,xy,\dots]$. This gives us $p = (P + 1)(P + 2)/2$ number of features, where $P$ is our maximum polynomial degree. Now for a given model
-We want to create a model to predict $\vc{z}$ given an input.
+We want to create a model to predict $\vc{z}$ given an input. $\boldsymbol{\tilde\beta}$ are the optimal parameters obtained from regression. Our prediction \(\boldsymbol{\tilde{\vc{z}}}\) is then given by
+
 \begin{equation*}
-	\boldsymbol{\tilde{z}} = X\boldsymbol{\tilde{\beta}},
+	\boldsymbol{\tilde{z}} = X\boldsymbol{\tilde{\beta}}.
 \end{equation*}
-we will have a mean square error (MSE) given by
+
+To asses the quality of the model, we need a way to quantify the error. We will use the mean square error (MSE), and $R^2$-score, given by
+
+{\large
+\begin{align*}
+	MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}}) &= \frac{1}{N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \frac{1}{N}\left\{(\vc{z} - X\boldsymbol{\tilde{\beta}})^T(\vc{z} - X\boldsymbol{\tilde{\beta}})\right\}.
+	\\
+	R^2(\boldsymbol{z}, \boldsymbol{\tilde{z}}) &= 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z})^2}, \hspace{3mm} \bar{z} = \frac{1}{n}\sum_{i=0}^{n-1}z_i
+\end{align*}
+}%
+
+MSE will always be larger than 0, and an MSE of 0 means our model fits the data perfectly. The $R^2$-score is a number between 0 and 1, with 1 being a perfect fit. In order to find the optimal parameters $\boldsymbol{\tilde{\beta}}$ we need a cost function to minimize. Choosing MSE as the cost-function gives the expresion for OLS-regression.
 \begin{equation*}
-	C(\boldsymbol{\beta}) = \frac{1}{N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \frac{1}{N}\left\{(\vc{z} - X\boldsymbol{\tilde{\beta}})^T(\vc{z} - X\boldsymbol{\tilde{\beta}})\right\}.
+	C(\boldsymbol{\beta}) = MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}})
 \end{equation*}
-We call $C(\boldsymbol{\beta})$ our cost function, and is the quantity we want to minimize. The minima can be found by doing the derivative with respect to all the parameters, and set the result to zero
+Minimizing this is done by doing the derivative with respect to all the parameters, and finding the zero.
 \begin{equation*}
-	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} = 0 = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
+	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} \equiv 0 = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
 \end{equation*}
 We can rewrite this as
 \begin{equation*}
 	X^T\vc{z} = X^TX\boldsymbol{\tilde{\beta}} \implies \boldsymbol{\tilde{\beta}} = (X^TX)^{-1} X^T \vc{z} \equiv \boldsymbol{\hat{\beta}}
 \end{equation*}
-Thus $\boldsymbol{\hat{\beta}}$ are the parameters that minimizes the cost function. Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
+This is OLS-regression. Thus $\boldsymbol{\hat{\beta}}$ are the optimal parameters that minimizes the cost function.
 
-There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. MSE is given by equation \eqref{eq:MSE} and the $R^2$ score by equation \eqref{eq:R2}.
-\begin{equation}
-	\label{eq:MSE}
-	MSE(\vc{z}, \vc{\tilde{z}}) = \frac{1}{n}\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2
-\end{equation}
-$MSE(\vc{z}, \vc{\tilde{z}})$ is the mean square between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
-\begin{equation}
-	\label{eq:R2}
-	R^2(\vc{z}, \vc{\tilde{z}}) = 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z}_i)^2}
-\end{equation}
-Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$. With this we can plot the quantities as a function of polynomial degree. We expect the MSE to always decrease and $R^2$ to increase for the train data. We expect the same for the test data, however at a certain number of polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}.
+Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
+
+%There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. MSE is given by equation \eqref{eq:MSE} and the $R^2$ score by equation \eqref{eq:R2}.
+%\begin{equation}
+%	\label{eq:MSE}
+%	MSE(\vc{z}, \vc{\tilde{z}}) = \frac{1}{n}\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2
+%\end{equation}
+%$MSE(\vc{z}, \vc{\tilde{z}})$ is the mean square between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
+%\begin{equation}
+%	\label{eq:R2}
+%	R^2(\vc{z}, \vc{\tilde{z}}) =
+%\end{equation}
+%Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
+
+We can now perform OLS on our data and plot the MSE and $R^2$-score as a function of polynomial degree. It is important to note that when we fit using a polynomial of degree $p$, all terms from lower polynomial degrees are included in the fit. We expect the MSE to strictly decrease and $R^2$ to strictly increase for the train data, as our model will become more complex. We expect the same for the test data, however at a certain polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}. Overfitting is when the model nearly perfectly fits the training data, while performing very poorly on test data.
+
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol5.pdf}
@@ -192,14 +210,12 @@ Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\v
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{R2_OLS_n30_eps02_pol5.pdf}
 	\endminipage
-	\caption{Here we have plotted the MSE and $R^2$ score for OLS. The left figure shows the MSE and right shows the $R^2$ score. The red dotted line is from the train data, and the blue dotted line is from the test data.}\label{fig:OLS_R2_and_MSE}
+	\caption{Here we have plotted the MSE and $R^2$-score for OLS. The left figure shows the MSE and right shows the $R^2$ score. The red dotted line is from the train data, and the blue dotted line is from the test data.}\label{fig:OLS_R2_and_MSE}
 \end{figure}
-From figure \ref{fig:OLS_R2_and_MSE} we see that the MSE strictly decrease and $R^2$ score increase. This indicates that we have not reached a point of overfitting yet.
+From figure \ref{fig:OLS_R2_and_MSE} we see that the MSE strictly decrease and $R^2$-score increase for the test data. This indicates that we have not reached a point of overfitting yet.
 
 It is also interesting to look at the variance in the parameters. We know that for a set of optimal parameters
-\begin{equation*}
-	\boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^T \vc{z},
-\end{equation*}
+$\boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^T \vc{z}$,
 We have the expectation value
 \begin{equation*}
 	\mathbb{E}[\boldsymbol{\hat{\beta}}] = \mathbb{E}[(X^TX)^{-1}X^T \vc{z}] = (X^TX)^{-1}X^T\mathbb{E}[\vc{z}] = (X^TX)^{-1}X^TX\boldsymbol{\hat{\beta}} = \boldsymbol{\hat{\beta}}.
@@ -235,7 +251,9 @@ Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the di
 	\endminipage
 \end{figure}
 
-\section*{Exercise 2: Bias-variance trade-off and resampling techniques}
+Note: kommenter plottene her
+
+\section*{Exercise 2: Bias-variance trade-off and bootstrapping}
 
 Before we perform an analysis on the bias-variance trade-off, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. Thus in figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for a high $p_\text{max}$, using the bootstrap method for resampling. The left plot shows an indication of overfitting at polynomial degree $p = 9$. Thus on the right hand plot we have displayed the MSE for $p_\text{max} = 10$, and as expected we see overfitting at $p=9$. One unexpected result is the sharp increase and decrease in MSE. This indicates that our model is much better for some polynomial degrees than others. The sharp fluctuations can be explained by the surge in complexity from one polynomial degree to the next. This is displayed in figure \ref{fig:var_beta}, when we increase the polynomial degree by two, the number of parameters more than double. !NOTE REF TO APEND!
 
@@ -272,9 +290,9 @@ Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and M
 	\caption{Here we have plotted the bias, variance and MSE for the test and train data. The $x$-axis shows the polynomial degree, and the $y$-axis indicates the bias, variance and MSE. The dotted lines are for the train data and solid lines are the test data.}\label{fig:BV_OLS}
 \end{figure}
 
-As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees. 
+As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees.
 
-\section*{Exercise 3: Cross-validation as resampling techniques, adding more complexity}
+\section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
 
 Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustrerer hvordan alle blir blæsta når man har høye polynomgrader, dette gjelder på tvers av alle.
 
@@ -373,7 +391,7 @@ Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as 
 \end{align}
 which is what we wanted to show.
 
-\section{Testing our implementation}
+\section{Testing our implementation}\label{Apx:test}
 In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
 \begin{equation}
 \label{eq:exp}
@@ -400,6 +418,26 @@ First off we want to test the regression methods we have written.
 \end{figure}
 
 
+
+\section{Testing Bias Variance Tradeoff}
+To ensure a correct implementation of the Bias Variance tradeoff for the Bootstrap method, we want to compare our implemented results with results obtained by scikitlearn. This will also provide us insight of how these results behave. We consider a one dimensional model given by
+\begin{align*}
+  y = \exp{-x^2} + 1.5\cdot\exp{-(x-2)^2} + \epsilon
+\end{align*}
+where $\epsilon$ is the noise, with mean zero and standard deviation $(0.01)^2$, and $x$ are uniformly distributed values with $x\in[-3,3]$. When we compare our own results with the ones obtained from scikitlearn, the result depends a lot on the particular setup we consider. We use $4/5$ of our data as the training data, $100$ bootstrap iterations and polynomial degrees from $P=0$ up to $P=15$ and scale this data by subracting the mean before dividing by the standard deviation. The differences we see between when we compare are very sensitive to the configuration. To illustrate this, we first perform the bias variance tradeoff with $N=170$ data points and then with $N=169$ data points. The resulting plots for the two configuration are shown in figure \ref{fig:compare_BV_scikit}, on the left and right panel, respectively.
+
+\begin{figure}[H]
+  \minipage{0.49\textwidth}
+  \includegraphics[width=\linewidth]{Testing_OLS_BV_compare_n170.pdf}
+  \endminipage\hfill
+  \minipage{0.49\textwidth}
+  \includegraphics[width=\linewidth]{Testing_OLS_BV_compare_n169.pdf}
+  \endminipage
+  \caption{BV compare}
+  \label{fig:compare_BV_scikit}
+\end{figure}
+
+For $N=170$ data points, our model yields a low variance and a high bias and MSE at first, similar to scikit-learn, just as expected. For a polynomial degree of $P=9$, we get an abrupt increase ouf our three metrics while scikit-learn remains stable. For $P=15$ we see that our variance and MSE starts to increase, while the bias remains low, just as desired. This feature is less present for the scikit-learn. If we compare with $N=169$, as shown on the right panel in figure \ref{fig:compare_BV_scikit}, we see that the variance and MSE of the scikit-learn model exceeds a value of $60$ for $P>14$, which is not present in our model. This shows that the bias variance trade-off is generally sensitive to our particular configuration, so when performing a bias-variance trade-off analysis on the Franke function our result may be correct, despite odd behaiour for certain polynomial degrees.
 
 \begin{thebibliography}{}
 \bibitem[]{ref} Ref.

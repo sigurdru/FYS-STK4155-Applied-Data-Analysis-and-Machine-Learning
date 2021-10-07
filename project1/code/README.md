@@ -1,6 +1,9 @@
 # Code of project 1
 Will include a description of code structure, every file and every function.
 
+# Dataflow
+Our code runs in a very down-and-up-again way, starting at the top with `main.py`, moving deeper until `regression.py` is reach, where it moves back out to plot the data. The code is run by calling `main.py` with various arguments. One of the options is `-a, --analyse`, where the argument is the name of a function defined in `analysis.py`. Each does a different kind of analysis and generates various plots. Each generates data, and then calls upon one of the 3 implemented resampling functions implemented in `resampling.py`. These in turn call upon one of the 3 different regression functions implemented in `regression.py`. The regression methods return the beta-parametes to the resampling methods, which in turn return a data-dictionary to the analysis function which then calls upon the relevant plotingfunctions in `plot.py`. At most steps, the argparse-object is passed along, or at least the relevant parts of it.
+
 # TODO
 
 ## Exersice 1: OLS

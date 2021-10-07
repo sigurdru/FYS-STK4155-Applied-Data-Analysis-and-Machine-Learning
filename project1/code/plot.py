@@ -45,6 +45,11 @@ def set_ax_info(ax, xlabel, ylabel, title=None, zlabel=None):
 
 
 def show(fig, fname, args):
+    if args.dataset == "SRTM":
+        print("Terrain data: \'SRTM_\' added at beginning of plot file name")
+        sys.exit()
+        fname = "SRTM_" + fname
+
     fig.savefig(os.path.join(path_plots, fname + '.pdf'))
     if args.show:
         plt.show()
