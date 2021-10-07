@@ -128,7 +128,7 @@ We will begin with using the simplest regression method, ordinary least squares 
 
 \section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
 
-Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We pick $n = 100$ randomly distributed points for $x$ and $y$, where our domain is $x,y\in[0,1]$. As mentioned in the introduction we add stochastic noise to the function, using the normal distribution $\epsilon \cdot N(0,1)$. Here $\epsilon$ is just a variable we can use to scale the noise. Choosing $\epsilon = 0.2$, gives us the dataset visualized in figure \ref{fig:FF_dataset}. We can choose to scale our data, however, this will have no effect when performing ordinary least squares (OLS). We do decide to scale our data by subtracting by the mean value (standard scaling), however this is only done because it makes our program more universal when performing other regression methods.
+Using the Franke Function (equation \eqref{eq:FF}) we generate our dataset. We pick $n = 30$ randomly distributed points for $x$ and $y$, where our domain is $x,y\in[0,1]$. As mentioned in the introduction we add stochastic noise to the function, using the normal distribution $\epsilon \cdot N(0,1)$. Here $\epsilon$ is just a variable we can use to scale the noise. Choosing $\epsilon = 0.2$, gives us the dataset visualized in figure \ref{fig:FF_dataset}. We can choose to scale our data, however, this will have no effect when performing ordinary least squares (OLS). We do decide to scale our data by subtracting by the mean value (standard scaling), however this is only done because it makes our program more universal when performing other regression methods.
 
 \begin{figure}[!htb]
 	\minipage{0.49\textwidth}
@@ -178,10 +178,10 @@ $MSE(\vc{z}, \vc{\tilde{z}})$ is the mean square between the datapoints $\vc{z}$
 Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$. With this we can plot the quantities as a function of polynomial degree. We expect the MSE to always decrease and $R^2$ to increase for the train data. We expect the same for the test data, however at a certain number of polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}.
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_OLS_n100_eps0_2_pol5.pdf}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol5.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{R2_OLS_n100_eps0_2_pol5.pdf}
+	\includegraphics[width=\linewidth]{R2_OLS_n30_eps02_pol5.pdf}
 	\endminipage
 	\caption{Here we have plotted the MSE and $R^2$ score for OLS. The left figure shows the MSE and right shows the $R^2$ score. The red dotted line is from the train data, and the blue dotted line is from the test data.}\label{fig:OLS_R2_and_MSE}
 \end{figure}
@@ -222,12 +222,25 @@ Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the di
 	\includegraphics[width=\linewidth]{Var_OLS_poldeg_5.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\caption{Here we have plotted the ideal parameters, for different polynomial degrees and with the confidence intervals. Top left figure has polynomial degree $p = 1$, top right $p = 3$ and bottom left $p = 5$. All the plots are of $\boldsymbol{\beta}$ as a function of the index in the vector. The confidence interval are $\pm 2\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$, where $\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$ is given by equation \eqref{eq:var_OLS}.} \label{fig:03-03}
+	\caption{Here we have plotted the ideal parameters, for different polynomial degrees and with the confidence intervals. Top left figure has polynomial degree $p = 1$, top right $p = 3$ and bottom left $p = 5$. All the plots are of $\boldsymbol{\beta}$ as a function of the index in the vector. The confidence interval is $\pm 2\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$, where $\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$ is given by equation \eqref{eq:var_OLS}.} \label{fig:var_beta}
 	\endminipage
 \end{figure}
 
 \section*{Exercise 2: Bias-variance trade-off and resampling techniques}
-With our data model given in equation \eqref{eq:z_true_data} we find our model by considering the cost function, given as
+
+Before we perform an analysis on the bias-variance trade-off, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. Thus in figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for a high $p_\text{max}$. The left plot shows an indication of overfitting at polynomial degree $p = 9$. Thus on the right hand plot we have displayed the MSE for $p_\text{max} = 10$, and as expected we see overfitting at $p=9$. One unexpected result is the sharp increase and decrease in MSE. This indicates that our model is much better for some polynomial degrees than others. The sharp fluctuations can be explained by the surge in complexity from one polynomial degree to the next. This is displayed in figure \ref{fig:var_beta}, when we increase the polynomial degree by two, the number of parameters more than double.
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol20.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10.pdf}
+	\endminipage
+	\caption{Overfitting, høyre med støy, venstre uten støy.}\label{fig:OLS_overfitting}
+\end{figure}
+
+Before we take a look at bias variance trade-off, we will derive the expressions. With our data model given in equation \eqref{eq:z_true_data} we find our model by considering the cost function, given as
 \begin{align*}
   C(\bm{\beta}) &= \frac{1}{N} \sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \mathbb{E}[(\mathbf{z}-\mathbf{\tilde{z}})^2]
 \end{align*}
@@ -243,6 +256,14 @@ where $f_i$ is the true data value at point $i$.
 
 In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of the bias, the second term represents the variance while the last term represents the variance of the irreducable error $\epsilon$. When performing linear regression the variance is a measurement on how much our model changes with different training sets. High variance will therefore occur if a different training set resulted in very different values of the individual estimators, $\bm{\beta}$. This will be the case for overfitting when our model is essentially trying to reproduce variations from the noise. The bias provides information about the difference between our model and the true data values. If our model is missing out on underlying structures in our data we would get a high bias. High bias will thus be the case for an underfitted model. Our goal is therefore to minimize the bias and variance in our model.
 
+Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and MSE for the test and train data, using the bootstrap method. For both datasets we expect the bias and MSE to start high and variance to start low. For the train data we should get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=9$) variance and error should increase, while bias stays low. In figure \ref{fig:BV_OLS} we have plotted bias, variance and MSE for the test and train data, using $r = 30$ resampling iterations. Because we expected to see overfitting at around $p=9$ we plotted for $p_\text{max} = 10$.
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0.2.pdf}
+	\caption{Here we have plotted the bias, variance and MSE for the test and train data. The $x$-axis shows the polynomial degree, and the $y$-axis indicates the bias, variance and MSE. The dotted lines are for the train data and solid lines are the test data.}\label{fig:BV_OLS}
+\end{figure}
+
+As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees. 
 
 \section*{Exercise 3: Cross-validation as resampling techniques, adding more complexity}
 

@@ -16,10 +16,6 @@ def split_scale(X, z, ttsplit, scaler):
     Returns:
         X_train, X_test, z_train, z_test, 2darrays: Scaled train and test data
     """
-    scaler.fit(X)
-    X = scaler.transform(X)
-    scaler.fit(z)
-    z = scaler.transform(z)
 
     if ttsplit != 0:
         X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
