@@ -221,8 +221,8 @@ def Plot_VarOLS(args):
     with confidence intervals.
     """
     p = np.array([1, 3, 5])
-    n = 100
-    sigma_sq = args.epsilon
+    n = 30
+    sigma_sq = 0.2
     x = np.sort(np.random.uniform(0, 1, n))
     y = np.sort(np.random.uniform(0, 1, n))
     x,y = np.meshgrid(x,y)
@@ -259,7 +259,7 @@ if __name__ == "__main__":
             self.show = True
             self.epsilon = eps
 
-    N = 100
+    N = 30
     x = np.sort(np.random.uniform(size=N))
     y = np.sort(np.random.uniform(size=N))
     x, y = np.meshgrid(x, y)
