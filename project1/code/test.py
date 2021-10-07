@@ -223,7 +223,7 @@ def test_BV():
     Test bias variance tradeoff using bootstrap
     """
     #Variables we are going to use
-    N = 170
+    N = 169
     maxdegree = 16
     P = np.arange(0,maxdegree,1)
     eps = 0.1
@@ -245,8 +245,7 @@ def test_BV():
     from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import PolynomialFeatures, StandardScaler
     from sklearn.utils import resample
-    # import resampling
-    # x = np.linspace(-3,3,N).reshape(-1,1)
+
     x = np.sort(np.random.uniform(-3, 3, size=N)).reshape(-1,1)
     y = f(x, eps)
     error = np.zeros(maxdegree)
@@ -254,7 +253,6 @@ def test_BV():
     variance = np.zeros(maxdegree)
     scaler = StandardScaler()
     x_train, x_test, y_train, y_test = resampling.split_scale(x, y, ttsplit=0.2, scaler=StandardScaler())
-    # x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2)
 
 
     for degree in range(maxdegree):
@@ -267,19 +265,29 @@ def test_BV():
         bias[degree] = np.mean( (y_test - np.mean(y_pred, axis=1, keepdims=True))**2 )
         variance[degree] = np.mean( np.var(y_pred, axis=1, keepdims=True) )
 
-    # plt.plot(P, error - our_results["test_error"], label='Error')
-    # plt.plot(P, bias - our_results["test_biases"], label='bias')
-    # plt.plot(P, variance - our_results["test_vars"], label='Variance')
-    plt.plot(P, error, label='Scikit error')
-    plt.plot(P, variance, label='Scikit Variance')
-    plt.plot(P, bias, label='Scikit bias')
+    fig, ax = plt.subplots()
 
-    plt.plot(P, our_results["test_errors"], '--', label='Our error')
-    plt.plot(P, our_results["test_vars"], '--', label='Our Variance')
-    plt.plot(P, our_results["test_biases"], '--', label='Our bias')
+    xlabel = 'Polynomial degree'
+    ylabel = 'Bias, variance and MSE'
+    title = 'Bias Variance Tradeoff comparison for Bootstrap. Using N={}'.format(N)
+    fname = 'Testing_OLS_BV_compare' \
+            + '_n' + str(N) \
+            + '_eps' + str(eps)
 
-    plt.legend()
-    plt.show()
+    ax.plot(P, error, label='SKlearn MSE')
+    ax.plot(P, variance, label='SKlearn Variance')
+    ax.plot(P, bias, label='SKlearn Bias')
+
+    ax.plot(P, our_results["test_errors"], '--', label='Test MSE')
+    ax.plot(P, our_results["test_vars"], '--', label='Test Variance')
+    ax.plot(P, our_results["test_biases"], '--', label='Test Bias')
+    plot.set_ax_info(ax, xlabel, ylabel, title)
+    fig.tight_layout()
+    print('Plotting BV comparison, see ' + fname + '.pdf')
+    plot.show(fig, fname, utils.parse_args())
+    # fig.savefig(plot.os.path.join(path_plots, fname + '.pdf'))
+
+
 
 def test_bootstrap():
     """
