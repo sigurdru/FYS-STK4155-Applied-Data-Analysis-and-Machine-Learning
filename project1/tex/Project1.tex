@@ -272,7 +272,7 @@ Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and M
 	\caption{Here we have plotted the bias, variance and MSE for the test and train data. The $x$-axis shows the polynomial degree, and the $y$-axis indicates the bias, variance and MSE. The dotted lines are for the train data and solid lines are the test data.}\label{fig:BV_OLS}
 \end{figure}
 
-As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees. 
+As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees.
 
 \section*{Exercise 3: Cross-validation as resampling techniques, adding more complexity}
 
@@ -363,6 +363,25 @@ First off we want to test the regression methods we have written.
 	\label{fig:test_OLS_Ridge}
 \end{figure}
 
+
+
+\section{Testing Bias Variance Tradeoff}
+To ensure a correct implementation of the Bias Variance tradeoff for the Bootstrap method, we want to compare our implemented results with results obtained by scikitlearn. This will also provide us insight of how these results behave. We consider a one dimensional model given by
+\begin{align*}
+  y = \exp{-x^2} + 1.5\cdot\exp{-(x-2)^2} + \epsilon
+\end{align*}
+where $\epsilon=N(0,0.1^2)$ is the noise and $x$ are uniformly distributed values with $x\in[-3,3]$. When we compare our own results with the ones obtained from scikitlearn, the result depends a lot on the particular setup we consider. We use $4/5$ of our data as the training data, $100$ bootstrap iterations and polynomial degrees from $0$ up to $15$ and scale this data by subracting the mean before dividing by the standard deviation. The differences we see between when we compare are very sensitive to the configuration. To illustrate this, we first perform the bias variance tradeoff with $170$ data points and then with $169$ data points.
+
+\begin{figure}[H]
+  \minipage{0.49\textwidth}
+  \includegraphics[width=\linewidth]{Testing_OLS_BV_compare_n170.pdf}
+  \endminipage\hfill
+  \minipage{0.49\textwidth}
+  \includegraphics[width=\linewidth]{Testing_OLS_BV_compare_n169.pdf}
+  \endminipage
+  \caption{BV compare}
+  \label{fig:compare_BV_scikit}
+\end{figure}
 
 
 \begin{thebibliography}{}
