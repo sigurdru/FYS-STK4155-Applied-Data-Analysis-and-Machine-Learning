@@ -11,7 +11,7 @@ import regression
 import plot
 import utils
 
-utils.np.random.seed(2018)
+utils.np.random.seed(7132)
 plt.style.use('seaborn')
 plt.rc('text', usetex=True)
 plt.rc('font', family='DejaVu Sans')
@@ -223,11 +223,11 @@ def test_BV():
     Test bias variance tradeoff using bootstrap
     """
     #Variables we are going to use
-    N = 200
-    maxdegree = 30
-    P = np.arange(1,maxdegree+1,1)
+    N = 170
+    maxdegree = 16
+    P = np.arange(0,maxdegree,1)
     eps = 0.1
-    resampling = "Boot"
+    resampling_m = "Boot"
     ttsplit = 0.2
     resampling_iter = 100
     lmb = [0.1]
@@ -235,23 +235,27 @@ def test_BV():
     scaling_conv = "S"
     #Using our method
     args = params(N, P, eps,
-                resampling, ttsplit, resampling_iter,
+                resampling_m, ttsplit, resampling_iter,
                 lmb, method, scaling_conv)
     our_results = analysis.bias_var_tradeoff(args, testing=True)
 
 
     #Using sklearn
-    utils.np.random.seed(2018)
+    utils.np.random.seed(7132)
     from sklearn.pipeline import make_pipeline
-    from sklearn.preprocessing import PolynomialFeatures
+    from sklearn.preprocessing import PolynomialFeatures, StandardScaler
     from sklearn.utils import resample
+    # import resampling
     # x = np.linspace(-3,3,N).reshape(-1,1)
     x = np.sort(np.random.uniform(-3, 3, size=N)).reshape(-1,1)
     y = f(x, eps)
     error = np.zeros(maxdegree)
     bias = np.zeros(maxdegree)
     variance = np.zeros(maxdegree)
-    x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2)
+    scaler = StandardScaler()
+    x_train, x_test, y_train, y_test = resampling.split_scale(x, y, ttsplit=0.2, scaler=StandardScaler())
+    # x_train, x_test, y_train, y_test = tts(x, y, test_size=0.2)
+
 
     for degree in range(maxdegree):
         model = make_pipeline(PolynomialFeatures(degree=degree), LinearRegression(fit_intercept=False))
@@ -274,7 +278,6 @@ def test_BV():
     plt.plot(P, our_results["test_vars"], '--', label='Our Variance')
     plt.plot(P, our_results["test_biases"], '--', label='Our bias')
 
-    plt.ylim(-0.05, 5)
     plt.legend()
     plt.show()
 

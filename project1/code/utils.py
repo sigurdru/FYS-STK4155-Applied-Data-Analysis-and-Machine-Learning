@@ -261,8 +261,8 @@ def create_X(x, y, n):
             Includes intercept.
     """
     if type(y) == int:
-        X = np.zeros((len(x), n))
-        for i in range(n):
+        X = np.zeros((len(x), n+1))
+        for i in range(n+1):
             X[:, i] = x**i
         return X
     if not 1 in x.shape:
