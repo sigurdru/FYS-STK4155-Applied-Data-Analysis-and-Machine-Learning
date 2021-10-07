@@ -141,7 +141,7 @@ We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0
 	\caption{Here we have displayed our noisy data along with the analytical function. The left figure shows the analytical Franke function, while the right figure is the Franke function with noise.}\label{fig:FF_dataset}
 \end{figure}
 
-It is good practice in regression analysis to scale the data, such that different features take values in the same order of magnitude. There are several different methods for scaling, one of which is StandardScaler. This subtracts from the data the mean, and diving by the standard deviation. This centres the data around $0$ and sets the variance to $1$. Because our $x$ and $y$ is already in the domain $[0, 1]$ with variance 1, this only shifts it down, and has no outcome on the regression results. For $z$ generated using \eqref{eq:FF} the effect is small, but we choose to do this for consistency. Our code allows for different scaling methods, no scaling, Normalizer and MinMax, though these will not be used.
+It is good practice in regression analysis to scale the data, such that different features take values in the same order of magnitude. There are several different methods for scaling, one of which is StandardScaler. This subtracts from the data the mean, and divides by the standard deviation. This centres the data around $0$ and sets the variance to $1$. Because our $x$ and $y$ is already in the domain $[0, 1]$ with variance 1, this only shifts it down, and has no outcome on the regression results. For $z$ generated using \eqref{eq:FF} the effect is small, but we choose to do this for consistency. Our code allows for the following different scaling methods: no scaling, Normalizer and MinMax, though these will not be used.
 
 We are fitting a bivariate polynomial of degree $P$. With $P$ as the highest polynomial degree, the polynomial will have $p=(P+1)(P+2) / 2$ terms. It can, without noise, be written
 \begin{equation}\label{eq:zpolynm}
@@ -163,7 +163,7 @@ We want to create a model to predict $\vc{z}$ given an input. $\boldsymbol{\tild
 	\boldsymbol{\tilde{z}} = X\boldsymbol{\tilde{\beta}}.
 \end{equation*}
 
-To asses the quality of the model, we need a way to quantify the error. We will use the mean square error (MSE), and R2-score, given by
+To asses the quality of the model, we need a way to quantify the error. We will use the mean square error (MSE), and $R^2$-score, given by
 
 {\large
 \begin{align*}
@@ -173,12 +173,11 @@ To asses the quality of the model, we need a way to quantify the error. We will 
 \end{align*}
 }%
 
-In order to find the optimal parameters $\boldsymbol{\tilde{\beta}}$ we need a cost function to minimize. Choosing MSE as the cost-function gives the expresion for OLS-regression.
-%We call $C(\boldsymbol{\beta})$ our cost function, and is the quantity we want to minimize. The minima can be found by
+MSE will always be larger than 0, and an MSE of 0 means our model fits the data perfectly. The $R^2$-score is a number between 0 and 1, with 1 being a perfect fit. In order to find the optimal parameters $\boldsymbol{\tilde{\beta}}$ we need a cost function to minimize. Choosing MSE as the cost-function gives the expresion for OLS-regression.
 \begin{equation*}
 	C(\boldsymbol{\beta}) = MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}})
 \end{equation*}
-Minimizing this is done by doing the derivative with respect to all the parameters, and find the zero.
+Minimizing this is done by doing the derivative with respect to all the parameters, and finding the zero.
 \begin{equation*}
 	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} \equiv 0 = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
 \end{equation*}
@@ -190,17 +189,20 @@ This is OLS-regression. Thus $\boldsymbol{\hat{\beta}}$ are the optimal paramete
 
 Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
 
-There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. MSE is given by equation \eqref{eq:MSE} and the $R^2$ score by equation \eqref{eq:R2}.
-\begin{equation}
-	\label{eq:MSE}
-	MSE(\vc{z}, \vc{\tilde{z}}) = \frac{1}{n}\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2
-\end{equation}
-$MSE(\vc{z}, \vc{\tilde{z}})$ is the mean square between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
-\begin{equation}
-	\label{eq:R2}
-	R^2(\vc{z}, \vc{\tilde{z}}) =
-\end{equation}
-Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$. With this we can plot the quantities as a function of polynomial degree. We expect the MSE to always decrease and $R^2$ to increase for the train data. We expect the same for the test data, however at a certain number of polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}.
+%There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. MSE is given by equation \eqref{eq:MSE} and the $R^2$ score by equation \eqref{eq:R2}.
+%\begin{equation}
+%	\label{eq:MSE}
+%	MSE(\vc{z}, \vc{\tilde{z}}) = \frac{1}{n}\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2
+%\end{equation}
+%$MSE(\vc{z}, \vc{\tilde{z}})$ is the mean square between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
+%\begin{equation}
+%	\label{eq:R2}
+%	R^2(\vc{z}, \vc{\tilde{z}}) =
+%\end{equation}
+%Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
+
+We can now perform OLS on our data and plot the MSE and $R^2$-score as a function of polynomial degree. It is important to note that when we fit using a polynomial of degree $p$, all terms from lower polynomial degrees are included in the fit. We expect the MSE to strictly decrease and $R^2$ to strictly increase for the train data, as our model will become more complex. We expect the same for the test data, however at a certain polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}. Overfitting is when the model nearly perfectly fits the training data, while performing very poorly on test data.
+
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol5.pdf}
@@ -208,14 +210,12 @@ Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\v
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{R2_OLS_n30_eps02_pol5.pdf}
 	\endminipage
-	\caption{Here we have plotted the MSE and $R^2$ score for OLS. The left figure shows the MSE and right shows the $R^2$ score. The red dotted line is from the train data, and the blue dotted line is from the test data.}\label{fig:OLS_R2_and_MSE}
+	\caption{Here we have plotted the MSE and $R^2$-score for OLS. The left figure shows the MSE and right shows the $R^2$ score. The red dotted line is from the train data, and the blue dotted line is from the test data.}\label{fig:OLS_R2_and_MSE}
 \end{figure}
-From figure \ref{fig:OLS_R2_and_MSE} we see that the MSE strictly decrease and $R^2$ score increase. This indicates that we have not reached a point of overfitting yet.
+From figure \ref{fig:OLS_R2_and_MSE} we see that the MSE strictly decrease and $R^2$-score increase for the test data. This indicates that we have not reached a point of overfitting yet.
 
 It is also interesting to look at the variance in the parameters. We know that for a set of optimal parameters
-\begin{equation*}
-	\boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^T \vc{z},
-\end{equation*}
+$\boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^T \vc{z}$,
 We have the expectation value
 \begin{equation*}
 	\mathbb{E}[\boldsymbol{\hat{\beta}}] = \mathbb{E}[(X^TX)^{-1}X^T \vc{z}] = (X^TX)^{-1}X^T\mathbb{E}[\vc{z}] = (X^TX)^{-1}X^TX\boldsymbol{\hat{\beta}} = \boldsymbol{\hat{\beta}}.
@@ -251,7 +251,9 @@ Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the di
 	\endminipage
 \end{figure}
 
-\section*{Exercise 2: Bias-variance trade-off and resampling techniques}
+Note: kommenter plottene her
+
+\section*{Exercise 2: Bias-variance trade-off and bootstrapping}
 
 Before we perform an analysis on the bias-variance trade-off, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. Thus in figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for a high $p_\text{max}$. The left plot shows an indication of overfitting at polynomial degree $p = 9$. Thus on the right hand plot we have displayed the MSE for $p_\text{max} = 10$, and as expected we see overfitting at $p=9$. One unexpected result is the sharp increase and decrease in MSE. This indicates that our model is much better for some polynomial degrees than others. The sharp fluctuations can be explained by the surge in complexity from one polynomial degree to the next. This is displayed in figure \ref{fig:var_beta}, when we increase the polynomial degree by two, the number of parameters more than double.
 
@@ -290,7 +292,7 @@ Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and M
 
 As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees.
 
-\section*{Exercise 3: Cross-validation as resampling techniques, adding more complexity}
+\section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
 
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
