@@ -264,6 +264,6 @@ if __name__ == "__main__":
     y = np.sort(np.random.uniform(size=N))
     x, y = np.meshgrid(x, y)
     args = Argparse()
-    z = utils.FrankeFunction(x, y, eps0 = args.epsilon)
+    z = utils.FrankeFunction(x, y, eps=args.epsilon)
     Plot_FrankeFunction(x, y, z, args)
     # Plot_VarOLS()

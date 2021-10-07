@@ -137,7 +137,7 @@ if __name__=='__main__':
     x = np.sort(np.random.uniform(size=n))
     y = np.sort(np.random.uniform(size=n))
     x, y = np.meshgrid(x, y)
-    z = utils.FrankeFunction(x, y, eps0=eps)
+    z = utils.FrankeFunction(x, y, eps=eps)
     X = utils.create_X(x, y, p)
 
     all_data= tts(X, z, test_size=ttsplit)
