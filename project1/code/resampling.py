@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import DefaultDict
 import numpy as np
 from sklearn.model_selection import train_test_split as tts, KFold
 import utils
@@ -23,7 +24,7 @@ def split_scale(X, z, ttsplit, scaler):
         X_train = X
         z_train = z
         X_test = X
-        z_test = 0
+        z_test = z
 
     scaler.fit(X_train)
     X_train = scaler.transform(X_train)
@@ -69,7 +70,7 @@ def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
     if B is None:
         B = len(z_train)
 
-    data = {}
+    data = DefaultDict(lambda:0)
     test_pred = np.empty((z_test.shape[0], B))
     train_pred = np.empty((z_train.shape[0], B))
 

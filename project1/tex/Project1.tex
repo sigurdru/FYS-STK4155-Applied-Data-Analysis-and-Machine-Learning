@@ -134,7 +134,7 @@ We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0
 	\includegraphics[width=\linewidth]{Frank_anal_eps_0.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Frank_anal_eps_0_2.pdf}
+	\includegraphics[width=\linewidth]{Frank_anal_eps_02.pdf}
 	\endminipage
 	\caption{Here we have displayed our noisy data along with the analytical function. The left figure shows the analytical Franke function, while the right figure is the Franke function with noise.}\label{fig:FF_dataset}
 \end{figure}
@@ -237,14 +237,14 @@ Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the di
 
 \section*{Exercise 2: Bias-variance trade-off and resampling techniques}
 
-Before we perform an analysis on the bias-variance trade-off, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. Thus in figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for a high $p_\text{max}$. The left plot shows an indication of overfitting at polynomial degree $p = 9$. Thus on the right hand plot we have displayed the MSE for $p_\text{max} = 10$, and as expected we see overfitting at $p=9$. One unexpected result is the sharp increase and decrease in MSE. This indicates that our model is much better for some polynomial degrees than others. The sharp fluctuations can be explained by the surge in complexity from one polynomial degree to the next. This is displayed in figure \ref{fig:var_beta}, when we increase the polynomial degree by two, the number of parameters more than double.
+Before we perform an analysis on the bias-variance trade-off, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. Thus in figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for a high $p_\text{max}$, using the bootstrap method for resampling. The left plot shows an indication of overfitting at polynomial degree $p = 9$. Thus on the right hand plot we have displayed the MSE for $p_\text{max} = 10$, and as expected we see overfitting at $p=9$. One unexpected result is the sharp increase and decrease in MSE. This indicates that our model is much better for some polynomial degrees than others. The sharp fluctuations can be explained by the surge in complexity from one polynomial degree to the next. This is displayed in figure \ref{fig:var_beta}, when we increase the polynomial degree by two, the number of parameters more than double. !NOTE REF TO APEND!
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol20.pdf}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol20_Boot_re90.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10.pdf}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10_Boot_re90.pdf}
 	\endminipage
 	\caption{Overfitting, høyre med støy, venstre uten støy.}\label{fig:OLS_overfitting}
 \end{figure}
@@ -268,7 +268,7 @@ In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of
 Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and MSE for the test and train data, using the bootstrap method. For both datasets we expect the bias and MSE to start high and variance to start low. For the train data we should get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=9$) variance and error should increase, while bias stays low. In figure \ref{fig:BV_OLS} we have plotted bias, variance and MSE for the test and train data, using $r = 30$ resampling iterations. Because we expected to see overfitting at around $p=9$ we plotted for $p_\text{max} = 10$.
 
 \begin{figure}[H]
-	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0.2.pdf}
+	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0_2.pdf}
 	\caption{Here we have plotted the bias, variance and MSE for the test and train data. The $x$-axis shows the polynomial degree, and the $y$-axis indicates the bias, variance and MSE. The dotted lines are for the train data and solid lines are the test data.}\label{fig:BV_OLS}
 \end{figure}
 
@@ -276,8 +276,44 @@ As expected we se an increase in MSE and variance for the test data, when we sta
 
 \section*{Exercise 3: Cross-validation as resampling techniques, adding more complexity}
 
+Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustrerer hvordan alle blir blæsta når man har høye polynomgrader, dette gjelder på tvers av alle.
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re5.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re7.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re10.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10_CV_re10.pdf}
+	\endminipage
+	\caption{Plot av CV for OLS} \label{fig:CV_OLS}
+\end{figure}
+
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
+
+Now we want to perform the same bootstrap analysis as we did for OLS (Exercise 2). Here we also take a look at when we have overfitting, for different values of $\lambda$
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re5.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re7.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re10.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10_CV_re10.pdf}
+	\endminipage
+	\caption{Plot av CV for OLS} \label{fig:Boot_overfitting}
+\end{figure}
 
 
 \section*{Exercise 5: Lasso regression on the Franke function with resampling}

@@ -13,5 +13,5 @@ def Ridge(X, z, lmb):
 def Lasso(X, z, lmb):
     model = linear_model.Lasso(lmb)
     model.fit(X, z)
-    return model.coef_
+    return model.coef_.reshape(-1, 1)
 

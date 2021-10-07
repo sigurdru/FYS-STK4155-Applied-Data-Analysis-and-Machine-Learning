@@ -116,6 +116,11 @@ def Plot_error(MSE_test, MSE_train, args):
         title += " using " \
                  + args.resampling  + " with " \
                  + f"iter = {args.resampling_iter}"
+        fname += "_" + args.resampling + "_" + "re" \
+                 + str(args.resampling_iter)
+    if args.method != "OLS":
+        fname += '_lam_'+str(args.lmb[0])
+        fname = fname.replace('.','_')
     xlabel = 'Polynomial degree'
     ylabel = 'MSE'
     set_ax_info(ax, xlabel, ylabel, title)
@@ -134,6 +139,10 @@ def Plot_R2(R2_test, R2_train, args):
         R2_train (array): array of train R2 score
         args (argparse): argparse containing information of method used
     """
+    if args.resampling != "None":
+        return
+    elif args.method != "OLS":
+        return
     # Plot the data
     fig, ax = plt.subplots()
     ax.plot(args.polynomial, R2_test, "bo--", label="Test R2")
@@ -188,6 +197,9 @@ def Plot_bias_var_tradeoff(datas, args):
     fname = 'BVT_' + args.method \
             + '_n' + str(args.num_points) \
             + '_eps' + str(args.epsilon)
+    if args.method != "OLS":
+        fname += '_lam_'+str(args.lmb[0])
+    fname = fname.replace('.', '_')
     show(fig, fname, args)
 
 def Plot_BVT_lambda(results, args):
@@ -256,7 +268,7 @@ if __name__ == "__main__":
     """
     class Argparse:
         def __init__(self, eps = 0):
-            self.show = True
+            self.show = False
             self.epsilon = eps
 
     N = 30
