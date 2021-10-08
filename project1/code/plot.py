@@ -85,7 +85,7 @@ def Plot_3DDataset(x, y, z, args, predict=False):
     #general formalities
     if predict:
         fname = f"{args.dataset}_prediction_p{args.polynomial[-1]}"
-        title = f"Preiction of raw data for P = {args.polynomial[-1]}"
+        title = f"Prediction of raw data for P = {args.polynomial[-1]}"
     else:
         fname = f"{args.dataset}_rawdata"
         title = "Raw data"
