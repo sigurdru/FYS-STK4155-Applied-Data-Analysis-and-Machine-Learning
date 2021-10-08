@@ -275,10 +275,10 @@ def Plot_BVT_lambda(result, args):
 
     c = np.linspace(0, 1, len(args.lmb))
     cmap = cm.coolwarm
-    for j, lmb in args.lmb:
-        ax.plot(P, result["test_errors"][:, j], c=cmap[c[j]], label=f"lambda: {lmb}")
-        ax.plot(P, result["test_biases"][:, j], c=cmap[c[j]], label=f"lambda: {lmb}")
-        ax.plot(P, result["test_vars"][:, j], c=cmap[c[j]], label=f"lambda: {lmb}")
+    for j, lmb in enumerate(args.lmb):
+        ax.plot(P, result["test_errors"][:, j], c=cmap(c[j]), label=f"lambda: {lmb}")
+        ax.plot(P, result["test_biases"][:, j], c=cmap(c[j]), label=f"lambda: {lmb}")
+        ax.plot(P, result["test_vars"][:, j], c=cmap(c[j]), label=f"lambda: {lmb}")
 
     xlabel = "Polynomial degree"
     ylabel = "Bias, variance and error"
