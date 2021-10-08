@@ -251,7 +251,7 @@ Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the di
 	\endminipage
 \end{figure}
 
-Note: kommenter plottene her
+Note: kommenter plottene her 
 
 \section*{Exercise 2: Bias-variance trade-off and bootstrapping}
 
@@ -273,7 +273,7 @@ Before we take a look at bias variance trade-off, we will derive the expressions
 \end{align*}
 where $\mathbb{E}$ is the expected value. % Sample value
 
-We can show that this can be written as \footnote{The derivation is given in Appendix A}
+We can show that this can be written as \footnote{The derivation is given in Appendix \ref{Apx:BVT}}
 
 \begin{align}
 \label{eq:bias_var_tradeoff}
@@ -341,7 +341,8 @@ Now we want to perform the same bootstrap analysis as we did for OLS (Exercise 2
 
 \appendix
 
-\section{Bias-variance Decomposition}
+
+\section{Bias-variance Decomposition}\label{Apx:BVT}
 
 We assume that our true data is generated from a noisy model with nromally distributed noise $\epsilon$ with a mean of zero and standard deviation $\sigma^2$, i.e.
 \begin{align*}
