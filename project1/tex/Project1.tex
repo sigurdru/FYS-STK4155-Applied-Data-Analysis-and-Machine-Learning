@@ -214,7 +214,7 @@ We can now perform OLS on our data and plot the MSE and $R^2$-score as a functio
 \end{figure}
 From figure \ref{fig:OLS_R2_and_MSE} we see that the MSE strictly decrease and $R^2$-score increase for the test data. This indicates that we have not reached a point of overfitting yet.
 
-It is also interesting to look at the variance in the parameters. We know that for a set of optimal parameters
+It is also interesting to look at the variance in the parameters, because this would give an indication of overfitting. We know that for a set of optimal parameters
 $\boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^T \vc{z}$,
 We have the expectation value
 \begin{equation*}
@@ -230,12 +230,10 @@ With this we can calculate the variance in $\boldsymbol{\hat{\beta}}$.
 \end{align*}
 Here we used $\mathbb{E} (\vc{z}\vc{z}^T) = X \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T X^T + \sigma^2\mathbb{1}$, where $\sigma^2 = \epsilon = 0.2$ is the variance of the noise and $\mathbb{1}$ is the identity. Now we have an estimate for the variance in parameter $\boldsymbol{\hat{\beta}}_{j}$ given by
 \begin{equation}
-	\boldsymbol{\sigma}^2(\boldsymbol{\hat{\beta}}_{j}) = \sigma^2 [(X^TX)^{-1}]_{jj}
+	\boldsymbol{\sigma}^2(\boldsymbol{\hat{\beta}}_{j}) = \sigma^2 [(X^TX)^{-1}]_{jj}.
 	\label{eq:var_OLS}
 \end{equation}
-Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the different parameters, for different polynomial degrees.
-
-
+Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the different parameters, for several polynomial degrees (see figure \ref{fig:var_beta}).
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{Var_OLS_poldeg_1.pdf}
@@ -250,8 +248,8 @@ Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the di
 	\caption{Here we have plotted the ideal parameters, for different polynomial degrees and with the confidence intervals. Top left figure has polynomial degree $p = 1$, top right $p = 3$ and bottom left $p = 5$. All the plots are of $\boldsymbol{\beta}$ as a function of the index in the vector. The confidence interval is $\pm 2\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$, where $\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$ is given by equation \eqref{eq:var_OLS}.} \label{fig:var_beta}
 	\endminipage
 \end{figure}
+We see in figure \ref{fig:var_beta} that the variance increases as a function of $p$. This is expected because we should get overfitting for higher polynomial degrees. For larger $p$ we also have more parameters to tune. This means that a change in one, could be compensated for by tuning the other parameters in the vicinity. We can see the result of this in the bottom left plot in figure \ref{fig:var_beta}. We observe a large variance in the middle, where we have a high density of parameters, and a lower variance on the edges. One also notices an comparatively low variance for the first parameter $\beta_0$, because the fixedd intercept.
 
-Note: kommenter plottene her 
 
 \section*{Exercise 2: Bias-variance trade-off and bootstrapping}
 
