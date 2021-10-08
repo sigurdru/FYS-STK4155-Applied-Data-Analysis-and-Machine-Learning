@@ -56,7 +56,7 @@ def show(fig, fname, args):
         plt.clf()
 
 
-def Plot_3DDataset(x, y, z, args):
+def Plot_3DDataset(x, y, z, args, predict=False):
     """3D plot the data and saves the plot in the output folder
         Either Franke funcprint(cm.hot(0.3))tion or terrain data
     Args:
@@ -83,9 +83,15 @@ def Plot_3DDataset(x, y, z, args):
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)
     #general formalities
-    fname = f"Frank_anal_eps_{args.epsilon}"
+    if predict:
+        fname = f"{args.dataset}_prediction_p{args.polynomial[-1]}"
+        title = f"Preiction of raw data for P = {args.polynomial[-1]}"
+    else:
+        fname = f"{args.dataset}_rawdata"
+        title = "Raw data"
+    if args.dataset == "Franke":
+        fname += f"_eps{args.epsilon}".replace(".", "")
     fname = fname.replace('.', '')  # remove dots from fname
-    title = 'Analytical plot of Franke\'s function'
     xlabel = '$x$'
     ylabel = '$y$'
     zlabel = '$f$'
@@ -270,11 +276,11 @@ def Plot_BVT_lambda(result, args):
     P = args.polynomial
 
     c = np.linspace(0, 1, len(args.lmb))
-    cmap = cm.coolwarm
-    for j, lmb in args.lmb:
-        ax.plot(P, result["test_errors"][:, j], c=cmap[c[j]], label=f"lambda: {lmb}")
-        ax.plot(P, result["test_biases"][:, j], c=cmap[c[j]], label=f"lambda: {lmb}")
-        ax.plot(P, result["test_vars"][:, j], c=cmap[c[j]], label=f"lambda: {lmb}")
+    cmap = cm.jet
+    for j, lmb in enumerate(args.lmb):
+        ax.plot(P, result["test_errors"][:, j], c=cmap(c[j]), label=f"MSE, lambda: {lmb}")
+        ax.plot(P, result["test_biases"][:, j], "--", c=cmap(c[j]), label="bias")
+        ax.plot(P, result["test_vars"][:, j], "-.", c=cmap(c[j]), label="variance")
 
     xlabel = "Polynomial degree"
     ylabel = "Bias, variance and error"
@@ -285,8 +291,8 @@ def Plot_BVT_lambda(result, args):
     fname += f"_eps{args.epsilon}_p{args.polynomial[-1]}"
     low = str(int(np.log10(args.lmb[0]))).replace("-", "m")
     high = str(int(np.log10(args.lmb[-1]))).replace("-", "m")
-    fname += f"_lmb{high}_{low}"
-    
+    fname += f"_lmb{low}_{high}"
+
     show(fig, fname, args)
 
 def Plot_2D_MSE(results, args):
@@ -296,14 +302,14 @@ def Plot_2D_MSE(results, args):
     fig, ax = plt.subplots()
     P, lmb = np.meshgrid(args.polynomial, np.log10(args.lmb))
     MSE = np.log10(results["test_MSE"].T)
-    F = ax.contourf(P, lmb, MSE, colormap=cm.coolwarm)
+    F = ax.contourf(P, lmb, MSE, cmap=cm.coolwarm)
     fig.colorbar(F)
 
     xlabel = "Polynomial degree"
     ylabel = "log10(lambda)"
-    title = ""
+    title = f"log10(MSE) for {args.method} as function of complexity and lambda"
     set_ax_info(ax, xlabel, ylabel, title)
-    
+
     fname = f"Contour_PL_{args.method}_n{args.num_points}_eps{args.epsilon}"
     ph = str(args.polynomial[-1])
     pl = str(args.polynomial[0])
