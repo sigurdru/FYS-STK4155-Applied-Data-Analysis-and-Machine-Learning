@@ -140,6 +140,12 @@ def parse_args(args=None):
             action="store_false",
             dest="show",
             )
+
+    add_arg("-pred", "--predict",
+            dest="pred",
+            action="store_true",
+            )
+
     parser.set_defaults(show=False)
 
     args = parser.parse_args(args)
