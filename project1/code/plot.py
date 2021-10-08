@@ -18,7 +18,6 @@ plt.rc('text', usetex=True)
 plt.rc('font', family='DejaVu Sans')
 path_plots = '../output/plots'
 
-print(cm.hot(0.3))
 def set_ax_info(ax, xlabel, ylabel, title=None, zlabel=None):
     """Write title and labels on an axis with the correct fontsizes.
 
@@ -84,10 +83,10 @@ def Plot_3DDataset(x, y, z, args, predict=False):
     fig.colorbar(surf, shrink=0.5, aspect=5)
     #general formalities
     if predict:
-        fname = f"{args.dataset}_prediction_p{args.polynomial[-1]}"
+        fname = f"prediction_p{args.polynomial[-1]}"
         title = f"Prediction of raw data for P = {args.polynomial[-1]}"
     else:
-        fname = f"{args.dataset}_rawdata"
+        fname = f"rawdata"
         title = "Raw data"
     if args.dataset == "Franke":
         fname += f"_eps{args.epsilon}".replace(".", "")
@@ -115,12 +114,24 @@ def Plot_error(MSE_test, MSE_train, args):
     ax.plot(args.polynomial, MSE_train, "ro--", label="Train MSE")
 
     # general formalities
-    fname = 'MSE_' + args.method \
-            + '_n' + str(args.num_points) \
-            + '_eps' + str(args.epsilon) \
-            + '_pol' + str(max(args.polynomial))
+    if args.dataset == "SRTM":
+        fname = 'MSE_' + args.method \
+                + '_n' + str(args.num_points) \
+                + '_pol' + str(max(args.polynomial))
+
+        title = 'Terrain data MSE for ' + args.method
+
+
+    else:
+        fname = 'MSE_' + args.method \
+                + '_n' + str(args.num_points) \
+                + '_eps' + str(args.epsilon) \
+                + '_pol' + str(max(args.polynomial))
+
+        title = 'MSE for ' + args.method
+
     fname = fname.replace('.','')  # remove dots from fname
-    title = 'MSE for ' + args.method
+
     if args.resampling != "None":
         title += " using " \
                  + args.resampling \
@@ -158,13 +169,25 @@ def Plot_R2(R2_test, R2_train, args):
     ax.plot(args.polynomial, R2_test, "bo--", label="Test R2")
     ax.plot(args.polynomial, R2_train, "ro--", label="Train R2")
     # general formalities
-    fname = 'R2_' + args.method \
-            + '_n' + str(args.num_points) \
-            + '_eps' + str(args.epsilon) \
-            + '_pol' + str(max(args.polynomial))
+
+    if args.dataset == "SRTM":
+        fname = 'R2_' + args.method \
+                + '_n' + str(args.num_points) \
+                + '_eps' + str(args.epsilon) \
+                + '_pol' + str(max(args.polynomial))
+        title = "Terrain data R2 score for " \
+                + args.method
+
+    else:
+        fname = 'R2_' + args.method \
+                + '_n' + str(args.num_points) \
+                + '_eps' + str(args.epsilon) \
+                + '_pol' + str(max(args.polynomial))
+
+        title = 'R2 score for ' \
+                + args.method
+
     fname = fname.replace('.', '') # remove dots from fname
-    title = 'R2 score for ' \
-            + args.method
     xlabel = 'Polynomial degree'
     ylabel = 'R2'
     set_ax_info(ax, xlabel, ylabel, title)
@@ -203,12 +226,21 @@ def Plot_bias_var_tradeoff(datas, args):
     title = 'Bias Variance Tradeoff for '+ args.method+', '\
              + args.resampling + ' iter = '+str(args.resampling_iter)
     set_ax_info(ax, xlabel, ylabel, title)
+
     # Saving figure
-    fname = 'BVT_' + args.method \
-            + '_n' + str(args.num_points) \
-            + '_eps' + str(args.epsilon)
+    if args.dataset == "SRTM":
+        fname = 'BVT_' + args.method \
+                + '_n' + str(args.num_points)
+        title = 'Terrain data: ' + title
+
+    else:
+        fname = 'BVT_' + args.method \
+                + '_n' + str(args.num_points) \
+                + '_eps' + str(args.epsilon)
+
     if args.method != "OLS":
         fname += '_lam_'+str(args.lmb[0])
+        
     fname = fname.replace('.', '_')
     print('Plotting Bias variance tradeoff: See %s.pdf' %(fname))
     show(fig, fname, args)
