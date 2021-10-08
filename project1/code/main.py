@@ -89,7 +89,7 @@ def parse_args(args=None):
     add_arg('-r', '--resampling',
             type=str,
             default='None',
-            choices=['None', 'Boot', 'CV'],
+            choices=['None', 'Bootstrap', 'CV'],
             help='Resamplingmethod: NoResampling, Bootstrap, Cross_Validation.',
             )
 

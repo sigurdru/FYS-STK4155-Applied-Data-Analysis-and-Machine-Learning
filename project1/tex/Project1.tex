@@ -259,10 +259,10 @@ Before we perform an analysis on the bias-variance trade-off, we want to take a 
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol20_Boot_re90.pdf}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol20_Bootstrap_re90.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10_Boot_re90.pdf}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10_Bootstrap_re90.pdf}
 	\endminipage
 	\caption{Overfitting, høyre med støy, venstre uten støy.}\label{fig:OLS_overfitting}
 \end{figure}
@@ -315,22 +315,38 @@ Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustr
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
 
-Now we want to perform the same bootstrap analysis as we did for OLS (Exercise 2). Here we also take a look at when we have overfitting, for different values of $\lambda$
+Now we want to perform the same bootstrap analysis as we did for OLS (Exercise 2). Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap.
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re5.pdf}
+	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol20_Bootstrap_re90_lam_0_0001.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re7.pdf}
+	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol20_Bootstrap_re90_lam_0_01.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re10.pdf}
+	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol20_Bootstrap_re90_lam_1_0.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10_CV_re10.pdf}
+	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol20_Bootstrap_re90_lam_100_0.pdf}
 	\endminipage
-	\caption{Plot av CV for OLS} \label{fig:Boot_overfitting}
+	\caption{Plot av MSE med BOOT for Ridge} \label{fig:Ridge_overfitting}
+\end{figure}
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_0_0001.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_0_01.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_1_0.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_100_0.pdf}
+	\endminipage
+	\caption{Plot av MSE med BOOT for Ridge} \label{fig:Ridge_CV}
 \end{figure}
 
 

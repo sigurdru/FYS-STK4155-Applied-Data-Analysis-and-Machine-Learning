@@ -114,11 +114,12 @@ def Plot_error(MSE_test, MSE_train, args):
             + '_eps' + str(args.epsilon) \
             + '_pol' + str(max(args.polynomial))
     fname = fname.replace('.','')  # remove dots from fname
-    title = 'Mean square error for ' + args.method
+    title = 'MSE for ' + args.method
     if args.resampling != "None":
         title += " using " \
-                 + args.resampling  + " with " \
-                 + f"iter = {args.resampling_iter}"
+                 + args.resampling \
+                 + f" iter = {args.resampling_iter}"
+        if args.method != "OLS": title += r', $\lambda$ = ' + str(args.lmb[0])
         fname += "_" + args.resampling + "_" + "re" \
                  + str(args.resampling_iter)
     if args.method != "OLS":
@@ -180,21 +181,21 @@ def Plot_bias_var_tradeoff(datas, args):
                 train_vars
         args (argparse): argparse containing information of method used
     """
-    print('Plotting Bias variance tradeoff: See output file.')
     # make figure and plot data
     fig, ax = plt.subplots()
 
     P = args.polynomial
-    ax.plot(P, datas["test_errors"], "bo-", label="test Error")
+    ax.plot(P, datas["test_errors"], "bo-", label="test MSE")
     ax.plot(P, datas["test_biases"], "ro-", label="test Bias")
     ax.plot(P, datas["test_vars"], "go-", label="test Variance")
-    ax.plot(P, datas["train_errors"], "bo--", label="train Error")
+    ax.plot(P, datas["train_errors"], "bo--", label="train MSE")
     ax.plot(P, datas["train_biases"], "ro--", label="train Bias")
     ax.plot(P, datas["train_vars"], "go--", label="train Variance")
     # General formalities
     xlabel = 'Polynomial degree'
-    ylabel = 'Bias, variance and error'
-    title = 'Bias Variance Tradeoff for ' + args.resampling
+    ylabel = 'Bias, variance and MSE'
+    title = 'Bias Variance Tradeoff for '+ args.method+', '\
+             + args.resampling + ' iter = '+str(args.resampling_iter)
     set_ax_info(ax, xlabel, ylabel, title)
     # Saving figure
     fname = 'BVT_' + args.method \
@@ -203,6 +204,7 @@ def Plot_bias_var_tradeoff(datas, args):
     if args.method != "OLS":
         fname += '_lam_'+str(args.lmb[0])
     fname = fname.replace('.', '_')
+    print('Plotting Bias variance tradeoff: See %s.pdf' %(fname))
     show(fig, fname, args)
 
 def Plot_lambda(results, args):
