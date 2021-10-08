@@ -1,5 +1,4 @@
 from collections import defaultdict
-from typing import DefaultDict
 import numpy as np
 from sklearn.model_selection import train_test_split as tts, KFold
 import utils
@@ -54,7 +53,7 @@ def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler, T
     test_pred = X_test @ beta
     train_pred = X_train @ beta
 
-    data = {}
+    data = defaultdict(lambda: 0)
     data["test_MSE"] = utils.MSE(z_test, test_pred)
     data["train_MSE"] = utils.MSE(z_train, train_pred)
     data["test_R2"] = utils.R2(z_test, test_pred)
@@ -70,7 +69,7 @@ def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
     if B is None:
         B = len(z_train)
 
-    data = DefaultDict(lambda:0)
+    data = defaultdict(lambda:0)
     test_pred = np.empty((z_test.shape[0], B))
     train_pred = np.empty((z_train.shape[0], B))
 

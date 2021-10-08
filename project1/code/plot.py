@@ -18,7 +18,7 @@ plt.rc('text', usetex=True)
 plt.rc('font', family='DejaVu Sans')
 path_plots = '../output/plots'
 
-
+print(cm.hot(0.3))
 def set_ax_info(ax, xlabel, ylabel, title=None, zlabel=None):
     """Write title and labels on an axis with the correct fontsizes.
 
@@ -58,7 +58,7 @@ def show(fig, fname, args):
 
 def Plot_3DDataset(x, y, z, args):
     """3D plot the data and saves the plot in the output folder
-        Either Franke function or terrain data
+        Either Franke funcprint(cm.hot(0.3))tion or terrain data
     Args:
         x (array):  x-data
         y (array):  y-data
@@ -205,7 +205,7 @@ def Plot_bias_var_tradeoff(datas, args):
     fname = fname.replace('.', '_')
     show(fig, fname, args)
 
-def Plot_BVT_lambda(results, args):
+def Plot_lambda(results, args):
     """ Plot test MSE as function of lambda, for different polynomial degrees
 
     Args:
@@ -213,7 +213,6 @@ def Plot_BVT_lambda(results, args):
                 First index goes over poly-degree
                 2nd index goes over lambda
     """
-    print("Hello")
     fig, ax = plt.subplots()
 
     lmbs = args.lmb
@@ -222,15 +221,12 @@ def Plot_BVT_lambda(results, args):
 
     xlabel = "log10(lambda-parameter)"
     ylabel = "Error"
-    title = f"Error as function of lambda-parameter using {args.method}"
+    title = f"Error as function of lambda-parameter using {args.method} and {args.resampling}"
     set_ax_info(ax, xlabel, ylabel, title)
-    fname = "LBVT_" + args.method \
+    fname = "lambdaMSE_" + args.method \
             + "_n" + str(args.num_points) \
             + "_eps" + str(args.epsilon)
     fname = fname.replace(".", "")
-
-    show(fig, fname, args)
-
 
 def Plot_VarOLS(args):
     """Here we plot the parameters for different polynomials
@@ -263,6 +259,58 @@ def Plot_VarOLS(args):
         show(fig,fname, args)
         print('Plotting variance in beta: See ' + fname + '.pdf')
 
+def Plot_BVT_lambda(result, args):
+    """
+    Plots BVT for as function of polynomial degree for different lambda
+    """
+    fig, ax = plt.subplots()
+
+    P = args.polynomial
+
+    c = np.linspace(0, 1, len(args.lmb))
+    cmap = cm.coolwarm
+    for j, lmb in args.lmb:
+        ax.plot(P, result["test_errors"][:, j], c=cmap[c[j]], label=f"lambda: {lmb}")
+        ax.plot(P, result["test_biases"][:, j], c=cmap[c[j]], label=f"lambda: {lmb}")
+        ax.plot(P, result["test_vars"][:, j], c=cmap[c[j]], label=f"lambda: {lmb}")
+
+    xlabel = "Polynomial degree"
+    ylabel = "Bias, variance and error"
+    title = f"BV-tradeoff for {args.method} for different lambda"
+    set_ax_info(ax, xlabel, ylabel, title)
+
+    fname = f"LBVT_{args.method}_n{args.num_points}"
+    fname += f"_eps{args.epsilon}_p{args.polynomial[-1]}"
+    low = str(int(np.log10(args.lmb[0]))).replace("-", "m")
+    high = str(int(np.log10(args.lmb[-1]))).replace("-", "m")
+    fname += f"_lmb{high}_{low}"
+    
+    show(fig, fname, args)
+
+def Plot_2D_MSE(results, args):
+    """
+    Plots contour map of MSE as function of polynomial degree and lambda
+    """
+    fig, ax = plt.subplots()
+    P, lmb = np.meshgrid(args.polynomial, np.log10(args.lmb))
+    MSE = np.log10(results["test_MSE"].T)
+    F = ax.contourf(P, lmb, MSE, colormap=cm.coolwarm)
+    fig.colorbar(F)
+
+    xlabel = "Polynomial degree"
+    ylabel = "log10(lambda)"
+    title = ""
+    set_ax_info(ax, xlabel, ylabel, title)
+    
+    fname = f"Contour_PL_{args.method}_n{args.num_points}_eps{args.epsilon}"
+    ph = str(args.polynomial[-1])
+    pl = str(args.polynomial[0])
+    lh = str(int(np.log10(args.lmb[0]))).replace("-", "m")
+    ll = str(int(np.log10(args.lmb[-1]))).replace("-", "m")
+    fname += f"_p{pl}_{ph}_lmb{ll}_{lh}"
+
+    show(fig, fname, args)
+
 if __name__ == "__main__":
     """
     Here we can plot Franke function with or withot noise,
@@ -281,5 +329,5 @@ if __name__ == "__main__":
     x, y = np.meshgrid(x, y)
     args = Argparse()
     z = utils.FrankeFunction(x, y, eps=args.epsilon)
-    Plot_FrankeFunction(x, y, z, args)
+    Plot_3DDataset(x, y, z, args)
     # Plot_VarOLS()

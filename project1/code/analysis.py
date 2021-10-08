@@ -8,10 +8,11 @@ import plot
 
 
 class NoneScaler(StandardScaler):
+    """ To have option of no scaling """
     def transform(self, x):
         return x
 
-
+# Dicts converting from string to callable functions
 reg_conv = {"OLS": Ordinary_least_squares, "Ridge": Ridge, "Lasso":Lasso}
 resampling_conv = {"None": NoResampling, "Boot": Bootstrap, "CV": cross_validation}
 scale_conv = {"None": NoneScaler(), "S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
@@ -54,11 +55,9 @@ def simple_regression(args):
     # Plotting the error, see output folder!
     plot.Plot_error(MSE_test=MSEs, MSE_train=MSE_train, args=args)
     plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
-    if args.method == "OLS" and args.dataset == "Franke":
-        """
-        For the first exer we want to make a plot of the
-        variance in the beta values.
-        """
+
+    if args.method == "OLS" and args.dataset == "Franke" and not args.show:
+        """ For Ex1 we want to make a plot of the variance in the beta values. """
         plot.Plot_VarOLS(args)
 
 
@@ -99,15 +98,17 @@ def bias_var_tradeoff(args, testing=False):
         return results
 
 
-def lambda_BVT(args):
+def lambda_analysis(args):
     """
-    Perform bias-variance trade-off analysis for different
-    values of lambda, as per last paragraph of Ex4
+    Performs lambda analysis
 
-    Should be used with Ridge or Lasso as regression methods
-    Should be used with Bootstrapping or CV as resampling methods
+    Should be used with Ridge and Lasso as regression methods
+    Should be used with bootstrapping or CV as resamling method
 
-    Plots MSE for test as function of complexity and lambda-parameter
+    If not too many polydegree:
+    Plots test MSE as function of lambda. Can be done for multiple polynomial degrees
+    If too many polydegree:
+    Plots a contour of MSE as function of complexity and lambda
     """
     P = args.polynomial
     lmbs = args.lmb
@@ -128,4 +129,42 @@ def lambda_BVT(args):
 
             results["test_MSE"][i][k] = data["test_MSE"]
 
+    if len(P) > 5:
+        plot.Plot_2D_MSE(results, args)
+    else:
+        plot.Plot_lambda(results, args)
+
+
+def BVT_lambda(args):
+    """
+    Perform bias-variance trade-off analysis for different
+    values of lambda, as per last paragraph of Ex4
+
+    Should be used with Ridge or Lasso as regression methods
+    Should be used with Bootstrapping resampling methods
+
+    Plots MSE for test as function of complexity for different lambda-parameter
+    """
+    P = args.polynomial
+    lmbs = args.lmb
+    scaler = scale_conv[args.scaling]
+
+    x, y, z = utils.load_data(args)
+
+    results = defaultdict(lambda: np.zeros((len(P), len(lmbs)), dtype=float))
+    resamp = resampling_conv[args.resampling]  # Should be bootstrapping
+
+    for i, p in enumerate(P):
+        print("p = ", p)
+        X = utils.create_X(x, y, p)
+
+        for k, lmb in enumerate(lmbs):
+            print("    lmb = ", lmb)
+            data = resamp(X, z, args.tts, args.resampling_iter, lmb, reg_conv[args.method], scaler)
+
+            results["test_errors"][i][k] = data["test_MSE"]
+            results["test_biases"][i][k] = data["test_bias"]
+            results["test_vars"][i][k] = data["test_variance"]
+
     plot.Plot_BVT_lambda(results, args)
+
