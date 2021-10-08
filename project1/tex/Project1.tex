@@ -178,13 +178,13 @@ MSE will always be larger than 0, and an MSE of 0 means our model fits the data 
 	C(\boldsymbol{\beta}) = MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}})
 \end{equation*}
 Minimizing this is done by doing the derivative with respect to all the parameters, and finding the zero.
-\begin{equation*}
+\begin{equation}\label{eq:Const_OLS}
 	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} \equiv 0 = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
-\end{equation*}
+\end{equation}
 We can rewrite this as
-\begin{equation*}
+\begin{equation}\label{eq:OLS_beta}
 	X^T\vc{z} = X^TX\boldsymbol{\tilde{\beta}} \implies \boldsymbol{\tilde{\beta}} = (X^TX)^{-1} X^T \vc{z} \equiv \boldsymbol{\hat{\beta}}
-\end{equation*}
+\end{equation}
 This is OLS-regression. Thus $\boldsymbol{\hat{\beta}}$ are the optimal parameters that minimizes the cost function.
 
 Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
@@ -214,7 +214,7 @@ We can now perform OLS on our data and plot the MSE and $R^2$-score as a functio
 \end{figure}
 From figure \ref{fig:OLS_R2_and_MSE} we see that the MSE strictly decrease and $R^2$-score increase for the test data. This indicates that we have not reached a point of overfitting yet.
 
-It is also interesting to look at the variance in the parameters. We know that for a set of optimal parameters
+It is also interesting to look at the variance in the parameters, because this would give an indication of overfitting. We know that for a set of optimal parameters
 $\boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^T \vc{z}$,
 We have the expectation value
 \begin{equation*}
@@ -230,12 +230,10 @@ With this we can calculate the variance in $\boldsymbol{\hat{\beta}}$.
 \end{align*}
 Here we used $\mathbb{E} (\vc{z}\vc{z}^T) = X \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T X^T + \sigma^2\mathbb{1}$, where $\sigma^2 = \epsilon = 0.2$ is the variance of the noise and $\mathbb{1}$ is the identity. Now we have an estimate for the variance in parameter $\boldsymbol{\hat{\beta}}_{j}$ given by
 \begin{equation}
-	\boldsymbol{\sigma}^2(\boldsymbol{\hat{\beta}}_{j}) = \sigma^2 [(X^TX)^{-1}]_{jj}
+	\boldsymbol{\sigma}^2(\boldsymbol{\hat{\beta}}_{j}) = \sigma^2 [(X^TX)^{-1}]_{jj}.
 	\label{eq:var_OLS}
 \end{equation}
-Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the different parameters, for different polynomial degrees.
-
-
+Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the different parameters, for several polynomial degrees (see figure \ref{fig:var_beta}).
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{Var_OLS_poldeg_1.pdf}
@@ -250,8 +248,8 @@ Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the di
 	\caption{Here we have plotted the ideal parameters, for different polynomial degrees and with the confidence intervals. Top left figure has polynomial degree $p = 1$, top right $p = 3$ and bottom left $p = 5$. All the plots are of $\boldsymbol{\beta}$ as a function of the index in the vector. The confidence interval is $\pm 2\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$, where $\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$ is given by equation \eqref{eq:var_OLS}.} \label{fig:var_beta}
 	\endminipage
 \end{figure}
+We see in figure \ref{fig:var_beta} that the variance increases as a function of $p$. This is expected because we should get overfitting for higher polynomial degrees. For larger $p$ we also have more parameters to tune. This means that a change in one, could be compensated for by tuning the other parameters in the vicinity. We can see the result of this in the bottom left plot in figure \ref{fig:var_beta}. We observe a large variance in the middle, where we have a high density of parameters, and a lower variance on the edges. One also notices an comparatively low variance for the first parameter $\beta_0$, because the fixedd intercept.
 
-Note: kommenter plottene her
 
 \section*{Exercise 2: Bias-variance trade-off and bootstrapping}
 
@@ -314,6 +312,7 @@ Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustr
 
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
+In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by subtracting a small number $\lambda$ from the diagonal, the matrix is no longer singular. This is called Ridge regression. The cost function is
 
 Now we want to perform the same bootstrap analysis as we did for OLS (Exercise 2). Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap.
 
