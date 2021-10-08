@@ -52,7 +52,7 @@ def simple_regression(args):
         R2s[i] = data["test_R2"]
         R2_train[i] = data["train_R2"]
 
-    #Plotting the error, see output folder!
+    # Plotting the error, see output folder!
     plot.Plot_error(MSE_test=MSEs, MSE_train=MSE_train, args=args)
     plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
 
