@@ -14,7 +14,7 @@ class NoneScaler(StandardScaler):
 
 # Dicts converting from string to callable functions
 reg_conv = {"OLS": Ordinary_least_squares, "Ridge": Ridge, "Lasso":Lasso}
-resampling_conv = {"None": NoResampling, "Boot": Bootstrap, "CV": cross_validation}
+resampling_conv = {"None": NoResampling, "Bootstrap": Bootstrap, "CV": cross_validation}
 scale_conv = {"None": NoneScaler(), "S": StandardScaler(), "N": Normalizer(), "M": MinMaxScaler()}
 
 
