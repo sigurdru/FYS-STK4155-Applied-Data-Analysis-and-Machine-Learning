@@ -83,8 +83,8 @@ def Plot_3DDataset(x, y, z, args, predict=False):
     fig.colorbar(surf, shrink=0.5, aspect=5)
     #general formalities
     if predict:
-        fname = f"prediction_p{args.polynomial[-1]}"
-        title = f"Prediction of raw data for P = {args.polynomial[-1]}"
+        fname = "prediction_p" + str(max(args.polynomial))
+        title = f"Prediction of raw data for P = {max(args.polynomial)}"
     else:
         fname = f"rawdata"
         title = "Raw data"
