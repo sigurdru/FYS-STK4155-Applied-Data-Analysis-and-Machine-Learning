@@ -33,7 +33,7 @@ def simple_regression(args):
 
     x, y, z = utils.load_data(args)
 
-    # plot.Plot_3DDataset(x, y, z, args)
+    plot.Plot_3DDataset(x, y, z, args)
 
     MSEs = np.zeros(len(P))
     MSE_train = np.zeros(len(P))
@@ -55,6 +55,9 @@ def simple_regression(args):
     # Plotting the error, see output folder!
     plot.Plot_error(MSE_test=MSEs, MSE_train=MSE_train, args=args)
     plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
+
+    beta = data["beta"]
+    plot.Plot_3DDataset(x, y, X @ beta, args, predict=True)
 
     if args.method == "OLS" and args.dataset == "Franke" and not args.show:
         """ For Ex1 we want to make a plot of the variance in the beta values. """
