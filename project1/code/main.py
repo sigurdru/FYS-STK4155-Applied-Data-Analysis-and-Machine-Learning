@@ -146,6 +146,11 @@ def parse_args(args=None):
             action="store_true",
             )
 
+    add_arg("-log",
+            action="store_true",
+            dest="log",
+            )
+
     parser.set_defaults(show=False)
 
     args = parser.parse_args(args)

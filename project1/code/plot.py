@@ -144,7 +144,12 @@ def Plot_error(MSE_test, MSE_train, args):
         fname = fname.replace('.','_')
     xlabel = 'Polynomial degree'
     ylabel = 'MSE'
+
+
     set_ax_info(ax, xlabel, ylabel, title)
+    if args.log:
+        ax.set_yscale('log')
+        fname += '_log'
 
     # save figure
     print('Plotting error: See ' + fname + '.pdf')
@@ -240,7 +245,7 @@ def Plot_bias_var_tradeoff(datas, args):
 
     if args.method != "OLS":
         fname += '_lam_'+str(args.lmb[0])
-        
+
     fname = fname.replace('.', '_')
     print('Plotting Bias variance tradeoff: See %s.pdf' %(fname))
     show(fig, fname, args)
