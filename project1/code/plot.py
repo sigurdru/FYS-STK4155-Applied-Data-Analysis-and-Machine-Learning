@@ -232,6 +232,7 @@ def Plot_bias_var_tradeoff(datas, args):
              + args.resampling + ' iter = '+str(args.resampling_iter)
     set_ax_info(ax, xlabel, ylabel, title)
 
+
     # Saving figure
     if args.dataset == "SRTM":
         fname = 'BVT_' + args.method \
@@ -245,6 +246,10 @@ def Plot_bias_var_tradeoff(datas, args):
 
     if args.method != "OLS":
         fname += '_lam_'+str(args.lmb[0])
+
+    if args.log:
+        ax.set_yscale('log')
+        fname += '_log'
 
     fname = fname.replace('.', '_')
     print('Plotting Bias variance tradeoff: See %s.pdf' %(fname))

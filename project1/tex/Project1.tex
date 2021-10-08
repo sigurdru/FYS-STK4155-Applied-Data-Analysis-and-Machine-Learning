@@ -367,8 +367,7 @@ Now we want to perform the same bootstrap analysis as we did for OLS (Exercise 2
 \end{figure}
 
 
-MSE bootstrap
-
+OLS MSE bootstrap
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol25_Bootstrap_re50_log.pdf}
@@ -378,6 +377,32 @@ MSE bootstrap
 	\endminipage
 	\caption{n50 log til venstre. n15 til høyre}
   \label{fig:terrain_OLS_MSE_bootstrap}
+\end{figure}
+
+
+OLS MSE CV
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol10_CV_re5.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol10_CV_re10.pdf}
+	\endminipage
+	\caption{k-fold 5 til venstre. k-fold 10 til høyre}
+  \label{fig:terrain_OLS_MSE_CV}
+\end{figure}
+
+
+OLS BVT Boot
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SRTM_BVT_OLS_n50_log.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SRTM_BVT_OLS_n15.pdf}
+	\endminipage
+	\caption{n50 log til venstre. n15 til høyre}
+  \label{fig:terrain_OLS_BVT}
 \end{figure}
 
 
