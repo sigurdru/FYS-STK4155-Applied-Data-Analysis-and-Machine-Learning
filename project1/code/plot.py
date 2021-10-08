@@ -274,11 +274,11 @@ def Plot_BVT_lambda(result, args):
     P = args.polynomial
 
     c = np.linspace(0, 1, len(args.lmb))
-    cmap = cm.coolwarm
+    cmap = cm.jet
     for j, lmb in enumerate(args.lmb):
-        ax.plot(P, result["test_errors"][:, j], c=cmap(c[j]), label=f"lambda: {lmb}")
-        ax.plot(P, result["test_biases"][:, j], c=cmap(c[j]), label=f"lambda: {lmb}")
-        ax.plot(P, result["test_vars"][:, j], c=cmap(c[j]), label=f"lambda: {lmb}")
+        ax.plot(P, result["test_errors"][:, j], c=cmap(c[j]), label=f"MSE, lambda: {lmb}")
+        ax.plot(P, result["test_biases"][:, j], "--", c=cmap(c[j]), label="bias")
+        ax.plot(P, result["test_vars"][:, j], "-.", c=cmap(c[j]), label="variance")
 
     xlabel = "Polynomial degree"
     ylabel = "Bias, variance and error"
@@ -289,7 +289,7 @@ def Plot_BVT_lambda(result, args):
     fname += f"_eps{args.epsilon}_p{args.polynomial[-1]}"
     low = str(int(np.log10(args.lmb[0]))).replace("-", "m")
     high = str(int(np.log10(args.lmb[-1]))).replace("-", "m")
-    fname += f"_lmb{high}_{low}"
+    fname += f"_lmb{low}_{high}"
 
     show(fig, fname, args)
 
