@@ -54,6 +54,7 @@ def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler, T
     train_pred = X_train @ beta
 
     data = defaultdict(lambda: 0)
+    data["beta"] = beta
     data["test_MSE"] = utils.MSE(z_test, test_pred)
     data["train_MSE"] = utils.MSE(z_train, train_pred)
     data["test_R2"] = utils.R2(z_test, test_pred)
