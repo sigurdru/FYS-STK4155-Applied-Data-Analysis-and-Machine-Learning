@@ -57,10 +57,9 @@ def show(fig, fname, args):
         plt.clf()
 
 
-def Plot_FrankeFunction(x, y, z, args):
-    """Plot the Franke function and saves the plot in the output
-    folder
-
+def Plot_3DDataset(x, y, z, args):
+    """3D plot the data and saves the plot in the output folder
+        Either Franke function or terrain data
     Args:
         x (array):  x-data
         y (array):  y-data

@@ -32,7 +32,7 @@ def simple_regression(args):
 
     x, y, z = utils.load_data(args)
 
-    # plot.Plot_FrankeFunction(x, y, z, args)
+    # plot.Plot_3DDataset(x, y, z, args)
 
     MSEs = np.zeros(len(P))
     MSE_train = np.zeros(len(P))
