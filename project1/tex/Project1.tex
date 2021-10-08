@@ -178,13 +178,13 @@ MSE will always be larger than 0, and an MSE of 0 means our model fits the data 
 	C(\boldsymbol{\beta}) = MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}})
 \end{equation*}
 Minimizing this is done by doing the derivative with respect to all the parameters, and finding the zero.
-\begin{equation*}
+\begin{equation}\label{eq:Const_OLS}
 	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} \equiv 0 = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
-\end{equation*}
+\end{equation}
 We can rewrite this as
-\begin{equation*}
+\begin{equation}\label{eq:OLS_beta}
 	X^T\vc{z} = X^TX\boldsymbol{\tilde{\beta}} \implies \boldsymbol{\tilde{\beta}} = (X^TX)^{-1} X^T \vc{z} \equiv \boldsymbol{\hat{\beta}}
-\end{equation*}
+\end{equation}
 This is OLS-regression. Thus $\boldsymbol{\hat{\beta}}$ are the optimal parameters that minimizes the cost function.
 
 Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
@@ -312,6 +312,7 @@ Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustr
 
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
+In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by subtracting a small number $\lambda$ from the diagonal, the matrix is no longer singular. This is called Ridge regression. The cost function is
 
 Now we want to perform the same bootstrap analysis as we did for OLS (Exercise 2). Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap.
 
