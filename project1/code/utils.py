@@ -85,12 +85,14 @@ def load_data(args):
             path = args.data_file
 
         # numbers stolen from other group, can be changed
-        xstart = 2000
-        ystart = 0
+        xstart = 50
+        ystart = 50
 
         terrain = imageio.imread(path)
         # to not deal with too large image, only NxN
-        terrain = terrain[xstart: xstart + N, ystart: ystart + N]
+        if N != 0:
+            # Plot entire terrain map by setting N=0 
+            terrain = terrain[xstart: xstart + N, ystart: ystart + N]
         nx, ny = terrain.shape
         x = np.sort(np.random.uniform(size=nx))
         y = np.sort(np.random.uniform(size=ny))
