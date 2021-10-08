@@ -167,4 +167,3 @@ def BVT_lambda(args):
             results["test_vars"][i][k] = data["test_variance"]
 
     plot.Plot_BVT_lambda(results, args)
-

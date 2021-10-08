@@ -284,7 +284,7 @@ def Plot_BVT_lambda(result, args):
     low = str(int(np.log10(args.lmb[0]))).replace("-", "m")
     high = str(int(np.log10(args.lmb[-1]))).replace("-", "m")
     fname += f"_lmb{high}_{low}"
-    
+
     show(fig, fname, args)
 
 def Plot_2D_MSE(results, args):
@@ -301,7 +301,7 @@ def Plot_2D_MSE(results, args):
     ylabel = "log10(lambda)"
     title = ""
     set_ax_info(ax, xlabel, ylabel, title)
-    
+
     fname = f"Contour_PL_{args.method}_n{args.num_points}_eps{args.epsilon}"
     ph = str(args.polynomial[-1])
     pl = str(args.polynomial[0])
