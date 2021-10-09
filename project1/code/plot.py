@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys, os, re
 
+import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from matplotlib import cm
@@ -48,6 +49,7 @@ def show(fig, fname, args):
         print("Terrain data: \'SRTM_\' added at beginning of plot file name")
         fname = "SRTM_" + fname
 
+    print("Saving plot: ", fname + ".pdf")
     fig.savefig(os.path.join(path_plots, fname + '.pdf'))
     if args.show:
         plt.show()
@@ -341,6 +343,8 @@ def Plot_BVT_lambda(result, args):
     fname += f"_lmb{low}_{high}"
     fname = fname.replace(".", "_")
     print("Plotting lambda BVT: see ", fname, ".pdf")
+
+    fig.tight_layout()
     show(fig, fname, args)
 
 def Plot_2D_MSE(results, args):
@@ -350,8 +354,13 @@ def Plot_2D_MSE(results, args):
     fig, ax = plt.subplots()
     P, lmb = np.meshgrid(args.polynomial, np.log10(args.lmb))
     MSE = np.log10(results["test_MSE"].T)
-    F = ax.contourf(P, lmb, MSE, cmap=cm.coolwarm)
-    fig.colorbar(F)
+
+    F = ax.contourf(P, lmb, MSE, cmap="jet")
+    norm = mpl.colors.Normalize(vmin=F.cvalues.min(), vmax=F.cvalues.max())
+    bar = mpl.cm.ScalarMappable(norm=norm, cmap=F.cmap)
+    bar.set_array([])
+    fig.colorbar(bar, ticks=F.levels)
+
 
     xlabel = "Polynomial degree"
     ylabel = "log10(lambda)"
