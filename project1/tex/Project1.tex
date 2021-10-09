@@ -253,7 +253,7 @@ We see in figure \ref{fig:var_beta} that the variance increases as a function of
 
 \section*{Exercise 2: Bias-variance trade-off and bootstrapping}
 
-Here we want to evaluate OLS using bootstrapping as a resampling technique. Bootstrap is a way of simulating having more data than you actually have, by reusing the same data. Lets say you have $N$ datapoints, then you would draw $N$-times, placing back the datapoint each time. Then perform the regression analysis, and repeat this process $B$-times. By placing back the datapoints, you would in many cases use the same datapoint several times. 
+Here we want to evaluate OLS using bootstrapping as a resampling technique. Bootstrap is a way of simulating having more data than you actually have, by reusing the same data. Lets say you have $N$ datapoints, then you would draw $N$-times, placing back the datapoint each time. Then perform the regression analysis, and repeat this process $B$-times. By placing back the datapoints, you would in many cases use the same datapoint several times.
 
 Now, with bootstrapping, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. Thus in figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for $p_\text{max} = 20$, using $B=90$ resampling iterations. The left plot shows an indication of overfitting at polynomial degree $p = 9$. Thus on the right hand plot we have displayed the MSE for $p_\text{max} = 10$, and as expected we see overfitting at $p=9$. One unexpected result is the sharp increase and decrease in MSE. This indicates that our model is much better for some polynomial degrees than others. The sharp fluctuations can be explained by the surge in complexity from one polynomial degree to the next. This is displayed in figure \ref{fig:var_beta}, when we increase the polynomial degree by two, the number of parameters more than double.
 
@@ -294,7 +294,13 @@ As expected we se an increase in MSE and variance for the test data, when we sta
 
 \section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
 
-Here we have implemented cross-validation as the resampling technique. This works by first shuffling the data randomly, then split the data into $k$ different groups. We can then decide on one group to be the test-data and perform linear regression on the rest. After that we can calculate the MSE, and repeat this process $k$-times. The final MSE would then be the mean MSE, after all the iterations. In figure \ref{fig:CV_OLS} we have done this, trying for $k = [5,7,10]$. 
+<<<<<<< HEAD
+Here we have implemented cross-validation as the resampling technique. They way
+
+Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustrerer hvordan alle blir blæsta når man har høye polynomgrader, dette gjelder på tvers av alle.
+=======
+Here we have implemented cross-validation as the resampling technique. This works by first shuffling the data randomly, then split the data into $k$ different groups. We can then decide on one group to be the test-data and perform linear regression on the rest. After that we can calculate the MSE, and repeat this process $k$-times. The final MSE would then be the mean MSE, after all the iterations. In figure \ref{fig:CV_OLS} we have done this, trying for $k = [5,7,10]$.
+>>>>>>> 509b66630b4edff8d88deb9f25d28775cd48163d
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -357,40 +363,57 @@ Now we want to perform the same bootstrap analysis as we did for OLS (Exercise 2
 
 \section*{Exercise 6: Analysis of real data}
 
-Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider terrain data from Norway !HVOR?!
+Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider terrain data from Norway !HVOR?!. The terrain data we consider is shown in figure \ref{fig:terrain_raw}.
 
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{SRTM_rawdata_n50.pdf}
+  \caption{Raw terrain data}
+  \label{fig:terrain_raw}
+\end{figure}
 
+We begin by studying the mean squared error with OLS-regression, where we use the bootstrap resampling method with $50$ resampling iterations. For our original data set with $50$ data points in both directions, we consider polynomials up to a maximum degree of $25$. The resulting mean squared error is shown on the left panel in figure \ref{fig:terrain_OLS_MSE_bootstrap} with a logarithmic y-axis. Using a data set with $50\cross50$ data points yields a little noticeable change in the mean squared error, but we see a potential overfitting occuring for $P>15$. To see that we get overfitting for the terrain data eventually, we plot the mean squared error for the same resampling method, but with $n=10$ points in each direction up to a polynomial degree of $P=10$, shown on the right panel in figure \ref{fig:terrain_OLS_MSE_bootstrap}. Here, we can see an evident overfitting starting to occur for polynomial degrees greater than $6$.
 
-3D terrain plots
+\begin{figure}[H]
+  \minipage{0.49\textwidth}
+  \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol25_Bootstrap_re50_log.pdf}
+  \endminipage\hfill
+  \minipage{0.49\textwidth}
+  \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n15_pol10_Bootstrap_re50.pdf}
+  \endminipage
+  \caption{n50 log til venstre. n15 til høyre}
+  \label{fig:terrain_OLS_MSE_bootstrap}
+\end{figure}
+
+As a simple sanity check, we plot the result of our fits for different polynomial degrees, which we can compare to the original data from figure \ref{fig:terrain_raw}. To capture the complexity of our data set, we consider four polynomial degrees, using $P\in[10,\,20,\,30,\,50]$, where the first two are shown in the upper left and right panel of figure \ref{fig:terrain_fit}, respectively, while the latter two in the bottom left and right panel of the same figure, respectively.
+
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_rawdata_n50.pdf}
+	\includegraphics[width=\linewidth]{SRTM_prediction_p10.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SRTM_prediction_p20.pdf}
 	\endminipage\hfill
   \minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_prediction_p25.pdf}
+	\includegraphics[width=\linewidth]{SRTM_prediction_p30.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_prediction_p30.pdf}
+	\includegraphics[width=\linewidth]{SRTM_prediction_p50.pdf}
 	\endminipage
 	\caption{Data til venstre. Fit til høyre}
-  \label{fig:terrain_raw_fit}
+  \label{fig:terrain_fit}
 \end{figure}
 
-OLS MSE bootstrap
+In figure \ref{fig:terrain_fit} we see that $P=10$ gives a decent fit, as it encaptures the essential structure of the terrain. It does, however, miss out on essentially all of the rough details of the landscape. We also notice that important structures are missing, which can be seen from the missing elevation around $x=1$ and $y=0.8$, which is present in the other three fits. Using $P=20$ we are able to reproduce more nuanced structures, while most of the rough edges are still left out. Increasing up to $P=30$ does not change the fit much, other than a few more details at certain points. Finally, we study the resulting fit with $P=50$. Although it provides some more rough futures of the terrain, it illustrates some difficulties of the fitting. The shape of the mointain top at $x=1$ and $y=1$ is no longer consisitent with the original terrain data, and we git a tiny vally around $x=1$ and $y=0.8$, which is not an actual feature of the terrain data. Still, there are details missing along the $x$-axis at $y=1$, and the structure of the two peaks at $y=0$ is still not being represented accurately. We emphasize that the misrepresentations obtained with $P=50$ might be a consequence of the splitting of train and test data, as well as that prticalur ploynomial degree. However, we are still not able to accurately predict important structures of the terrain.
+
+We also include a plot of the mean squared error with bootstrap resampling for each factor $5$ polynomial degree from $p=5$ up to $P=50$, shown in figure \ref{fig:terrain_MSE_bootstrap_p50}.
+
 \begin{figure}[H]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol25_Bootstrap_re50_log.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n15_pol10_Bootstrap_re50.pdf}
-	\endminipage
-	\caption{n50 log til venstre. n15 til høyre}
-  \label{fig:terrain_OLS_MSE_bootstrap}
+  \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol50_Bootstrap_re50.pdf}
+  \caption{MSE}
+  \label{fig:terrain_MSE_bootstrap_p50}
 \end{figure}
 
+This illustrates the difficulties of fitting this terrain data, as subtle structures will still be missing in our fitted model, despite using polynomial degrees where overfitting is taking place.
 
 OLS MSE CV
 \begin{figure}[H]
