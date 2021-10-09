@@ -443,7 +443,7 @@ Using the bootstrap method for resampling, we perform a Bias-variance trade-off.
 
 \section{Bias-variance Decomposition}\label{Apx:BVT}
 
-We assume that our true data is generated from a noisy model with nromally distributed noise $\epsilon$ with a mean of zero and standard deviation $\sigma^2$, i.e.
+We assume that our true data is generated from a noisy model with normally distributed noise $\epsilon$ with a mean of zero and standard deviation $\sigma^2$, i.e.
 \begin{align*}
   \mathbf{y} &= f(\mathbf{x}) + \bm{\epsilon}
 \end{align*}
@@ -458,6 +458,7 @@ We have approximated this function with our design matrix $\mathbf{X}$ and our p
 where $\mathbb{E}$ is the expected value. % Note sample value
 
 We want to show that the above expression can be written as
+NoteNOTE: husk å definer alt, skriv i t
 
 \begin{align*}
   \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expy)^2 + \frac{1}{n}\sum_i (\tilde{y}_i - \expy )^2 + \sigma^2
