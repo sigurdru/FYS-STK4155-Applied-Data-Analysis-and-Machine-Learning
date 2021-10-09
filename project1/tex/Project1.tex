@@ -331,7 +331,9 @@ In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singu
 \begin{equation}
 	\boldsymbol{\hat{\beta}} = (X^TX-\lambda I)X^T\vc{z},
 \end{equation}
-where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, so finding the optimal is paramount. This is done by running the regression for many different values of $\lambda$ and choosing the one giving the best results. Now we want to perform the same bootstrap analysis as we did for OLS, using Ridge. Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap.
+where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, so finding the optimal is paramount. This is done by running the regression for many different values of $\lambda$ and choosing the one giving the best results.
+
+Now we want to perform the same bootstrap analysis as we did for OLS, using Ridge. Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap. Figure \ref{fig:Ridge_boot_PM} shows MSE as function of polynomial degree for 4 different values of $\lambda$, starting at $10^-4$, increasing with a factor of 100 for each plot. We see that test error varies a lot.
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -346,7 +348,7 @@ where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, s
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol20_Bootstrap_re90_lam_100_0.pdf}
 	\endminipage
-	\caption{Plot av MSE med BOOT for Ridge} \label{fig:Ridge_overfitting}
+	\caption{MSE using Ridgeregression and bootstrapping, as function of complexity, for different values of $\lambda$.} \label{fig:Ridge_boot_PM}
 \end{figure}
 
 \begin{figure}[H]
@@ -362,7 +364,7 @@ where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, s
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_100_0.pdf}
 	\endminipage
-	\caption{Plot av MSE med BOOT for Ridge} \label{fig:Ridge_CV}
+	\caption{MSE using Ridgeregression and cross-validation, as function of complexity, for different values of $\lambda$.} \label{fig:Ridge_CV_PM}
 \end{figure}
 
 
