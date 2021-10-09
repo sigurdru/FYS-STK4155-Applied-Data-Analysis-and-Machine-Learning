@@ -275,5 +275,6 @@ def plot_test_func():
 plot_test_func()
 test_OLS()
 test_Ridge()
-# test_BV(169)
-# test_BV(170)
+test_BV(169)
+utils.np.random.seed(7132)
+test_BV(170)
