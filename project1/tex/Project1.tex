@@ -294,13 +294,7 @@ As expected we se an increase in MSE and variance for the test data, when we sta
 
 \section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
 
-<<<<<<< HEAD
-Here we have implemented cross-validation as the resampling technique. They way
-
-Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustrerer hvordan alle blir blæsta når man har høye polynomgrader, dette gjelder på tvers av alle.
-=======
 Here we have implemented cross-validation as the resampling technique. This works by first shuffling the data randomly, then split the data into $k$ different groups. We can then decide on one group to be the test-data and perform linear regression on the rest. After that we can calculate the MSE, and repeat this process $k$-times. The final MSE would then be the mean MSE, after all the iterations. In figure \ref{fig:CV_OLS} we have done this, trying for $k = [5,7,10]$.
->>>>>>> 509b66630b4edff8d88deb9f25d28775cd48163d
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -517,10 +511,10 @@ We test the implementation of OLS and Ridge regression. For Lasso we already use
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
 	\endminipage
-	\caption{}
+	\caption{In this figure we have plotted the test and train MSE for both OLS (left plot) and Ridge regression (right plot). Along the $x$-axis we have polynomial degree, and MSE along the $y$-axis. The blue and red dashed line is the sklearn MSE respectively. We plotted our test and train MSE as red and blue dots respectively.}
 	\label{fig:test_OLS_Ridge}
 \end{figure}
-
+Looking at figure \ref{fig:test_OLS_Ridge}, our OLS implementation returns indistinguishable MSE's compared to sklearn. For ridge however we see some small deviations at polynomial degrees $p=7$ and $p = 13$. The strong correspondence makes us confident that our implementations are correct, however, we one should be wary that our results deviate at some polynomial degrees. This is probably due to optimizations that the professional library sklearn has done. 
 
 
 \section{Testing Bias Variance Tradeoff}\label{Apx:testing_BVT}
