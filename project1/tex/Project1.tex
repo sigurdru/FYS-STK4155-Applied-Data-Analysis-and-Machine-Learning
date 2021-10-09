@@ -129,7 +129,7 @@ We have also written code to test our implementation of the methods, where we co
 
 \section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
 
-We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, \eqref{eq:FF} takes values \(z\in[-0.45, \hspace{1mm} 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is visualized in figure \ref{fig:FF_dataset}.
+We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. Equation \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, \eqref{eq:FF} takes values \(z\in[-0.45, \hspace{1mm} 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is visualized in figure \ref{fig:FF_dataset}.
 
 \begin{figure}[!htb]
 	\minipage{0.49\textwidth}
@@ -147,7 +147,7 @@ We are fitting a bivariate polynomial of degree $P$. With $P$ as the highest pol
 \begin{equation}\label{eq:zpolynm}
 	z(x, y) = \beta_0 + \beta_1x + \beta_2y + \beta_3x^2 + \beta_4xy + \beta_5y^2 + \dots
 \end{equation}
-where the $\beta$-parameters are coefficients for each term. The $x$ and $y$s are collected in a design matrix $X$. The columns of $X$ are the terms, while the rows are all terms for a single datapoint. $X$ thus have size $(n^2\cross p)$. The $\beta$s are collected in a vector $\boldsymbol{\beta}$ of length $p$. This is unknown.
+where the $\beta$-parameters are coefficients for each term. The $x$ and $y$'s are collected in a design matrix $X$. The columns of $X$ are the terms, while the rows are all terms for a single datapoint. $X$ thus have size $(n^2\cross p)$. The $\beta$s are collected in a vector $\boldsymbol{\beta}$ of length $p$. This is unknown.
 
 Thus, out model with stochastic noise takes the form
 \begin{equation}
@@ -248,14 +248,14 @@ Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the di
 	\caption{Here we have plotted the ideal parameters, for different polynomial degrees and with the confidence intervals. Top left figure has polynomial degree $p = 1$, top right $p = 3$ and bottom left $p = 5$. All the plots are of $\boldsymbol{\beta}$ as a function of the index in the vector. The confidence interval is $\pm 2\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$, where $\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$ is given by equation \eqref{eq:var_OLS}.} \label{fig:var_beta}
 	\endminipage
 \end{figure}
-We see in figure \ref{fig:var_beta} that the variance increases as a function of $p$. This is expected because we should get overfitting for higher polynomial degrees. For larger $p$ we also have more parameters to tune. This means that a change in one, could be compensated for by tuning the other parameters in the vicinity. We can see the result of this in the bottom left plot in figure \ref{fig:var_beta}. We observe a large variance in the middle, where we have a high density of parameters, and a lower variance on the edges. One also notices an comparatively low variance for the first parameter $\beta_0$, because the fixedd intercept.
+We see in figure \ref{fig:var_beta} that the variance increases as a function of $p$. This is expected because we should get overfitting for higher polynomial degrees. For larger $p$ we also have more parameters to tune. This means that a change in one, could be compensated for by tuning the other parameters in the vicinity. We can see the result of this in the bottom left plot in figure \ref{fig:var_beta}. We observe a large variance in the middle, where we have a high density of parameters, and a lower variance on the edges. One also notices an comparatively low variance for the first parameter $\beta_0$, because the fixed intercept.
 
 
 \section*{Exercise 2: Bias-variance trade-off and bootstrapping}
 
+Here we want to evaluate OLS using bootstrapping as a resampling technique. Bootstrap is a way of simulating having more data than you actually have, by reusing the same data. Lets say you have $N$ datapoints, then you would draw $N$-times, placing back the datapoint each time. Then perform the regression analysis, and repeat this process $B$-times. By placing back the datapoints, you would in many cases use the same datapoint several times. 
 
-
-Before we perform an analysis on the bias-variance trade-off, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. Thus in figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for a high $p_\text{max}$, using the bootstrap method for resampling. The left plot shows an indication of overfitting at polynomial degree $p = 9$. Thus on the right hand plot we have displayed the MSE for $p_\text{max} = 10$, and as expected we see overfitting at $p=9$. One unexpected result is the sharp increase and decrease in MSE. This indicates that our model is much better for some polynomial degrees than others. The sharp fluctuations can be explained by the surge in complexity from one polynomial degree to the next. This is displayed in figure \ref{fig:var_beta}, when we increase the polynomial degree by two, the number of parameters more than double. !NOTE REF TO APEND!
+Now, with bootstrapping, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. Thus in figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for $p_\text{max} = 20$, using $B=90$ resampling iterations. The left plot shows an indication of overfitting at polynomial degree $p = 9$. Thus on the right hand plot we have displayed the MSE for $p_\text{max} = 10$, and as expected we see overfitting at $p=9$. One unexpected result is the sharp increase and decrease in MSE. This indicates that our model is much better for some polynomial degrees than others. The sharp fluctuations can be explained by the surge in complexity from one polynomial degree to the next. This is displayed in figure \ref{fig:var_beta}, when we increase the polynomial degree by two, the number of parameters more than double.
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -283,20 +283,18 @@ where $f_i$ is the true data value at point $i$.
 
 In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of the bias, the second term represents the variance while the last term represents the variance of the irreducable error $\epsilon$. When performing linear regression the variance is a measurement on how much our model changes with different training sets. High variance will therefore occur if a different training set resulted in very different values of the individual estimators, $\bm{\beta}$. This will be the case for overfitting when our model is essentially trying to reproduce variations from the noise. The bias provides information about the difference between our model and the true data values. If our model is missing out on underlying structures in our data we would get a high bias. High bias will thus be the case for an underfitted model. Our goal is therefore to minimize the bias and variance in our model.
 
-Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and MSE for the test and train data, using the bootstrap method. For both datasets we expect the bias and MSE to start high and variance to start low. For the train data we should get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=9$) variance and error should increase, while bias stays low. In figure \ref{fig:BV_OLS} we have plotted bias, variance and MSE for the test and train data, using $r = 30$ resampling iterations. Because we expected to see overfitting at around $p=9$ we plotted for $p_\text{max} = 10$.
+Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and MSE for the test and train data, using the bootstrap method. For both datasets we expect the bias and MSE to start high and variance to start low. For the train data we should get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=9$) variance and error should increase, while bias stays low. In figure \ref{fig:BV_OLS} we have plotted bias, variance and MSE for the test and train data, using $B = 90$ resampling iterations. Because we expected to see overfitting at around $p=9$ we plotted for $p_\text{max} = 10$.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0_2.pdf}
 	\caption{Here we have plotted the bias, variance and MSE for the test and train data. The $x$-axis shows the polynomial degree, and the $y$-axis indicates the bias, variance and MSE. The dotted lines are for the train data and solid lines are the test data.}\label{fig:BV_OLS}
 \end{figure}
 
-As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees.
+As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias does not act completely as expected. It does decrease in the beginning, however it starts increasing with the MSE again at around $p = 8$. This however could be due to the sensitive nature of bootstrapping. As we saw in \ref{Apx:testing_BVT}, bias variance analysis with bootstrapping is very sensitive to the number of resampling iterations $B$, and gives unexpected results because of it. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees. Taking all of this into account, the optimal fit that minimizes bias, variance and MSE for OLS is $p=6$.
 
 \section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
 
-Here we have implemented cross-validation as the resampling technique. They way 
-
-Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustrerer hvordan alle blir blæsta når man har høye polynomgrader, dette gjelder på tvers av alle.
+Here we have implemented cross-validation as the resampling technique. This works by first shuffling the data randomly, then split the data into $k$ different groups. We can then decide on one group to be the test-data and perform linear regression on the rest. After that we can calculate the MSE, and repeat this process $k$-times. The final MSE would then be the mean MSE, after all the iterations. In figure \ref{fig:CV_OLS} we have done this, trying for $k = [5,7,10]$. 
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -314,6 +312,7 @@ Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustr
 	\caption{Plot av CV for OLS} \label{fig:CV_OLS}
 \end{figure}
 
+When doing bootstrapping we saw overfitting at around $p=6$. Looking at the plots in figure \ref{fig:CV_OLS} there seems to be consistent overfitting at around $p=3$. In the bottom right plot we have plotted for higher polynomials to illustrate that this error does not decrease for higher $p$. This does not depend on the number of resampling iterations. We see no obvious reason that the overfitting should start sooner, and thus ground it in random fluctuations. We have consistently seen large variation in results based on number of resampling, and the random seed used when producing the results. One interesting result is that a higher number of resampling iterations seems to decrease the overfitting effects. This coincide with the analysis on early overfitting. Having a larger number of resampling iterations should dampen the odd effects due to randomness.
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
 In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by subtracting a small number $\lambda$ from the diagonal, the matrix is no longer singular. This is called Ridge regression. The cost function is
@@ -358,23 +357,23 @@ Now we want to perform the same bootstrap analysis as we did for OLS (Exercise 2
 
 \section*{Exercise 6: Analysis of real data}
 
-3D terrain plots
-\begin{figure}[H]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_rawdata_n50.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_OLS_prediction_p20_n50.pdf}
-	\endminipage
-  \minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_OLS_prediction_p25_n50.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_OLS_prediction_p30_n50.pdf}
-	\endminipage
-	\caption{Data til venstre. Fit til høyre}
-  \label{fig:terrain_raw_fit}
-\end{figure}
+%3D terrain plots
+%\begin{figure}[H]
+%	\minipage{0.49\textwidth}
+%	\includegraphics[width=\linewidth]{SRTM_rawdata_n50.pdf}
+%	\endminipage\hfill
+%	\minipage{0.49\textwidth}
+%	\includegraphics[width=\linewidth]{SRTM_OLS_prediction_p20_n50.pdf}
+%	\endminipage
+%  \minipage{0.49\textwidth}
+%	\includegraphics[width=\linewidth]{SRTM_OLS_prediction_p25_n50.pdf}
+%	\endminipage\hfill
+%	\minipage{0.49\textwidth}
+%	\includegraphics[width=\linewidth]{SRTM_OLS_prediction_p30_n50.pdf}
+%	\endminipage
+%	\caption{Data til venstre. Fit til høyre}
+%  \label{fig:terrain_raw_fit}
+%\end{figure}
 
 
 OLS MSE bootstrap
@@ -497,7 +496,7 @@ First off we want to test the regression methods we have written.
 
 
 
-\section{Testing Bias Variance Tradeoff}
+\section{Testing Bias Variance Tradeoff}\label{Apx:testing_BVT}
 To ensure a correct implementation of the Bias Variance tradeoff for the Bootstrap method, we want to compare our implemented results with results obtained by scikitlearn. This will also provide us insight of how these results behave. We consider a one dimensional model given by
 \begin{align*}
   y = \exp{-x^2} + 1.5\cdot\exp{-(x-2)^2} + \epsilon
