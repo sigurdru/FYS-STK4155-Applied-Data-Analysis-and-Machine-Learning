@@ -309,10 +309,10 @@ Here we have implemented cross-validation as the resampling technique. This work
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10_CV_re10.pdf}
 	\endminipage
-	\caption{Plot av CV for OLS} \label{fig:CV_OLS}
+	\caption{Here we have plotted the MSE when performing cross-validation as the resampling technique. On the $x$-axis we have polynomial degree, and MSE on the $y$-axis. The top left, right and bottom left figures are with $k=[5, 7, 10]$ iterations respectively. The bottom left plot is to illustrate the diverging MSE for higher polynomial degree, which we see irregardless of iteration-number.} \label{fig:CV_OLS}
 \end{figure}
 
-When doing bootstrapping we saw overfitting at around $p=6$. Looking at the plots in figure \ref{fig:CV_OLS} there seems to be consistent overfitting at around $p=3$. In the bottom right plot we have plotted for higher polynomials to illustrate that this error does not decrease for higher $p$. This does not depend on the number of resampling iterations. We see no obvious reason that the overfitting should start sooner, and thus ground it in random fluctuations. We have consistently seen large variation in results based on number of resampling, and the random seed used when producing the results. One interesting result is that a higher number of resampling iterations seems to decrease the overfitting effects. This coincide with the analysis on early overfitting. Having a larger number of resampling iterations should dampen the odd effects due to randomness.
+When bootstrapping we saw overfitting at around $p=6$. Looking at the plots in figure \ref{fig:CV_OLS} there seems to be consistent overfitting at around $p=3$. In the bottom right plot we have plotted for higher polynomials to illustrate that this error does not decrease for higher $p$. This does not depend on the number of resampling iterations. We see no obvious reason that the overfitting should start sooner compared to bootstrapping, and thus ground it in random fluctuations. We have consistently seen large variation in results based on number of resampling, and the random seed used when producing the results. Another interesting result is that a higher number of resampling iterations seems to decrease the overfitting effects. This coincide with the analysis on early overfitting. Having a larger number of resampling iterations should dampen the odd effects due to randomness.
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
 In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by subtracting a small number $\lambda$ from the diagonal, the matrix is no longer singular. This is called Ridge regression. The cost function is
@@ -472,20 +472,21 @@ Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as 
 which is what we wanted to show.
 
 \section{Testing our implementation}\label{Apx:test}
-In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing, namely an exponential:
+In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing:
 \begin{equation}
-\label{eq:exp}
-f_\text{Test}(x) = exp(x) + \epsilon.
+	\label{eq:test_data}
+	y = \exp{-x^2} + 1.5\cdot\exp{-(x-2)^2} + \epsilon.
 \end{equation}
-Here $\epsilon$ denotes normally distributed noise, and $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
+
+Here $\epsilon$ denotes normally distributed noise with zero mean and variance $\sigma^2 = 0.1$. We look at when $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{Testing_data.pdf}
-	\caption{Here you we have plotted the testing data along with the analytical function.}
+	\caption{Here you we have plotted the testing data along with the analytical function. The solid blue line denotes the analytical function.}
 	\label{fig:TestingData}
 \end{figure}
 
-First off we want to test the regression methods we have written.
+We test the implementation of OLS and Ridge regression. For Lasso we already used the scikit-learn implementation, so there is no reason to compare it with itself.
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{Testing_OLS.pdf}
@@ -493,18 +494,16 @@ First off we want to test the regression methods we have written.
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
 	\endminipage
-	\caption{HEI EHIEHIAHFIASJDFKASDFJASDKF}
+	\caption{}
 	\label{fig:test_OLS_Ridge}
 \end{figure}
 
 
 
 \section{Testing Bias Variance Tradeoff}\label{Apx:testing_BVT}
-To ensure a correct implementation of the Bias Variance tradeoff for the Bootstrap method, we want to compare our implemented results with results obtained by scikitlearn. This will also provide us insight of how these results behave. We consider a one dimensional model given by
-\begin{align*}
-  y = \exp{-x^2} + 1.5\cdot\exp{-(x-2)^2} + \epsilon
-\end{align*}
-where $\epsilon$ is the noise, with mean zero and standard deviation $(0.01)^2$, and $x$ are uniformly distributed values with $x\in[-3,3]$. When we compare our own results with the ones obtained from scikitlearn, the result depends a lot on the particular setup we consider. We use $4/5$ of our data as the training data, $100$ bootstrap iterations and polynomial degrees from $P=0$ up to $P=15$ and scale this data by subracting the mean before dividing by the standard deviation. The differences we see between when we compare are very sensitive to the configuration. To illustrate this, we first perform the bias variance tradeoff with $N=170$ data points and then with $N=169$ data points. The resulting plots for the two configuration are shown in figure \ref{fig:compare_BV_scikit}, on the left and right panel, respectively.
+To ensure a correct implementation of the Bias Variance tradeoff for the Bootstrap method, we want to compare our implemented results with results obtained by scikitlearn. This will also provide us insight of how these results behave. We consider the same data as when we tested our regression methods in Appendix \ref{Apx:test} (equation \eqref{eq:test_data}). However with a slightly different domain, namely $x\in[-3,3]$.
+
+When we compare our own results with the ones obtained from scikitlearn, the result depends a lot on the particular setup we consider. We use $4/5$ of our data as the training data, $100$ bootstrap iterations and polynomial degrees from $P=0$ up to $P=15$ and scale this data by subracting the mean before dividing by the standard deviation. The differences we see between when we compare are very sensitive to the configuration. To illustrate this, we first perform the bias variance tradeoff with $N=170$ data points and then with $N=169$ data points. The resulting plots for the two configuration are shown in figure \ref{fig:compare_BV_scikit}, on the left and right panel, respectively.
 
 \begin{figure}[H]
   \minipage{0.49\textwidth}
