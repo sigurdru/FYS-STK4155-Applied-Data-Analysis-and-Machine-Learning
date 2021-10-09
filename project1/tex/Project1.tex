@@ -413,9 +413,9 @@ We also include a plot of the mean squared error with bootstrap resampling for e
   \label{fig:terrain_MSE_bootstrap_p50}
 \end{figure}
 
-This illustrates the difficulties of fitting this terrain data, as subtle structures will still be missing in our fitted model, despite using polynomial degrees where overfitting is taking place.
+This illustrates the difficulties of fitting this terrain data, as subtle structures will still be missing in our fitted model, despite using polynomial degrees where overfitting is taking place. Despite large fluctuations in the MSE for higher order polynomials, it's worth mentioning that the MSE values themselves are not particularly large, which is expected since we don't include noise in our data. !SJEKK!
 
-OLS MSE CV
+Now, we move on the studying the MSE with the cross validation resampling method. To see the detailed behaviour of the MSE with cross-validation we restrict our analysis to $P=10$ as the maximum polynomial degree, since higher degrees caused the MSE to explode. The result of the cross-validation resampling is shown for $5$ and $10$ k-folds in figure \ref{fig:terrain_OLS_MSE_CV}.
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol10_CV_re5.pdf}
@@ -426,9 +426,10 @@ OLS MSE CV
 	\caption{k-fold 5 til venstre. k-fold 10 til høyre}
   \label{fig:terrain_OLS_MSE_CV}
 \end{figure}
+With $5$ k-folds, we see that the test MSE becomes incredibly large when $P>8$. Doubling the number of k-folds, the MSE drops significantly, but there is still a clear increase for $P>8$.
+!Discussion/interpretation!
 
-
-OLS BVT Boot
+Using the bootstrap method for resampling, we perform a Bias-variance trade-off. Using $P=25$ as the largest polynomial, we are unable to see the relative behaviour of the quantities we plot for $50$ data points, so we use a logarithmic scale on the y-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. Once again, we include a result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $P=10$. This clearly shows an increase in the test MSE and test variance as $P$ increases, while the bias declines.   
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SRTM_BVT_OLS_n50_log.pdf}
