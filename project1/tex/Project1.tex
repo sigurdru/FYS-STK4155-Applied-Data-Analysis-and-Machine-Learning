@@ -279,7 +279,7 @@ We can show that this can be written as \footnote{The derivation is given in App
 \label{eq:bias_var_tradeoff}
   \mathbb{E}[(\mathbf{z}-\mathbf{\tilde{z}})^2] &= \frac{1}{N}\sum_i (f_i - \expz)^2 + \frac{1}{N}\sum_i (\tilde{z}_i - \expz)^2 + \sigma^2
 \end{align}
-where $f_i$ is the true data value at point $i$.
+where $f_i$ is the true data value at point $i$, and $\sigma^2$ the standard deviation of the noise.
 
 In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of the bias, the second term represents the variance while the last term represents the variance of the irreducable error $\epsilon$. When performing linear regression the variance is a measurement on how much our model changes with different training sets. High variance will therefore occur if a different training set resulted in very different values of the individual estimators, $\bm{\beta}$. This will be the case for overfitting when our model is essentially trying to reproduce variations from the noise. The bias provides information about the difference between our model and the true data values. If our model is missing out on underlying structures in our data we would get a high bias. High bias will thus be the case for an underfitted model. Our goal is therefore to minimize the bias and variance in our model.
 
@@ -291,6 +291,18 @@ Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and M
 \end{figure}
 
 As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias does not act completely as expected. It does decrease in the beginning, however it starts increasing with the MSE again at around $p = 8$. This however could be due to the sensitive nature of bootstrapping. As we saw in \ref{Apx:testing_BVT}, bias variance analysis with bootstrapping is very sensitive to the number of resampling iterations $B$, and gives unexpected results because of it. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees. Taking all of this into account, the optimal fit that minimizes bias, variance and MSE for OLS is $p=6$.
+
+The last term of \eqref{eq:bias_var_tradeoff} is a constant, and related to the noise in the data. Using data with more noise will give worse fit, and less noise gives a better fit. However, the relative bias and error will stay the same.  In this paper all results have been produced with the same amount of noise. Had we used a different value, we would except the MSE-plots to be similar, with the only difference being the value of the error. As a sanity check, we remake figure \ref{fig:BV_OLS} with lower and higher noise. See figure \ref{fig:BV_OLS_noise}. Comparing with \ref{fig:BV_OLS}, we see that the graphs are relatively the same, just taking lower and higher values.
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0_1.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0_5.pdf}
+	\endminipage
+	\caption{Here we have plotted the bias, variance and MSE for the test and train data, exactly as figure \ref{fig:BV_OLS}, but using lower (left) and higher (right) levels of noise. This is to show we get similar results} \label{fig:BV_OLS_noise}
+\end{figure}
 
 \section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
 
@@ -458,7 +470,7 @@ We have approximated this function with our design matrix $\mathbf{X}$ and our p
 where $\mathbb{E}$ is the expected value. % Note sample value
 
 We want to show that the above expression can be written as
-NoteNOTE: husk å definer alt, skriv i t
+NoteNOTE: husk å definer alt, skriv i teksten hva f, y, yhat og ytilde er!
 
 \begin{align*}
   \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expy)^2 + \frac{1}{n}\sum_i (\tilde{y}_i - \expy )^2 + \sigma^2
