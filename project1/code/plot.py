@@ -273,10 +273,15 @@ def Plot_lambda(results, args):
     ylabel = "Error"
     title = f"Error as function of lambda-parameter using {args.method} and {args.resampling}"
     set_ax_info(ax, xlabel, ylabel, title)
-    fname = "lambdaMSE_" + args.method \
-            + "_n" + str(args.num_points) \
-            + "_eps" + str(args.epsilon)
+
+    low = str(int(np.log10(args.lmb[0]))).replace("-", "m")
+    high = str(int(np.log10(args.lmb[-1]))).replace("-", "m")
+    fname = f"lambdaMSE_{args.method}_{args.resampling}{args.resampling_iter}_n{args.num_points}"
+    fname += f"_eps{args.epsilon}_p{args.polynomial[-1]}_l{low}_{high}"
     fname = fname.replace(".", "")
+    print('Plotting lambda_analysis: See %s.pdf' %(fname))
+    show(fig, fname, args)
+
 
 def Plot_VarOLS(args):
     """Here we plot the parameters for different polynomials
@@ -329,12 +334,13 @@ def Plot_BVT_lambda(result, args):
     title = f"BV-tradeoff for {args.method} for different lambda"
     set_ax_info(ax, xlabel, ylabel, title)
 
-    fname = f"LBVT_{args.method}_n{args.num_points}"
+    fname = f"LBVT_{args.method}_{args.resampling}_n{args.num_points}"
     fname += f"_eps{args.epsilon}_p{args.polynomial[-1]}"
     low = str(int(np.log10(args.lmb[0]))).replace("-", "m")
     high = str(int(np.log10(args.lmb[-1]))).replace("-", "m")
     fname += f"_lmb{low}_{high}"
-
+    fname = fname.replace(".", "_")
+    print("Plotting lambda BVT: see ", fname, ".pdf")
     show(fig, fname, args)
 
 def Plot_2D_MSE(results, args):
@@ -352,7 +358,7 @@ def Plot_2D_MSE(results, args):
     title = f"log10(MSE) for {args.method} as function of complexity and lambda"
     set_ax_info(ax, xlabel, ylabel, title)
 
-    fname = f"Contour_PL_{args.method}_n{args.num_points}_eps{args.epsilon}"
+    fname = f"Contour_PL_{args.method}_{args.resampling}{args.resampling_iter}_n{args.num_points}_eps{args.epsilon}"
     ph = str(args.polynomial[-1])
     pl = str(args.polynomial[0])
     lh = str(int(np.log10(args.lmb[0]))).replace("-", "m")
