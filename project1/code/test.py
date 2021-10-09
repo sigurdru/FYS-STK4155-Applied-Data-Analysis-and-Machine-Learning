@@ -11,6 +11,13 @@ import regression
 import plot
 import utils
 
+"""
+IN THIS FILE:
+We perform a lot of tests on our implementations. Namely OLS, Rige and bias variance tradeoff.
+In order to run the tests, just run the command:
+python3 test.py
+"""
+
 utils.np.random.seed(7132)
 plt.style.use('seaborn')
 plt.rc('text', usetex=True)
@@ -51,7 +58,7 @@ def test_OLS():
     #We will divide by zero when taking log :o
     np.seterr(divide='ignore')
     #polynomial degree
-    p_max = 21
+    p_max = 16
     p_array = np.arange(1, p_max, 1)
     our_MSE_test = np.zeros(p_max-1)
     our_MSE_train = np.zeros(p_max-1)
@@ -59,7 +66,7 @@ def test_OLS():
     sklearn_MSE_train = np.zeros(p_max-1)
 
     #the noise we want
-    eps = 0.2
+    eps = 0.1
     #number of data points
     n = 100
     #percentage of data used for testing
@@ -86,25 +93,21 @@ def test_OLS():
         sklearn_MSE_test[p-1] = utils.MSE(z_test, OLS_predict_test)
         sklearn_MSE_train[p-1] = utils.MSE(z_train, OLS_predict_train)
 
-    plt.plot(p_array, sklearn_MSE_test, label='sklearn MSE test')
-    plt.plot(p_array, sklearn_MSE_train, label='sklearn MSE train')
-    plt.plot(p_array, our_MSE_test, '--',label='our MSE test')
-    plt.plot(p_array, our_MSE_train, '--', label='our MSE train')
-    plt.legend()
-    plt.show()
 
-    relative_error = np.abs(our_MSE_test - sklearn_MSE_test)
     fig, ax = plt.subplots()
     xlabel = 'Polynomial degree'
-    ylabel = r'$\log(|$MSE$_{sk}$ - MSE$_{our}$ $|)$'
+    ylabel = r'MSE'
     title = 'Testing of OLS'
     fname = 'Testing_OLS'
-    ax.plot(p_array, np.log(relative_error),
-            label='Relative MSE')
+    ax.plot(p_array, sklearn_MSE_test, 'r--',label='sklearn MSE test')
+    ax.plot(p_array, sklearn_MSE_train, 'b--', label='sklearn MSE train')
+    ax.plot(p_array, our_MSE_test, 'ro',label='our MSE test')
+    ax.plot(p_array, our_MSE_train, 'bo', label='our MSE train')
     plot.set_ax_info(ax, xlabel, ylabel, title)
     fig.tight_layout()
     print('Plotting OLS test, see ' + fname + '.pdf')
     fig.savefig(plot.os.path.join(path_plots, fname + '.pdf'))
+    plt.close()
 
 def test_Ridge():
     """
@@ -114,12 +117,14 @@ def test_Ridge():
     #We will divide by zero when taking log :o
     np.seterr(divide='ignore')
     #polynomial degree
-    p_max = 100
+    p_max = 16
     p_array = np.arange(1, p_max, 1)
-    our_MSE = np.zeros(p_max-1)
-    sklearn_MSE = np.zeros(p_max-1)
+    our_MSE_test = np.zeros(p_max-1)
+    our_MSE_train = np.zeros(p_max-1)
+    sklearn_MSE_test = np.zeros(p_max-1)
+    sklearn_MSE_train = np.zeros(p_max-1)
     #the noise we want
-    eps = 0.2
+    eps = 0.1
     #number of data points
     n = 100
     lmd = 0.2
@@ -134,71 +139,30 @@ def test_Ridge():
                                                                                regression.Ridge,
                                                                                scaler=analysis.scale_conv["S"],
                                                                                Testing=True)
-        our_MSE[p-1] = data["test_MSE"]
+        our_MSE_test[p-1] = data["test_MSE"]
+        our_MSE_train[p-1] = data['train_MSE']
 
         regOLS = Ridge(fit_intercept=True)
         regOLS.fit(X_train, z_train)
-        OLS_predict = regOLS.predict(X_test)
-        sklearn_MSE[p-1] = utils.MSE(z_test, OLS_predict)
-    relative_error = np.abs(our_MSE - sklearn_MSE)
+        OLS_predict_test = regOLS.predict(X_test)
+        OLS_predict_train = regOLS.predict(X_train)
+        sklearn_MSE_test[p-1] = utils.MSE(z_test, OLS_predict_test)
+        sklearn_MSE_train[p-1] = utils.MSE(z_train, OLS_predict_train)
+    #Plotting
     fig, ax = plt.subplots()
     xlabel = 'Polynomial degree'
-    ylabel = r'$\log(|$MSE$_{sk}$ - MSE$_{our}$ $|)$'
+    ylabel = 'MSE'
     title = 'Testing of Ridge regression'
     fname = 'Testing_Ridge'
-    ax.plot(p_array, np.log(relative_error),
-            label='Relative MSE')
+    ax.plot(p_array, sklearn_MSE_test, 'r--', label='sklearn MSE test')
+    ax.plot(p_array, sklearn_MSE_train, 'b--', label='sklearn MSE train')
+    ax.plot(p_array, our_MSE_test, 'ro', label='our MSE test')
+    ax.plot(p_array, our_MSE_train, 'bo', label='our MSE train')
     plot.set_ax_info(ax, xlabel, ylabel, title)
     fig.tight_layout()
     print('Plotting Ridge test, see ' + fname + '.pdf')
     fig.savefig(plot.os.path.join(path_plots, fname + '.pdf'))
-
-def test_Lasso():
-    """
-    Here we perform a test on our Lasso method
-    using sklearn
-    """
-    #We will divide by zero when taking log :o
-    np.seterr(divide='ignore')
-    #polynomial degree
-    p_max = 100
-    p_array = np.arange(1, p_max, 1)
-    our_MSE = np.zeros(p_max-1)
-    sklearn_MSE = np.zeros(p_max-1)
-    #the noise we want
-    eps = 0.2
-    #number of data points
-    n = 100
-    lmd = 0.2
-    #percentage of data used for testing
-    ttsplit = 0.2
-    #creating data
-    x = np.sort(np.random.uniform(size=n))
-    z = f(x, eps)
-    for p in p_array:
-        X = create_design_matrix(x, p)
-        data, X_train, X_test, z_train, z_test, beta = resampling.NoResampling(X, z, ttsplit, 0, [lmd],
-                                                                               regression.Lasso,
-                                                                               scaler=analysis.scale_conv["S"],
-                                                                               Testing=True)
-        our_MSE[p-1] = data["test_MSE"]
-
-        regOLS = Lasso(fit_intercept=True)
-        regOLS.fit(X_train, z_train)
-        OLS_predict = regOLS.predict(X_test)
-        sklearn_MSE[p-1] = utils.MSE(z_test, OLS_predict)
-    relative_error = np.abs(our_MSE - sklearn_MSE)
-    fig, ax = plt.subplots()
-    xlabel = 'Polynomial degree'
-    ylabel = r'$\log(|$MSE$_{sk}$ - MSE$_{our}$ $|)$'
-    title = 'Testing of Lasso regression'
-    fname = 'Testing_Lasso'
-    ax.plot(p_array, np.log(relative_error),
-            label='Relative MSE')
-    plot.set_ax_info(ax, xlabel, ylabel, title)
-    fig.tight_layout()
-    print('Plotting Lasso test, see ' + fname + '.pdf')
-    fig.savefig(plot.os.path.join(path_plots, fname + '.pdf'))
+    plt.close()
 
 class params:
     """
@@ -218,16 +182,16 @@ class params:
         self.scaling = scaling_conv
         self.dataset = "Test"
 
-def test_BV():
+def test_BV(N):
     """
     Test bias variance tradeoff using bootstrap
     """
     #Variables we are going to use
-    N = 169
+    N = N
     maxdegree = 16
     P = np.arange(0,maxdegree,1)
     eps = 0.1
-    resampling_m = "Boot"
+    resampling_m = "Bootstrap"
     ttsplit = 0.2
     resampling_iter = 100
     lmb = [0.1]
@@ -283,23 +247,15 @@ def test_BV():
     plot.set_ax_info(ax, xlabel, ylabel, title)
     fig.tight_layout()
     print('Plotting BV comparison, see ' + fname + '.pdf')
-    plot.show(fig, fname, utils.parse_args())
-    # fig.show()
-    # fig.savefig(plot.os.path.join(path_plots, fname + '.pdf'))
+    fig.savefig(plot.os.path.join(path_plots, fname + '.pdf'))
 
 
-
-def test_bootstrap():
-    """
-    test bootstrap
-    """
-    pass
 def plot_test_func():
     """
     Here save the plot of the test data along with the analytical test function.
     """
     n = 100
-    eps = 0.2
+    eps = 0.1
     x = np.sort(np.random.uniform(size=n))
     y_nonoise = f(x)
     y_withnoise = f(x, eps)
@@ -314,9 +270,11 @@ def plot_test_func():
     fig.tight_layout()
     print('Plotting testing function, see ' + fname + '.pdf')
     fig.savefig(plot.os.path.join(path_plots, fname + '.pdf'))
+    plt.close()
 
-# plot_test_func()
-# test_OLS()
-# test_Ridge()
-# test_Lasso()
-test_BV()
+plot_test_func()
+test_OLS()
+test_Ridge()
+test_BV(169)
+utils.np.random.seed(7132)
+test_BV(170)
