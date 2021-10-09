@@ -253,6 +253,8 @@ We see in figure \ref{fig:var_beta} that the variance increases as a function of
 
 \section*{Exercise 2: Bias-variance trade-off and bootstrapping}
 
+
+
 Before we perform an analysis on the bias-variance trade-off, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. Thus in figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for a high $p_\text{max}$, using the bootstrap method for resampling. The left plot shows an indication of overfitting at polynomial degree $p = 9$. Thus on the right hand plot we have displayed the MSE for $p_\text{max} = 10$, and as expected we see overfitting at $p=9$. One unexpected result is the sharp increase and decrease in MSE. This indicates that our model is much better for some polynomial degrees than others. The sharp fluctuations can be explained by the surge in complexity from one polynomial degree to the next. This is displayed in figure \ref{fig:var_beta}, when we increase the polynomial degree by two, the number of parameters more than double. !NOTE REF TO APEND!
 
 \begin{figure}[H]
@@ -291,6 +293,8 @@ Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and M
 As expected we se an increase in MSE and variance for the test data, when we start overfitting. The bias also acts as expected, decreasing in the beginning and staying low. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees.
 
 \section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
+
+Here we have implemented cross-validation as the resampling technique. They way 
 
 Plotta CV, tre figurer viser for forskjellige iterasjoner, siste figuren illustrerer hvordan alle blir blæsta når man har høye polynomgrader, dette gjelder på tvers av alle.
 
