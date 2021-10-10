@@ -292,7 +292,7 @@ Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and M
 	\caption{Here we have plotted the bias, variance and MSE for the test and train data. The $x$-axis shows the polynomial degree, and the $y$-axis indicates the bias, variance and MSE. The dotted lines are for the train data and solid lines are the test data.}\label{fig:BV_OLS}
 \end{figure}
 
-As expected we se a general increase in MSE and variance for the test data when the complexity increases, despite a certain dip around $p=13$. The test bias does not act completely as expected. It does decrease in the beginning, however it starts increasing at around $p = 15$. This is likely due to unpredictable behaviour of our model, which we would expect for such a high polynomial degree. The decrease of the MSE and variance also suggests that the model does not behave ideally at all values of $p$.  
+As expected we se a general increase in MSE and variance for the test data when the complexity increases, despite a certain dip around $p=13$. The test bias does not act completely as expected. It does decrease in the beginning, however it starts increasing at around $p = 15$. This is likely due to unpredictable behaviour of our model, which we would expect for such a high polynomial degree. The decrease of the MSE and variance also suggests that the model does not behave ideally at all values of $p$.
 
 As we saw in \ref{Apx:testing_BVT}, bias variance analysis with bootstrapping is very sensitive to the number of resampling iterations $B$, and gives unexpected results because of it. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees. Taking all of this into account, the optimal fit that minimizes bias, variance and MSE for OLS is $p=6$.
 
@@ -331,7 +331,7 @@ Here we have implemented cross-validation as the resampling technique. This work
 When bootstrapping we saw overfitting at around $p=6$. Looking at the plots in figure \ref{fig:CV_OLS} there seems to be consistent overfitting at around $p=3$. In the bottom right plot we have plotted for higher polynomials to illustrate that this error does not decrease for higher $p$. This does not depend on the number of resampling iterations. We see no obvious reason that the overfitting should start sooner compared to bootstrapping, and thus ground it in random fluctuations. We have consistently seen large variation in results based on number of resampling, and the random seed used when producing the results. Another interesting result is that a higher number of resampling iterations seems to decrease the overfitting effects. This coincide with the analysis on early overfitting. Having a larger number of resampling iterations should dampen the odd effects due to randomness.
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
-In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by adding a small number $\lambda$ from the diagonal, the matrix is no longer singular. This is called Ridge regression. The optimal parameters $\boldsymbol{\hat\beta}$ are given by
+In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by adding a small number $\lambda$ to the diagonal, the matrix is no longer singular. This is called Ridge regression. The optimal parameters $\boldsymbol{\hat\beta}$ are given by
 \begin{equation}
 	\boldsymbol{\hat{\beta}} = (X^TX+\lambda I)X^T\vc{z},
 \end{equation}
@@ -408,6 +408,20 @@ q
 
 
 \section*{Exercise 5: Lasso regression on the Franke function with resampling}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m4.pdf}
+\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+\label{fig:Ridge_boot_BVT}
+\end{figure}
+
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{MSE_Lasso_n30_eps02_pol10_Bootstrap_re90_lam_0_0001.pdf}
+	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+	\label{fig:Ridge_boot_BVT}
+\end{figure}
+
 
 
 \section*{Exercise 6: Analysis of real data}
