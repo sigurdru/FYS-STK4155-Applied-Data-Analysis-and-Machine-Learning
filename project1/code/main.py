@@ -153,6 +153,11 @@ def parse_args(args=None):
             dest="log",
             )
 
+    add_arg("-push",
+            action="store_true",
+            dest="push",
+            )
+
     parser.set_defaults(show=False)
 
     args = parser.parse_args(args)

@@ -47,6 +47,13 @@ def set_ax_info(ax, xlabel, ylabel, title=None, zlabel=None):
         ax.set_zlabel(zlabel, fontsize=18)
         ax.tick_params(axis='both', which='major', labelsize=12)
 
+def push(file):
+    print("LOOKFORTHIS", file)
+    os.system(f"git add {file}")
+    os.system("git commit -m 'plots'")
+    os.system("git push")
+    print(f"Pushed to git: {file}")
+
 
 def show(fig, fname, args):
     if args.dataset == "SRTM":
@@ -55,6 +62,8 @@ def show(fig, fname, args):
 
     print("Saving plot: ", fname + ".pdf")
     fig.savefig(os.path.join(path_plots, fname + '.pdf'))
+    if args.push:
+        push(os.path.join(path_plots, fname + ".pdf"))
     if args.show:
         plt.show()
     else:
