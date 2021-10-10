@@ -124,9 +124,6 @@ We will begin by using the simplest regression method, ordinary least squares (O
 
 We have also written code to test our implementation of the methods, where we compare our results with those obtained using the open-source machine learning package Scikit-learn. These results are presented in Appendix \ref{Apx:test}.
 
-%Tenke me heller plassere dette i Exersice 6 hvor det skal brukes, og ikke i introduksjonen. here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}.
-
-
 \section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
 
 We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. Equation \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, the Franke function takes values \(z\in[-0.45, \hspace{1mm} 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is visualized in figure \ref{fig:FF_dataset}.
@@ -335,6 +332,12 @@ where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, s
 
 Now we want to perform the same bootstrap analysis as we did for OLS, using Ridge. Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap. Figure \ref{fig:Ridge_boot_PM} shows MSE as function of polynomial degree for 4 different values of $\lambda$, starting at $10^-4$, increasing with a factor of 100 for each plot. We see that test error varies a lot, making it non-trivial to determine what is overfitting and underfitting. For the 3 first $\lambda$-values it seems we have overfitting for $p=9$, while for $\lambda=100$, it can not be conclusively decided. $p=3$ and $p=8$ seem to be the best two values before overfitting for the 3 smallest $\lambda$.
 
+\begin{figure}
+	\includegraphics[width=\linewidth]{Contour_PL_Ridge_Bootstrap90_n30_eps0.2_p1_6_lmb2_m6.pdf}
+	\caption{MSE using Ridge and bootstrapping, as function of polynomial degree and $\lambda$. The minimum value is $MSE=0.047$ at $p=3$ and $log10(\lambda) = -4.4$.}
+	\label{fig:Ridge-boot_heatmap}
+\end{figure}
+
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol20_Bootstrap_re90_lam_0_0001.pdf}
@@ -386,15 +389,15 @@ To explore the $\lambda$-dependence more in-depth, we now choose a single polyno
 
 \section*{Exercise 6: Analysis of real data}
 
-Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider terrain data from Norway !HVOR?!. The terrain data we consider is shown in figure \ref{fig:terrain_raw}.
+Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider Norwegian terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}. Because the datasets are large, we will only consider one small part of \texttt{SRTM\_data\_Norway\_1.tif}, namely $f_{i,j}$ where $i,j\in[50,100]$, i.e. $N=50$ datapoints in each direction. It is useful to consider dimensionless data, thus we divide by the highest point $z_{i,j} = f_{i,j}/\max{|f_{i,j}|}$, and let $i,j\in[50,100] \rightarrow x,y\in[0,1]$ when plotting. Then we get the data visualized in figure \ref{fig:terrain_raw}.
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{SRTM_rawdata_n50.pdf}
-  \caption{Raw terrain data}
+  \caption{Here we have plotted the terrain data which we will use in this exercise.}
   \label{fig:terrain_raw}
 \end{figure}
 
-We begin by studying the mean squared error with OLS-regression, where we use the bootstrap resampling method with $50$ resampling iterations. For our original data set with $50$ data points in both directions, we consider polynomials up to a maximum degree of $25$. The resulting mean squared error is shown on the left panel in figure \ref{fig:terrain_OLS_MSE_bootstrap} with a logarithmic y-axis. Using a data set with $50\cross50$ data points yields a little noticeable change in the mean squared error, but we see a potential overfitting occuring for $P>15$. To see that we get overfitting for the terrain data eventually, we plot the mean squared error for the same resampling method, but with $n=10$ points in each direction up to a polynomial degree of $P=10$, shown on the right panel in figure \ref{fig:terrain_OLS_MSE_bootstrap}. Here, we can see an evident overfitting starting to occur for polynomial degrees greater than $6$.
+We begin by studying the MSE using OLS-regression and bootstrapping as the resampling technique. Our results should mirror those we got in exercise 2, where the test MSE decreases in the beginning, and increases when we start overfitting. Choosing $B = 50$ iterations and max polynomial degree $p_\text{max} = 25$ we get the MSE illustrated in figure \ref{fig:terrain_OLS_MSE_bootstrap}.
 
 \begin{figure}[H]
   \minipage{0.49\textwidth}
@@ -406,6 +409,8 @@ We begin by studying the mean squared error with OLS-regression, where we use th
   \caption{n50 log til venstre. n15 til høyre}
   \label{fig:terrain_OLS_MSE_bootstrap}
 \end{figure}
+
+(with a logarithmic y-axis. Using a data set with \$50\textbackslash\{\}cross50\$ data points yields a little noticeable change in the mean squared error, but we see a potential overfitting occuring for \$P>15\$. To see that we get overfitting for the terrain data eventually, we plot the mean squared error for the same resampling method, but with \$n=10\$ points in each direction up to a polynomial degree of \$P=10\$, shown on the right panel in figure \textbackslash\{\}ref\{fig:terrain\_OLS\_MSE\_bootstrap\}. Here, we can see an evident overfitting starting to occur for polynomial degrees greater than \$6\$.)<-- GAMMEL ANALYSE
 
 As a simple sanity check, we plot the result of our fits for different polynomial degrees, which we can compare to the original data from figure \ref{fig:terrain_raw}. To capture the complexity of our data set, we consider four polynomial degrees, using $P\in[10,\,20,\,30,\,50]$, where the first two are shown in the upper left and right panel of figure \ref{fig:terrain_fit}, respectively, while the latter two in the bottom left and right panel of the same figure, respectively.
 
@@ -426,7 +431,7 @@ As a simple sanity check, we plot the result of our fits for different polynomia
   \label{fig:terrain_fit}
 \end{figure}
 
-In figure \ref{fig:terrain_fit} we see that $P=10$ gives a decent fit, as it encaptures the essential structure of the terrain. It does, however, miss out on essentially all of the rough details of the landscape. We also notice that important structures are missing, which can be seen from the missing elevation around $x=1$ and $y=0.8$, which is present in the other three fits. Using $P=20$ we are able to reproduce more nuanced structures, while most of the rough edges are still left out. Increasing up to $P=30$ does not change the fit much, other than a few more details at certain points. Finally, we study the resulting fit with $P=50$. Although it provides some more rough futures of the terrain, it illustrates some difficulties of the fitting. The shape of the mointain top at $x=1$ and $y=1$ is no longer consisitent with the original terrain data, and we git a tiny vally around $x=1$ and $y=0.8$, which is not an actual feature of the terrain data. Still, there are details missing along the $x$-axis at $y=1$, and the structure of the two peaks at $y=0$ is still not being represented accurately. We emphasize that the misrepresentations obtained with $P=50$ might be a consequence of the splitting of train and test data, as well as that prticalur ploynomial degree. However, we are still not able to accurately predict important structures of the terrain.
+In figure \ref{fig:terrain_fit} we see that $p=10$ gives a decent fit, as it captures the essential structure of the terrain. It does, however, miss out on many of the rough details in the landscape. For example the small elevation on the corner $(x,y) = (1,1)$. With $p=20$ we are able to reproduce more nuanced structures like the peak mentioned above. Increasing up to $p=30$ does not change the fit much, other than a few more details at certain points. Finally, we study the resulting fit with $p=50$. Although it provides some more rough futures of the terrain, it illustrates some difficulties of the fitting. The shape of the mountain top at $x=1$ and $y=1$ is no longer consistent with the original terrain data, and we git a tiny valley at $x=1$ and $y=0.8$, which is not an actual feature of the terrain data. Still, there are details missing along the $x$-axis at $y=1$, and the structure of the two peaks at $y=0$ is still not being represented accurately. We emphasize that the misrepresentations obtained with $P=50$ might be a consequence of the splitting of train and test data, as well as that prticalur ploynomial degree. However, we are still not able to accurately predict important structures of the terrain.
 
 We also include a plot of the mean squared error with bootstrap resampling for each factor $5$ polynomial degree from $p=5$ up to $P=50$, shown in figure \ref{fig:terrain_MSE_bootstrap_p50}.
 
@@ -438,7 +443,8 @@ We also include a plot of the mean squared error with bootstrap resampling for e
 
 This illustrates the difficulties of fitting this terrain data, as subtle structures will still be missing in our fitted model, despite using polynomial degrees where overfitting is taking place. Despite large fluctuations in the MSE for higher order polynomials, it's worth mentioning that the MSE values themselves are not particularly large, which is expected since we don't include noise in our data. !SJEKK!
 
-Now, we move on the studying the MSE with the cross validation resampling method. To see the detailed behaviour of the MSE with cross-validation we restrict our analysis to $P=10$ as the maximum polynomial degree, since higher degrees caused the MSE to explode. The result of the cross-validation resampling is shown for $5$ and $10$ k-folds in figure \ref{fig:terrain_OLS_MSE_CV}.
+Next we move on to studying the MSE with cross validation. As with the bootstrap analysis, we expect the MSE to decrease in the beginning, and increase when overfitting. We plot use $p_\text{max} = 10$ and $k=[5,10]$ folds, and get the results shown in figure \ref{fig:terrain_OLS_MSE_CV}.
+
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol10_CV_re5.pdf}
@@ -449,10 +455,11 @@ Now, we move on the studying the MSE with the cross validation resampling method
 	\caption{k-fold 5 til venstre. k-fold 10 til høyre}
   \label{fig:terrain_OLS_MSE_CV}
 \end{figure}
-With $5$ k-folds, we see that the test MSE becomes incredibly large when $P>8$. Doubling the number of k-folds, the MSE drops significantly, but there is still a clear increase for $P>8$.
-!Discussion/interpretation!
+(Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes incredibly large when $P>8$. Doubling the number of k-folds, the MSE drops significantly, but there is still a clear increase for $p>8$.) <-- GAMMEL TOLKNING
 
-Using the bootstrap method for resampling, we perform a Bias-variance trade-off. Using $P=25$ as the largest polynomial, we are unable to see the relative behaviour of the quantities we plot for $50$ data points, so we use a logarithmic scale on the y-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. Once again, we include a result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $P=10$. This clearly shows an increase in the test MSE and test variance as $P$ increases, while the bias declines.
+Now we move on to bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=x$) variance and error should increase, while bias stays low.
+
+Using $p_\text{max}=25$. we are unable to see the relative behaviour of the quantities we plot for $50$ data points, so we use a logarithmic scale on the y-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. Once again, we include a result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $P=10$. This clearly shows an increase in the test MSE and test variance as $P$ increases, while the bias declines.
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SRTM_BVT_OLS_n50_log.pdf}
