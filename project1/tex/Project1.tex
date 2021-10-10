@@ -370,6 +370,18 @@ q
 	\label{fig:Ridge_boot_BVT}
 \end{figure}
 
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{Contour_PL_Ridge_CV10_n30_eps0.2_p1_6_lmb2_m6.pdf}
+	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+	\label{fig:Ridge_boot_BVT}
+\end{figure}
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_CV10_n30_eps02_p5_lm8_6.pdf}
+	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+	\label{fig:Ridge_boot_BVT}
+\end{figure}
+
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -414,7 +426,7 @@ We begin by studying the MSE using OLS-regression and bootstrapping as the resam
   \label{fig:terrain_OLS_MSE_bootstrap}
 \end{figure}
 
-Looking at figure \ref{fig:terrain_OLS_MSE_bootstrap} we see that for $(50\cross50)$ grid-points (left plot), we get a small increase in the MSE after $p = 23$. We think this is because of the large number of grid points. Therefore we plot for $30\cross30$ grid-points (right figure) and see a much larger increase after $p = 8$. Because of this we conclude that the small overfitting is due to our large number of grid-points. 
+Looking at figure \ref{fig:terrain_OLS_MSE_bootstrap} we see that for $(50\cross50)$ grid-points (left plot), we get a small increase in the MSE after $p = 23$. We think this is because of the large number of grid points. Therefore we plot for $30\cross30$ grid-points (right figure) and see a much larger increase after $p = 8$. Because of this we conclude that the small overfitting is due to our large number of grid-points.
 
 As a simple sanity check, we plot the result of our fits for different polynomial degrees, which we can compare to the original data from figure \ref{fig:terrain_raw}. To capture the complexity of our data set, we consider four polynomial degrees, using $P\in[10,\,20,\,30,\,50]$, where the first two are shown in the upper left and right panel of figure \ref{fig:terrain_fit}, respectively, while the latter two in the bottom left and right panel of the same figure, respectively.
 
@@ -461,7 +473,7 @@ Next we move on to studying the MSE with cross validation. As with the bootstrap
 \end{figure}
 (Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes incredibly large when $P>8$. Doubling the number of k-folds, the MSE drops significantly, but there is still a clear increase for $p>8$.) <-- GAMMEL TOLKNING
 
-Now we move on to bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=x$) variance and error should increase, while bias stays low. Using $p_\text{max}=25$, 
+Now we move on to bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=x$) variance and error should increase, while bias stays low. Using $p_\text{max}=25$,
 
 
 we are unable to see the relative behaviour of the quantities we plot for $50$ data points, so we use a logarithmic scale on the y-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. Once again, we include a result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $P=10$. This clearly shows an increase in the test MSE and test variance as $P$ increases, while the bias declines.
