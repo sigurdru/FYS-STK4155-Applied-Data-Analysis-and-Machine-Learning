@@ -404,13 +404,13 @@ We begin by studying the MSE using OLS-regression and bootstrapping as the resam
   \minipage{0.49\textwidth}
   \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n30_pol15_Bootstrap_re50_log.pdf}
   \endminipage
-  \caption{Her we have plotted the $\log(\text{MSE})$ as a function of polynomial degree. The left plot is with $(50\cross50)$ grid-points and right with $(50\cross50)$.}
+  \caption{Her we have plotted the $\log(\text{MSE})$ as a function of polynomial degree. The left plot is with $(50\cross50)$ grid-points and right with $(30\cross30)$.}
   \label{fig:terrain_OLS_MSE_bootstrap}
 \end{figure}
 
 Looking at figure \ref{fig:terrain_OLS_MSE_bootstrap} we see that for $(50\cross50)$ grid-points (left plot), we get a small increase in the MSE after $p = 23$. We think this is because of the large number of grid points. Therefore we plot for $30\cross30$ grid-points (right figure) and see a much larger increase after $p = 8$. Because of this we conclude that the small overfitting is due to our large number of grid-points. 
 
-As a simple sanity check, we plot the result of our fits for different polynomial degrees, which we can compare to the original data from figure \ref{fig:terrain_raw}. To capture the complexity of our data set, we consider four polynomial degrees, using $P\in[10,\,20,\,30,\,50]$, where the first two are shown in the upper left and right panel of figure \ref{fig:terrain_fit}, respectively, while the latter two in the bottom left and right panel of the same figure, respectively.
+As a simple sanity check, we plot the result of our fits for different polynomial degrees, which we can compare to the original data from figure \ref{fig:terrain_raw}. To capture the complexity of our data set, we consider four polynomial degrees, using $p\in[10,\,20,\,30,\,50]$, where the first two are shown in the upper left and right panel of figure \ref{fig:terrain_fit}, respectively, while the latter two in the bottom left and right panel of the same figure, respectively.
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -429,47 +429,36 @@ As a simple sanity check, we plot the result of our fits for different polynomia
   \label{fig:terrain_fit}
 \end{figure}
 
-In figure \ref{fig:terrain_fit} we see that $p=10$ gives a decent fit, as it captures the essential structure of the terrain. It does, however, miss out on many of the rough details in the landscape. For example the small elevation on the corner $(x,y) = (1,1)$. With $p=20$ we are able to reproduce more nuanced structures like the peak mentioned above. Increasing up to $p=30$ does not change the fit much, other than a few more details at certain points. Finally, we study the resulting fit with $p=50$. Although it provides some more rough futures of the terrain, it illustrates some difficulties of the fitting. The shape of the mountain top at $x=1$ and $y=1$ is no longer consistent with the original terrain data, and we git a tiny valley at $x=1$ and $y=0.8$, which is not an actual feature of the terrain data. Still, there are details missing along the $x$-axis at $y=1$, and the structure of the two peaks at $y=0$ is still not being represented accurately. We emphasize that the misrepresentations obtained with $P=50$ might be a consequence of the splitting of train and test data, as well as that prticalur ploynomial degree. However, we are still not able to accurately predict important structures of the terrain.
+In figure \ref{fig:terrain_fit} we see that $p=10$ gives a decent fit, as it captures the essential structure of the terrain. It does, however, miss out on many of the rough details in the landscape. For example the small elevation on the corner $(x,y) = (1,1)$. With $p=20$ we are able to reproduce more nuanced structures like the peak mentioned above. Increasing up to $p=30$ does not change the fit much, other than a few more details at certain points. Finally, we study the resulting fit with $p=50$. Although it provides some more rough futures of the terrain, it illustrates some difficulties of the fitting. The shape of the mountain top at $x=1$ and $y=1$ is no longer consistent with the original terrain data, and we git a tiny valley at $x=1$ and $y=0.8$, which is not an actual feature of the terrain data. Still, there are details missing along the $x$-axis at $y=1$, and the structure of the two peaks at $y=0$ is still not being represented accurately.
 
-We also include a plot of the mean squared error with bootstrap resampling for each factor $5$ polynomial degree from $p=5$ up to $P=50$, shown in figure \ref{fig:terrain_MSE_bootstrap_p50}.
-
-\begin{figure}[H]
-  \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol50_Bootstrap_re50.pdf}
-  \caption{MSE}
-  \label{fig:terrain_MSE_bootstrap_p50}
-\end{figure}
-
-This illustrates the difficulties of fitting this terrain data, as subtle structures will still be missing in our fitted model, despite using polynomial degrees where overfitting is taking place. Despite large fluctuations in the MSE for higher order polynomials, it's worth mentioning that the MSE values themselves are not particularly large, which is expected since we don't include noise in our data. !SJEKK!
-
-Next we move on to studying the MSE with cross validation. As with the bootstrap analysis, we expect the MSE to decrease in the beginning, and increase when overfitting. We plot use $p_\text{max} = 10$ and $k=[5,10]$ folds, and get the results shown in figure \ref{fig:terrain_OLS_MSE_CV}.
+Next we move on to studying the MSE with cross validation. As with the bootstrap analysis, we expect the MSE to decrease in the beginning, and increase when overfitting. We use $p_\text{max} = 7$ and $k=[5,10]$ folds, and get the results shown in figure \ref{fig:terrain_OLS_MSE_CV}.
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol10_CV_re5.pdf}
+	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol7_CV_re5_log.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol10_CV_re10.pdf}
+	\includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol7_CV_re10_log.pdf}
 	\endminipage
-	\caption{k-fold 5 til venstre. k-fold 10 til høyre}
+	\caption{Here we have plotted $\log(\text{MSE})$ as a function of polynomial degree, with cross-validation as the resampling technique. Left graph shows with $k=5$ iterations, and right with $k=10$.}
   \label{fig:terrain_OLS_MSE_CV}
 \end{figure}
-(Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes incredibly large when $P>8$. Doubling the number of k-folds, the MSE drops significantly, but there is still a clear increase for $p>8$.) <-- GAMMEL TOLKNING
+Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes large when $p>3$. Doubling the number of k-folds, the MSE drops, however the test MSE still deviates quicker, and there is a clear increase for $p>6$. Also the MSE drops much lower in figure \ref{fig:terrain_OLS_MSE_bootstrap}, almost an order of magnitude lower. There is no clear reason as to why the results are different from those obtained when bootstrapping. One reason could be that we have an "unlucky" seed, and because we have such few resampling iterations we get deviations.
 
-Now we move on to bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=x$) variance and error should increase, while bias stays low. Using $p_\text{max}=25$, 
+Now we look at bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=23$) variance and error should increase, while bias stays low. Using max polynomial degree $p_\text{max}=25$ and $B=50$ iterations we get the result in figure \ref{fig:terrain_OLS_BVT}.
 
-
-we are unable to see the relative behaviour of the quantities we plot for $50$ data points, so we use a logarithmic scale on the y-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. Once again, we include a result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $P=10$. This clearly shows an increase in the test MSE and test variance as $P$ increases, while the bias declines.
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SRTM_BVT_OLS_n50_log.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SRTM_BVT_OLS_n15.pdf}
+	\includegraphics[width=\linewidth]{SRTM_BVT_OLS_n30_log.pdf}
 	\endminipage
-	\caption{n50 log til venstre. n15 til høyre}
+	\caption{Here we have plotted the logarithm of MSE, variance and bias, as a function of polynomial degree. We used $B=50$ bootstrap iterations. The left plot is with $(50\cross50)$ grid-points and right with $(30\cross30)$.}
   \label{fig:terrain_OLS_BVT}
 \end{figure}
 
+To easier see variations when we plot for $50$ data points, we use a logarithmic scale on the $y$-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. We see little deviations in bias and MSE, this is makes sense when considering our MSE obtained in (figure \ref{fig:terrain_OLS_MSE_bootstrap}). The test variance also deviates little from the train variance because of the same reason. Again for reference, we include the result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $p=15$. This clearly shows the variations which we expect.
 
 \appendix
 
@@ -524,58 +513,5 @@ Using that $\mathbb{E}[\epsilon^2]=\sigma^2$ and writing the expected values as 
   \mathbb{E}\left[(\mathbf{z} - \mathbf{\tilde{z}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expz)^2 + \frac{1}{n}\sum_i (\tilde{z}_i - \expz )^2 + \sigma^2
 \end{align}
 which is what we wanted to show.
-
-\section{Testing our implementation}\label{Apx:test}
-In order to make sure our algorithms are running correctly, it is necessary to perform tests. We did this by comparing our results to those produced by scikit-learn. First of all we generated some simpler data for testing:
-\begin{equation}
-	\label{eq:test_data}
-	y = \exp{-x^2} + 1.5\cdot\exp{-(x-2)^2} + \epsilon.
-\end{equation}
-
-Here $\epsilon$ denotes normally distributed noise with zero mean and variance $\sigma^2 = 0.1$. We look at when $x$ runs from $x_\text{min} = 0$ to $x_\text{max} = 1$ in $N = 50$ randomly distributed steps. This generates the testing data visualized in figure \ref{fig:TestingData}.
-
-\begin{figure}[H]
-	\includegraphics[width=\linewidth]{Testing_data.pdf}
-	\caption{Here you we have plotted the testing data along with the analytical function. The solid blue line denotes the analytical function.}
-	\label{fig:TestingData}
-\end{figure}
-
-We test the implementation of OLS and Ridge regression. For Lasso we already used the scikit-learn implementation, so there is no reason to compare it with itself.
-\begin{figure}[H]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Testing_OLS.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Testing_Ridge.pdf}
-	\endminipage
-	\caption{In this figure we have plotted the test and train MSE for both OLS (left plot) and Ridge regression (right plot). Along the $x$-axis we have polynomial degree, and MSE along the $y$-axis. The blue and red dashed line is the sklearn MSE respectively. We plotted our test and train MSE as red and blue dots respectively.}
-	\label{fig:test_OLS_Ridge}
-\end{figure}
-Looking at figure \ref{fig:test_OLS_Ridge}, our OLS implementation returns indistinguishable MSE's compared to sklearn. For ridge however we see some small deviations at polynomial degrees $p=7$ and $p = 13$. The strong correspondence makes us confident that our implementations are correct, however, we one should be wary that our results deviate at some polynomial degrees. This is probably due to optimizations that the professional library sklearn has done.
-
-
-\section{Testing Bias Variance Tradeoff}\label{Apx:testing_BVT}
-To ensure a correct implementation of the Bias Variance tradeoff for the Bootstrap method, we want to compare our implemented results with results obtained by scikitlearn. This will also provide us insight of how these results behave. We consider the same data as when we tested our regression methods in Appendix \ref{Apx:test} (equation \eqref{eq:test_data}). However with a slightly different domain, namely $x\in[-3,3]$.
-
-When we compare our own results with the ones obtained from scikitlearn, the result depends a lot on the particular setup we consider. We use $4/5$ of our data as the training data, $100$ bootstrap iterations and polynomial degrees from $P=0$ up to $P=15$ and scale this data by subracting the mean before dividing by the standard deviation. The differences we see between when we compare are very sensitive to the configuration. To illustrate this, we first perform the bias variance tradeoff with $N=170$ data points and then with $N=169$ data points. The resulting plots for the two configuration are shown in figure \ref{fig:compare_BV_scikit}, on the left and right panel, respectively.
-
-\begin{figure}[H]
-  \minipage{0.49\textwidth}
-  \includegraphics[width=\linewidth]{Testing_OLS_BV_compare_n170.pdf}
-  \endminipage\hfill
-  \minipage{0.49\textwidth}
-  \includegraphics[width=\linewidth]{Testing_OLS_BV_compare_n169.pdf}
-  \endminipage
-  \caption{BV compare}
-  \label{fig:compare_BV_scikit}
-\end{figure}
-
-For $N=170$ data points, our model yields a low variance and a high bias and MSE at first, similar to scikit-learn, just as expected. For a polynomial degree of $P=9$, we get an abrupt increase ouf our three metrics while scikit-learn remains stable. For $P=15$ we see that our variance and MSE starts to increase, while the bias remains low, just as desired. This feature is less present for the scikit-learn. If we compare with $N=169$, as shown on the right panel in figure \ref{fig:compare_BV_scikit}, we see that the variance and MSE of the scikit-learn model exceeds a value of $60$ for $P>14$, which is not present in our model. This shows that the bias variance trade-off is generally sensitive to our particular configuration, so when performing a bias-variance trade-off analysis on the Franke function our result may be correct, despite odd behaiour for certain polynomial degrees.
-
-\begin{thebibliography}{}
-\bibitem[]{ref} Ref.
-
-\end{thebibliography}
-
 
 \end{document}
