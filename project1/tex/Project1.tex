@@ -412,7 +412,7 @@ q
 
 
 \section*{Exercise 6: Analysis of real data}
-
+\subsection*{OLS}
 Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider Norwegian terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}. Because the datasets are large, we will only consider one small part of \texttt{SRTM\_data\_Norway\_1.tif}, namely $f_{i,j}$ where $i,j\in[50,100]$, i.e. $N=50$ datapoints in each direction. It is useful to consider dimensionless data, thus we divide by the highest point $z_{i,j} = f_{i,j}/\max{|f_{i,j}|}$, and let $i,j\in[50,100] \rightarrow x,y\in[0,1]$ when plotting. Then we get the data visualized in figure \ref{fig:terrain_raw}.
 
 \begin{figure}[H]
@@ -471,11 +471,7 @@ Next we move on to studying the MSE with cross validation. As with the bootstrap
 \end{figure}
 Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes large when $p>3$. Doubling the number of k-folds, the MSE drops, however the test MSE still deviates quicker, and there is a clear increase for $p>6$. Also the MSE drops much lower in figure \ref{fig:terrain_OLS_MSE_bootstrap}, almost an order of magnitude lower. There is no clear reason as to why the results are different from those obtained when bootstrapping. One reason could be that we have an "unlucky" seed, and because we have such few resampling iterations we get deviations.
 
-<<<<<<< HEAD
 Now we look at bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=23$) variance and error should increase, while bias stays low. Using max polynomial degree $p_\text{max}=25$ and $B=50$ iterations we get the result in figure \ref{fig:terrain_OLS_BVT}.
-=======
-Now we move on to bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=x$) variance and error should increase, while bias stays low. Using $p_\text{max}=25$,
->>>>>>> 2e2d3b2e48c81540e5e4281e18cd8b541b88b4ec
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -489,6 +485,62 @@ Now we move on to bias-variance trade-off analysis, still expecting the same beh
 \end{figure}
 
 To easier see variations when we plot for $50$ data points, we use a logarithmic scale on the $y$-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. We see little deviations in bias and MSE, this is makes sense when considering our MSE obtained in (figure \ref{fig:terrain_OLS_MSE_bootstrap}). The test variance also deviates little from the train variance because of the same reason. Again for reference, we include the result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $p=15$. This clearly shows the variations which we expect.
+
+\subsection*{Ridge}
+MSE BOOT
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{SRTM_Contour_PL_Ridge_Bootstrap90_n50_eps0.2_p8_19_lmbm2_m19.pdf}
+	\caption{Hei}
+	\label{fig:terrain_Ridge_MSE_Boot}
+\end{figure}
+\begin{verbatim}
+1.3400357976376783e-05
+[9] [13]
+Min MSE is 1.3400357976376783e-05 at p=17, l=-11.633333333333333
+No handles with labels found to put in legend.
+Terrain data: 'SRTM_' added at beginning of plot file name
+Saving plot:  SRTM_Contour_PL_Ridge_Bootstrap90_n50_eps0.2_p8_19_lmbm2_m19.pdf
+\end{verbatim}
+
+MSE CV
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{SRTM_Contour_PL_Ridge_CV10_n50_eps0.2_p1_9_lmb1_m9.pdf}
+	\caption{Hei}
+	\label{fig:terrain_Ridge_MSE_CV}
+\end{figure}
+\begin{verbatim}
+Min MSE is 5.5142010462652346e-05 at p=6, l=-6.666666666666667
+No handles with labels found to put in legend.
+Terrain data: 'SRTM_' added at beginning of plot file name
+Saving plot:  SRTM_Contour_PL_Ridge_CV10_n50_eps0.2_p1_9_lmb1_m9.pdf
+\end{verbatim}
+
+\subsection*{Lasso}
+
+MSE BOOT
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{SRTM_Contour_PL_Lasso_Bootstrap90_n50_eps0.2_p4_11_lmbm6_m10.pdf}
+	\caption{Hei}
+	\label{fig:terrain_Lasso_MSE_Boot}
+\end{figure}
+\begin{verbatim}
+Min MSE is 0.00010616500383109283 at p=10, l=-6.933333333333334
+No handles with labels found to put in legend.
+Terrain data: 'SRTM_' added at beginning of plot file name
+Saving plot:  SRTM_Contour_PL_Lasso_Bootstrap90_n50_eps0.2_p4_11_lmbm6_m10.pdf
+\end{verbatim}
+MSE CV
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{SRTM_Contour_PL_Lasso_CV10_n50_eps0.2_p5_14_lmbm1_m9.pdf}
+	\caption{Hei}
+	\label{fig:terrain_Lasso_MSE_CV}
+\end{figure}
+\begin{verbatim}
+Min MSE is 0.6514930968299291 at p=13, l=-5.0
+No handles with labels found to put in legend.
+Terrain data: 'SRTM_' added at beginning of plot file name
+Saving plot:  SRTM_Contour_PL_Lasso_CV10_n50_eps0.2_p5_14_lmbm1_m9.pdf
+\end{verbatim}
 
 \appendix
 

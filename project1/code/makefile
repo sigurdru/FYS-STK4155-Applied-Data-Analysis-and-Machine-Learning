@@ -28,12 +28,19 @@ exercise4:
 	python3 main.py -m Ridge -r CV -ri 10 -a simple_regression -l 100 -lc value -p 10
 exercise5:
 exercise6:
+	#Create OLS results
 	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 30 -p 15 -log
 	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 50 -p 30 -log
 	python3 main.py -d SRTM -r CV -ri 5 -n 50 -p 7 -log
 	python3 main.py -d SRTM -r CV -ri 10 -n 50 -p 7 -log
 	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 50 -p 25 -a bias_var_tradeoff -log
 	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 30 -p 15 -a bias_var_tradeoff -log
+	#Create Ridge results
+	python3 main.py -d SRTM -n 50 -m Ridge -r Bootstrap -ri 90 -a lambda_analysis -l m19,m2,31 -lc range -p 8,20
+	python3 main.py -d SRTM -n 50 -m Ridge -r CV -ri 10 -a lambda_analysis -l m9,1,31 -lc range -p 1,10
+	#Create Lasso results
+	python3 main.py -d SRTM -n 50 -m Lasso -r Bootstrap -ri 90 -a lambda_analysis -l m10,m6,31 -lc range -p 4,12
+	python3 main.py -d SRTM -n 50 -m Lasso -r CV -ri 10 -a lambda_analysis -l m9,m1,31 -lc range -p 5,15
 	
 all: exercise1 exercise2 exercise3 exercise4 exercise5 exercise6
 
