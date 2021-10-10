@@ -157,7 +157,10 @@ def Plot_error(MSE_test, MSE_train, args):
         fname += '_lam_'+str(args.lmb[0])
         fname = fname.replace('.', '_')
     xlabel = 'Polynomial degree'
-    ylabel = 'MSE'
+    if args.log:
+        ylabel = 'log(MSE)'
+    else:
+        ylabel = 'MSE'
 
     set_ax_info(ax, xlabel, ylabel, title)
     if args.log:
@@ -426,11 +429,9 @@ if __name__ == "__main__":
             self.epsilon = eps
             self.dataset = "Franke"
 
-    # N = 30
-    # x = np.sort(np.random.uniform(size=N))
-    # y = np.sort(np.random.uniform(size=N))
-    # x, y = np.meshgrid(x, y)
+    N = 30
+    x = np.sort(np.random.uniform(size=N))
+    y = np.sort(np.random.uniform(size=N))
+    x, y = np.meshgrid(x, y)
     args = Argparse()
-    # z = utils.FrankeFunction(x, y, eps=args.epsilon)
-    # Plot_3DDataset(x, y, z, args)
-    Plot_VarOLS(args)
+    z = utils.FrankeFunction(x, y, eps=args.epsilon)
