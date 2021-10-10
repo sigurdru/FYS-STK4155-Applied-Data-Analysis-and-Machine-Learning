@@ -157,7 +157,10 @@ def Plot_error(MSE_test, MSE_train, args):
         fname += '_lam_'+str(args.lmb[0])
         fname = fname.replace('.', '_')
     xlabel = 'Polynomial degree'
-    ylabel = 'MSE'
+    if args.log:
+        ylabel = 'log(MSE)'
+    else:
+        ylabel = 'MSE'
 
     set_ax_info(ax, xlabel, ylabel, title)
     if args.log:
@@ -353,7 +356,7 @@ def Plot_BVT_lambda(result, args):
 
     xlabel = "Polynomial degree"
     ylabel = "Bias, variance and error"
-    title = f"BV-tradeoff for {args.method} for different lambda"
+    title = f"BV-tradeoff for {args.method} using {args.resampling} iter = {args.resampling_iter}"
     set_ax_info(ax, xlabel, ylabel, title)
 
     fname = f"LBVT_{args.method}_{args.resampling}_n{args.num_points}"
@@ -381,6 +384,13 @@ def Plot_2D_MSE(results, args):
     else:
         title = "MSE"
 
+    min_val = np.min(MSE)
+    min_l, min_P = np.where(MSE == min_val)
+    print(min_P, min_l)
+    min_P = args.polynomial[min_P[0]]
+    min_l = np.log10(args.lmb[min_l[0]])
+    print(f"Min MSE is {min_val} at p={min_P}, l={min_l}")
+
     F = ax.contourf(P, lmb, MSE, cmap="jet")
     norm = mpl.colors.Normalize(vmin=F.cvalues.min(), vmax=F.cvalues.max())
     bar = mpl.cm.ScalarMappable(norm=norm, cmap=F.cmap)
@@ -388,6 +398,8 @@ def Plot_2D_MSE(results, args):
     cbar = fig.colorbar(bar, ticks=F.levels)
     cbar.set_label("log10(Error)" if args.log else "Error",
                    rotation=90, fontsize=20, position=(1, 0.5))
+
+    ax.scatter(min_P, min_l, s=30, c="r", marker="x")
 
     xlabel = "Polynomial degree"
     ylabel = "log10(lambda)"
@@ -417,11 +429,9 @@ if __name__ == "__main__":
             self.epsilon = eps
             self.dataset = "Franke"
 
-    # N = 30
-    # x = np.sort(np.random.uniform(size=N))
-    # y = np.sort(np.random.uniform(size=N))
-    # x, y = np.meshgrid(x, y)
+    N = 30
+    x = np.sort(np.random.uniform(size=N))
+    y = np.sort(np.random.uniform(size=N))
+    x, y = np.meshgrid(x, y)
     args = Argparse()
-    # z = utils.FrankeFunction(x, y, eps=args.epsilon)
-    # Plot_3DDataset(x, y, z, args)
-    Plot_VarOLS(args)
+    z = utils.FrankeFunction(x, y, eps=args.epsilon)
