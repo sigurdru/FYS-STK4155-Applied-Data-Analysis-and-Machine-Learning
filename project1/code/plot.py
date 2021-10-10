@@ -95,7 +95,7 @@ def Plot_3DDataset(x, y, z, args, predict=False):
     fname = fname.replace('.', '')  # remove dots from fname
     xlabel = '$x$'
     ylabel = '$y$'
-    zlabel = '$f$'
+    zlabel = '$z$'
     set_ax_info(ax, xlabel, ylabel, title, zlabel)
     fig.tight_layout()
     show(fig, fname, args)
