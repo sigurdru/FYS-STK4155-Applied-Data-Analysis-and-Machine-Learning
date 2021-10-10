@@ -460,7 +460,7 @@ We begin by studying the MSE using OLS-regression and bootstrapping as the resam
   \label{fig:terrain_OLS_MSE_bootstrap}
 \end{figure}
 
-Looking at figure \ref{fig:terrain_OLS_MSE_bootstrap} we see that for $(50\cross50)$ grid-points (left plot), we get a small increase in the MSE after $p = 23$. We think this is because of the large number of grid points. Therefore we plot for $30\cross30$ grid-points (right figure) and see a much larger increase after $p = 8$. Because of this we conclude that the small overfitting is due to our large number of grid-points.
+Looking at figure \ref{fig:terrain_OLS_MSE_bootstrap} we see that for $(50\cross50)$ grid-points (left plot), we get a small increase in the MSE after $p = 23$. We assume that overfitting is not evident due to the large number of data points. Therefore we plot for $30\cross30$ grid-points (right figure) and see a much larger increase after $p = 8$. Because of this we conclude that the small overfitting is due to our large number of grid-points.
 
 As a simple sanity check, we plot the result of our fits for different polynomial degrees, which we can compare to the original data from figure \ref{fig:terrain_raw}. To capture the complexity of our data set, we consider four polynomial degrees, using $p\in[10,\,20,\,30,\,50]$, where the first two are shown in the upper left and right panel of figure \ref{fig:terrain_fit}, respectively, while the latter two in the bottom left and right panel of the same figure, respectively.
 
@@ -495,9 +495,11 @@ Next we move on to studying the MSE with cross validation. As with the bootstrap
 	\caption{Here we have plotted $\log(\text{MSE})$ as a function of polynomial degree, with cross-validation as the resampling technique. Left graph shows with $k=5$ iterations, and right with $k=10$.}
   \label{fig:terrain_OLS_MSE_CV}
 \end{figure}
-Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes large when $p>3$. Doubling the number of k-folds, the MSE drops, however the test MSE still deviates quicker, and there is a clear increase for $p>6$. Also the MSE drops much lower in figure \ref{fig:terrain_OLS_MSE_bootstrap}, almost an order of magnitude lower. There is no clear reason as to why the results are different from those obtained when bootstrapping. One reason could be that we have an "unlucky" seed, and because we have such few resampling iterations we get deviations.
+Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes large when $p>3$. Doubling the number of k-folds, the MSE drops, however the test MSE still deviates quicker, and there is a clear increase for $p>6$. With $k=10$ we seem to get a clearly increased test MSE with odd ordered polynomial degrees, a feature that was not apparent with the bootstrap method.
 
-Now we look at bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=23$) variance and error should increase, while bias stays low. Using max polynomial degree $p_\text{max}=25$ and $B=50$ iterations we get the result in figure \ref{fig:terrain_OLS_BVT}.
+Also the MSE drops much lower in figure \ref{fig:terrain_OLS_MSE_bootstrap}, almost an order of magnitude lower. There is no clear reason as to why the results are different from those obtained when bootstrapping. One reason could be that we have an "unlucky" seed, and because we have such few resampling iterations we get deviations, just like we discussed for our Franke function results.
+
+Now we look at bias-variance trade-off analysis, still expecting the same behavior as in exercise 2. i.e. for both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE lower. For the testing data however, when we start to see overfitting (around $p=23$) variance and error should increase, while bias stays low. Using max polynomial degree $p_\text{max}=25$ and $B=50$ iterations we get the result in figure \ref{fig:terrain_OLS_BVT}.
 
 
 \begin{figure}[H]
@@ -511,7 +513,7 @@ Now we look at bias-variance trade-off analysis, still expecting the same behavi
   \label{fig:terrain_OLS_BVT}
 \end{figure}
 
-To easier see variations when we plot for $50$ data points, we use a logarithmic scale on the $y$-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. We see little deviations in bias and MSE, this is makes sense when considering our MSE obtained in (figure \ref{fig:terrain_OLS_MSE_bootstrap}). The test variance also deviates little from the train variance because of the same reason. Again for reference, we include the result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $p=15$. This clearly shows the variations which we expect.
+To easier see variations when we plot for $50$ data points, we use a logarithmic scale on the $y$-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. We see little deviations in bias and MSE, this makes sense when considering our MSE obtained in (figure \ref{fig:terrain_OLS_MSE_bootstrap}). The test variance also deviates little from the train variance because of the same reason. Again for reference, we include the result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $p=15$. This clearly shows the variations which we expect.
 
 \appendix
 
