@@ -189,7 +189,7 @@ def Plot_R2(R2_test, R2_train, args):
     fig, ax = plt.subplots()
     ax.plot(args.polynomial, R2_test, "bo--", label="Test R2")
     ax.plot(args.polynomial, R2_train, "ro--", label="Train R2")
-    # general formalitiesiscrete uniform” 
+    # general formalitiesiscrete uniform”
     if args.dataset == "SRTM":
         fname = 'R2_' + args.method \
                 + '_n' + str(args.num_points) \
@@ -356,7 +356,7 @@ def Plot_BVT_lambda(result, args):
 
     xlabel = "Polynomial degree"
     ylabel = "Bias, variance and error"
-    title = f"BV-tradeoff for {args.method} for different lambda"
+    title = f"BV-tradeoff for {args.method} using {args.resampling} iter = {args.resampling_iter}"
     set_ax_info(ax, xlabel, ylabel, title)
 
     fname = f"LBVT_{args.method}_{args.resampling}_n{args.num_points}"
@@ -384,6 +384,13 @@ def Plot_2D_MSE(results, args):
     else:
         title = "MSE"
 
+    min_val = np.min(MSE)
+    min_l, min_P = np.where(MSE == min_val)
+    print(min_P, min_l)
+    min_P = args.polynomial[min_P[0]]
+    min_l = np.log10(args.lmb[min_l[0]])
+    print(f"Min MSE is {min_val} at p={min_P}, l={min_l}")
+
     F = ax.contourf(P, lmb, MSE, cmap="jet")
     norm = mpl.colors.Normalize(vmin=F.cvalues.min(), vmax=F.cvalues.max())
     bar = mpl.cm.ScalarMappable(norm=norm, cmap=F.cmap)
@@ -391,6 +398,8 @@ def Plot_2D_MSE(results, args):
     cbar = fig.colorbar(bar, ticks=F.levels)
     cbar.set_label("log10(Error)" if args.log else "Error",
                    rotation=90, fontsize=20, position=(1, 0.5))
+
+    ax.scatter(min_P, min_l, s=30, c="r", marker="x")
 
     xlabel = "Polynomial degree"
     ylabel = "log10(lambda)"

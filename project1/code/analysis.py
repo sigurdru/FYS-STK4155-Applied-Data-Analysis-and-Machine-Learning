@@ -81,7 +81,7 @@ def simple_regression(args):
     for i, p in enumerate(P):
         print("p = ", p)
 
-        if args.resampling != "CV": 
+        if args.resampling != "CV":
             X_train = X_train_[:, :utils.get_features(p)]
             X_test = X_test_[:, :utils.get_features(p)]
             inputs = ((X_train, X_test), (z_train, z_test), args.resampling_iter, args.lmb[0], reg_conv[args.method])
@@ -99,9 +99,9 @@ def simple_regression(args):
     plot.Plot_R2(R2_test=R2s, R2_train=R2_train, args=args)
 
     if args.pred:
-        predict_data = resampl((X_train_, X_test_), (z_train, z_test), args.resampling_iter, args.lmb[0], reg_conv[args.method])
-        beta = predict_data["beta"]
-        plot.Plot_3DDataset(x, y, X @ beta, args, predict=True)
+        X_ = X[:, :utils.get_features(p)]
+        beta = reg_conv[args.method](X_,z)
+        plot.Plot_3DDataset(x, y, X_ @ beta, args, predict=True)
 
     if args.method == "OLS" and args.dataset == "Franke" and not args.show:
         """ For Ex1 we want to make a plot of the variance in the beta values. """
@@ -132,7 +132,7 @@ def bias_var_tradeoff(args, testing=False):
     for i, p in enumerate(P):
         print("p = ", p)
 
-        if args.resampling != "CV": 
+        if args.resampling != "CV":
             X_train = X_train_[:, :utils.get_features(p)]
             X_test = X_test_[:, :utils.get_features(p)]
             inputs = ((X_train, X_test), (z_train, z_test), args.resampling_iter, args.lmb[0], reg_conv[args.method])
@@ -180,7 +180,7 @@ def lambda_analysis(args):
     for i, p in enumerate(P):
         print("p = ", p)
 
-        if args.resampling != "CV": 
+        if args.resampling != "CV":
             X_train = X_train_[:, :utils.get_features(p)]
             X_test = X_test_[:, :utils.get_features(p)]
         else:
@@ -195,7 +195,7 @@ def lambda_analysis(args):
             data = resampl(*inputs)
 
             results["test_MSE"][i][k] = data["test_MSE"]
-    
+
     r = results["test_MSE"]
     print(np.where(r == np.min(r)))
     print(np.min(r))
@@ -231,7 +231,7 @@ def BVT_lambda(args):
     for i, p in enumerate(P):
         print("p = ", p)
 
-        if args.resampling != "CV": 
+        if args.resampling != "CV":
             X_train = X_train_[:, :utils.get_features(p)]
             X_test = X_test_[:, :utils.get_features(p)]
         else:
