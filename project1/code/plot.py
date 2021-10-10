@@ -388,7 +388,6 @@ def Plot_2D_MSE(results, args):
 
     min_val = np.min(MSE)
     min_l, min_P = np.where(MSE == min_val)
-    print(min_P, min_l)
     min_P = args.polynomial[min_P[0]]
     min_l = np.log10(args.lmb[min_l[0]])
     print(f"Min MSE is {min_val} at p={min_P}, l={min_l}")

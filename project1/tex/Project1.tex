@@ -334,7 +334,7 @@ When bootstrapping we saw overfitting at around $p=6$. Looking at the plots in f
 
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
-In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by adding a small number $\lambda$ from the diagonal, the matrix is no longer singular. This is called Ridge regression. The optimal parameters $\boldsymbol{\hat\beta}$ are given by
+In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by adding a small number $\lambda$ to the diagonal, the matrix is no longer singular. This is called Ridge regression. The optimal parameters $\boldsymbol{\hat\beta}$ are given by
 \begin{equation}
 	\boldsymbol{\hat{\beta}} = (X^TX+\lambda I)X^T\vc{z},
 \end{equation}
@@ -411,6 +411,20 @@ q
 
 
 \section*{Exercise 5: Lasso regression on the Franke function with resampling}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m4.pdf}
+\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+\label{fig:Ridge_boot_BVT}
+\end{figure}
+
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{MSE_Lasso_n30_eps02_pol10_Bootstrap_re90_lam_0_0001.pdf}
+	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+	\label{fig:Ridge_boot_BVT}
+\end{figure}
+
 
 
 \section*{Exercise 6: Analysis of real data}
