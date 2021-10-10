@@ -420,11 +420,9 @@ if __name__ == "__main__":
             self.epsilon = eps
             self.dataset = "Franke"
 
-    # N = 30
-    # x = np.sort(np.random.uniform(size=N))
-    # y = np.sort(np.random.uniform(size=N))
-    # x, y = np.meshgrid(x, y)
+    N = 30
+    x = np.sort(np.random.uniform(size=N))
+    y = np.sort(np.random.uniform(size=N))
+    x, y = np.meshgrid(x, y)
     args = Argparse()
-    # z = utils.FrankeFunction(x, y, eps=args.epsilon)
-    # Plot_3DDataset(x, y, z, args)
-    Plot_VarOLS(args)
+    z = utils.FrankeFunction(x, y, eps=args.epsilon)

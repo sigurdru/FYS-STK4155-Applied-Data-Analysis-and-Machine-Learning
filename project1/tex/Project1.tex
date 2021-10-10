@@ -399,21 +399,20 @@ Having used our data analysis methods to study the Franke function we will now m
   \label{fig:terrain_raw}
 \end{figure}
 
-We begin by studying the MSE using OLS-regression and bootstrapping as the resampling technique. Our results should mirror those we got in exercise 2, where the test MSE decreases in the beginning, and increases when we start overfitting. Choosing $B = 50$ iterations and max polynomial degree $p_\text{max} = 30$ we get the MSE illustrated in figure \ref{fig:terrain_OLS_MSE_bootstrap}.
+We begin by studying the MSE using OLS-regression and bootstrapping as the resampling technique. Our results should mirror those we got in exercise 2, where the test MSE decreases in the beginning, and increases when we start overfitting. Choosing $B = 50$ iterations and max polynomial degree $p_\text{max} = 30$ we get the MSE illustrated in figure \ref{fig:terrain_OLS_MSE_bootstrap}. Because of the small variation in MSE we plotted the $\log(\text{MSE})$ along the $y$-axis.
 
 \begin{figure}[H]
-  \minipage{0.48\textwidth}
+  \minipage{0.49\textwidth}
   \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol30_Bootstrap_re50_log.pdf}
   \endminipage\hfill
   \minipage{0.49\textwidth}
-  \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n15_pol10_Bootstrap_re50.pdf}
+  \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n30_pol15_Bootstrap_re50_log.pdf}
   \endminipage
-  \caption{n50 log til venstre. n15 til høyre}
+  \caption{Her we have plotted the $\log(\text{MSE})$ as a function of polynomial degree. The left plot is with $(50\cross50)$ grid-points and right with $(50\cross50)$.}
   \label{fig:terrain_OLS_MSE_bootstrap}
 \end{figure}
 
-
-(with a logarithmic y-axis. Using a data set with \$50\textbackslash\{\}cross50\$ data points yields a little noticeable change in the mean squared error, but we see a potential overfitting occuring for \$P>15\$. To see that we get overfitting for the terrain data eventually, we plot the mean squared error for the same resampling method, but with \$n=10\$ points in each direction up to a polynomial degree of \$P=10\$, shown on the right panel in figure \textbackslash\{\}ref\{fig:terrain\_OLS\_MSE\_bootstrap\}. Here, we can see an evident overfitting starting to occur for polynomial degrees greater than \$6\$.)<-- GAMMEL ANALYSE
+Looking at figure \ref{fig:terrain_OLS_MSE_bootstrap} we see that for $(50\cross50)$ grid-points (left plot), we get a small increase in the MSE after $p = 23$. We think this is because of the large number of grid points. Therefore we plot for $30\cross30$ grid-points (right figure) and see a much larger increase after $p = 8$. Because of this we conclude that the small overfitting is due to our large number of grid-points. 
 
 As a simple sanity check, we plot the result of our fits for different polynomial degrees, which we can compare to the original data from figure \ref{fig:terrain_raw}. To capture the complexity of our data set, we consider four polynomial degrees, using $P\in[10,\,20,\,30,\,50]$, where the first two are shown in the upper left and right panel of figure \ref{fig:terrain_fit}, respectively, while the latter two in the bottom left and right panel of the same figure, respectively.
 
