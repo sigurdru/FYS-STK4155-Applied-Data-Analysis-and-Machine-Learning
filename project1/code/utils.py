@@ -18,6 +18,8 @@ def get_directly_implemented_funcs(module):
             flist[f.name] = eval("module." + f.name)
     return flist
 
+def get_features(i):
+    return (i + 1) * (i + 2) // 2
 
 def FrankeFunction(x, y, eps=0):
     """

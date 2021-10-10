@@ -47,8 +47,9 @@ def resample(x, z):
     return x, z
 
 
-def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler, Testing=False):
-    X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
+def NoResampling(X, z, unused_iter_variable, lmb, reg_method, Testing=False):
+    X_train, X_test = X
+    z_train, z_test = z
     beta = reg_method(X_train, z_train, lmb)
     test_pred = X_test @ beta
     train_pred = X_train @ beta
@@ -64,8 +65,9 @@ def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler, T
     else:
         return data, X_train, X_test, z_train, z_test, beta
 
-def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
-    X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
+def Bootstrap(X, z, B, lmb, reg_method):
+    X_train, X_test = X
+    z_train, z_test = z
 
     if B is None:
         B = len(z_train)
@@ -89,8 +91,7 @@ def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
     data["train_variance"] = utils.Variance(z_train, train_pred)
     return data
 
-def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
-    X, _, z, _ = split_scale(X, z, 0, scaler)  # In this case only scales
+def cross_validation(X, z, k, lmb, reg_method):
 
     data = defaultdict(lambda: 0)
     train_pred = np.empty(k)
