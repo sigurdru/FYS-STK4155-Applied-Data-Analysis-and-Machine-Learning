@@ -27,6 +27,18 @@ exercise4:
 	python3 main.py -m Ridge -r CV -ri 10 -a simple_regression -l 1 -lc value -p 10
 	python3 main.py -m Ridge -r CV -ri 10 -a simple_regression -l 100 -lc value -p 10
 exercise5:
+	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a lambda_analysis -l m4,m1,31 -lc range -p 1,7
+	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a lambda_analysis -l m4,2,51 -lc range -p 1,3,5,7,9 -pc list
+	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a simple_regression -l 0.0001 -lc value -p 20
+	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a simple_regression -l 0.01 -lc value -p 20
+	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a simple_regression -l 1 -lc value -p 20
+	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a simple_regression -l 100 -lc value -p 20
+	python3 main.py --show -m Lasso -r CV -ri 10 -a lambda_analysis -l m4,2,51 -lc range -p 1,7
+	python3 main.py --show -m Lasso -r CV -ri 10 -a lambda_analysis -l m4,6,101 -lc range -p 1,3,5,7,9 -pc list
+	python3 main.py --show -m Lasso -r CV -ri 10 -a simple_regression -l 0.0001 -lc value -p 10
+	python3 main.py --show -m Lasso -r CV -ri 10 -a simple_regression -l 0.01 -lc value -p 10
+	python3 main.py --show -m Lasso -r CV -ri 10 -a simple_regression -l 1 -lc value -p 10
+	python3 main.py --show -m Lasso -r CV -ri 10 -a simple_regression -l 100 -lc value -p 10
 exercise6:
 	#Create OLS results
 	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 30 -p 15 -log

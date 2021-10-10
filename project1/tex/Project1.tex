@@ -293,11 +293,11 @@ Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and M
 	\caption{Here we have plotted the bias, variance and MSE for the test and train data. The $x$-axis shows the polynomial degree, and the $y$-axis indicates the bias, variance and MSE. The dotted lines are for the train data and solid lines are the test data.}\label{fig:BV_OLS}
 \end{figure}
 
-As expected we se a general increase in MSE and variance for the test data when the complexity increases, despite a certain dip around $p=13$. The test bias does not act completely as expected. It does decrease in the beginning, however it starts increasing at around $p = 15$. This is likely due to unpredictable behaviour of our model, which we would expect for such a high polynomial degree. The decrease of the MSE and variance also suggests that the model does not behave ideally at all values of $p$.  
+As expected we se a general increase in MSE and variance for the test data when the complexity increases, despite a certain dip around $p=13$. The test bias does not act completely as expected. It does decrease in the beginning, however it starts increasing at around $p = 15$. This is likely due to unpredictable behaviour of our model, which we would expect for such a high polynomial degree. The decrease of the MSE and variance also suggests that the model does not behave ideally at all values of $p$. When increasing the number of iterations to $B=300$, the MSE and variance kept increasing up to $p=14$, while they dipped at $p=15$. The increase of the test bias at $p=15$ was reduced as well, causing it to end up with a final value below $0.10$. This suggests that our model behaves somewhat unpredictable at sufficiently high polynomial degree, but other than that, the results are just as we expected. We were also able to see that the variance surpasses the bias for sufficiently high model complexity.
 
-As we saw in \ref{Apx:testing_BVT}, bias variance analysis with bootstrapping is very sensitive to the number of resampling iterations $B$, and gives unexpected results because of it. One thing we also saw in the overfitting experiment (figure \ref{fig:OLS_overfitting}) is the sharp increase and decrease for specific polynomial degrees. Taking all of this into account, the optimal fit that minimizes bias, variance and MSE for OLS is $p=6$.
+As previously discussed, the minimum value of the test MSE at $p=3$ does not seem to correspond to the best fit, according to our bias-variance trade-off analysis. There seems to be a slight increase in variance at $p=7$, which is also the case for the test MSE. Taking all of this into account, the optimal fit of the Franke function that minimizes bias, variance and MSE for OLS is $p=6$.
 
-The last term of \eqref{eq:bias_var_tradeoff} is a constant, and related to the noise in the data. Using data with more noise will give worse fit, and less noise gives a better fit. However, the relative bias and error will stay the same.  In this paper all results have been produced with the same amount of noise. Had we used a different value, we would except the MSE-plots to be similar, with the only difference being the value of the error. As a sanity check, we remake figure \ref{fig:BV_OLS} with lower and higher noise. See figure \ref{fig:BV_OLS_noise}. Comparing with \ref{fig:BV_OLS}, we see that the graphs are relatively the same, just taking lower and higher values.
+The last term of \eqref{eq:bias_var_tradeoff} is a constant, and related to the noise in the data. Using data with more noise will give worse fit, and less noise gives a better fit. However, the relative behaviour of the bias and error will stay the same.  In this paper all results have been produced with the same amount of noise. Had we used a different value, we would except the MSE-plots to be similar, with the only difference being the value of the error. As a sanity check, we remake figure \ref{fig:BV_OLS} with lower and higher noise, but with $p_\text{max}=10$ to avoid high MSE values which could make the comparison difficult. See figure \ref{fig:BV_OLS_noise}. Comparing with figure \ref{fig:BV_OLS}, we see that the graphs behave relatively the same way, just taking lower and higher values.
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -311,7 +311,7 @@ The last term of \eqref{eq:bias_var_tradeoff} is a constant, and related to the 
 
 \section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
 
-Here we have implemented cross-validation as the resampling technique. This works by first shuffling the data randomly, then split the data into $k$ different groups. We can then decide on one group to be the test-data and perform linear regression on the rest. After that we can calculate the MSE, and repeat this process $k$-times. The final MSE would then be the mean MSE, after all the iterations. In figure \ref{fig:CV_OLS} we have done this, trying for $k = [5,7,10]$.
+Here we have implemented cross-validation as the resampling technique. This works by first shuffling the data randomly, then split the data into $k$ different groups. We can then decide on one group to be the test-data and perform linear regression with the remaining data as the training set. After that we calculate the MSE. Then we choose a new group to be the test data and calculate the MSE once again with the remaining groups as the training data. We repeat the process a total of $k$ timer, until all the groups have been used as test data. The final MSE will then be the mean MSE, after all the iterations. In figure \ref{fig:CV_OLS} we have performed cross-validation resampling, using $k = [5,7,10]$ iterations.
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -329,27 +329,39 @@ Here we have implemented cross-validation as the resampling technique. This work
 	\caption{Here we have plotted the MSE when performing cross-validation as the resampling technique. On the $x$-axis we have polynomial degree, and MSE on the $y$-axis. The top left, right and bottom left figures are with $k=[5, 7, 10]$ iterations respectively. The bottom left plot is to illustrate the diverging MSE for higher polynomial degree, which we see irregardless of iteration-number.} \label{fig:CV_OLS}
 \end{figure}
 
-When bootstrapping we saw overfitting at around $p=6$. Looking at the plots in figure \ref{fig:CV_OLS} there seems to be consistent overfitting at around $p=3$. In the bottom right plot we have plotted for higher polynomials to illustrate that this error does not decrease for higher $p$. This does not depend on the number of resampling iterations. We see no obvious reason that the overfitting should start sooner compared to bootstrapping, and thus ground it in random fluctuations. We have consistently seen large variation in results based on number of resampling, and the random seed used when producing the results. Another interesting result is that a higher number of resampling iterations seems to decrease the overfitting effects. This coincide with the analysis on early overfitting. Having a larger number of resampling iterations should dampen the odd effects due to randomness.
+When bootstrapping we saw overfitting at around $p=6$. Looking at the plots in figure \ref{fig:CV_OLS} there seems to be consistent overfitting at around $p=3$. In the bottom right plot we have plotted for higher polynomials to illustrate that this error does not decrease for higher $p$. This diverging behaviour takes place regardless of the number of resampling iterations. We see no obvious reason that the overfitting should start sooner compared to bootstrapping, and thus ground it in random fluctuations. We have consistently seen large variations in results based on number of resampling, and the random seed used when studying the model predictions. One possible explanation of the MSE difference between the bootstrap method and cross-validation might be that the test set we used for bootstrap resampling happened to be a favorable one, with fewer points generated with high values of $\epsilon$. Another important aspect is that we averaged a total of $90$ simulations for the bootstrap method, compared to averaging a maximum of $k=10$ resamplings with cross-validation. The mean MSE of the cross-validation method is thus more affected by a bad fit than the mean MSE of the bootstrap method.
+
+
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
-In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by adding a small number $\lambda$ from the diagonal, the matrix is no longer singular. This is called Ridge regression. The optimal parameters $\boldsymbol{\hat\beta}$ are given by
+In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by adding a small number $\lambda$ to the diagonal, the matrix is no longer singular. This is called Ridge regression. The optimal parameters $\boldsymbol{\hat\beta}$ are given by
 \begin{equation}
 	\boldsymbol{\hat{\beta}} = (X^TX+\lambda I)X^T\vc{z},
 \end{equation}
-where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, so finding the optimal is paramount. This is done by running the regression for many different values of $\lambda$ and choosing the one giving the best results.  Note that when $\lambda=0$, the expression becomes that of OLS.
+where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, so finding the optimal is paramount. This is done by running the regression for many different values of $\lambda$ and choosing the one giving the best results.  Note that when $\lambda=0$, the expression becomes that of OLS. The following relation between the Ridge-parameters and the OLS-parameters can be show to be true:
+\begin{equation}\label{eq:beta_ridge_ols}
+	\hat{\beta}^{Ridge} = (1 + \lambda)^{-1}\hat{\beta}^{OLS}
+\end{equation}
 
-Now we want to perform the same bootstrap analysis as we did for OLS, using Ridge. Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap. Figure \ref{fig:Ridge_boot_PM} shows MSE as function of polynomial degree for 4 different values of $\lambda$, starting at $10^-4$, increasing with a factor of 100 for each plot. We see that test error varies a lot, making it non-trivial to determine what is overfitting and underfitting. For the 3 first $\lambda$-values it seems we have overfitting for $p=9$, while for $\lambda=100$, it can not be conclusively decided. $p=3$ and $p=8$ seem to be the best two values before overfitting for the 3 smallest $\lambda$.
+Before we look at specific values of $\lambda$ or polynomial degrees, we make a heatmap of the MSE for several values of both. As equation \eqref{eq:beta_ridge_ols} shows, the parameters are pushed to $0$ for large values of $\lambda$. We therefore expect the best $\lambda$-value to be quite small. In figure \ref{fig:Ridge-boot_heatmap} below, we have chosen values between $10^{-6}$ and $10^0$. The polynomial degree run from $1$ to $15$. The 0-polynomial is excluded as it would be extreme underfitting, giving high errors and the plot less interesting.
 
 \begin{figure}[H]
-	\includegraphics[width=\linewidth]{Contour_PL_Ridge_Bootstrap90_n30_eps0.2_p1_6_lmb2_m6.pdf}
-	\caption{MSE using Ridge and bootstrapping, as function of polynomial degree and $\lambda$. The minimum value is $MSE=0.047$ at $p=3$ and $log10(\lambda) = -4.4$.}
+	\includegraphics[width=\linewidth]{Contour_PL_Ridge_Bootstrap90_n30_eps0.2_p1_15_lmb0_m6.pdf}
+	\caption{MSE using Ridge and bootstrapping, as function of polynomial degree and $\lambda$. The minimum value is $MSE=0.0472$ at $p=8$ and $log10(\lambda) = -2.07$.}
 	\label{fig:Ridge-boot_heatmap}
 \end{figure}
 
+There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstly, for low polynomial degrees, and for all $\lambda$s, the error is high. This is underfitting. Next, it is also high for high polynomial degrees, and low $\lambda$s. This is a region of overfitting. It does not extend up to higher $\lambda$s. This is probably because
+
 \begin{figure}[H]
+		\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_Bootstrap90_n30_eps02_p9_lm6_2.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_Bootstrap90_n30_eps02_p10_lm3_m1.pdf}
+	\endminipage
 	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
-	\label{fig:Ridge-boot_heatmap}
+	\label{fig:Ridge-boot_lambdas}
 \end{figure}
 
 
@@ -409,6 +421,20 @@ q
 
 
 \section*{Exercise 5: Lasso regression on the Franke function with resampling}
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m4.pdf}
+\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+\label{fig:Ridge_boot_BVT}
+\end{figure}
+
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{MSE_Lasso_n30_eps02_pol10_Bootstrap_re90_lam_0_0001.pdf}
+	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+	\label{fig:Ridge_boot_BVT}
+\end{figure}
+
 
 
 \section*{Exercise 6: Analysis of real data}
