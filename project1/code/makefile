@@ -1,6 +1,6 @@
 exercise1:
 	python3 plot.py
-	python3 main.py -p 5
+	python3 main.py
 exercise2:
 	python3 main.py -r Bootstrap -ri 90 -p 20
 	python3 main.py -r Bootstrap -ri 90 -p 10
@@ -30,7 +30,11 @@ exercise5:
 exercise6:
 	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 30 -p 15 -log
 	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 50 -p 30 -log
-
-all: oppgave1 oppgave2 oppgave3 oppgave4 oppgave5 oppgave6
+	python3 main.py -d SRTM -r CV -ri 5 -n 50 -p 7 -log
+	python3 main.py -d SRTM -r CV -ri 10 -n 50 -p 7 -log
+	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 50 -p 25 -a bias_var_tradeoff -log
+	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 30 -p 15 -a bias_var_tradeoff -log
+	
+all: exercise1 exercise2 exercise3 exercise4 exercise5 exercise6
 
 

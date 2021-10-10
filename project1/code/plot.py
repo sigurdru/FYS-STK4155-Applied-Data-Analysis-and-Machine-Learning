@@ -245,6 +245,8 @@ def Plot_bias_var_tradeoff(datas, args):
     ylabel = 'Bias, variance and MSE'
     title = 'Bias Variance Tradeoff for ' + args.method+', '\
         + args.resampling + ' iter = '+str(args.resampling_iter)
+    if args.log:
+        ylabel = '(log) Bias, variance and MSE'
     set_ax_info(ax, xlabel, ylabel, title)
 
     # Saving figure
