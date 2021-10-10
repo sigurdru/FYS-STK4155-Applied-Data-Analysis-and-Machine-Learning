@@ -334,6 +334,12 @@ where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, s
 
 Now we want to perform the same bootstrap analysis as we did for OLS, using Ridge. Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap. Figure \ref{fig:Ridge_boot_PM} shows MSE as function of polynomial degree for 4 different values of $\lambda$, starting at $10^-4$, increasing with a factor of 100 for each plot. We see that test error varies a lot, making it non-trivial to determine what is overfitting and underfitting. For the 3 first $\lambda$-values it seems we have overfitting for $p=9$, while for $\lambda=100$, it can not be conclusively decided. $p=3$ and $p=8$ seem to be the best two values before overfitting for the 3 smallest $\lambda$.
 
+\begin{figure}
+	\includegraphics[width=\linewidth]{Contour_PL_Ridge_Bootstrap90_n30_eps0.2_p1_6_lmb2_m6.pdf}
+	\caption{MSE using Ridge and bootstrapping, as function of polynomial degree and $\lambda$. The minimum value is $MSE=0.047$ at $p=3$ and $log10(\lambda) = -4.4$.}
+	\label{fig:Ridge-boot_heatmap}
+\end{figure}
+
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol20_Bootstrap_re90_lam_0_0001.pdf}
