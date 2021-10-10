@@ -1,10 +1,9 @@
 import numpy as np
 from collections import defaultdict
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
-from sklearn.utils import resample
+from sklearn.model_selection import train_test_split as tts
 from regression import Ordinary_least_squares, Ridge, Lasso
 from resampling import NoResampling, Bootstrap, cross_validation
-import resampling
 import utils
 import plot
 
@@ -18,6 +17,38 @@ class NoneScaler(StandardScaler):
 reg_conv = {"OLS": Ordinary_least_squares, "Ridge": Ridge, "Lasso":Lasso}
 resampling_conv = {"None": NoResampling, "Bootstrap": Bootstrap, "CV": cross_validation}
 scale_conv = {"None": NoneScaler(), "S": StandardScaler(with_std=False), "N": Normalizer(), "M": MinMaxScaler()}
+
+def split_scale(X, z, ttsplit, scaler):
+    """
+    Split and scale data
+    z-data is only scaled if scaler is StandardScaler
+    Also used to scale data for CV, but this does its own splitting.
+    Args:
+        X, 2darray: Full design matrix
+        z, 2darray: dataset
+        ttsplit, float: train/test split ratio
+        scaler, sklearn.preprocessing object: Is fitted to train data, scales train and test
+    Returns:
+        X_train, X_test, z_train, z_test, 2darrays: Scaled train and test data
+    """
+
+    if ttsplit != 0:
+        X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
+    else:
+        X_train = X
+        z_train = z
+        X_test = X
+        z_test = z
+
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    scaler.fit(z_train)
+    z_train = scaler.transform(z_train)
+    z_test = scaler.transform(z_test)
+
+    return X_train, X_test, z_train, z_test
 
 
 def simple_regression(args):
@@ -45,7 +76,7 @@ def simple_regression(args):
     resampl = resampling_conv[args.resampling]
 
     X = utils.create_X(x, y, P[-1])
-    X_train_, X_test_, z_train, z_test = resampling.split_scale(X, z, args.tts, scaler)
+    X_train_, X_test_, z_train, z_test = split_scale(X, z, args.tts, scaler)
 
     for i, p in enumerate(P):
         print("p = ", p)
@@ -96,7 +127,7 @@ def bias_var_tradeoff(args, testing=False):
     resampl = resampling_conv[args.resampling]
 
     X = utils.create_X(x, y, P[-1])
-    X_train_, X_test_, z_train, z_test = resampling.split_scale(X, z, args.tts, scaler)
+    X_train_, X_test_, z_train, z_test = split_scale(X, z, args.tts, scaler)
 
     for i, p in enumerate(P):
         print("p = ", p)
@@ -144,7 +175,7 @@ def lambda_analysis(args):
     resampl = resampling_conv[args.resampling]
 
     X = utils.create_X(x, y, P[-1])
-    X_train_, X_test_, z_train, z_test = resampling.split_scale(X, z, args.tts, scaler)
+    X_train_, X_test_, z_train, z_test = split_scale(X, z, args.tts, scaler)
 
     for i, p in enumerate(P):
         print("p = ", p)
@@ -195,7 +226,7 @@ def BVT_lambda(args):
     resampl = resampling_conv[args.resampling]  # Should be bootstrapping
 
     X = utils.create_X(x, y, P[-1])
-    X_train_, X_test_, z_train, z_test = resampling.split_scale(X, z, args.tts, scaler)
+    X_train_, X_test_, z_train, z_test = split_scale(X, z, args.tts, scaler)
 
     for i, p in enumerate(P):
         print("p = ", p)

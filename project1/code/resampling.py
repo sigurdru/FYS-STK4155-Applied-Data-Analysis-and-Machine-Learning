@@ -1,39 +1,8 @@
 from collections import defaultdict
 import numpy as np
-from sklearn.model_selection import train_test_split as tts, KFold
+from sklearn.model_selection import KFold
 import utils
 
-def split_scale(X, z, ttsplit, scaler):
-    """
-    Split and scale data
-    z-data is only scaled if scaler is StandardScaler
-    Also used to scale data for CV, but this does its own splitting.
-    Args:
-        X, 2darray: Full design matrix
-        z, 2darray: dataset
-        ttsplit, float: train/test split ratio
-        scaler, sklearn.preprocessing object: Is fitted to train data, scales train and test
-    Returns:
-        X_train, X_test, z_train, z_test, 2darrays: Scaled train and test data
-    """
-
-    if ttsplit != 0:
-        X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
-    else:
-        X_train = X
-        z_train = z
-        X_test = X
-        z_test = z
-
-    scaler.fit(X_train)
-    X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
-
-    scaler.fit(z_train)
-    z_train = scaler.transform(z_train)
-    z_test = scaler.transform(z_test)
-
-    return X_train, X_test, z_train, z_test
 
 
 def resample(x, z):
