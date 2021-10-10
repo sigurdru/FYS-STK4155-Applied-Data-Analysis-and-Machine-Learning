@@ -48,7 +48,6 @@ def set_ax_info(ax, xlabel, ylabel, title=None, zlabel=None):
         ax.tick_params(axis='both', which='major', labelsize=12)
 
 def push(file):
-    print("LOOKFORTHIS", file)
     os.system(f"git add {file}")
     os.system("git commit -m 'plots'")
     os.system("git push")
