@@ -187,7 +187,7 @@ def Plot_R2(R2_test, R2_train, args):
     fig, ax = plt.subplots()
     ax.plot(args.polynomial, R2_test, "bo--", label="Test R2")
     ax.plot(args.polynomial, R2_train, "ro--", label="Train R2")
-    # general formalitiesiscrete uniform” 
+    # general formalitiesiscrete uniform”
     if args.dataset == "SRTM":
         fname = 'R2_' + args.method \
                 + '_n' + str(args.num_points) \
