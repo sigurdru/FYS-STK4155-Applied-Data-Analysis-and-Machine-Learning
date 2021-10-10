@@ -184,7 +184,7 @@ We can rewrite this as
 \end{equation}
 This is OLS-regression. Thus $\boldsymbol{\hat{\beta}}$ are the optimal parameters that minimizes the cost function.
 
-Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data. By splitting the data we prevent overfitting, since the $\boldsymbol{\hat{\beta}}$ values obtained by the train data yields a low MSE for the test data as well. 
+Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
 
 %There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. MSE is given by equation \eqref{eq:MSE} and the $R^2$ score by equation \eqref{eq:R2}.
 %\begin{equation}
@@ -198,7 +198,7 @@ Now that we have an expression for the optimal parameters, we also want to evalu
 %\end{equation}
 %Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
 
-We can now perform OLS on our data and plot the MSE and $R^2$-score as a function of polynomial degree. It is important to note that when we fit using a polynomial of degree $p$, all terms from lower polynomial degrees are included in the fit. We expect the MSE to strictly decrease and $R^2$ to strictly increase for the train data, as our model will become more complex. We expect the same for the test data, however at a certain polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}. Overfitting is when the model nearly perfectly fits the training data, while performing very poorly on test data.
+We can now perform OLS on our data and plot the MSE and $R^2$-score as a function of polynomial degree. It is important to note that when we fit using a polynomial of degree $p$, all terms from lower polynomial degrees are included in the fit. We expect the MSE to strictly decrease and $R^2$ to strictly increase for the train data, as our model becomes more complex. We expect the same for the test data, however at a certain polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}. Overfitting is when the model nearly perfectly fits the training data, since it tries to fit specific data points. This results in a poor performance on the test data, as these data points are different from the train data. Splitting the data is thus a way to prevent overfitting, as we choose the model complexity which minimizes the test error.
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -210,6 +210,8 @@ We can now perform OLS on our data and plot the MSE and $R^2$-score as a functio
 	\caption{Here we have plotted the MSE and $R^2$-score for OLS. The left figure shows the MSE and right shows the $R^2$ score. The red dotted line is from the train data, and the blue dotted line is from the test data.}\label{fig:OLS_R2_and_MSE}
 \end{figure}
 From figure \ref{fig:OLS_R2_and_MSE} we see that the MSE strictly decrease and $R^2$-score increase for the test data. This indicates that we have not reached a point of overfitting yet.
+
+NOTE: REWRITE ABOVE WHEN PLOTS ARE UPDATED
 
 It is also interesting to look at the variance in the parameters, because this would give an indication of overfitting. We know that for a set of optimal parameters
 $\boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^T \vc{z}$,
@@ -328,9 +330,9 @@ In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singu
 \begin{equation}
 	\boldsymbol{\hat{\beta}} = (X^TX+\lambda I)X^T\vc{z},
 \end{equation}
-where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, so finding the optimal is paramount. This is done by running the regression for many different values of $\lambda$ and choosing the one giving the best results.
+where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, so finding the optimal is paramount. This is done by running the regression for many different values of $\lambda$ and choosing the one giving the best results.  Note that when $\lambda=0$, the expression becomes that of OLS.
 
-Now we want to perform the same bootstrap analysis as we did for OLS, using Ridge. Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap. Figure \ref{fig:Ridge_boot_PM} shows MSE as function of polynomial degree for 4 different values of $\lambda$, starting at $10^-4$, increasing with a factor of 100 for each plot. We see that test error varies a lot, making it non-trivial to determine what is overfitting and underfitting. For the 3 first $\lambda$-values it seems we have overfitting for $p=9$, while for $\lambda=100$, it can not be conclusively decided.
+Now we want to perform the same bootstrap analysis as we did for OLS, using Ridge. Here we also take a look at when we have overfitting, for different values of $\lambda$ and with bootstrap. Figure \ref{fig:Ridge_boot_PM} shows MSE as function of polynomial degree for 4 different values of $\lambda$, starting at $10^-4$, increasing with a factor of 100 for each plot. We see that test error varies a lot, making it non-trivial to determine what is overfitting and underfitting. For the 3 first $\lambda$-values it seems we have overfitting for $p=9$, while for $\lambda=100$, it can not be conclusively decided. $p=3$ and $p=8$ seem to be the best two values before overfitting for the 3 smallest $\lambda$.
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
@@ -347,6 +349,19 @@ Now we want to perform the same bootstrap analysis as we did for OLS, using Ridg
 	\endminipage
 	\caption{MSE using Ridgeregression and bootstrapping, as function of complexity, for different values of $\lambda$.} \label{fig:Ridge_boot_PM}
 \end{figure}
+
+To explore the $\lambda$-dependence more in-depth, we now choose a single polynomial degree and  plot the error as function of $\lambda$.  In figure \ref{fig:Ridge_boot_LM} we have done this for the two values noted above,$p=3$ and $p=8$.
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_Bootstrap90_n30_eps02_p3_lm10_2.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_Bootstrap90_n30_eps02_p8_lm10_2.pdf}
+	\endminipage
+	\caption{MSE using Ridgeregression and bootstrapping, as function of $\lambda$, for different polynomial degrees.} \label{fig:Ridge_boot_LM}
+\end{figure}
+
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}

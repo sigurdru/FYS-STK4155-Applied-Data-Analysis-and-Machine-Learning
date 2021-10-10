@@ -1,7 +1,10 @@
+from matplotlib import transforms
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import sys, os, re
+import sys
+import os
+import re
 
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
@@ -18,6 +21,7 @@ plt.style.use('seaborn')
 plt.rc('text', usetex=True)
 plt.rc('font', family='DejaVu Sans')
 path_plots = '../output/plots'
+
 
 def set_ax_info(ax, xlabel, ylabel, title=None, zlabel=None):
     """Write title and labels on an axis with the correct fontsizes.
@@ -76,14 +80,14 @@ def Plot_3DDataset(x, y, z, args, predict=False):
     ax = fig.gca(projection="3d")
     # Plot the surface.
     surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
+                           linewidth=0, antialiased=False)
     # Customize the z axis.
     ax.zaxis.set_major_locator(LinearLocator(10))
     ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
 
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)
-    #general formalities
+    # general formalities
     if predict:
         fname = "prediction_p" + str(max(args.polynomial))
         title = f"Prediction of raw data for P = {max(args.polynomial)}"
@@ -95,7 +99,7 @@ def Plot_3DDataset(x, y, z, args, predict=False):
     fname = fname.replace('.', '')  # remove dots from fname
     xlabel = '$x$'
     ylabel = '$y$'
-    zlabel = '$f$'
+    zlabel = '$z$'
     set_ax_info(ax, xlabel, ylabel, title, zlabel)
     fig.tight_layout()
     show(fig, fname, args)
@@ -123,7 +127,6 @@ def Plot_error(MSE_test, MSE_train, args):
 
         title = 'Terrain data MSE for ' + args.method
 
-
     else:
         fname = 'MSE_' + args.method \
                 + '_n' + str(args.num_points) \
@@ -132,21 +135,21 @@ def Plot_error(MSE_test, MSE_train, args):
 
         title = 'MSE for ' + args.method
 
-    fname = fname.replace('.','')  # remove dots from fname
+    fname = fname.replace('.', '')  # remove dots from fname
 
     if args.resampling != "None":
         title += " using " \
                  + args.resampling \
                  + f" iter = {args.resampling_iter}"
-        if args.method != "OLS": title += r', $\lambda$ = ' + str(args.lmb[0])
+        if args.method != "OLS":
+            title += r', $\lambda$ = ' + str(args.lmb[0])
         fname += "_" + args.resampling + "_" + "re" \
                  + str(args.resampling_iter)
     if args.method != "OLS":
         fname += '_lam_'+str(args.lmb[0])
-        fname = fname.replace('.','_')
+        fname = fname.replace('.', '_')
     xlabel = 'Polynomial degree'
     ylabel = 'MSE'
-
 
     set_ax_info(ax, xlabel, ylabel, title)
     if args.log:
@@ -175,8 +178,7 @@ def Plot_R2(R2_test, R2_train, args):
     fig, ax = plt.subplots()
     ax.plot(args.polynomial, R2_test, "bo--", label="Test R2")
     ax.plot(args.polynomial, R2_train, "ro--", label="Train R2")
-    # general formalities
-
+    # general formalitiesiscrete uniform” 
     if args.dataset == "SRTM":
         fname = 'R2_' + args.method \
                 + '_n' + str(args.num_points) \
@@ -194,7 +196,7 @@ def Plot_R2(R2_test, R2_train, args):
         title = 'R2 score for ' \
                 + args.method
 
-    fname = fname.replace('.', '') # remove dots from fname
+    fname = fname.replace('.', '')  # remove dots from fname
     xlabel = 'Polynomial degree'
     ylabel = 'R2'
     set_ax_info(ax, xlabel, ylabel, title)
@@ -230,10 +232,9 @@ def Plot_bias_var_tradeoff(datas, args):
     # General formalities
     xlabel = 'Polynomial degree'
     ylabel = 'Bias, variance and MSE'
-    title = 'Bias Variance Tradeoff for '+ args.method+', '\
-             + args.resampling + ' iter = '+str(args.resampling_iter)
+    title = 'Bias Variance Tradeoff for ' + args.method+', '\
+        + args.resampling + ' iter = '+str(args.resampling_iter)
     set_ax_info(ax, xlabel, ylabel, title)
-
 
     # Saving figure
     if args.dataset == "SRTM":
@@ -254,8 +255,9 @@ def Plot_bias_var_tradeoff(datas, args):
         fname += '_log'
 
     fname = fname.replace('.', '_')
-    print('Plotting Bias variance tradeoff: See %s.pdf' %(fname))
+    print('Plotting Bias variance tradeoff: See %s.pdf' % (fname))
     show(fig, fname, args)
+
 
 def Plot_lambda(results, args):
     """ Plot test MSE as function of lambda, for different polynomial degrees
@@ -269,11 +271,15 @@ def Plot_lambda(results, args):
 
     lmbs = args.lmb
     for i, p in enumerate(args.polynomial):
-        ax.plot(np.log10(lmbs), results["test_MSE"][i], label=f"Polynomial degree: {p}")
+        r = results["test_MSE"][i]
+        if args.log:
+            r = np.log10(r)
+        ax.plot(np.log10(lmbs), r, label=f"Polynomial degree: {p}")
 
     xlabel = "log10(lambda-parameter)"
-    ylabel = "Error"
-    title = f"Error as function of lambda-parameter using {args.method} and {args.resampling}"
+    ylabel = "log10(Error)" if args.log else "Error"
+    title = f"Error using {args.method} and {args.resampling} iter = {args.resampling_iter}"
+
     set_ax_info(ax, xlabel, ylabel, title)
 
     low = str(int(np.log10(args.lmb[0]))).replace("-", "m")
@@ -281,7 +287,7 @@ def Plot_lambda(results, args):
     fname = f"lambdaMSE_{args.method}_{args.resampling}{args.resampling_iter}_n{args.num_points}"
     fname += f"_eps{args.epsilon}_p{args.polynomial[-1]}_l{low}_{high}"
     fname = fname.replace(".", "")
-    print('Plotting lambda_analysis: See %s.pdf' %(fname))
+    print('Plotting lambda_analysis: See %s.pdf' % (fname))
     show(fig, fname, args)
 
 
@@ -294,27 +300,30 @@ def Plot_VarOLS(args):
     sigma_sq = 0.2
     x = np.sort(np.random.uniform(0, 1, n))
     y = np.sort(np.random.uniform(0, 1, n))
-    x,y = np.meshgrid(x,y)
+    x, y = np.meshgrid(x, y)
     z = utils.FrankeFunction(x, y, sigma_sq)
+    X_ = utils.create_X(x, y, p[-1])
     for i in p:
-        X = utils.create_X(x, y, i)
+        X = X_[:, :utils.get_features(i)]
         XTXinverse = np.linalg.pinv(X.T @ X)
         beta = XTXinverse @ X.T @ z
         variance_beta = sigma_sq*XTXinverse
         sigma_sq_beta = np.diag(variance_beta)
-        upper = beta[:,0] + 2*np.sqrt(sigma_sq_beta)
-        lower = beta[:,0] - 2*np.sqrt(sigma_sq_beta)
-        beta_index = np.arange(0,len(beta), 1)
+        upper = beta[:, 0] + 2*np.sqrt(sigma_sq_beta)
+        lower = beta[:, 0] - 2*np.sqrt(sigma_sq_beta)
+        beta_index = np.arange(0, len(beta), 1)
         fig, ax = plt.subplots()
-        ax.scatter(beta_index, beta, label = r'$\beta$(index)')
-        ax.fill_between(beta_index, lower, upper, alpha = 0.2, label = r'$\pm 2\sigma$')
+        ax.scatter(beta_index, beta, label=r'$\beta$(index)')
+        ax.fill_between(beta_index, lower, upper,
+                        alpha=0.2, label=r'$\pm 2\sigma$')
         xlabel = r'index'
         ylabel = r'$\beta$'
-        title = r'$\beta$-values with confidence interval for p = %i' %(i)
+        title = r'$\beta$-values with confidence interval for p = %i' % (i)
         set_ax_info(ax, xlabel, ylabel, title)
         fname = 'Var_OLS_poldeg_' + str(i)
-        show(fig,fname, args)
+        show(fig, fname, args)
         print('Plotting variance in beta: See ' + fname + '.pdf')
+
 
 def Plot_BVT_lambda(result, args):
     """
@@ -327,9 +336,12 @@ def Plot_BVT_lambda(result, args):
     c = np.linspace(0, 1, len(args.lmb))
     cmap = cm.jet
     for j, lmb in enumerate(args.lmb):
-        ax.plot(P, result["test_errors"][:, j], c=cmap(c[j]), label=f"MSE, lambda: {lmb}")
-        ax.plot(P, result["test_biases"][:, j], "--", c=cmap(c[j]), label="bias")
-        ax.plot(P, result["test_vars"][:, j], "-.", c=cmap(c[j]), label="variance")
+        ax.plot(P, result["test_errors"][:, j], c=cmap(
+            c[j]), label=f"MSE, lambda: {lmb}")
+        ax.plot(P, result["test_biases"][:, j],
+                "--", c=cmap(c[j]), label="bias")
+        ax.plot(P, result["test_vars"][:, j], "-.",
+                c=cmap(c[j]), label="variance")
 
     xlabel = "Polynomial degree"
     ylabel = "Bias, variance and error"
@@ -347,24 +359,31 @@ def Plot_BVT_lambda(result, args):
     fig.tight_layout()
     show(fig, fname, args)
 
+
 def Plot_2D_MSE(results, args):
     """
     Plots contour map of MSE as function of polynomial degree and lambda
     """
     fig, ax = plt.subplots()
     P, lmb = np.meshgrid(args.polynomial, np.log10(args.lmb))
-    MSE = np.log10(results["test_MSE"].T)
+    MSE = results["test_MSE"].T
+    if args.log:
+        MSE = np.log10(MSE)
+        title = "log10(MSE)"
+    else:
+        title = "MSE"
 
     F = ax.contourf(P, lmb, MSE, cmap="jet")
     norm = mpl.colors.Normalize(vmin=F.cvalues.min(), vmax=F.cvalues.max())
     bar = mpl.cm.ScalarMappable(norm=norm, cmap=F.cmap)
     bar.set_array([])
-    fig.colorbar(bar, ticks=F.levels)
-
+    cbar = fig.colorbar(bar, ticks=F.levels)
+    cbar.set_label("log10(Error)" if args.log else "Error",
+                   rotation=90, fontsize=20, position=(1, 0.5))
 
     xlabel = "Polynomial degree"
     ylabel = "log10(lambda)"
-    title = f"log10(MSE) for {args.method} as function of complexity and lambda"
+    title += f" for {args.method} using {args.resampling} iter = {args.resampling_iter}"
     set_ax_info(ax, xlabel, ylabel, title)
 
     fname = f"Contour_PL_{args.method}_{args.resampling}{args.resampling_iter}_n{args.num_points}_eps{args.epsilon}"
@@ -376,6 +395,7 @@ def Plot_2D_MSE(results, args):
 
     show(fig, fname, args)
 
+
 if __name__ == "__main__":
     """
     Here we can plot Franke function with or withot noise,
@@ -384,15 +404,16 @@ if __name__ == "__main__":
     name.
     """
     class Argparse:
-        def __init__(self, eps = 0):
+        def __init__(self, eps=0):
             self.show = False
             self.epsilon = eps
+            self.dataset = "Franke"
 
-    N = 30
-    x = np.sort(np.random.uniform(size=N))
-    y = np.sort(np.random.uniform(size=N))
-    x, y = np.meshgrid(x, y)
+    # N = 30
+    # x = np.sort(np.random.uniform(size=N))
+    # y = np.sort(np.random.uniform(size=N))
+    # x, y = np.meshgrid(x, y)
     args = Argparse()
-    z = utils.FrankeFunction(x, y, eps=args.epsilon)
-    Plot_3DDataset(x, y, z, args)
-    # Plot_VarOLS()
+    # z = utils.FrankeFunction(x, y, eps=args.epsilon)
+    # Plot_3DDataset(x, y, z, args)
+    Plot_VarOLS(args)

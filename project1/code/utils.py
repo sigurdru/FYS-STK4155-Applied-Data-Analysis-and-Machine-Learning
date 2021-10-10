@@ -18,6 +18,8 @@ def get_directly_implemented_funcs(module):
             flist[f.name] = eval("module." + f.name)
     return flist
 
+def get_features(i):
+    return (i + 1) * (i + 2) // 2
 
 def FrankeFunction(x, y, eps=0):
     """
@@ -91,14 +93,14 @@ def load_data(args):
         terrain = imageio.imread(path)
         # to not deal with too large image, only NxN
         if N != 0:
-            # Plot entire terrain map by setting N=0 
+            # Plot entire terrain map by setting N=0
             terrain = terrain[xstart: xstart + N, ystart: ystart + N]
         nx, ny = terrain.shape
         x = np.sort(np.random.uniform(size=nx))
         y = np.sort(np.random.uniform(size=ny))
         x, y = np.meshgrid(x, y)
 
-        z = terrain.ravel().reshape(-1, 1)
+        z = terrain.ravel().reshape(-1, 1) / np.max(terrain)
 
     return x, y, z
 
