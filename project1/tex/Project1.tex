@@ -385,9 +385,7 @@ To explore the $\lambda$-dependence more in-depth, we now choose a single polyno
 
 \section*{Exercise 6: Analysis of real data}
 
-Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider Norwegian terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}. We will only consider one small part of \texttt{SRTM\_data\_Norway\_1.tif}, namely $g_{i,j}$ where $i,j\in[50,100]$. We want to consider dimensionless data, thus we divide by the highest point $f_{i,j} = g_{i,j}/\max{f_{i,j}}$.
-
-We also make the data dimensionless by dividing the terrain data by the highest point. We also let $x,y\in[0,1]$ \ref{fig:terrain_raw}.
+Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider Norwegian terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}. Because the datasets are large, we will only consider one small part of \texttt{SRTM\_data\_Norway\_1.tif}, namely $g_{i,j}$ where $i,j\in[50,100]$. It is useful to consider dimensionless data, thus we divide by the highest point $f_{i,j} = g_{i,j}/\max{g_{i,j}}$, and let $i,j\in[50,100] \rightarrow x,y\in[0,1]$. Then we get the data visualized in figure \ref{fig:terrain_raw}.
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{SRTM_rawdata_n50.pdf}
