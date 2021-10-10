@@ -4,7 +4,7 @@ exercise1:
 exercise2:
 	python3 main.py -r Bootstrap -ri 90 -p 20
 	python3 main.py -r Bootstrap -ri 90 -p 10
-	python3 main.py -r Bootstrap -ri 90 -p 10 -a bias_var_tradeoff
+	python3 main.py -r Bootstrap -ri 90 -p 15 -a bias_var_tradeoff
 	python3 main.py -r Bootstrap -ri 90 -p 10 -a bias_var_tradeoff -e 0.5 
 	python3 main.py -r Bootstrap -ri 90 -p 10 -a bias_var_tradeoff -e 0.1 
 exercise3:
