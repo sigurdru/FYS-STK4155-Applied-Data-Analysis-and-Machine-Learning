@@ -124,9 +124,6 @@ We will begin by using the simplest regression method, ordinary least squares (O
 
 We have also written code to test our implementation of the methods, where we compare our results with those obtained using the open-source machine learning package Scikit-learn. These results are presented in Appendix \ref{Apx:test}.
 
-%Tenke me heller plassere dette i Exersice 6 hvor det skal brukes, og ikke i introduksjonen. here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}.
-
-
 \section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
 
 We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. Equation \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, the Franke function takes values \(z\in[-0.45, \hspace{1mm} 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is visualized in figure \ref{fig:FF_dataset}.
@@ -373,7 +370,9 @@ Now we want to perform the same bootstrap analysis as we did for OLS, using Ridg
 
 \section*{Exercise 6: Analysis of real data}
 
-Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider terrain data from Norway !HVOR?!. The terrain data we consider is shown in figure \ref{fig:terrain_raw}.
+Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider Norwegian terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}. We will only consider one small part of \texttt{SRTM\_data\_Norway\_1.tif}, namely $g_{i,j}$ where $i,j\in[50,100]$. We want to consider dimensionless data, thus we divide by the highest point $f_{i,j} = g_{i,j}/\max{f_{i,j}}$.
+
+We also make the data dimensionless by dividing the terrain data by the highest point. We also let $x,y\in[0,1]$ \ref{fig:terrain_raw}.
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{SRTM_rawdata_n50.pdf}
