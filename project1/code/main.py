@@ -25,9 +25,10 @@ def parameter_range(inp, method, lmb=False):
     elif method == "list":
         return str(sorted([ntype(i) for i in inp.split(",")]))
 
-    if lmb:
+    if "," in inp or lmb:
         return f"{func}({inp})"
-    return f"{func}({inp} + 1)"
+    else:
+        return f"{func}({inp} + 1)"
 
 
 def parse_args(args=None):
