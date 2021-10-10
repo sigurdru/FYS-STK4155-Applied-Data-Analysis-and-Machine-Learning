@@ -393,11 +393,11 @@ Having used our data analysis methods to study the Franke function we will now m
   \label{fig:terrain_raw}
 \end{figure}
 
-We begin by studying the MSE using OLS-regression and bootstrapping as the resampling technique. Our results should mirror those we got in exercise 2, where the test MSE decreases in the beginning, and increases when we start overfitting. Choosing $B = 50$ iterations and max polynomial degree $p_\text{max} = 25$ we get the MSE illustrated in figure \ref{fig:terrain_OLS_MSE_bootstrap}.
+We begin by studying the MSE using OLS-regression and bootstrapping as the resampling technique. Our results should mirror those we got in exercise 2, where the test MSE decreases in the beginning, and increases when we start overfitting. Choosing $B = 50$ iterations and max polynomial degree $p_\text{max} = 30$ we get the MSE illustrated in figure \ref{fig:terrain_OLS_MSE_bootstrap}.
 
 \begin{figure}[H]
-  \minipage{0.49\textwidth}
-  \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol25_Bootstrap_re50_log.pdf}
+  \minipage{0.48\textwidth}
+  \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n50_pol30_Bootstrap_re50_log.pdf}
   \endminipage\hfill
   \minipage{0.49\textwidth}
   \includegraphics[width=\linewidth]{SRTM_MSE_OLS_n15_pol10_Bootstrap_re50.pdf}
@@ -405,6 +405,7 @@ We begin by studying the MSE using OLS-regression and bootstrapping as the resam
   \caption{n50 log til venstre. n15 til høyre}
   \label{fig:terrain_OLS_MSE_bootstrap}
 \end{figure}
+
 
 (with a logarithmic y-axis. Using a data set with \$50\textbackslash\{\}cross50\$ data points yields a little noticeable change in the mean squared error, but we see a potential overfitting occuring for \$P>15\$. To see that we get overfitting for the terrain data eventually, we plot the mean squared error for the same resampling method, but with \$n=10\$ points in each direction up to a polynomial degree of \$P=10\$, shown on the right panel in figure \textbackslash\{\}ref\{fig:terrain\_OLS\_MSE\_bootstrap\}. Here, we can see an evident overfitting starting to occur for polynomial degrees greater than \$6\$.)<-- GAMMEL ANALYSE
 
@@ -453,9 +454,10 @@ Next we move on to studying the MSE with cross validation. As with the bootstrap
 \end{figure}
 (Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes incredibly large when $P>8$. Doubling the number of k-folds, the MSE drops significantly, but there is still a clear increase for $p>8$.) <-- GAMMEL TOLKNING
 
-Now we move on to bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=x$) variance and error should increase, while bias stays low.
+Now we move on to bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=x$) variance and error should increase, while bias stays low. Using $p_\text{max}=25$, 
 
-Using $p_\text{max}=25$. we are unable to see the relative behaviour of the quantities we plot for $50$ data points, so we use a logarithmic scale on the y-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. Once again, we include a result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $P=10$. This clearly shows an increase in the test MSE and test variance as $P$ increases, while the bias declines.
+
+we are unable to see the relative behaviour of the quantities we plot for $50$ data points, so we use a logarithmic scale on the y-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. Once again, we include a result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $P=10$. This clearly shows an increase in the test MSE and test variance as $P$ increases, while the bias declines.
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SRTM_BVT_OLS_n50_log.pdf}

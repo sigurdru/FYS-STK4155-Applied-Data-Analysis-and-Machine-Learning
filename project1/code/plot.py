@@ -157,7 +157,10 @@ def Plot_error(MSE_test, MSE_train, args):
         fname += '_lam_'+str(args.lmb[0])
         fname = fname.replace('.', '_')
     xlabel = 'Polynomial degree'
-    ylabel = 'MSE'
+    if args.log:
+        ylabel = 'log(MSE)'
+    else:
+        ylabel = 'MSE'
 
     set_ax_info(ax, xlabel, ylabel, title)
     if args.log:
