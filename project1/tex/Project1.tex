@@ -1,18 +1,324 @@
-tput/plots/Testing_data.pdf
-Removing project1/output/plots/Testing_Ridge.pdf
-Removing project1/output/plots/Testing_OLS_BV_compare_n170.pdf
-Removing project1/output/plots/Testing_OLS_BV_compare_n169.pdf
-Removing project1/output/plots/Testing_OLS.pdf
-Removing project1/output/plots/SRTM_R2_OLS_n50_eps02_pol5.pdf
-Removing project1/output/plots/SRTM_MSE_OLS_n50_pol5_Bootstrap_re50.pdf
-Removing project1/output/plots/SRTM_MSE_OLS_n50_pol5_Bootstrap_re100.pdf
-Removing project1/output/plots/SRTM_MSE_OLS_n50_pol50_Bootstrap_re50.pdf
-Removing project1/output/plots/SRTM_MSE_OLS_n50_pol5.pdf
-Removing project1/output/plots/SRTM_MSE_OLS_n50_pol10_CV_re5.pdf
-Removing project1/output/plots/SRTM_MSE_OLS_n50_pol10_CV_re10.pdf
-Removing project1/output/plots/SRTM_MSE_OLS_n500_pol5_Bootstrap_re100.pdf
-Removing project1/output/plots/SRTM_MSE_OLS_n15_pol15_Bootstrap_re50.pdf
-Removing project1/output/plots/SRTM_MSE_OLS_n15_pol1
+
+\documentclass[reprint,english,notitlepage,aps,nobalancelastpage,nofootinbib]{revtex4-1}  % defines the basic parameters of the document
+% if you want a single-column, remove reprint
+
+% allows special characters (including æøå)
+\usepackage[utf8]{inputenc}
+%\usepackage [norsk]{babel} %if you write norwegian
+\usepackage[english]{babel}  %if you write english
+\usepackage[T1]{fontenc}
+
+
+%% note that you may need to download some of these packages manually, it depends on your setup.
+%% I recommend downloading TeXMaker, because it includes a large library of the most common packages.
+
+\usepackage{physics,amssymb}  % mathematical symbols (physics imports amsmath)
+\usepackage{graphicx, bm}         % include graphics such as plots
+\usepackage{upgreek}
+\usepackage{float}
+\usepackage{xcolor}           % set colors
+\usepackage[hidelinks]{hyperref}         % automagic cross-referencing (this is GODLIKE)
+\usepackage{tikz}             % draw figures manually
+\usepackage{listings}         % display code
+\usepackage{subfigure}        % imports a lot of cool and useful figure commands
+\usepackage{verbatim}
+\usepackage{adjustbox}
+\usepackage{mathpazo}
+\usepackage{siunitx}
+\usepackage{kantlipsum}
+\usepackage{bigints}
+\usepackage{multirow}
+\usepackage{geometry}
+\usepackage{algorithm2e}
+\usepackage{amsmath}
+
+% defines the color of hyperref objects
+% Blending two colors:  blue!80!black  =  80% blue and 20% black
+\hypersetup{ % this is just my personal choice, feel free to change things
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}}
+
+%% Defines the style of the programming listing
+%% This is actually my personal template, go ahead and change stuff if you want
+\lstset{ %
+	inputpath=,
+	backgroundcolor=\color{white!88!black},
+	basicstyle={\ttfamily\scriptsize},
+	commentstyle=\color{magenta},
+	language=Python,
+	morekeywords={True,False},
+	tabsize=4,
+	stringstyle=\color{green!55!black},
+	frame=single,
+	keywordstyle=\color{blue},
+	showstringspaces=false,
+	columns=fullflexible,
+	keepspaces=true}
+
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\newcommand{\ihat}{\boldsymbol{\hat{\textbf{\i}}}}
+\newcommand{\jhat}{\boldsymbol{\hat{\textbf{\j}}}}
+\newcommand{\khat}{\boldsymbol{\hat{\textbf{k}}}}
+\newcommand{\del}[1]{\textbf{#1)}}
+\newcommand{\svar}[1]{\underline{\underline{{#1}}}}
+\newcommand{\vc}[1]{\mathbf{#1}}
+\renewcommand{\deg}{^{\circ}}
+\newcommand{\hksqrt}[2][]{\ \mathpalette\DHLhksqrt{[#1]{#2\,}}}
+\def\DHLhksqrt#1#2{\setbox0=\hbox{$#1\sqrt#2$}\dimen0=\ht0
+	\advance\dimen0-0.3\ht0
+	\setbox2=\hbox{\vrule height\ht0 depth -\dimen0}
+	{\box0\lower0.65pt\box2}}
+
+\newcommand{\expy}{\mathbb{E}[\mathbf{\tilde{y}}]}
+\newcommand{\expz}{\mathbb{E}[\mathbf{\tilde{z}}]}
+\newcommand{\closed}[1]{\left({#1}\right)}
+\newcommand{\bracket}[1]{\left[{#1}\right]}
+
+
+\graphicspath{{../output/plots/}} % search for figures in this dir
+
+
+
+\begin{document}
+
+
+\begin{titlepage}
+	\begin{center}
+	\textbf{Analysis of Regression and Resampling Methods}
+
+	\vspace{0.2cm}
+	Håkon Olav Torvik, Vetle Vikenes and Sigurd Sørlie Rustad
+
+	\vspace{0.5cm}
+	\includegraphics[scale=0.5]{../../pictures/UIO}
+	\vspace{0.8cm}
+
+	University of Oslo\\
+	Norway\\
+	\today	\\
+	\end{center}
+	\tableofcontents
+	\clearpage
+\end{titlepage}
+%\maketitle                              % creates the title
+
+\onecolumngrid
+\section*{Introduction}
+
+Regression analysis is a statistical method for fitting a function to data. It is useful for building mathematical models to explain noisy observations. There are several regression methods to achieve this, all with their strengths and weaknesses. We will in this paper study three different methods; ordinary least squares, Ridge and Lasso regression. All the code, results and instructions on running the code can be found in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}.
+
+The mathematical model obtained from regression analysis can be used to predict an outcome, given some previously untested input. To build an accurate model, one has to train it on a lot of data. Real-world datasets usually have a fixed size, and getting more data can be practically impossible. By training the model on one particular data set only, we might risk that our model is only efficient for that specific configuration, while predictions made about different data sets will be poor. It is therefore useful to have tools to avoid this for small datasets. Resampling methods are such tools. In addition to the regression methods, we will also study the effect of bootstrapping and cross-validating the data.
+
+In order to study this, we need data to analyze. We will in this paper test the methods on two datasets. We will generate one dataset ourselves using a noisy analytical bivariate function, the Franke function \eqref{eq:FF}, while the other data set is real-world terrain data. The fitting we will perform for both data sets is a polynomial fit with $x$ and $y$ dependence of the form $[1,\,x,\,y,\,x^2,\,xy,\,y^2,\,\dots]$.
+
+\begin{align}
+	\begin{split}\label{eq:FF}
+		f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10})
+		\\
+		+ &\frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2)
+	\end{split}
+\end{align}
+
+We will begin by using the simplest regression method, ordinary least squares (OLS), to fit polynomials up to fifth order on the Franke function. At first we will not resample the data, only test our implementation and do some basic analysis. We will then add the resampling methods, Bootstrapping and Cross-Validation, and analyze various quantities from the resulting fits. After that we will do the same analyses as before, but using the more complex regression methods Ridge and Lasso. Having tested different methods on the Franke function, we will repeat these analyses in the end when studying terrain data. This paper will not study the effects of different scaling methods, train-test split ratios and amount of noise.
+
+We have also written code to test our implementation of the methods, where we compare our results with those obtained using the open-source machine learning package Scikit-learn. These results are presented in Appendix \ref{Apx:test}.
+
+\section*{Exercise 1: Ordinary Least Square (OLS) on the Franke function}
+
+We generate a dataset drawing $n=30$ uniformly distributed points in $x, y \in[0, 1]$. Equation \eqref{eq:FF} is then used to create $n^2$ \(z\)-values. In this domain, the Franke function takes values \(z\in[-0.45, \hspace{1mm} 1.52]\) before scaling. To this we add normally distributed stochastic noise. The noise has a mean of $\mu=0$, and variance $\sigma^2=1$. It is scaled by a factor $\epsilon$, which we normally set to $\epsilon=0.2$. This gives a substantial amount of noise, without completely drowning out the data. The data with and without noise is visualized in figure \ref{fig:FF_dataset}.
+
+\begin{figure}[!htb]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Frank_anal_eps_0.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Franke_rawdata_eps02.pdf}
+	\endminipage
+	\caption{Here we have displayed our noisy data along with the analytical function. The left figure shows the analytical Franke function, while the right figure is the Franke function with noise.}\label{fig:FF_dataset}
+\end{figure}
+
+It is good practice in regression analysis to scale the data, such that different features take values in the same order of magnitude. There are several different methods for scaling, one of which is StandardScaler. This is done by subtracting the mean from the data, before dividing this by the standard deviation. This centres the data around $0$ and sets the variance to $1$. Because our $x$ and $y$ is already in the domain $[0, 1]$ with variance $1$, this only shifts it down, and has no outcome on the regression results. For $z$ generated using \eqref{eq:FF} the effect is small, but we choose to do this for consistency. Our code allows for the following different scaling methods: no scaling, Normalizer and MinMax, though these will not be used. One main advantage of scaling the data becomes evident when we consider terrain data later on. The altitude of the terrain could vary hundreds of meters between the lowest and highest point, and if we were to study the errors of our model predictions, we would not necessarily be able to determine whether an error of order $10$ is good or bad. By scaling the data we get the relative error of our prediction, which gives a simpler assessment of the resulting fit.
+
+We are fitting a bivariate polynomial of degree $p$. With $p$ as the highest polynomial degree, the polynomial will have $N_p=(p+1)(p+2) / 2$ terms. It can, without noise, be written
+\begin{equation}\label{eq:zpolynm}
+	z(x, y) = \beta_0 + \beta_1x + \beta_2y + \beta_3x^2 + \beta_4xy + \beta_5y^2 + \dots
+\end{equation}
+where the $\beta$-parameters are coefficients for each term. The $x$ and $y$'s are collected in a design matrix $X$. The columns of $X$ are the terms, while the rows are all terms for a single datapoint. $X$ thus have size $(n^2\cross N_p)$. The $\beta$s are collected in a vector $\boldsymbol{\beta}$ of length $p$. These are unknown parameters to be determined.
+
+Thus, out model with stochastic noise takes the form
+\begin{equation}
+	\label{eq:z_true_data}
+	\vc{z} = X \boldsymbol{\beta} + \boldsymbol{\epsilon},
+\end{equation}
+
+One challenge in our case is that our data is two-dimensional, i.e. $\vc{z}$ has dimensions $(n,n)$. We create a workaround by mapping our two-dimensional data, to a one dimensional $(n^2,1)$ vector. This is an important note, and we will do this throughout the report.
+
+We want to create a model to predict $\vc{z}$ given an input. $\boldsymbol{\tilde\beta}$ are the optimal parameters obtained from regression. Our prediction \(\boldsymbol{\tilde{\vc{z}}}\) is then given by
+
+\begin{equation*}
+	\boldsymbol{\tilde{z}} = X\boldsymbol{\tilde{\beta}}.
+\end{equation*}
+
+To asses the quality of the model, we need a way to quantify the error. We will use the mean square error (MSE), and $R^2$-score, given by
+
+{\large
+\begin{align*}
+	MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}}) &= \frac{1}{N}\sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \frac{1}{N}\left\{(\vc{z} - X\boldsymbol{\tilde{\beta}})^T(\vc{z} - X\boldsymbol{\tilde{\beta}})\right\}.
+	\\
+	R^2(\boldsymbol{z}, \boldsymbol{\tilde{z}}) &= 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z})^2}, \hspace{3mm} \bar{z} = \frac{1}{n}\sum_{i=0}^{n-1}z_i
+\end{align*}
+}%
+
+MSE will always be larger than 0, and an MSE of 0 means our model fits the data perfectly. The $R^2$-score is a number between 0 and 1, with 1 being a perfect fit. In order to find the optimal parameters $\boldsymbol{\tilde{\beta}}$ we need a cost function to minimize. Choosing MSE as the cost-function gives the expresion for OLS-regression.
+\begin{equation*}
+	C(\boldsymbol{\beta}) = MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}})
+\end{equation*}
+Minimizing this is done by doing the derivative with respect to all the parameters, and finding the zero.
+\begin{equation}\label{eq:Const_OLS}
+	\frac{\partial C(\boldsymbol{\beta})}{\partial \boldsymbol{\beta}} \equiv 0 = X^T(\boldsymbol{z} - X\boldsymbol{\tilde{\beta}}).
+\end{equation}
+We can rewrite this as
+\begin{equation}\label{eq:OLS_beta}
+	X^T\vc{z} = X^TX\boldsymbol{\tilde{\beta}} \implies \boldsymbol{\tilde{\beta}} = (X^TX)^{-1} X^T \vc{z} \equiv \boldsymbol{\hat{\beta}}
+\end{equation}
+This is OLS-regression. Thus $\boldsymbol{\hat{\beta}}$ are the optimal parameters that minimizes the cost function.
+
+Now that we have an expression for the optimal parameters, we also want to evaluate how good our results are. We do this by splitting our data into two sets, one set for training (80\%) and one set for testing (20\%). We can then find the optimal parameters ($\boldsymbol{\hat{\beta}}$) using the train data, and then compare our test data to the actual data.
+
+%There are many quantities we can use to evaluate our results, however we have decided to calculate the MSE and $R^2$ score. MSE is given by equation \eqref{eq:MSE} and the $R^2$ score by equation \eqref{eq:R2}.
+%\begin{equation}
+%	\label{eq:MSE}
+%	MSE(\vc{z}, \vc{\tilde{z}}) = \frac{1}{n}\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2
+%\end{equation}
+%$MSE(\vc{z}, \vc{\tilde{z}})$ is the mean square between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
+%\begin{equation}
+%	\label{eq:R2}
+%	R^2(\vc{z}, \vc{\tilde{z}}) =
+%\end{equation}
+%Here $R^2(\vc{z}, \vc{\tilde{z}})$ is the $R^2$ score between the datapoints $\vc{z}$ and $\vc{\tilde{z}}$.
+
+We can now perform OLS on our data and plot the MSE and $R^2$-score as a function of polynomial degree. It is important to note that when we fit using a polynomial of degree $p$, all terms from lower polynomial degrees are included in the fit. We expect the MSE to strictly decrease and $R^2$ to strictly increase for the train data, as our model becomes more complex. We expect the same for the test data, however at a certain polynomial degree we might se overfitting. This would make our error increase and $R^2$ score decrease. The results are plotted in figure \ref{fig:OLS_R2_and_MSE}. Overfitting is when the model nearly perfectly fits the training data, since it tries to fit specific data points. This results in a poor performance on the test data, as these data points are different from the train data. Splitting the data is thus a way to prevent overfitting, as we choose the model complexity which minimizes the test error.
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol5.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{R2_OLS_n30_eps02_pol5.pdf}
+	\endminipage
+	\caption{Here we have plotted the MSE and $R^2$-score for OLS. The left figure shows the MSE and right shows the $R^2$ score. The red dotted line is from the train data, and the blue dotted line is from the test data.}\label{fig:OLS_R2_and_MSE}
+\end{figure}
+From figure \ref{fig:OLS_R2_and_MSE} we see that the MSE strictly decrease and $R^2$-score strictly increase for the train data. For the test data, we see that $p>3$ causes the MSE to increase as well as a reduction of the $R^2$-score. This is an indication that overfitting is starting to occur.
+
+It is also interesting to look at the variance in the parameters, because this would give an indication of overfitting. We know that for a set of optimal parameters
+$\boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^T \vc{z}$,
+We have the expectation value
+\begin{equation*}
+	\mathbb{E}[\boldsymbol{\hat{\beta}}] = \mathbb{E}[(X^TX)^{-1}X^T \vc{z}] = (X^TX)^{-1}X^T\mathbb{E}[\vc{z}] = (X^TX)^{-1}X^TX\boldsymbol{\hat{\beta}} = \boldsymbol{\hat{\beta}}.
+\end{equation*}
+With this we can calculate the variance in $\boldsymbol{\hat{\beta}}$.
+\begin{align*}
+	\text{Var}(\boldsymbol{\hat{\beta}}) &= \mathbb{E}\left[(\boldsymbol{\hat{\beta}} - \mathbb{E}[\boldsymbol{\hat{\beta}}])(\boldsymbol{\hat{\beta}} - \mathbb{E}[\boldsymbol{\hat{\beta}}])^T\right] \\
+	&= \mathbb{E}\left[((X^TX)^{-1}X^T\vc{z}- \boldsymbol{\hat{\beta}})((X^TX)^{-1}X^T\vc{z}- \boldsymbol{\hat{\beta}})^T\right] \\
+	&= (X^TX)^{-1}X^T \mathbb{E}\left[\vc{z}\vc{z}^T\right]X(X^TX)^{-1}- \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T \\
+	&= (X^TX)^{-1}X^T\left[X\boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^TX^T + \sigma^2 \right] X (X^TX)^{-1} - \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T \\
+	&= \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T + \sigma^2(X^TX)^{-1} - \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T = \sigma^2(X^TX)^{-1}
+\end{align*}
+Here we used $\mathbb{E} (\vc{z}\vc{z}^T) = X \boldsymbol{\hat{\beta}}\boldsymbol{\hat{\beta}}^T X^T + \sigma^2\mathbb{1}$, where $\sigma^2 = \epsilon = 0.2$ is the variance of the noise and $\mathbb{1}$ is the identity matrix. Now we have an estimate for the variance in parameter $\boldsymbol{\hat{\beta}}_{j}$ given by
+\begin{equation}
+	\boldsymbol{\sigma}^2(\boldsymbol{\hat{\beta}}_{j}) = \sigma^2 [(X^TX)^{-1}]_{jj}.
+	\label{eq:var_OLS}
+\end{equation}
+where $j$ corresponds to the coefficient, as in equation \eqref{eq:zpolynm}. Using equation \eqref{eq:var_OLS} we can plot the confidence interval for the different parameters, for several polynomial degrees (see figure \ref{fig:var_beta}).
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Var_OLS_poldeg_1.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Var_OLS_poldeg_3.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Var_OLS_poldeg_5.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\caption{Here we have plotted the ideal parameters, for different polynomial degrees and with the confidence intervals. Top left figure has polynomial degree $p = 1$, top right $p = 3$ and bottom left $p = 5$. All the plots are of $\boldsymbol{\beta}$ as a function of the index in the vector. The confidence interval is $\pm 2\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$, where $\boldsymbol{\sigma}(\boldsymbol{\hat{\beta}}_{j})$ is given by equation \eqref{eq:var_OLS}.} \label{fig:var_beta}
+	\endminipage
+\end{figure}
+We see in figure \ref{fig:var_beta} that the variance increases as a function of $p$. This is expected because we should get overfitting for higher polynomial degrees\footnote{A discussion of the variance is given in the next section}. For larger $p$ we also have more parameters to tune. This means that an adjustment of one parameter could be compensated by tuning the other parameters in the vicinity. We can see the result of this in the bottom left plot in figure \ref{fig:var_beta}. We observe a large variance in the middle, where we have a high density of parameters, and a lower variance on the edges. One also notices a comparatively low variance for the first parameter $\beta_0$, because of the fixed intercept.
+
+
+\section*{Exercise 2: Bias-variance trade-off and bootstrapping}
+
+Here we want to evaluate OLS using bootstrapping as a resampling technique. Bootstrap is a way of simulating having more data than you actually have, by reusing the same data. Let's say you have $N$ datapoints, then for every bootstrap-iteration, you would draw $1$ of the $N$ points at random, put it back again and continue until you have drawn a total of $N$ points again. After that you perform the regression analysis. This process is repeated $B$ times. By placing back the datapoints, you would in many cases use the same datapoint several times, even in the same regression. This random sampling will allow us to use a different set of training data in each simulation, without actually having new data, and still reduce the amount of overfitting compared with training on the same data over and over.
+
+Now, with bootstrapping, we want to take a look at when we get overfitting. It is common to see overfitting when we have a high polynomial degree ($p_\text{max}$) compared to the number of datapoints. In figure \ref{fig:OLS_overfitting} we have plotted the test and train MSE for $p_\text{max} = 20$, using $B=90$ resampling iterations. Now, the plotted MSE corresponds to the mean MSE after $90$ iterations for each polynomial degree. The left plot shows an indication of overfitting for polynomial degrees $p > 7$. On the right panel we have displayed the MSE for $p_\text{max} = 10$, which suggests the beginning of overfitting for $p>3$, and looks very similar to the MSE obtained without bootstrapping from figure \ref{fig:OLS_R2_and_MSE}. This indicates that the MSE we got without bootstrapping was very close to the expected value for $p=2$.
+
+Increasing the number of bootstrap iterations to $B>90$ yielded no noticeable change in the MSE.  An important point to consider is that despite an increase in the test MSE for $p>3$, the increase is of a relatively low value. This means that a polynomial degree of $p=5$ or $p=7$ could be the best fit for reproducing the Franke function, but $p=3$ happens to yield the lowest MSE for our particular test data, which might be affected by the noise at certain points.
+
+!LES GJENNOM!
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol20_Bootstrap_re90.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol10_Bootstrap_re90.pdf}
+	\endminipage
+	\caption{Test MSE for OLS with $B=90$ iterations with the Bootstrap resampling method, using $p_\text{max}=20$ on the left panel and $p_\text{max}=10$ on the right panel.}
+  \label{fig:OLS_overfitting}
+\end{figure}
+
+Before we study the bias variance trade-off, we will take a look at the mathematical expressions. With our data model given in equation \eqref{eq:z_true_data} we find our model by considering the cost function, given as
+\begin{align*}
+  C(\bm{\beta}) &= \frac{1}{N} \sum_{i=0}^{N-1} (z_i - \tilde{z}_i)^2 = \mathbb{E}[(\mathbf{z}-\mathbf{\tilde{z}})^2]
+\end{align*}
+where $\mathbb{E}$ is the expected value. % Sample value
+
+We can show that this can be written as\footnote{The derivation is given in Appendix \ref{Apx:BVT}}
+
+\begin{align}
+\label{eq:bias_var_tradeoff}
+  \mathbb{E}[(\mathbf{z}-\mathbf{\tilde{z}})^2] &= \frac{1}{N}\sum_i (f_i - \expz)^2 + \frac{1}{N}\sum_i (\tilde{z}_i - \expz)^2 + \sigma^2
+\end{align}
+where $f_i$ is the true data value at point $i$, and $\sigma^2$ the standard deviation of the noise.
+
+In equation \eqref{eq:bias_var_tradeoff} the first term represents the square of the bias, the second term represents the variance while the last term represents the variance of the irreducable error $\epsilon$. When performing linear regression the variance is a measurement on how much our model changes with different training sets. High variance will therefore occur if a different training set resulted in very different values of the individual estimators, $\bm{\hat{\beta}}_j$. This will be the case for overfitting when our model is essentially trying to reproduce variations from the noise. The bias provides information about the difference between our model and the true data values. If our model is missing out on underlying structures in our data we would get a high bias. High bias will thus be the case for an underfitted model. Our goal is therefore to minimize the bias and variance in our model.
+
+Using equation \eqref{eq:bias_var_tradeoff} we can plot the bias, variance and MSE for the test and train data, using the bootstrap method. For both datasets we expect the bias and MSE to start high and variance to start low. For the train data we should get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting the variance and error should increase, while the bias stays low. In figure \ref{fig:BV_OLS} we have plotted bias, variance and MSE for the test and train data, using $B = 90$ resampling iterations. We plot for $p_\text{max} = 15$, to obtain the desired result that the variance should surpass the bias.
+
+\begin{figure}[H]
+	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0_2.pdf}
+	\caption{Here we have plotted the bias, variance and MSE for the test and train data. The $x$-axis shows the polynomial degree, and the $y$-axis indicates the bias, variance and MSE. The dotted lines are for the train data and solid lines are the test data.}\label{fig:BV_OLS}
+\end{figure}
+
+As expected we se a general increase in MSE and variance for the test data when the complexity increases, despite a certain dip around $p=13$. The test bias does not act completely as expected. It does decrease in the beginning, however it starts increasing at around $p = 15$. This is likely due to unpredictable behaviour of our model, which we would expect for such a high polynomial degree. The decrease of the MSE and variance also suggests that the model does not behave ideally at all values of $p$. When increasing the number of iterations to $B=300$, the MSE and variance kept increasing up to $p=14$, while they dipped at $p=15$. The increase of the test bias at $p=15$ was reduced as well, causing it to end up with a final value below $0.10$. This suggests that our model behaves somewhat unpredictable at sufficiently high polynomial degree, but other than that, the results are just as we expected. We were also able to see that the variance surpasses the bias for sufficiently high model complexity.
+
+As previously discussed, the minimum value of the test MSE at $p=3$ does not seem to correspond to the best fit, according to our bias-variance trade-off analysis. There seems to be a slight increase in variance at $p=7$, which is also the case for the test MSE. Taking all of this into account, the optimal fit of the Franke function that minimizes bias, variance and MSE for OLS is $p=6$.
+
+The last term of \eqref{eq:bias_var_tradeoff} is a constant, and related to the noise in the data. Using data with more noise will give worse fit, and less noise gives a better fit. However, the relative behaviour of the bias and error will stay the same.  In this paper all results have been produced with the same amount of noise. Had we used a different value, we would except the MSE-plots to be similar, with the only difference being the value of the error. As a sanity check, we remake figure \ref{fig:BV_OLS} with lower and higher noise, but with $p_\text{max}=10$ to avoid high MSE values which could make the comparison difficult. See figure \ref{fig:BV_OLS_noise}. Comparing with \ref{fig:BV_OLS}, we see that the graphs behave relatively the same way, just taking lower and higher values.
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0_1.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0_5.pdf}
+	\endminipage
+	\caption{Here we have plotted the bias, variance and MSE for the test and train data, exactly as figure \ref{fig:BV_OLS}, but using lower (left) and higher (right) levels of noise. This is to show we get similar results} \label{fig:BV_OLS_noise}
+\end{figure}
+
+\section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
+
+Here we have implemented cross-validation as the resampling technique. This works by first shuffling the data randomly, then split the data into $k$ different groups. We can then decide on one group to be the test-data and perform linear regression on the rest. After that we can calculate the MSE, and repeat this process $k$-times. The final MSE would then be the mean MSE, after all the iterations. In figure \ref{fig:CV_OLS} we have done this, trying for $k = [5,7,10]$.
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re5.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re7.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol6_CV_re10.pdf}
@@ -179,7 +485,11 @@ Next we move on to studying the MSE with cross validation. As with the bootstrap
 \end{figure}
 Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes large when $p>3$. Doubling the number of k-folds, the MSE drops, however the test MSE still deviates quicker, and there is a clear increase for $p>6$. Also the MSE drops much lower in figure \ref{fig:terrain_OLS_MSE_bootstrap}, almost an order of magnitude lower. There is no clear reason as to why the results are different from those obtained when bootstrapping. One reason could be that we have an "unlucky" seed, and because we have such few resampling iterations we get deviations.
 
+<<<<<<< HEAD
+Now we look at bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=23$) variance and error should increase, while bias stays low. Using max polynomial degree $p_\text{max}=25$ and $B=50$ iterations we get the result in figure \ref{fig:terrain_OLS_BVT}.
+=======
 Now we move on to bias-variance trade-off analysis, still expecting the same behavior as exercise 2. I.e. For both test and train, the bias and MSE should start high and variance low. The train data will get a strictly better fit for higher polynomial degree, making both the bias and MSE to decrease. For the testing data however, when we start to see overfitting (around $p=x$) variance and error should increase, while bias stays low. Using $p_\text{max}=25$,
+>>>>>>> 2e2d3b2e48c81540e5e4281e18cd8b541b88b4ec
 
 \begin{figure}[H]
 	\minipage{0.49\textwidth}
