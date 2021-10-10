@@ -1,39 +1,8 @@
 from collections import defaultdict
 import numpy as np
-from sklearn.model_selection import train_test_split as tts, KFold
+from sklearn.model_selection import KFold
 import utils
 
-def split_scale(X, z, ttsplit, scaler):
-    """
-    Split and scale data
-    z-data is only scaled if scaler is StandardScaler
-    Also used to scale data for CV, but this does its own splitting.
-    Args:
-        X, 2darray: Full design matrix
-        z, 2darray: dataset
-        ttsplit, float: train/test split ratio
-        scaler, sklearn.preprocessing object: Is fitted to train data, scales train and test
-    Returns:
-        X_train, X_test, z_train, z_test, 2darrays: Scaled train and test data
-    """
-
-    if ttsplit != 0:
-        X_train, X_test, z_train, z_test = tts(X, z, test_size=ttsplit)
-    else:
-        X_train = X
-        z_train = z
-        X_test = X
-        z_test = z
-
-    scaler.fit(X_train)
-    X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
-
-    scaler.fit(z_train)
-    z_train = scaler.transform(z_train)
-    z_test = scaler.transform(z_test)
-
-    return X_train, X_test, z_train, z_test
 
 
 def resample(x, z):
@@ -47,8 +16,9 @@ def resample(x, z):
     return x, z
 
 
-def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler, Testing=False):
-    X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
+def NoResampling(X, z, unused_iter_variable, lmb, reg_method, Testing=False):
+    X_train, X_test = X
+    z_train, z_test = z
     beta = reg_method(X_train, z_train, lmb)
     test_pred = X_test @ beta
     train_pred = X_train @ beta
@@ -64,8 +34,9 @@ def NoResampling(X, z, ttsplit, unused_iter_variable, lmb, reg_method, scaler, T
     else:
         return data, X_train, X_test, z_train, z_test, beta
 
-def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
-    X_train, X_test, z_train, z_test = split_scale(X, z, ttsplit, scaler)
+def Bootstrap(X, z, B, lmb, reg_method):
+    X_train, X_test = X
+    z_train, z_test = z
 
     if B is None:
         B = len(z_train)
@@ -89,8 +60,7 @@ def Bootstrap(X, z, ttsplit, B, lmb, reg_method, scaler):
     data["train_variance"] = utils.Variance(z_train, train_pred)
     return data
 
-def cross_validation(X, z, unused_tts, k, lmb, reg_method, scaler):
-    X, _, z, _ = split_scale(X, z, 0, scaler)  # In this case only scales
+def cross_validation(X, z, k, lmb, reg_method):
 
     data = defaultdict(lambda: 0)
     train_pred = np.empty(k)
