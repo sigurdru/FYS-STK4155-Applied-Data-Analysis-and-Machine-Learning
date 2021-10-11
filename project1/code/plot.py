@@ -304,6 +304,8 @@ def Plot_lambda(results, args):
     ylabel = "log10(Error)" if args.log else "Error"
     title = f"Error using {args.method} and {args.resampling} iter = {args.resampling_iter}"
 
+    if args.dataset == "SRTM":
+        title = "Terrain data: " + title
     set_ax_info(ax, xlabel, ylabel, title)
 
     low = str(int(np.log10(args.lmb[0]))).replace("-", "m")
