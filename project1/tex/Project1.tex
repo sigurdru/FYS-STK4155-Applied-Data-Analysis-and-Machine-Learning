@@ -334,11 +334,15 @@ When bootstrapping we saw overfitting at around $p=6$. Looking at the plots in f
 
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
-In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by adding a small number $\lambda$ to the diagonal, the matrix is no longer singular. This is called Ridge regression. The optimal parameters $\boldsymbol{\hat\beta}$ are given by
-\begin{equation}
-	\boldsymbol{\hat{\beta}} = (X^TX+\lambda I)X^T\vc{z},
-\end{equation}
-where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, so finding the optimal is paramount. This is done by running the regression for many different values of $\lambda$ and choosing the one giving the best results.  Note that when $\lambda=0$, the expression becomes that of OLS. The following relation between the Ridge-parameters and the OLS-parameters can be show to be true:
+In some cases, it might happen that the matrix $\mathbf{X}^T\mathbf{X}$ is singular, such that it is non-invertible. This is the case if some of the independent variables are highly correlated. Then OLS will not work, see \eqref{eq:OLS_beta}. However, by adding a small number $\lambda$ to the diagonal, the matrix is no longer singular. This is called Ridge regression. The cost-function and corresponding optimal parameters $\boldsymbol{\hat\beta}$ are given by
+
+\begin{align*}
+	C(X,\boldsymbol\beta) &= \frac{1}{n} \left[ \left(\mathbf{y}-\mathbf{X}\boldsymbol\beta\right)^T \left(\mathbf{y}-\mathbf{X}\boldsymbol\beta\right) + \lambda\boldsymbol\beta^T\boldsymbol\beta \right]
+	\\
+	\boldsymbol{\hat{\beta}} &= (\mathbf{X}^T\mathbf{X}+\lambda \mathbf{I})\mathbf{X}^T\vc{z},
+\end{align*}
+
+where $\mathbf{I}$ is  the identity matrix. The parameter $\lambda$ can take any value, so finding the optimal is paramount. This is done by running the regression for many different values of $\lambda$ and choosing the one giving the best results.  Note that when $\lambda=0$, the expression becomes that of OLS. The following relation between the Ridge-parameters and the OLS-parameters can be show to be true:
 \begin{equation}\label{eq:beta_ridge_ols}
 	\hat{\beta}^{Ridge} = (1 + \lambda)^{-1}\hat{\beta}^{OLS}
 \end{equation}
@@ -420,7 +424,11 @@ We now want to study the bias-variance trade-off using Ridge. Using high $\lambd
 
 \section*{Exercise 5: Lasso regression on the Franke function with resampling}
 
-
+A third regression method is Lasso. This has the following cost-function:
+\begin{equation*}
+	C(\mathbf{X}, \boldsymbol{\beta}) = \frac{1}{n}\left[\left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)^T \left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)+\lambda ||\boldsymbol{\beta}||_1 \right].
+\end{equation*}
+The optimal parameters do not have a nice, simple expression, due to the L1-norm. The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, for very low $\lambda$, this should be the same as OLS, just as with Ridge
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m4.pdf}
