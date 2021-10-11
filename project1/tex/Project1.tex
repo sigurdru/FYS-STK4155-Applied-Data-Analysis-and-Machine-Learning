@@ -343,7 +343,7 @@ where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, s
 	\hat{\beta}^{Ridge} = (1 + \lambda)^{-1}\hat{\beta}^{OLS}
 \end{equation}
 
-Before we look at specific values of $\lambda$ or polynomial degrees, we make a heatmap of the MSE for several values of both. As equation \eqref{eq:beta_ridge_ols} shows, the parameters are pushed to $0$ for large values of $\lambda$. We therefore expect the best $\lambda$-value to be quite small. In figure \ref{fig:Ridge-boot_heatmap} below, we have chosen values between $10^{-6}$ and $10^0$. The polynomial degree run from $1$ to $15$. The 0-polynomial is excluded as it would be extreme underfitting, giving high errors and the plot less interesting.
+Before we look at specific values of $\lambda$ or polynomial degrees, we make a heatmap of the MSE for several values of both. As equation \eqref{eq:beta_ridge_ols} shows, the parameters go to $0$ for large values of $\lambda$. We therefore expect the best $\lambda$-value to be quite small, as the parameters are suppressed for larger values. In figure \ref{fig:Ridge-boot_heatmap} below, we have chosen values between $10^{-6}$ and $10^0$. The polynomial degree run from $1$ to $15$. The 0-polynomial is excluded as it would be extreme underfitting, giving high errors and the plot less interesting.
 
 \begin{figure}[H]
 	\begin{center}
@@ -419,6 +419,8 @@ We now want to study the bias-variance trade-off using Ridge. Using high $\lambd
 
 
 \section*{Exercise 5: Lasso regression on the Franke function with resampling}
+
+
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m4.pdf}
