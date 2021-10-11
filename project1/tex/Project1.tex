@@ -346,7 +346,9 @@ where $I$ is  the identity matrix. The parameter $\lambda$ can take any value, s
 Before we look at specific values of $\lambda$ or polynomial degrees, we make a heatmap of the MSE for several values of both. As equation \eqref{eq:beta_ridge_ols} shows, the parameters are pushed to $0$ for large values of $\lambda$. We therefore expect the best $\lambda$-value to be quite small. In figure \ref{fig:Ridge-boot_heatmap} below, we have chosen values between $10^{-6}$ and $10^0$. The polynomial degree run from $1$ to $15$. The 0-polynomial is excluded as it would be extreme underfitting, giving high errors and the plot less interesting.
 
 \begin{figure}[H]
-	\includegraphics[width=\linewidth]{Contour_PL_Ridge_Bootstrap90_n30_eps0.2_p1_15_lmb0_m6.pdf}
+	\begin{center}
+		\includegraphics[width=0.8\linewidth]{Contour_PL_Ridge_Bootstrap90_n30_eps0.2_p1_15_lmb0_m6.pdf}
+	\end{center}
 	\caption{MSE using Ridge and bootstrapping, as function of polynomial degree and $\lambda$. The minimum value is $MSE=0.0472$ at $p=8$ and $log10(\lambda_{best}) = -2.07$.}
 	\label{fig:Ridge-boot_heatmap}
 \end{figure}
@@ -356,7 +358,7 @@ There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstl
 To further study the $\lambda$-dependence, we make some lineplots in a larger $\lambda$-range for a few polynomial degrees. We also make a similar plot, but narrowed down around the best region of figure \ref{fig:Ridge-boot_heatmap}. These are shown in figure \ref{fig:Ridge-boot_lambdas}, left and right respectively. In the first we see that for extremly high $\lambda$, the error converges to a high value for all polynomial degrees. This is Ridge shrinking all estimators to $0$.  For extremely low values, it looks similar to our results using OLS. See right figure in \ref{fig:OLS_R2_and_MSE}. On the right side of the figure the best results from \ref{fig:Ridge-boot_heatmap} are explored further. Again we see a clear dip in error in the range, however the results are quite jagged. As this plot has higher resolution, the best $\lambda$-value is slightly different from before,  now being $\lambda_{best} = 10^{-2.24}$. $MSE_{best}=0.0471$.  This is better than the Bootstrapping using OLS, although marginally.
 
 \begin{figure}[H]
-		\minipage{0.49\textwidth}
+	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_Bootstrap90_n30_eps02_p10_lm8_6.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
@@ -367,43 +369,53 @@ To further study the $\lambda$-dependence, we make some lineplots in a larger $\
 \end{figure}
 
 
-We now want to do the same analysis, using cross-validation instead of bootstrapping. We remake the heatmap, figure \ref{fig:Ridge-boot_heatmap}, in the same $\lambda$-range, but limit ourselves to lower polynomials, as the results for CV using OLS were quite bad for high polynomials. This was justified by making the plot for higher polynomials as well, though this is not presented.
+We now want to do the same analysis, using cross-validation instead of bootstrapping. We remake the heatmap, figure \ref{fig:Ridge-boot_heatmap}, in the same $\lambda$-range, but limit ourselves to lower polynomials, as the results for CV using OLS were quite bad for high polynomials. This was justified by making the plot for higher polynomials as well, though this is not presented. Figure \ref{fig:Ridge_CV_heatmap} is similar to the corresponding for bootstrapping, in that very low polynomials and high $\lambda$ give high MSE, and same for high polynomials with low $\lambda$ . The lowest errors are a band around this. The very best value is $MSE_{best}=0.0493$, for $p=3, \lambda=10^{-2.24}$. This is the lowest error of any method so far in this paper.
 
 \begin{figure}[H]
-	\includegraphics[width=\linewidth]{Contour_PL_Ridge_CV10_n30_eps0.2_p1_6_lmb2_m6.pdf}
+	\begin{center}
+		\includegraphics[width=0.8\linewidth]{Contour_PL_Ridge_CV10_n30_eps0.2_p1_6_lmb2_m6.pdf}
+	\end{center}
 	\caption{MSE using Ridge with cross-validation, k=10, as function of $\lambda$ and polynomial degree. The minimum value is $MSE=0.0493$ at $p=3$ and $log10(\lambda)=-2.24$)}
 	\label{fig:Ridge_CV_heatmap}
 \end{figure}
 
+Figure \ref{fig:Ridge_CV_lambdas} shows both an extended and narrower $\lambda$-range, left and right respectively. The results are similar to figure \ref{fig:Ridge-boot_lambdas}, as should be expected. Again, for extremely high $\lambda$ the results converge to a high error. For low $\lambda$ and polynomial degree, the error is quite constant, though making a small dip around $log10(\lambda)=-2$.
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}]
+	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_CV10_n30_eps02_p6_lm8_6.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}]
+	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_CV10_n30_eps02_p4_lm3_m1.pdf}
+	\endminipage
+	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+	\label{fig:Ridge_CV_lambdas}
+\end{figure}
+
+We now want to study the bias-variance trade-off using Ridge. Using high $\lambda$, Ridge should suppress the estimators, giving very low variance, even for high polynomial degrees. The bias should for the same reason be high, as this would be akin to underfitting. For low $\lambda$, the variance should be much higher, as this is similar to OLS.  Using 3 values for $\lambda$, figure \ref{fig:Ridge_boot_BVT} shows the bias, variance and error for polynomials between $p=0$ and $p=20$. For $\lambda=100$, Ridge suppresses the estimators.   the bias quickly converges to a value, and the variance never increases.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{LBVT_Ridge_Bootstrap_n30_eps0_2_p20_lmbm8_2.pdf}
-	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
-	\label{fig:Ridge_boot_BVT}
-\end{figure}
-
-\begin{figure}[H]
-	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_CV10_n30_eps02_p5_lm8_6.pdf}
-	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
+	\caption{MSE, bias and variance using Ridge and bootstrapping, for different $\lambda$s.}
 	\label{fig:Ridge_boot_BVT}
 \end{figure}
 
 
-\begin{figure}[H]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_0_0001.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_0_01.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_1_0.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_100_0.pdf}
-	\endminipage
-	\caption{MSE using Ridgeregression and cross-validation, as function of complexity, for different values of $\lambda$.} \label{fig:Ridge_CV_PM}
-\end{figure}
+%\begin{figure}[H]
+%	\minipage{0.49\textwidth}
+%	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_0_0001.pdf}
+%	\endminipage\hfill
+%	\minipage{0.49\textwidth}
+%	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_0_01.pdf}
+%	\endminipage\hfill
+%	\minipage{0.49\textwidth}
+%	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_1_0.pdf}
+%	\endminipage\hfill
+%	\minipage{0.49\textwidth}
+%	\includegraphics[width=\linewidth]{MSE_Ridge_n30_eps02_pol10_CV_re10_lam_100_0.pdf}
+%	\endminipage
+%	\caption{MSE using Ridgeregression and cross-validation, as function of complexity, for different values of $\lambda$.} \label{fig:Ridge_CV_PM}
+%\end{figure}
 
 
 \section*{Exercise 5: Lasso regression on the Franke function with resampling}
