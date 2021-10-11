@@ -373,7 +373,7 @@ To further study the $\lambda$-dependence, we make some lineplots in a larger $\
 \end{figure}
 
 
-We now want to do the same analysis, using cross-validation instead of bootstrapping. We remake the heatmap, figure \ref{fig:Ridge-boot_heatmap}, in the same $\lambda$-range, but limit ourselves to lower polynomials, as the results for CV using OLS were quite bad for high polynomials. This was justified by making the plot for higher polynomials as well, though this is not presented. Figure \ref{fig:Ridge_CV_heatmap} is similar to the corresponding for bootstrapping, in that very low polynomials and high $\lambda$ give high MSE, and same for high polynomials with low $\lambda$ . The lowest errors are a band around this. The very best value is $MSE_{best}=0.0493$, for $p=3, \lambda=10^{-2.24}$. This is the lowest error of any method so far in this paper.
+We now want to do the same analysis, using cross-validation instead of bootstrapping. We remake the heatmap, figure \ref{fig:Ridge-boot_heatmap}, in the same $\lambda$-range, but limit ourselves to lower polynomials, as the results for CV using OLS were quite bad for high polynomials. This was justified by making the plot for higher polynomials as well, though this is not presented. Figure \ref{fig:Ridge_CV_heatmap} is similar to the corresponding for bootstrapping, in that very low polynomials and high $\lambda$ give high MSE, and same for high polynomials with low $\lambda$ . The lowest errors are a band around this. The very best value is $MSE_{best}=0.0493$, for $p=3, \lambda=10^{-2.24}$.
 
 \begin{figure}[H]
 	\begin{center}
@@ -383,13 +383,13 @@ We now want to do the same analysis, using cross-validation instead of bootstrap
 	\label{fig:Ridge_CV_heatmap}
 \end{figure}
 
-Figure \ref{fig:Ridge_CV_lambdas} shows both an extended and narrower $\lambda$-range, left and right respectively. The results are similar to figure \ref{fig:Ridge-boot_lambdas}, as should be expected. Again, for extremely high $\lambda$ the results converge to a high error. For low $\lambda$ and polynomial degree, the error is quite constant, though making a small dip around $log10(\lambda)=-2$.
+Figure \ref{fig:Ridge_CV_lambdas} shows both an extended and narrower $\lambda$-range, left and right respectively. The results are similar to figure \ref{fig:Ridge-boot_lambdas}, as should be expected. Again, for extremely high $\lambda$ the results converge to a high error. For low $\lambda$ and polynomial degree, the error is quite constant, though making a small dip around $log10(\lambda)=-2$. This dip was also seen for bootstrapping. This indicates that Ridge-regression is better then normal OLS. Without this dip, the best results using Ridge would have been for very small $\lambda$. making the method virtually similar to OLS.We can however conclude that Ridge give better results on our dataset.
 
 \begin{figure}[H]
-	\minipage{0.49\textwidth}]
+	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_CV10_n30_eps02_p6_lm8_6.pdf}
 	\endminipage\hfill
-	\minipage{0.49\textwidth}]
+	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_CV10_n30_eps02_p4_lm3_m1.pdf}
 	\endminipage
 	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
@@ -401,7 +401,7 @@ We now want to study the bias-variance trade-off using Ridge. Using high $\lambd
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{LBVT_Ridge_Bootstrap_n30_eps0_2_p20_lmbm8_2.pdf}
 	\caption{MSE, bias and variance using Ridge and bootstrapping, for different $\lambda$s.}
-	\label{fig:Ridge_boot_BVT}
+	\label{fig:Ridge_boot_BVT}This is the lowest error of any method so far in this paper.
 \end{figure}
 
 
@@ -428,12 +428,14 @@ A third regression method is Lasso. This has the following cost-function:
 \begin{equation*}
 	C(\mathbf{X}, \boldsymbol{\beta}) = \frac{1}{n}\left[\left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)^T \left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)+\lambda ||\boldsymbol{\beta}||_1 \right].
 \end{equation*}
-The optimal parameters do not have a nice, simple expression, due to the L1-norm. The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, for very low $\lambda$, this should be the same as OLS, just as with Ridge
+The optimal parameters do not have a nice, simple expression, due to the L1-norm. For this reason we do not implement the method ourselves in the code, rather calling the function from a package.  The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, for very low $\lambda$, this should be the same as OLS, just as with Ridge.
+
+Figure \ref{fig:Lasso_boot_heatmap} shows a the error for a range of $\lambda$s and polynomial degrees, just like figure \ref{fig:Ridge-boot_heatmap}. The Lasso-function we call is quite slow for low values of $\lambda$, so we can not choose too small values.
 
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m4.pdf}
+\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m5.pdf}
 \caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
-\label{fig:Ridge_boot_BVT}
+\label{fig:Lasso_boot_heatmap}
 \end{figure}
 
 
@@ -443,6 +445,19 @@ The optimal parameters do not have a nice, simple expression, due to the L1-norm
 	\label{fig:Ridge_boot_BVT}
 \end{figure}
 
+As we did for Ridge-regression, we want also to run Lasso with cross-validation. At this point, our code gives us some very weird results. We should get that Lasso gives low errors for low $\lambda$, just as with OLS, increasing till a point where it becomes a straight line. This is was we get using bootstrapping, see figure \ref{fig:Lasso_boot_lambdas}. However, using CV we do not get this, see figure \ref{fig:Lasso_CV_heatmaps}. The error is high for low $\lambda$, and decrease as $\lambda$ increase, leveling out at some point. The left plot shows the $log10$ of the error, so the uniform colour indicates that the error is the same everywhere in the upper region. The right plot almost looks like it is the inverse of figure \ref{fig:Ridge_CV_heatmap}, the corresponding one for Ridge. This makes it look like we are simply plotting the results the wrong way. Having indulged this idea, messing with the code in attempts at reversing it, this has been ruled out. Had there been such a mig bug somewhere it should have revealed itself in our earlier results . It is the same functions that are being called, in different combinations. Only the combination Lasso with cross-validation gives these results. The analysis and plotting is exactly the same for all the heatmap-plots. What makes this problem even weirder and hard to resolve is that we do not get this with the terrain data. In the next section we will thus present Lasso-CV-results, which we have confidence in to be correct. We will get back to this then, but we are choosing a smaller region in the entire data to analyse. To further exacerbate the weirdness of the bug, by choosing a region of same size right next to the original in the same datafile, we again get the same wrong results as here with the Franke function. Intense staring at the code by multiple people outside our group has resulted in nothing further than several "Huh, that's weird. It should'nt do that."
+
+
+\begin{figure}[H]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Contour_PL_Lasso_CV10_n30_eps0.2_p1_15_lmb1_m2.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Contour_PL_Lasso_CV10_n30_eps0.2_p1_6_lmbm1_m6.pdf}
+	\endminipage
+	\caption{MSE using Lasso and cross-validation, for a wide range of $\lambda$ and polynomial degrees. On the left, the $log10(MSE)$ is shown, while on the right it is just the $MSE$.}
+	\label{fig:Lasso_CV_heatmaps}
+\end{figure}
 
 
 \section*{Exercise 6: Analysis of real data}
