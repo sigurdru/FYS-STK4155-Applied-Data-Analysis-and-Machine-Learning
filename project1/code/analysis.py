@@ -21,7 +21,6 @@ scale_conv = {"None": NoneScaler(), "S": StandardScaler(with_std=False), "N": No
 def split_scale(X, z, ttsplit, scaler):
     """
     Split and scale data
-    z-data is only scaled if scaler is StandardScaler
     Also used to scale data for CV, but this does its own splitting.
     Args:
         X, 2darray: Full design matrix
@@ -53,7 +52,7 @@ def split_scale(X, z, ttsplit, scaler):
 
 def simple_regression(args):
     """
-    Run regression. Basically Ex1
+    Run regression. Default analysis function
     For Ridge and Lasso, a single lambda-value is used
 
     Can be used with any regression method

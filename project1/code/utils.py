@@ -19,6 +19,7 @@ def get_directly_implemented_funcs(module):
     return flist
 
 def get_features(i):
+    """ Returns the number of features of the design matrix for polynomial degree i """
     return (i + 1) * (i + 2) // 2
 
 def FrankeFunction(x, y, eps=0):
@@ -116,7 +117,7 @@ def create_X(x, y, n):
             max polynomial degree
     Returns:
         X: 2darray
-            Includes intercept.
+            Design matrix. Includes intercept.
     """
     if type(y) == int:
         X = np.zeros((len(x), n+1))
@@ -137,18 +138,3 @@ def create_X(x, y, n):
             X[:, q + k] = (x ** (i - k)) * (y ** k)
     return X
 
-
-def MSE(y, y_pred):
-    return sum((y - y_pred) ** 2) / len(y)
-
-def MSE_boot(y, y_pred):
-    return np.mean( np.mean((y - y_pred) ** 2, axis=1, keepdims=True) )
-
-def R2(y, y_pred):
-    return 1 - sum((y - y_pred) ** 2) / sum((y - np.mean(y)) ** 2)
-
-def Bias(y, y_pred):
-    return np.mean( (y - np.mean(y_pred, axis=1, keepdims=True)) ** 2 )
-
-def Variance(y, y_pred):
-    return np.mean( np.var(y_pred, axis=1, keepdims=True) )
