@@ -171,7 +171,7 @@ To asses the quality of the model, we need a way to quantify the error. We will 
 \end{align*}
 }%
 
-MSE will always be larger than 0, and an MSE of 0 means our model fits the data perfectly. The $R^2$-score is a number between 0 and 1, with 1 being a perfect fit. In order to find the optimal parameters $\boldsymbol{\tilde{\beta}}$ we need a cost function to minimize. Choosing MSE as the cost-function gives the expresion for OLS-regression.
+MSE will always be larger than 0, and an MSE of 0 means our model fits the data perfectly. Throughout this paper, MSE and error will be used interchangeably. The $R^2$-score is a number between 0 and 1, with 1 being a perfect fit. In order to find the optimal parameters $\boldsymbol{\tilde{\beta}}$ we need a cost function to minimize. Choosing MSE as the cost-function gives the expresion for OLS-regression.
 \begin{equation*}
 	C(\boldsymbol{\beta}) = MSE(\boldsymbol{z}, \boldsymbol{\tilde{z}})
 \end{equation*}
@@ -347,13 +347,13 @@ Before we look at specific values of $\lambda$ or polynomial degrees, we make a 
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{Contour_PL_Ridge_Bootstrap90_n30_eps0.2_p1_15_lmb0_m6.pdf}
-	\caption{MSE using Ridge and bootstrapping, as function of polynomial degree and $\lambda$. The minimum value is $MSE=0.0472$ at $p=8$ and $log10(\lambda) = -2.07$.}
+	\caption{MSE using Ridge and bootstrapping, as function of polynomial degree and $\lambda$. The minimum value is $MSE=0.0472$ at $p=8$ and $log10(\lambda_{best}) = -2.07$.}
 	\label{fig:Ridge-boot_heatmap}
 \end{figure}
 
 There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstly, for low polynomial degrees, and for all $\lambda$s, the error is high. This is underfitting. Next, it is also high for high polynomial degrees, and low $\lambda$s. This is a region of overfitting. It does not extend up to higher $\lambda$s. This is probably because the estimators are getting small, as per \eqref{eq:beta_ridge_ols}. Lastly, the error is smallest in a band around the overfitting area, with a bottom in the middle, for $p=8$ and $\lambda=10^{-2.07}$. These are the best parameters for Ridge.
 
-To further study the $\lambda$-dependence, we make some lineplots in a larger $\lambda$-range for a few polynomial degrees. We also make a similar plot, but narrowed down around the best region of figure \ref{fig:Ridge-boot_heatmap}. These are shown in figure \ref{fig:Ridge-boot_lambdas}, left and right respectively. In the first we see that for extremly high $\lambda$, the error converges to a high value for all polynomial degrees.  For extremely low values, it looks similar to our results using OLS. See right figure in \ref{fig:OLS_R2_and_MSE}.
+To further study the $\lambda$-dependence, we make some lineplots in a larger $\lambda$-range for a few polynomial degrees. We also make a similar plot, but narrowed down around the best region of figure \ref{fig:Ridge-boot_heatmap}. These are shown in figure \ref{fig:Ridge-boot_lambdas}, left and right respectively. In the first we see that for extremly high $\lambda$, the error converges to a high value for all polynomial degrees. This is Ridge shrinking all estimators to $0$.  For extremely low values, it looks similar to our results using OLS. See right figure in \ref{fig:OLS_R2_and_MSE}. On the right side of the figure the best results from \ref{fig:Ridge-boot_heatmap} are explored further. Again we see a clear dip in error in the range, however the results are quite jagged. As this plot has higher resolution,he best $\lambda$-value is slightly different from before,  now being $\lambda_{best} = 10^{-2.24}$.
 
 \begin{figure}[H]
 		\minipage{0.49\textwidth}
