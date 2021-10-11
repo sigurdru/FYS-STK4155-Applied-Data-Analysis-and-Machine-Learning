@@ -129,7 +129,7 @@ def create_X(x, y, n):
         y = np.ravel(y)
 
     N = len(x)
-    l = (n + 1) * (n + 2) // 2  # Number of elements in beta
+    l = get_features(n)  # Number of elements in beta
     X = np.ones((N, l))
 
     for i in range(1, n + 1):

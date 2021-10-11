@@ -44,4 +44,3 @@ def Lasso(X, z, lmb):
     model = linear_model.Lasso(lmb, max_iter=1e6, tol=1e-1)
     model.fit(X, z)
     return model.coef_.reshape(-1, 1)
-
