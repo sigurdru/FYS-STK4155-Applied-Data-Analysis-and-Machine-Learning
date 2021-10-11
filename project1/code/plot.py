@@ -58,9 +58,9 @@ def show(fig, fname, args):
     if args.dataset == "SRTM":
         print("Terrain data: \'SRTM_\' added at beginning of plot file name")
         fname = "SRTM_" + fname
-
-    print("Saving plot: ", fname + ".pdf")
-    fig.savefig(os.path.join(path_plots, fname + '.pdf'))
+    if args.save:
+        print("Saving plot: ", fname + ".pdf")
+        fig.savefig(os.path.join(path_plots, fname + '.pdf'))
     if args.push:
         push(os.path.join(path_plots, fname + ".pdf"))
     if args.show:
@@ -126,6 +126,9 @@ def Plot_error(MSE_test, MSE_train, args):
     fig, ax = plt.subplots()
     ax.plot(args.polynomial, MSE_test, "bo--", label="test MSE")
     ax.plot(args.polynomial, MSE_train, "ro--", label="Train MSE")
+
+    amin = np.argmin(MSE_test)
+    print(f"Lowest error is {MSE_test[amin]}, for p = {args.polynomial[amin]}")
 
     # general formalities
     if args.dataset == "SRTM":
