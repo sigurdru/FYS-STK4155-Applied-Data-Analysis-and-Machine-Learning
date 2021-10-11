@@ -32,6 +32,7 @@ make all
 make exercise1
 ```
 
+# Everything below this needs to be revised
 ### Code tests
 All code tests are implemented in the program `test.py`, run it with the command
 `python3 test.py`
