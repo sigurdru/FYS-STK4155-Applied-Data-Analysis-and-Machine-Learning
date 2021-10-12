@@ -296,18 +296,6 @@ As expected we se a general increase in MSE and variance for the test data when 
 
 As previously discussed, the minimum value of the test MSE at $p=3$ does not seem to correspond to the best fit, according to our bias-variance trade-off analysis. There seems to be a slight increase in variance at $p=7$, which is also the case for the test MSE. Taking all of this into account, the optimal fit of the Franke function that minimizes bias, variance and MSE for OLS appears to be either $p=6$ or $p=7$ with bootstrap resampling. Considering the low test MSE we got for $p=3$, our results depend on the particular test data we use. Making a final conclusion about whether $p=6$ or $p=7$ gives the best prediction would therefore be more appropriate if we had studied the bootstrap method for different sets of test data, which we have not done. This could give an indication about the validity of the differences between the two polynomial degrees.
 
-The last term of \eqref{eq:bias_var_tradeoff} is a constant, and related to the noise in the data. Using data with more noise will give worse fit, and less noise gives a better fit. However, the relative behaviour of the bias and error will stay the same.  In this paper all results have been produced with the same amount of noise. Had we used a different value, we would except the MSE-plots to be similar, with the only difference being the value of the error. As a sanity check, we remake figure \ref{fig:BV_OLS} with lower and higher noise, but with $p_\text{max}=10$ to avoid high MSE values which could make the comparison difficult. See figure \ref{fig:BV_OLS_noise}. Comparing with figure \ref{fig:BV_OLS}, we see that the graphs behave relatively the same way, just taking lower and higher values.
-
-\begin{figure}[h]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0_1.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{BVT_OLS_n30_eps0_5.pdf}
-	\endminipage
-	\caption{Here we have plotted the bias, variance and MSE for the test and train data, exactly as figure \ref{fig:BV_OLS}, but using lower (left) and higher (right) levels of noise. This is to show we get similar results} \label{fig:BV_OLS_noise}
-\end{figure}
-
 
 \section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
 
@@ -356,7 +344,7 @@ Before we look at specific values of $\lambda$ or polynomial degrees, we make a 
 	\label{fig:Ridge-boot_heatmap}
 \end{figure}
 
-There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstly, for low polynomial degrees, all $\lambda$ values gives high MSE values. This is underfitting. Next, the MSE is also high for high polynomial degrees when the $\lambda$ values are low. This is a region of overfitting. It does not extend up to higher $\lambda$s. This is probably because the estimators related to the higher order polynomials are being supressed, as per \eqref{eq:beta_ridge_ols}, preventing them from dominating the overall prediction. Lastly, the MSE is smallest in a region around $p=8$ and $\lambda=10^{-2.07}$, which is a higher polynomial degree than we got from our OLS analyses. With OLS we also saw 
+There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstly, for low polynomial degrees, all $\lambda$ values gives high MSE values. This is underfitting. Next, the MSE is also high for high polynomial degrees when the $\lambda$ values are low. This is a region of overfitting. It does not extend up to higher $\lambda$s. This is probably because the estimators related to the higher order polynomials are being supressed, as per \eqref{eq:beta_ridge_ols}, preventing them from dominating the overall prediction. Lastly, the MSE is smallest in a region around $p=8$ and $\lambda=10^{-2.07}$, which is a higher polynomial degree than we got from our OLS analyses. With OLS we also saw
 
 To further study the $\lambda$-dependence, we make some lineplots in a larger $\lambda$-range for a few polynomial degrees. We also make a similar plot, but narrowed down around the best region of figure \ref{fig:Ridge-boot_heatmap}. These are shown in figure \ref{fig:Ridge-boot_lambdas}, left and right respectively. In the first we see that for extremly high $\lambda$, the error converges to a high value for all polynomial degrees. This is Ridge shrinking all estimators to $0$.  For extremely low values, it looks similar to our results using OLS. See right figure in \ref{fig:OLS_R2_and_MSE}. On the right side of the figure the best results from \ref{fig:Ridge-boot_heatmap} are explored further. Again we see a clear dip in error in the range, however the results are quite jagged. As this plot has higher resolution, the best $\lambda$-value is slightly different from before,  now being $\lambda_{best} = 10^{-2.24}$. $MSE_{best}=0.0471$.  This is better than the Bootstrapping using OLS, although marginally.
 
