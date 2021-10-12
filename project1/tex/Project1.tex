@@ -396,18 +396,14 @@ A third regression method is Lasso. This has the following cost-function:
 \begin{equation*}
 	C(\mathbf{X}, \boldsymbol{\beta}) = \frac{1}{n}\left[\left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)^T \left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)+\lambda ||\boldsymbol{\beta}||_1 \right].
 \end{equation*}
-The optimal parameters do not have a nice, simple expression, due to the L1-norm. For this reason we do not implement the method ourselves in the code, rather calling the function from a package.  The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, for very low $\lambda$, this should be the same as OLS, just as with Ridge.
+The optimal parameters do not have a nice, simple expression, due to the L1-norm. For this reason we do not implement the method ourselves in the code, rather calling the function from a package.  The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, as is the case for Ridge, for very low $\lambda$, this should be the same as OLS.
 
-Figure \ref{fig:Lasso_boot_heatmap} shows a the error for a range of $\lambda$s and polynomial degrees, just like figure \ref{fig:Ridge-boot_heatmap}. The Lasso-function we call is quite slow for low values of $\lambda$, so we can not choose too small values.  In figure \ref{fig:Lasso_boot_heatmap}, we have made two heatmaps in different ranges. On the right, we have used higher $\lambda$ and higher polynomial degrees. This was mainly to show that for high $\lambda$, the error is the same everywhere, as we should expect from Lasso. This is the big red area in the figure. The lowest errors are ion the dark blue field. The two plots show the minimum to be in different places. However, the value of the two minimum errors are the same, to the 7th decimal point. We also see that there is a band of lower errors for $log10(\lambda)\approx-5$, compared to $log10(\lambda)\approx-6$. This is the same dip we saw using Ridge. We get that also Lasso is better than OLS.
+In figure \ref{fig:Lasso_boot_heatmap}, we choose $\lambda$ in the range $10^{-6}$ to $10^{-1}$. For higher values, the error is exactly the same everywhere, as we should expect from Lasso. The polynomial degree range from 1 to 10. Lasso is extremely slow, so higher polynomial degrees and lower $\lambda$ is not viable to get results for in reasonable time. We see in the figure that the error is high for higher $\lambda$, and decrease with it. We clearly see the underfit for low polynomial degrees, but have not reached the overfit for higher, as we saw in figures \ref{fig:Ridge-boot_heatmap} and \ref{fig:Ridge_CV_heatmap} for Ridge. We do however see a dip in the errors, along $lambda=10^{-5}$. This indicates that Lasso might give better results than OLS, as there is a benefit in not using as low as possible $\lambda$. The lowest error we get is $MSE_{min}=$ for $p=$ and $\lambda=$.
 
 \begin{figure}[h]
-	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m6.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmb2_m6.pdf}
-	\endminipage
-	\caption{MSE using Lasso and bootstrapping, as function of $\lambda$ and polynomial degrees. On the left, the lowest error is $MSE_{best}=0.0473$, for $p=3$ and $log10(\lambda)  = -5,33$. The right plot is to show that for high $\lambda$, the error is just flat and constant everywhere. This is the red field on top. }
+	%\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmbm1_m6.pdf}  % Sub with this one. Must wait for run to complete.
+	\caption{MSE using Lasso with bootstrapping, as function of $\lambda$ and polynomial degrees. The lowest error is $MSE_{min}=$, for $p=3$ and $\lambda = 10^{}$.}
 	\label{fig:Lasso_boot_heatmap}
 \end{figure}
 
