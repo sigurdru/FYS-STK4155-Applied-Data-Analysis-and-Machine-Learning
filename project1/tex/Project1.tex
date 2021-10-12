@@ -430,19 +430,17 @@ A third regression method is Lasso. This has the following cost-function:
 \end{equation*}
 The optimal parameters do not have a nice, simple expression, due to the L1-norm. For this reason we do not implement the method ourselves in the code, rather calling the function from a package.  The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, for very low $\lambda$, this should be the same as OLS, just as with Ridge.
 
-Figure \ref{fig:Lasso_boot_heatmap} shows a the error for a range of $\lambda$s and polynomial degrees, just like figure \ref{fig:Ridge-boot_heatmap}. The Lasso-function we call is quite slow for low values of $\lambda$, so we can not choose too small values.
+Figure \ref{fig:Lasso_boot_heatmap} shows a the error for a range of $\lambda$s and polynomial degrees, just like figure \ref{fig:Ridge-boot_heatmap}. The Lasso-function we call is quite slow for low values of $\lambda$, so we can not choose too small values.  In figure \ref{fig:Lasso_boot_heatmap}, we have made two heatmaps in different ranges. On the right, we have used higher $\lambda$ and higher polynomial degrees. This was mainly to show that for high $\lambda$, the error is the same everywhere, as we should expect from Lasso. This is the big red area in the figure. The lowest errors are ion the dark blue field. The two plots show the minimum to be in different places. However, the value of the two minimum errors are the same, to the 7th decimal point. We also see that there is a band of lower errors for $log10(\lambda)\approx-5$, compared to $log10(\lambda)\approx-6$. This is the same dip we saw using Ridge. We get that also Lasso is better than OLS.
 
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m6.pdf}
-\caption{MSE using Lasso and bootstrapping, as function of $\lambda$ and polynomial degrees. The lowest error is $MSE_{best}=0.0473$, for $p=3$ and $log10(\lambda)  = -5,33$}
-\label{fig:Lasso_boot_heatmap}
-\end{figure}
-
-
-\begin{figure}[H]
-	\includegraphics[width=\linewidth]{MSE_Lasso_n30_eps02_pol10_Bootstrap_re90_lam_0_0001.pdf}
-	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
-	\label{fig:Ridge_boot_BVT}
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m6.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmb2_m6.pdf}
+	\endminipage
+	\caption{MSE using Lasso and bootstrapping, as function of $\lambda$ and polynomial degrees. On the left, the lowest error is $MSE_{best}=0.0473$, for $p=3$ and $log10(\lambda)  = -5,33$. The right plot is to show that for high $\lambda$, the error is just flat and constant everywhere. This is the red field on top. }
+	\label{fig:Lasso_boot_heatmap}
 \end{figure}
 
 As we did for Ridge-regression, we want also to run Lasso with cross-validation. At this point, our code gives us some very weird results. We should get that Lasso gives low errors for low $\lambda$, just as with OLS, increasing till a point where it becomes a straight line. This is was we get using bootstrapping, see figure \ref{fig:Lasso_boot_lambdas}. However, using CV we do not get this, see figure \ref{fig:Lasso_CV_heatmaps}. The error is high for low $\lambda$, and decrease as $\lambda$ increase, leveling out at some point. The left plot shows the $log10$ of the error, so the uniform colour indicates that the error is the same everywhere in the upper region. The right plot almost looks like it is the inverse of figure \ref{fig:Ridge_CV_heatmap}, the corresponding one for Ridge. This makes it look like we are simply plotting the results the wrong way. Having indulged this idea, messing with the code in attempts at reversing it, this has been ruled out. Had there been such a mig bug somewhere it should have revealed itself in our earlier results . It is the same functions that are being called, in different combinations. Only the combination Lasso with cross-validation gives these results. The analysis and plotting is exactly the same for all the heatmap-plots. What makes this problem even weirder and hard to resolve is that we do not get this with the terrain data. In the next section we will thus present Lasso-CV-results, which we have confidence in to be correct. We will get back to this then, but we are choosing a smaller region in the entire data to analyse. To further exacerbate the weirdness of the bug, by choosing a region of same size right next to the original in the same datafile, we again get the same wrong results as here with the Franke function. Intense staring at the code by multiple people outside our group has resulted in nothing further than several "Huh, that's weird. It should'nt do that."
