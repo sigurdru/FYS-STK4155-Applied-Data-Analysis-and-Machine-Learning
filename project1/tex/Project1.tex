@@ -309,6 +309,7 @@ The last term of \eqref{eq:bias_var_tradeoff} is a constant, and related to the 
 	\caption{Here we have plotted the bias, variance and MSE for the test and train data, exactly as figure \ref{fig:BV_OLS}, but using lower (left) and higher (right) levels of noise. This is to show we get similar results} \label{fig:BV_OLS_noise}
 \end{figure}
 
+
 \section*{Exercise 3: Cross-validation as resampling technique, adding more complexity}
 
 Here we have implemented cross-validation as the resampling technique. This works by first shuffling the data randomly, then split the data into $k$ different groups. We can then decide on one group to be the test-data and perform linear regression with the remaining data as the training set. After that we calculate the MSE. Then we choose a new group to be the test data and calculate the MSE once again with the remaining groups as the training data. We repeat the process a total of $k$ timer, until all the groups have been used as test data. The final MSE will then be the mean MSE, after all the iterations. In figure \ref{fig:CV_OLS} we have performed cross-validation resampling, using $k = [5,7,10]$ iterations.
@@ -330,7 +331,6 @@ Here we have implemented cross-validation as the resampling technique. This work
 \end{figure}
 
 When bootstrapping we saw overfitting at around $p=6$. Looking at the plots in figure \ref{fig:CV_OLS} there seems to be consistent overfitting at around $p=3$. In the bottom right plot we have plotted for higher polynomials to illustrate that this error does not decrease for higher $p$. This diverging behaviour takes place regardless of the number of resampling iterations. We see no obvious reason that the overfitting should start sooner compared to bootstrapping, and thus ground it in random fluctuations. We have consistently seen large variations in results based on number of resampling, and the random seed used when studying the model predictions. One possible explanation of the MSE difference between the bootstrap method and cross-validation might be that the test set we used for bootstrap resampling happened to be a favorable one, with fewer points generated with high values of $\epsilon$. Another important aspect is that we averaged a total of $90$ simulations for the bootstrap method, compared to averaging a maximum of $k=10$ resamplings with cross-validation. The mean MSE of the cross-validation method is thus more affected by a bad fit than the mean MSE of the bootstrap method.
-
 
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
@@ -436,7 +436,6 @@ q
 	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
 	\label{fig:Ridge_boot_BVT}
 \end{figure}
-
 
 
 \section*{Exercise 6: Analysis of real data}
