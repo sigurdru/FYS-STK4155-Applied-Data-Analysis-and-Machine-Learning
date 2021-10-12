@@ -11,8 +11,6 @@ Code dependencies:
     - imageio, 2.9.0
     - sklearn, 0.24.2
     - matplotlib, 3.2.1
-    - pandas, 1.1.1
-    - re, 2.2.1
 ## How to run the code
 ```
 # move into the code directory
