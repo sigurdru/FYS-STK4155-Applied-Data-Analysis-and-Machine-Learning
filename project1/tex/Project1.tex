@@ -459,15 +459,17 @@ As we did for Ridge-regression, we want also to run Lasso with cross-validation.
 
 
 \section*{Exercise 6: Analysis of real data}
-\subsection*{OLS}
-Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider Norwegian terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}. Because the datasets are large, we will only consider one small part of \texttt{SRTM\_data\_Norway\_1.tif}, namely $f_{i,j}$ where $i,j\in[50,100]$, i.e. $N=50$ datapoints in each direction. It is useful to consider dimensionless data, thus we divide by the highest point $z_{i,j} = f_{i,j}/\max{|f_{i,j}|}$, and let $i,j\in[50,100] \rightarrow x,y\in[0,1]$ when plotting. Then we get the data visualized in figure \ref{fig:terrain_raw}.
+Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider Norwegian terrain data from here\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}. Because the datasets are large, we will only consider one small part of \texttt{SRTM\_data\_Norway\_1.tif}, namely $f_{i,j}$ where $i,j\in[50,100]$, i.e. $N=50$ datapoints in each direction. It is useful to consider dimensionless data, thus we divide by the absolute highest/lowest point $z_{i,j} = f_{i,j}/\max{|f_{i,j}|}$, and let $i,j\in[50,100] \rightarrow x,y\in[0,1]$ when plotting. Then we get the data visualized in figure \ref{fig:terrain_raw}.
 
 \begin{figure}[h]
-  \includegraphics[width=\linewidth]{SRTM_rawdata_n50.pdf}
-  \caption{Here we have plotted the terrain data which we will use in this exercise.}
-  \label{fig:terrain_raw}
+	\includegraphics[width=\linewidth]{SRTM_rawdata_n50.pdf}
+	\caption{Here we have plotted the terrain data which we will use in this exercise.}
+	\label{fig:terrain_raw}
 \end{figure}
 
+We will analyze the data using the same methods above. Namely OLS, Ridge- and Lasso-regression. We will implement Bootstrapping and cross validation for them all, and try to evaluate bias and variance. The first three sections (OLS, Ridge and Lasso) will cover each numerical method separately. Then in the last section (Analysis) we will try to conclude which one is best. 
+
+\subsection*{OLS}
 We begin by studying the MSE using OLS-regression and bootstrapping as the resampling technique. Our results should mirror those we got in exercise 2, where the test MSE decreases in the beginning, and increases when we start overfitting. Choosing $B = 50$ iterations and max polynomial degree $p_\text{max} = 30$ we get the MSE illustrated in figure \ref{fig:terrain_OLS_MSE_bootstrap}. Because of the small variation in MSE we plotted the $\log(\text{MSE})$ along the $y$-axis.
 
 \begin{figure}[h]
@@ -480,8 +482,7 @@ We begin by studying the MSE using OLS-regression and bootstrapping as the resam
   \caption{Her we have plotted the $\log(\text{MSE})$ as a function of polynomial degree. The left plot is with $(50\cross50)$ grid-points and right with $(30\cross30)$.}
   \label{fig:terrain_OLS_MSE_bootstrap}
 \end{figure}
-
-Looking at figure \ref{fig:terrain_OLS_MSE_bootstrap} we see that for $(50\cross50)$ grid-points (left plot), we get a small increase in the MSE after $p = 23$. We assume that overfitting is not evident due to the large number of data points. Therefore we plot for $30\cross30$ grid-points (right figure) and see a much larger increase after $p = 8$. Because of this we conclude that the small overfitting is due to our large number of grid-points.
+Looking at figure \ref{fig:terrain_OLS_MSE_bootstrap} we see that for $(50\cross50)$ grid-points (left plot), we get a small increase in the MSE after $p = 23$. The actual minimum $\text{MSE} \approx 1.29\cdot10^{-5}$ is at polynomial degree $p = 23$. We assume that overfitting is not evident due to the large number of data points. Therefore we plot for $30\cross30$ grid-points (right figure) and see a much larger increase after $p = 8$. Because of this we conclude that the small overfitting is due to our large number of grid-points.
 
 As a simple sanity check, we plot the result of our fits for different polynomial degrees, which we can compare to the original data from figure \ref{fig:terrain_raw}. To capture the complexity of our data set, we consider four polynomial degrees, using $p\in[10,\,20,\,30,\,50]$, where the first two are shown in the upper left and right panel of figure \ref{fig:terrain_fit}, respectively, while the latter two in the bottom left and right panel of the same figure, respectively.
 
@@ -516,7 +517,7 @@ Next we move on to studying the MSE with cross validation. As with the bootstrap
 	\caption{Here we have plotted $\log(\text{MSE})$ as a function of polynomial degree, with cross-validation as the resampling technique. Left graph shows with $k=5$ iterations, and right with $k=10$.}
   \label{fig:terrain_OLS_MSE_CV}
 \end{figure}
-Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes large when $p>3$. Doubling the number of k-folds, the MSE drops, however the test MSE still deviates quicker, and there is a clear increase for $p>6$. With $k=10$ we seem to get a clearly increased test MSE with odd ordered polynomial degrees, a feature that was not apparent with the bootstrap method.
+Looking at figure \ref{fig:terrain_OLS_MSE_CV} we see that the test MSE becomes large when $p>3$. Doubling the number of k-folds, the MSE drops, however the test MSE still deviates quicker, and there is a clear increase for $p>6$. With $k=10$ we seem to get a clearly increased test MSE with odd ordered polynomial degrees, a feature that was not apparent with the bootstrap method. The actual minimum $\text{MSE} \approx 2.22\cdot10^{-4}$ was found at polynomial degree $p=2$ with $k=5$ iterations. For $k=10$ we found the minimum $\text{MSE} \approx 6.05\cdot10^{-4}$ at $p=6$.
 
 Also the MSE drops much lower in figure \ref{fig:terrain_OLS_MSE_bootstrap}, almost an order of magnitude lower. There is no clear reason as to why the results are different from those obtained when bootstrapping. One reason could be that we have an "unlucky" seed, and because we have such few resampling iterations we get deviations, just like we discussed for our Franke function results.
 
@@ -533,66 +534,48 @@ Now we look at bias-variance trade-off analysis, still expecting the same behavi
   \label{fig:terrain_OLS_BVT}
 \end{figure}
 
-To easier see variations when we plot for $50$ data points, we use a logarithmic scale on the $y$-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. We see little deviations in bias and MSE, this makes sense when considering our MSE obtained in (figure \ref{fig:terrain_OLS_MSE_bootstrap}). The test variance also deviates little from the train variance because of the same reason. Again for reference, we include the result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $p=15$. This clearly shows the variations which we expect.
+To easier see variations when we plot for $50$ data points, we use a logarithmic scale on the $y$-axis. The result is shown on the left panel in figure \ref{fig:terrain_OLS_BVT}. We see little deviations in bias and MSE, this makes sense when considering our the small MSE variations when bootstrapping (figure \ref{fig:terrain_OLS_MSE_bootstrap}). The test variance also deviates little from the train variance because of the same reason. Again for reference, we include the result obtained with fewer data points to see any noticeable effect. The bias-variance trade-off result for $15$ data points is shown on the right panel of figure \ref{fig:terrain_OLS_BVT}, up to $p=15$. This clearly shows the variations which we expect.
 
 \subsection*{Ridge}
-MSE BOOT
+Next we evaluate the terrain data using Ridge regression, using bootstrap and cross validation as the resampling technique. Considering the unnoticeable variations in bias and variance in figure \ref{fig:terrain_OLS_BVT}, we omit those plots for further analysis. When using fewer datapoints, it would make more sense in including them, as we also saw in figure \ref{fig:terrain_OLS_BVT}.
+
+Now, when we implement bootstrapping, we will use $B=90$ iterations, looking at polynomial degrees between $p_\text{min} = 8$ and $p_\text{max} = 19$, and $\lambda$-values between $10^{-2}$ and $10^{-18}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Ridge_MSE_Boot}. 
 \begin{figure}[h]
-	\includegraphics[width=\linewidth]{SRTM_Contour_PL_Ridge_Bootstrap90_n50_eps0.2_p8_19_lmbm2_m19.pdf}
-	\caption{Hei}
+	\includegraphics[width=0.8\linewidth]{SRTM_Contour_PL_Ridge_Bootstrap90_n50_eps0.2_p8_19_lmbm2_m19.pdf}
+	\caption{This contour shows the MSE (colorbar), when using bootstrapping, as a function of polynomial degree ($x$-axis) and $\log(\lambda)$ ($y$-axis). The red X marks for what values of $p$ and $\lambda$ we have the minimum MSE.}
 	\label{fig:terrain_Ridge_MSE_Boot}
 \end{figure}
-\begin{verbatim}
-1.3400357976376783e-05
-[9] [13]
-Min MSE is 1.3400357976376783e-05 at p=17, l=-11.633333333333333
-No handles with labels found to put in legend.
-Terrain data: 'SRTM_' added at beginning of plot file name
-Saving plot:  SRTM_Contour_PL_Ridge_Bootstrap90_n50_eps0.2_p8_19_lmbm2_m19.pdf
-\end{verbatim}
+In figure \ref{fig:terrain_Ridge_MSE_Boot} we see that we get the lowest $\text{MSE} \approx 1.34\cdot10^{-5}$ (the red x) for a small $\lambda \approx 10^{-12}$ and large $p = 17$. The small $\lambda$ indicates that ordinary OLS should be a good fit. This is because when $\lambda$ shrinks, we approach OLS.
 
-MSE CV
+We implement cross-validation as our resampling technique. We will use 10 iterations, looking at polynomial degrees between $p_\text{min} = 1$ and $p_\text{max} = 9$, and $\lambda$-values between $10$ and $10^{-9}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Ridge_MSE_CV}. 
 \begin{figure}[h]
-	\includegraphics[width=\linewidth]{SRTM_Contour_PL_Ridge_CV10_n50_eps0.2_p1_9_lmb1_m9.pdf}
-	\caption{Hei}
+	\includegraphics[width=0.8\linewidth]{SRTM_Contour_PL_Ridge_CV10_n50_eps0.2_p1_9_lmb1_m9.pdf}
+	\caption{This contour shows the MSE (colorbar), when using cross-validation, as a function of polynomial degree ($x$-axis) and $\log(\lambda)$ ($y$-axis). The red X marks for what values of $p$ and $\lambda$ we have the minimum MSE.}
 	\label{fig:terrain_Ridge_MSE_CV}
 \end{figure}
-\begin{verbatim}
-Min MSE is 5.5142010462652346e-05 at p=6, l=-6.666666666666667
-No handles with labels found to put in legend.
-Terrain data: 'SRTM_' added at beginning of plot file name
-Saving plot:  SRTM_Contour_PL_Ridge_CV10_n50_eps0.2_p1_9_lmb1_m9.pdf
-\end{verbatim}
+In figure \ref{fig:terrain_Ridge_MSE_CV} we see that the lowest $\text{MSE} \approx 1.51\cdot10^{-5}$ (the red x) is with a small $\lambda \approx 10^{-7}$ and $p = 6$.
 
 \subsection*{Lasso}
-
-MSE BOOT
+Lastly we evaluate the terrain data using Lasso regression. Here we will also implement bootstrap and cross validation as the resampling technique.  When bootstrapping, we will use $B=90$ iterations, looking at polynomial degrees between $p_\text{min} = 4$ and $p_\text{max} = 11$, and $\lambda$-values between $10^{-6}$ and $10^{-10}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Lasso_MSE_Boot}. 
 \begin{figure}[h]
-	\includegraphics[width=\linewidth]{SRTM_Contour_PL_Lasso_Bootstrap90_n50_eps0.2_p4_11_lmbm6_m10.pdf}
-	\caption{Hei}
+	\includegraphics[width=0.8\linewidth]{SRTM_Contour_PL_Lasso_Bootstrap90_n50_eps0.2_p4_11_lmbm6_m10.pdf}
+	\caption{This contour shows the MSE (colorbar), when using bootstrapping, as a function of polynomial degree ($x$-axis) and $\log(\lambda)$ ($y$-axis). The red X marks for what values of $p$ and $\lambda$ we have the minimum MSE.}
 	\label{fig:terrain_Lasso_MSE_Boot}
 \end{figure}
-\begin{verbatim}
-Min MSE is 0.00010616500383109283 at p=10, l=-6.933333333333334
-No handles with labels found to put in legend.
-Terrain data: 'SRTM_' added at beginning of plot file name
-Saving plot:  SRTM_Contour_PL_Lasso_Bootstrap90_n50_eps0.2_p4_11_lmbm6_m10.pdf
-\end{verbatim}
-MSE CV
+In figure \ref{fig:terrain_Lasso_MSE_Boot} we see that we get the lowest $\text{MSE} \approx 1.06\cdot10^{-4}$ (the red x) for a small $\lambda \approx 10^{-7}$ and large $p = 10$.
+
+When we use cross-validation, we still use 10 iterations, looking at polynomial degrees between $p_\text{min} = 5$ and $p_\text{max} = 14$, and $\lambda$-values between $10^{-1}$ and $10^{-9}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Lasso_MSE_CV}. 
 \begin{figure}[h]
-	\includegraphics[width=\linewidth]{SRTM_Contour_PL_Lasso_CV10_n50_eps0.2_p5_14_lmbm1_m9.pdf}
-	\caption{Hei}
+	\includegraphics[width=0.8\linewidth]{SRTM_Contour_PL_Lasso_CV10_n50_eps0.2_p5_14_lmbm1_m9.pdf}
+	\caption{This contour shows the MSE (colorbar), when using cross-validation, as a function of polynomial degree ($x$-axis) and $\log(\lambda)$ ($y$-axis). The red X marks for what values of $p$ and $\lambda$ we have the minimum MSE.}
 	\label{fig:terrain_Lasso_MSE_CV}
 \end{figure}
-\begin{verbatim}
-Min MSE is 0.6514930968299291 at p=13, l=-5.0
-No handles with labels found to put in legend.
-Terrain data: 'SRTM_' added at beginning of plot file name
-Saving plot:  SRTM_Contour_PL_Lasso_CV10_n50_eps0.2_p5_14_lmbm1_m9.pdf
-\end{verbatim}
+In figure \ref{fig:terrain_Lasso_MSE_CV} we see that the lowest $\text{MSE} \approx 0.65$ (the red x) is with $\lambda \approx 10^{-5}$ and $p = 13$.
 
+\section*{Analysis}
+
+\clearpage
 \appendix
-
 
 \section{Bias-variance Decomposition}\label{Apx:BVT}
 
