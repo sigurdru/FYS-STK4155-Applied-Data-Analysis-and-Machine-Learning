@@ -6,11 +6,11 @@ The report Project1.pdf is found in the tex directory.
 # Morten has given us an extended deadline, until wednesday (13.10) evening. As long as this headline is here, we have not completed the rapport! 
 
 Code dependencies:
-- Python (runs with python version 3.8.10 and newer)
-    - numpy, 1.19.4
-    - matplotlib, 3.3.1
-    - pandas, 1.1.4
-
+- Python 3.8.10
+    - numpy, 1.18.5
+    - imageio, 2.9.0
+    - sklearn, 0.24.2
+    - matplotlib, 3.2.1
 ## How to run the code
 ```
 # move into the code directory
@@ -26,25 +26,10 @@ python3 main.py -h
 ```
 
 To reproduce all the results in our rapport, a makefile is configured to produce every plot.
-Can either be done for all, or individual exercises.
+Can either be done for all (this takes a lot of time), or individual exercises. For example
 ```
-make all
-make exercise1
-```
-
-# Everything below this needs to be revised
-### Code tests
-All code tests are implemented in the program `test.py`, run it with the command
-`python3 test.py`
-
-!!!HER SIER VI HVA VI TESTER!!!
-
-### Example run
-The following will reproduce all the results in the report:
-```
-cd code
-python3 main.py -r
-
-# to run a specific calulation, for example
-python3 main.py -p 5 -pc range -n 50 -m OLS
+#Run all exercises
+make all       
+#Run exercise 1 
+make exercise1 
 ```
