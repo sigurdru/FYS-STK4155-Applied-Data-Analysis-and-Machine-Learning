@@ -350,7 +350,7 @@ There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstl
 
 We now want to do the same analysis, using cross-validation instead of bootstrapping. We make a new heatmap, in the same $\lambda$-range as in figure \ref{fig:Ridge-boot_heatmap}, but limit ourselves to lower polynomials, as the MSE values for CV using OLS were quite large for high polynomial degrees. A plot up to $p=10$ was generated, but the high MSE values for larger values of $p$ caused the remaining MSE values to appear identical, so we have chosen to not include it.
 
-Figure \ref{fig:Ridge_CV_heatmap} is similar to figure \ref{fig:Ridge-boot_heatmap}, the corresponding plot for bootstrapping, in that very low polynomial orders and high $\lambda$ values, as well as high polynomial degrees with low $\lambda$ values, gives a high MSE. The lowest errors are found within a region around $\lambda\in[10^{-1},\,10^{-3}]$ for $p>3$. The lowest MSE value is $MSE_\text{min}=0.0493$, for $p=3,\, \lambda=10^{-2.24}$. 
+Figure \ref{fig:Ridge_CV_heatmap} is similar to figure \ref{fig:Ridge-boot_heatmap}, the corresponding plot for bootstrapping, in that very low polynomial orders and high $\lambda$ values, as well as high polynomial degrees with low $\lambda$ values, gives a high MSE. The lowest errors are found within a region around $\lambda\in[10^{-1},\,10^{-3}]$ for $p>3$. The lowest MSE value is $MSE_\text{min}=0.0493$, for $p=3,\, \lambda=10^{-2.24}$.
 
 \begin{figure}[h]
 	\begin{center}
