@@ -1,10 +1,8 @@
 from matplotlib import transforms
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
 import sys
 import os
-import re
 
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
