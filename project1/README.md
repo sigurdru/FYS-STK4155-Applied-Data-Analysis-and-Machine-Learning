@@ -26,8 +26,10 @@ python3 main.py -h
 ```
 
 To reproduce all the results in our rapport, a makefile is configured to produce every plot.
-Can either be done for all (this takes a lot of time), or individual exercises.
+Can either be done for all (this takes a lot of time), or individual exercises. For example
 ```
-make all        #Runs all exercises
-make exercise1  #Runs exercise 1
+#Run all exercises
+make all       
+#Run exercise 1 
+make exercise1 
 ```
