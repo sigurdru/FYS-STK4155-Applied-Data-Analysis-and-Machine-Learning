@@ -118,7 +118,7 @@ def parse_args(args=None):
     add_arg("-d", "--dataset",
             type=str,
             default="Franke",
-            choices=["Franke", "SRTM"],
+            choices=["Franke", "SRTM", "Test"],
             help="Dataset to be used. If SRTM, -df must give path to file "
             )
 
