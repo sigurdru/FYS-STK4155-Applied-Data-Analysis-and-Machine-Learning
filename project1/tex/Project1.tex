@@ -258,8 +258,6 @@ Now, with bootstrapping, we want to take a look at when we get overfitting. It i
 
 The lowest MSE we got was $MSE_{min}=0.0474$, for $p=3$. This is slightly higher than what we got without resampling. This is because the bootstrap-MSE is a mean of $B$ errors, fluctuating around a value. A different random draw of the noise might have yielded lower MSE for bootstrapping. Increasing the number of bootstrap iterations to $B>90$ yielded no noticeable change in the MSE. Using $B=300$ only changed the MSE in the 7th decimal place. An important point to consider is that despite an increase in the test MSE for $p>3$, the increase is of a relatively low value. This means that a polynomial degree of $p=5$ or $p=7$ could be the best fit for reproducing the Franke function, but $p=3$ happens to yield the lowest MSE for our particular test data, which might be affected by the noise at certain points.
 
-!LES GJENNOM!
-
 \begin{figure}[h]
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{MSE_OLS_n30_eps02_pol20_Bootstrap_re90.pdf}
