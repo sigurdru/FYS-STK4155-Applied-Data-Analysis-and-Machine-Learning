@@ -58,9 +58,9 @@ def show(fig, fname, args):
     if args.dataset == "SRTM":
         print("Terrain data: \'SRTM_\' added at beginning of plot file name")
         fname = "SRTM_" + fname
-
-    print("Saving plot: ", fname + ".pdf")
-    fig.savefig(os.path.join(path_plots, fname + '.pdf'))
+    if args.save:
+        print("Saving plot: ", fname + ".pdf")
+        fig.savefig(os.path.join(path_plots, fname + '.pdf'))
     if args.push:
         push(os.path.join(path_plots, fname + ".pdf"))
     if args.show:
@@ -126,6 +126,9 @@ def Plot_error(MSE_test, MSE_train, args):
     fig, ax = plt.subplots()
     ax.plot(args.polynomial, MSE_test, "bo--", label="test MSE")
     ax.plot(args.polynomial, MSE_train, "ro--", label="Train MSE")
+
+    amin = np.argmin(MSE_test)
+    print(f"Lowest error is {MSE_test[amin]}, for p = {args.polynomial[amin]}")
 
     # general formalities
     if args.dataset == "SRTM":
@@ -288,11 +291,21 @@ def Plot_lambda(results, args):
         if args.log:
             r = np.log10(r)
         ax.plot(np.log10(lmbs), r, label=f"Polynomial degree: {p}")
+    
+    r = results["test_MSE"]
+    min_val = np.min(r)
+    mp, ml = np.where(r == min_val)
+    mp = args.polynomial[mp[0]]
+    ml = np.log10(lmbs[ml][0])
+    print(f"Min MSE is {min_val} at p={mp}, l={ml}")
+    
 
     xlabel = "log10(lambda-parameter)"
     ylabel = "log10(Error)" if args.log else "Error"
     title = f"Error using {args.method} and {args.resampling} iter = {args.resampling_iter}"
 
+    if args.dataset == "SRTM":
+        title = "Terrain data: " + title
     set_ax_info(ax, xlabel, ylabel, title)
 
     low = str(int(np.log10(args.lmb[0]))).replace("-", "m")

@@ -159,6 +159,11 @@ def parse_args(args=None):
             dest="push",
             )
 
+    add_arg("-nosave",
+            action="store_false",
+            dest="save",
+            )
+
     parser.set_defaults(show=False)
 
     args = parser.parse_args(args)

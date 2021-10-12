@@ -3,6 +3,8 @@ The work of Håkon Olav Torvik, Vetle Viknes and Sigurd Sørlie Rustad in FYS-ST
 
 The report Project1.pdf is found in the tex directory.
 
+# Morten has given us an extended deadline, until wednesday (13.10) evening. As long as this headline is here, we have not completed the rapport! 
+
 Code dependencies:
 - Python (runs with python version 3.8.10 and newer)
     - numpy, 1.19.4
@@ -15,19 +17,22 @@ Code dependencies:
 cd code
 ```
 
-The code is now run by calling the program `main.py`. The arguments are handled
-by the `argparse` module and directions will be printed to the terminal by
-running the program with the `-h` flag (or `--help`). The README inside the code directory gives a detailed explanation of each argument, as well as an overwiev of the enitre code. 
+The README inside the code directory gives an overwiev of the files and dataflow. 
+The code is run by calling the program `main.py`. It takes several commandline arguments,
+handled by the `argparse` module. Directions will be printed to the terminal by
+running the program with the `-h` flag (or `--help`).  
 ```
 python3 main.py -h
 ```
 
-Notably, the `-r` flag (or `--results`) is for producing the results in the
-report (both calculation and plotting): !!!DETTE VIRKER IKKE ENDA!!!
+To reproduce all the results in our rapport, a makefile is configured to produce every plot.
+Can either be done for all, or individual exercises.
 ```
-python3 main.py -r
+make all
+make exercise1
 ```
 
+# Everything below this needs to be revised
 ### Code tests
 All code tests are implemented in the program `test.py`, run it with the command
 `python3 test.py`
