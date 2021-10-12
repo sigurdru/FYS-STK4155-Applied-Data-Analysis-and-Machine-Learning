@@ -356,23 +356,11 @@ Before we look at specific values of $\lambda$ or polynomial degrees, we make a 
 	\label{fig:Ridge-boot_heatmap}
 \end{figure}
 
-There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstly, for low polynomial degrees, all $\lambda$ values gives high MSE values. This is underfitting. Next, the MSE is also high for high polynomial degrees when the $\lambda$ values are low. This is a region of overfitting. It does not extend up to higher $\lambda$s. This is probably because the estimators related to the higher order polynomials are being supressed, as per \eqref{eq:beta_ridge_ols}, preventing them from dominating the overall prediction. Lastly, the MSE is smallest in a region around $p=8$ and $\lambda=10^{-2.07}$, which is a higher polynomial degree than we got from our OLS analyses. With OLS we also saw 
+There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstly, for low polynomial degrees, all $\lambda$ values gives high MSE values. This is underfitting. Next, the MSE is also high for high polynomial degrees when the $\lambda$ values are low. This is a region of overfitting. It does not extend up to higher $\lambda$s. This is probably because the estimators related to the higher order polynomials are being supressed, as per \eqref{eq:beta_ridge_ols}, preventing them from dominating the overall prediction. Lastly, the MSE is smallest in a region around $p=8$ and $\lambda=10^{-2.07}$, which is a higher polynomial degree than we got from our OLS analyses. This point yields $MSE_\text{min}=0.0471$, which is a lower value than obtained when bootstrapping with OLS, although marginally. With OLS we also got that $p=3$ yielded the lowest test MSE overall when bootstrapping, and in figure \ref{fig:Ridge-boot_heatmap} we see a thin vertical region for $p=3$ where the MSE is lower compared to neighbouring polynomial degrees. As a final note, we see that the narrow regions with lower MSE values are found near $p=6$ as well, with certain regions covering $p=7$ as well.
 
-To further study the $\lambda$-dependence, we make some lineplots in a larger $\lambda$-range for a few polynomial degrees. We also make a similar plot, but narrowed down around the best region of figure \ref{fig:Ridge-boot_heatmap}. These are shown in figure \ref{fig:Ridge-boot_lambdas}, left and right respectively. In the first we see that for extremly high $\lambda$, the error converges to a high value for all polynomial degrees. This is Ridge shrinking all estimators to $0$.  For extremely low values, it looks similar to our results using OLS. See right figure in \ref{fig:OLS_R2_and_MSE}. On the right side of the figure the best results from \ref{fig:Ridge-boot_heatmap} are explored further. Again we see a clear dip in error in the range, however the results are quite jagged. As this plot has higher resolution, the best $\lambda$-value is slightly different from before,  now being $\lambda_{best} = 10^{-2.24}$. $MSE_{best}=0.0471$.  This is better than the Bootstrapping using OLS, although marginally.
+We now want to do the same analysis, using cross-validation instead of bootstrapping. We make a new heatmap, in the same $\lambda$-range as in figure \ref{fig:Ridge-boot_heatmap}, but limit ourselves to lower polynomials, as the MSE values for CV using OLS were quite large for high polynomial degrees. A plot up to $p=10$ was generated, but the high MSE values for larger values of $p$ caused the remaining MSE values to appear identical, so we have chosen to not include it.
 
-\begin{figure}[h]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_Bootstrap90_n30_eps02_p10_lm8_6.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_Bootstrap90_n30_eps02_p10_lm3_m1.pdf}
-	\endminipage
-	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
-	\label{fig:Ridge-boot_lambdas}
-\end{figure}
-
-
-We now want to do the same analysis, using cross-validation instead of bootstrapping. We remake the heatmap, figure \ref{fig:Ridge-boot_heatmap}, in the same $\lambda$-range, but limit ourselves to lower polynomials, as the results for CV using OLS were quite bad for high polynomials. This was justified by making the plot for higher polynomials as well, though this is not presented. Figure \ref{fig:Ridge_CV_heatmap} is similar to the corresponding for bootstrapping, in that very low polynomials and high $\lambda$ give high MSE, and same for high polynomials with low $\lambda$ . The lowest errors are a band around this. The very best value is $MSE_{best}=0.0493$, for $p=3, \lambda=10^{-2.24}$.
+Figure \ref{fig:Ridge_CV_heatmap} is similar to figure \ref{fig:Ridge-boot_heatmap}, the corresponding plot for bootstrapping, in that very low polynomial orders and high $\lambda$ values, as well as high polynomial degrees with low $\lambda$ values, gives a high MSE. The lowest errors are found within a region around $\lambda\in[10^{-1},\,10^{-3}]$ for $p>3$. The lowest MSE value is $MSE_\text{min}=0.0493$, for $p=3,\, \lambda=10^{-2.24}$. 
 
 \begin{figure}[h]
 	\begin{center}
@@ -382,18 +370,9 @@ We now want to do the same analysis, using cross-validation instead of bootstrap
 	\label{fig:Ridge_CV_heatmap}
 \end{figure}
 
-Figure \ref{fig:Ridge_CV_lambdas} shows both an extended and narrower $\lambda$-range, left and right respectively. The results are similar to figure \ref{fig:Ridge-boot_lambdas}, as should be expected. Again, for extremely high $\lambda$ the results converge to a high error. For low $\lambda$ and polynomial degree, the error is quite constant, though making a small dip around $log10(\lambda)=-2$. This dip was also seen for bootstrapping. This indicates that Ridge-regression is better then normal OLS. Without this dip, the best results using Ridge would have been for very small $\lambda$. making the method virtually similar to OLS.We can however conclude that Ridge give better results on our dataset.
+For low $\lambda$ and polynomial degree, the error is quite constant, though making a small dip around $log10(\lambda)=-2$. This dip was also seen for bootstrapping. This indicates that Ridge-regression is better then normal OLS. Without this dip, the best results using Ridge would have been for very small $\lambda$. making the method virtually similar to OLS.We can however conclude that Ridge give better results on our dataset.
 
-\begin{figure}[h]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_CV10_n30_eps02_p6_lm8_6.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{lambdaMSE_Ridge_CV10_n30_eps02_p4_lm3_m1.pdf}
-	\endminipage
-	\caption{MSE using Ridge and bootstrapping, as function of $\lambda$ for different polynomial degrees.}
-	\label{fig:Ridge_CV_lambdas}
-\end{figure}
+
 
 We now want to study the bias-variance trade-off using Ridge. Using high $\lambda$, Ridge should suppress the estimators, giving very low variance, even for high polynomial degrees. The bias should for the same reason be high, as this would be akin to underfitting. For low $\lambda$, the variance should be much higher, as this is similar to OLS.  Using 3 values for $\lambda$, figure \ref{fig:Ridge_boot_BVT} shows the bias, variance and error for polynomials between $p=0$ and $p=20$. For $\lambda=100$, Ridge suppresses the estimators.   the bias quickly converges to a value, and the variance never increases.
 
