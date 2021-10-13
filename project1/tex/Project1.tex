@@ -526,6 +526,8 @@ We implement cross-validation as our resampling technique. We will use 10 iterat
 \end{figure}
 In figure \ref{fig:terrain_Ridge_MSE_CV} we see that the lowest $\text{MSE} \approx 1.51\cdot10^{-5}$ (the red x) is with a small $\lambda \approx 10^{-7}$ and $p = 6$.
 
+Using the terrain data, our code for Ridge runs much faster than when using the Franke function, even for more data points. This is why we are able to use a much smaller value for $\lambda$.
+
 \subsection*{Lasso}
 Lastly we evaluate the terrain data using Lasso regression. Here we will also implement bootstrap and cross validation as the resampling technique.  When bootstrapping, we will use $B=90$ iterations, looking at polynomial degrees between $p_\text{min} = 4$ and $p_\text{max} = 11$, and $\lambda$-values between $10^{-6}$ and $10^{-10}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Lasso_MSE_Boot}.
 \begin{figure}[h]
@@ -543,6 +545,8 @@ When we use cross-validation, we still use 10 iterations, looking at polynomial 
 \end{figure}
 In figure \ref{fig:terrain_Lasso_MSE_CV} we see that the lowest $\text{MSE} \approx 0.65$ (the red x) is with $\lambda \approx 10^{-5}$ and $p = 13$.
 
+Using the Franke function, we found that using Lasso with cross-validation do not at all give the results we expect, with the error being low for low $\lambda$, increasing with it, until suddenly flatting out at a certain $\lambda$, where the parameters $\boldsymbol{\beta}$ are set to 0. Using Lasso with cross-validation on the terrain data does give these results, as we should expect. However, the error is several orders of magnitude higher than those obtained using Ridge, or Lasso with bootstrapping. We therefore do not consider this a viable
+
 \subsection*{Analysis}
 In the table \ref{tab:anal6} we have listed the lowest MSE values for the given methods. To remind ourselves the best lowest MSE for Ridge was with
 \begin{table}[h]
@@ -554,6 +558,7 @@ In the table \ref{tab:anal6} we have listed the lowest MSE values for the given 
 	\end{tabular}\caption{In this table we have listed the strictly best MSE-values for the given methods and resampling technique.
 	\label{tab:anal6}}
 \end{table}
+
 
 \clearpage
 \appendix
