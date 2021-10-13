@@ -547,20 +547,29 @@ In figure \ref{fig:terrain_Lasso_MSE_CV} we see that the lowest $\text{MSE} \app
 
 Using the Franke function, we found that using Lasso with cross-validation do not at all give the results we expect, with the error being low for low $\lambda$, increasing with it, until suddenly flatting out at a certain $\lambda$, where the parameters $\boldsymbol{\beta}$ are set to 0. Using Lasso with cross-validation on the terrain data does give these results, as we should expect. However, the error is several orders of magnitude higher than those obtained using Ridge, or Lasso with bootstrapping. We therefore do not consider this a viable
 
+\clearpage
 \subsection*{Analysis}
-In the table \ref{tab:anal6} we have listed the lowest MSE values for the given methods. To remind ourselves the best lowest MSE for Ridge was with
+In the table \ref{tab:anal6} we have listed the lowest MSE values for the given methods. To remind ourselves, we have also in table \ref{tab:anal6b} listed for what lambda and polynomial degrees we got the lowest MSE.
 \begin{table}[h]
 	\begin{tabular}{|l|l|l|l|}
 		\hline
 		& OLS     & Ridge   & Lasso   \\ \hline
-		CV        & $6.05\cdot10^{-4}$ & $1.51\cdot10^{-5}$ & $1.06\cdot10^{-4}$ \\ \hline
-		Bootstrap & $1.29\cdot10^{-5}$ & $1.34\cdot10^{-5}$ & $0.65$    \\ \hline
-	\end{tabular}\caption{In this table we have listed the strictly best MSE-values for the given methods and resampling technique.
+		CV        & $6.05\cdot10^{-4}$ & $1.51\cdot10^{-5}$ & $0.65$ \\ \hline
+		Bootstrap & $1.29\cdot10^{-5}$ & $1.34\cdot10^{-5}$ &  $1.06\cdot10^{-4}$   \\ \hline
+	\end{tabular}\caption{In this table we have listed the strictly lowest MSE-values for the given methods and resampling technique.
 	\label{tab:anal6}}
 \end{table}
+\begin{table}[h]
+	\begin{tabular}{|l|l|l|l|}
+		\hline
+		& OLS      & Ridge                            & Lasso                           \\ \hline
+		CV        & $p = 6$  & $p = 6, \ \ \lambda = 10^{-7}$   & $p = 13, \ \ \lambda = 10^{-5}$ \\ \hline
+		Bootstrap & $p = 23$ & $p = 17, \ \ \lambda = 10^{-12}$ & $p = 10, \ \ \lambda = 10^{-7}$ \\ \hline
+	\end{tabular}\caption{This table lists for what lambda and polynomial degrees we got the strictly lowest MSE-values.
+	\label{tab:anal6b}}
+\end{table}
+As we saw in exercise 5, cross validation with Lasso-regression gives poor MSE values and unexpected results. As we discussed more in depth, this should be due to a bug, because we see no reason to why we get these results. The overall method that gives the lowest MSE is OLS with 50 bootstrapping iterations. We see that the only three methods within the same order of magnitude are OLS with bootstrapping and Ridge-regression with cross-validation and bootstrapping. The absolute lowest MSE is OLS with 50 bootstrapping iterations. However this is with a polynomial degree of 26. With Ridge, we get the same order of magnitude with polynomial degrees 6 and 17 when using cross-validation and bootstrapping respectively. As we have mentioned many times during the report, cross-validation has had the lowest MSE for comparatively lower polynomial degrees throughout the report. We still have no clear reason for why this is the case, and thus we are a bit suspect with the result. With more time we would like to go more in-depth on how the fits actually look compared to the data. When using bootstrapping on ridge-regression we get a lambda value of $10^{-12}$ which means it should be extremely close to OLS. Thus we conclude that the simplest method is the optimal one. Despite the large polynomial degree, it yields the lowest MSE. Ridge-regression is within the same order of magnitude, with lower polynomial degrees. This however is with an extremely low lambda-value (close to OLS), and therefore it is hard to justify an increase model complexity.
 
-
-\clearpage
 \appendix
 
 \section{Bias-variance Decomposition}\label{Apx:BVT}

@@ -3,8 +3,6 @@ The work of Håkon Olav Torvik, Vetle Viknes and Sigurd Sørlie Rustad in FYS-ST
 
 The report Project1.pdf is found in the tex directory.
 
-# Morten has given us an extended deadline, until wednesday (13.10) evening. As long as this headline is here, we have not completed the rapport! 
-
 Code dependencies:
 - Python 3.8.10
     - numpy, 1.18.5
