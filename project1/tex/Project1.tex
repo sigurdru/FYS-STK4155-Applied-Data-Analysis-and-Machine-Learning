@@ -16,6 +16,7 @@
 \usepackage{graphicx, bm}         % include graphics such as plots
 \usepackage{upgreek}
 \usepackage{float}
+\usepackage[table,xcdraw]{xcolor}
 \usepackage{xcolor}           % set colors
 \usepackage[hidelinks]{hyperref}         % automagic cross-referencing (this is GODLIKE)
 \usepackage{tikz}             % draw figures manually
@@ -346,7 +347,7 @@ Before we look at specific values of $\lambda$ or polynomial degrees, we make a 
 	\label{fig:Ridge-boot_heatmap}
 \end{figure}
 
-There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstly, for low polynomial degrees, all $\lambda$ values gives high MSE values. This is underfitting. Next, the MSE is also high for high polynomial degrees when the $\lambda$ values are low. This is a region of overfitting. It does not extend up to higher $\lambda$s. This is probably because the estimators related to the higher order polynomials are being supressed, as per equation \eqref{eq:beta_ridge_ols}, preventing them from dominating the overall prediction. Lastly, the MSE is smallest in a region around $p=8$ and $\lambda=10^{-2.07}$, which is a higher polynomial degree than we got from our OLS analyses. This point yields $MSE_\text{min}=0.0471$, which is a lower value than obtained when bootstrapping with OLS, although marginally. With OLS we also got that $p=3$ yielded the lowest test MSE overall when bootstrapping, and in figure \ref{fig:Ridge-boot_heatmap} we see a thin vertical region for $p=3$ where the MSE is lower compared to neighbouring polynomial degrees. As a final note, we see that the narrow regions with lower MSE values are found near $p=6$ as well, with certain regions covering $p=7$ as well.
+There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstly, for low polynomial degrees, all $\lambda$ values gives high MSE values. This is underfitting. Next, the MSE is also high for high polynomial degrees when the $\lambda$ values are low. This is a region of overfitting. It does not extend up to higher $\lambda$s. This is probably because the estimators related to the higher order polynomials are being supressed, as per \eqref{eq:beta_ridge_ols}, preventing them from dominating the overall prediction. Lastly, the MSE is smallest in a region around $p=8$ and $\lambda=10^{-2.07}$, which is a higher polynomial degree than we got from our OLS analyses. This point yields $MSE_\text{min}=0.0471$, which is a lower value than obtained when bootstrapping with OLS, although marginally. With OLS we also got that $p=3$ yielded the lowest test MSE overall when bootstrapping, and in figure \ref{fig:Ridge-boot_heatmap} we see a thin vertical region for $p=3$ where the MSE is lower compared to neighbouring polynomial degrees. As a final note, we see that the narrow regions with lower MSE values are found near $p=6$ as well, with certain regions covering $p=7$ as well.
 
 We now want to do the same analysis, using cross-validation instead of bootstrapping. We make a new heatmap, in the same $\lambda$-range as in figure \ref{fig:Ridge-boot_heatmap}, but limit ourselves to lower polynomials, as the MSE values for CV using OLS were quite large for high polynomial degrees. A plot up to $p=10$ was generated, but the high MSE values for larger values of $p$ caused the remaining MSE values to appear identical, so we have chosen to not include it.
 
@@ -362,9 +363,7 @@ Figure \ref{fig:Ridge_CV_heatmap} is similar to figure \ref{fig:Ridge-boot_heatm
 
 Since we were able to get a slightly better $MSE_\text{min}$ with ridge, as compared to OLS, it indicates that Ridge-regression is somewhat better than normal OLS, but not by much. The best results when using Ridge did arise from very small $\lambda$ values, making the method virtually similar to OLS. Another advantage of the ridge regression was that the $\lambda$ parameter provided more options for higher order polynomials, making our model less sensitive to one specific choice. Before making any conclusions, we will perform a bias-variance trade-off analysis for ridge regression.
 
-To study the regression method further, we now want to study the bias-variance trade-off using Ridge. Since $\lambda<1$ yielded the best resulting MSE when we performed bootstrap resampling, we will consider the bias, variance and MSE for polynomial degrees between $p=0$ and $p=20$ with $\lambda\in[10^{-8},\,10^{-4},\,10^{-2}]$. We would expect the lowest $\lambda$ value to cause the largest increase in MSE and variance, since this is will behave very similar to OLS. For increased $\lambda$ values, we expect a dampened increase of the MSE and variance for increasing polynomial degree. The result of the bias-variance trade-off analyses for the three $\lambda$ values is shown in figure \ref{fig:Ridge_boot_BVT}.
-
-In figure \ref{fig:Ridge_boot_BVT} we see that $\lambda=10^{-8}$ causes a significant increase of MSE and variance, as expected. Comparing $\lambda=10^{-4}$ to $\lambda=10^{-2}$ we see that both the variance and the MSE of the former is slightly higher than it is for the latter. However, the differences between the two is fairly small, and we see the overall expected behaviour that their variances and MSEs remain more or less constant for higher polynomial degrees. We note that up to $p=3$, the MSE and variance is approximately identical for all three $\lambda$ values. This agrees well with figure \ref{fig:Ridge-boot_heatmap}, where the MSE appeared constant at $p=1,\,2$ and $3$ for $lambda<10^{-2}$.
+To study the regression method further, we now want to study the bias-variance trade-off using Ridge. Using high $\lambda$, Ridge should suppress the estimators, giving very low variance, even for high polynomial degrees. The bias should for the same reason be high, as this would be akin to underfitting. For low $\lambda$, the variance should be much higher, as this is similar to OLS.  Using 3 values for $\lambda$, figure \ref{fig:Ridge_boot_BVT} shows the bias, variance and error for polynomials between $p=0$ and $p=20$. For $\lambda=100$, Ridge suppresses the estimators.   the bias quickly converges to a value, and the variance never increases.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{LBVT_Ridge_Bootstrap_n30_eps0_2_p20_lmbm8_m2.pdf}
@@ -396,33 +395,40 @@ A third regression method is Lasso. This has the following cost-function:
 \begin{equation*}
 	C(\mathbf{X}, \boldsymbol{\beta}) = \frac{1}{n}\left[\left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)^T \left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)+\lambda ||\boldsymbol{\beta}||_1 \right].
 \end{equation*}
-The optimal parameters do not have a nice, simple expression, due to the L1-norm. For this reason we do not implement the method ourselves in the code, rather calling the function from a package.  The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, as is the case for Ridge, for very low $\lambda$, this should be the same as OLS.
+The optimal parameters do not have a nice, simple expression, due to the L1-norm. For this reason we do not implement the method ourselves in the code, rather calling the function from a package (scikit-learn).  The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, as is the case for Ridge, for very low $\lambda$, this should be the same as OLS.
 
-In figure \ref{fig:Lasso_boot_heatmap}, we choose $\lambda$ in the range $10^{-6}$ to $10^{-1}$. For higher values, the error is exactly the same everywhere, as we should expect from Lasso. The polynomial degree range from 1 to 10. Lasso is extremely slow, so higher polynomial degrees and lower $\lambda$ is not viable to get results for in reasonable time. We see in the figure that the error is high for higher $\lambda$, and decrease with it. We clearly see the underfit for low polynomial degrees, but have not reached the overfit for higher, as we saw in figures \ref{fig:Ridge-boot_heatmap} and \ref{fig:Ridge_CV_heatmap} for Ridge. We do however see a dip in the errors, along $lambda=10^{-5}$. This indicates that Lasso might give better results than OLS, as there is a benefit in not using as low as possible $\lambda$. The lowest error we get is $MSE_{min}=0.0473$ for $p=7$ and $\lambda=10^{-5.0}$. NOTE: Må fylle inn her når resultatet er klart.
+In figure \ref{fig:Lasso_boot_heatmap}, we choose $\lambda$ in the range $10^{-6}$ to $10^{-1}$. For higher values, the error is exactly the same everywhere, as we should expect from Lasso. The polynomial degree range from 1 to 10. Lasso is extremely slow, so higher polynomial degrees and lower $\lambda$ is not viable to get results for in reasonable time. We see in the figure that the error is high for higher $\lambda$, and decrease along with it. We clearly see the underfit for low polynomial degrees, but have not reached the overfit for higher, as we saw in figures \ref{fig:Ridge-boot_heatmap} and \ref{fig:Ridge_CV_heatmap} for Ridge. We do however see a dip in the errors, along $lambda=10^{-5}$. This indicates that Lasso might give better results than OLS, as there is a benefit in not using as low as possible $\lambda$. The lowest error we get is $MSE_{min}=0.0473$ for $p=7$ and $\lambda=10^{-5.0}$.
 
 \begin{figure}[h]
-	\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmbm1_m6.pdf}
+	\includegraphics[width=0.8\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmbm1_m6.pdf}
 	\caption{MSE using Lasso with bootstrapping, as function of $\lambda$ and polynomial degrees. The lowest error is $MSE_{min}=0.0473$, for $p=7$ and $\lambda = 10^{-5.0}$.}
 	\label{fig:Lasso_boot_heatmap}
 \end{figure}
 
-MÅ OGSÅ GJØRE BVT. jeg driver å lager plottet nå
-
-As we did for Ridge-regression, we want also to run Lasso with cross-validation. At this point, our code gives us some very weird results. We should get that Lasso gives low errors for low $\lambda$, just as with OLS, increasing till a point where it becomes a straight line. This is was we get using bootstrapping. However, using CV we do not get this, see figure \ref{fig:Lasso_CV_heatmaps}. The error is high for low $\lambda$, and decrease as $\lambda$ increase, leveling out at some point. The left plot shows the $log10$ of the error, so the uniform colour indicates that the error is the same everywhere in the upper region. The right plot almost looks like it is the inverse of figure \ref{fig:Ridge_CV_heatmap}, the corresponding one for Ridge. This makes it look like we are simply plotting the results the wrong way. Having indulged this idea, messing with the code in attempts at reversing it, this has been ruled out. Had there been such a big bug somewhere it should have revealed itself in our earlier results . It is the same functions that are being called, in different combinations. Only the combination Lasso with cross-validation gives these results. The analysis and plotting is exactly the same for all the heatmap-plots. What makes this problem even weirder and hard to resolve is that we do not get this with the terrain data. In the next section we will thus present Lasso-CV-results, which we have confidence in to be correct. We will get back to this then, but we are choosing a smaller region in the entire data to analyse. To further exacerbate the weirdness of the bug, by choosing a region of same size right next to the original in the same datafile, we again get the same wrong results as here with the Franke function. Intense staring at the code by multiple people outside our group has resulted in nothing further than several "Huh, that's weird. It shouldn't do that."
-
+We have also plotted the bias and variance for Lasso in figure \ref{fig:Lasso_BVT}. We plotted for polynomial degrees between 0 and 12, with lambda values $\lambda = 10^{-8}, 10^{-4}, 10^{-2}$. It is difficult to extrapolate any information from the plot, however we can notice that the variance increases quicker for lower lambda-values. When it comes to bias however, we cannot see any noticeable variation. This is expected because we don't get large overfitting. We tried plotting up to polynomial degree 20, however did not see any change in behavior.
 
 \begin{figure}[h]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Contour_PL_Lasso_CV10_n30_eps0.2_p1_15_lmb1_m2.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Contour_PL_Lasso_CV10_n30_eps0.2_p1_6_lmbm1_m6.pdf}
-	\endminipage
-	\caption{MSE using Lasso and cross-validation, for a wide range of $\lambda$ and polynomial degrees. On the left, the $log10(MSE)$ is shown, while on the right it is just the $MSE$.}
-	\label{fig:Lasso_CV_heatmaps}
+	\includegraphics[width=\linewidth]{LBVT_Lasso_Bootstrap_n30_eps0_2_p12_lmbm5_m2.pdf}
+	\caption{Here we have plotted the bias, variance and MSE as a function of polynomial degree, and for lambda values $\lambda = 10^{-8}, 10^{-4}, 10^{-2}$.}
+	\label{fig:Lasso_BVT}
 \end{figure}
 
 
+As we did for Ridge-regression, we want also to run Lasso with cross-validation. At this point, our code gives us some very weird results. We should get that Lasso gives low errors for low $\lambda$, just as with OLS, increasing till a point where it becomes a straight line. This is what we got using bootstrapping. However, using CV we do not get this, see figure \ref{fig:Lasso_CV_heatmaps}. The error is high for low $\lambda$, and decrease as $\lambda$ increase, leveling out at some point. The upper plot shows the $log10$ of the error, so the uniform colour indicates that the error is the same everywhere in the upper region. The lower plot almost looks like it is the inverse of figure \ref{fig:Ridge_CV_heatmap}, the corresponding one for Ridge. This makes it look like we are simply plotting the results the wrong way. Having indulged this idea, messing with the code in attempts at reversing it, this has been ruled out. Had there been such a bug somewhere it should have revealed itself in our earlier results. It is the same functions that are being called, in different combinations. Only the combination Lasso with cross-validation gives these results. The analysis and plotting is exactly the same for all the heatmap-plots. What makes this problem even weirder and hard to resolve is that we do not get this with the terrain data. In the next section we will thus present Lasso-CV-results, which we have confidence in to be correct. We will get back to this then, but we are choosing a smaller region in the entire data to analyse. To further exacerbate the weirdness of the bug, by choosing a region of same size right next to the original in the same datafile, we again get the same wrong results as here with the Franke function. Intense staring at the code by multiple people outside our group has resulted in nothing further than several "Huh, that's weird. It shouldn't do that."
+
+
+\begin{figure}[h]
+	\minipage{0.80\textwidth}
+	\includegraphics[width=\linewidth]{Contour_PL_Lasso_CV10_n30_eps0.2_p1_15_lmb1_m2.pdf}
+	\endminipage\hfill
+	\minipage{0.80\textwidth}
+	\includegraphics[width=\linewidth]{Contour_PL_Lasso_CV10_n30_eps0.2_p1_6_lmbm1_m6.pdf}
+	\endminipage
+	\caption{MSE using Lasso and cross-validation, for a wide range of $\lambda$ and polynomial degrees. The upper plot is with $log10(MSE)$, while on the bottom is just the $MSE$.}
+	\label{fig:Lasso_CV_heatmaps}
+\end{figure}
+
+\clearpage
 \section*{Exercise 6: Analysis of real data}
 Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider Norwegian terrain data\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}. Because the datasets are large, we will only consider one small part of \texttt{SRTM\_data\_Norway\_1.tif}, namely $f_{i,j}$ where $i,j\in[50,100]$, i.e. $N=50$ datapoints in each direction. It is useful to consider dimensionless data, thus we divide by the absolute highest/lowest point $z_{i,j} = f_{i,j}/\max{|f_{i,j}|}$, and let $i,j\in[50,100] \rightarrow x,y\in[0,1]$ when plotting. Figure \ref{fig:terrain_raw} shows the terrain we are studying.
 
@@ -541,9 +547,18 @@ In figure \ref{fig:terrain_Lasso_MSE_CV} we see that the lowest $\text{MSE} \app
 
 Using the Franke function, we found that using Lasso with cross-validation do not at all give the results we expect, with the error being low for low $\lambda$, increasing with it, until suddenly flatting out at a certain $\lambda$, where the parameters $\boldsymbol{\beta}$ are set to 0. Using Lasso with cross-validation on the terrain data does give these results, as we should expect. However, the error is several orders of magnitude higher than those obtained using Ridge, or Lasso with bootstrapping. We therefore do not consider Lasso with cross-validation a viable method for us.
 
+\subsection*{Analysis}
+In the table \ref{tab:anal6} we have listed the lowest MSE values for the given methods. To remind ourselves the best lowest MSE for Ridge was with
+\begin{table}[h]
+	\begin{tabular}{|l|l|l|l|}
+		\hline
+		& OLS     & Ridge   & Lasso   \\ \hline
+		CV        & $6.05\cdot10^{-4}$ & $1.51\cdot10^{-5}$ & $1.06\cdot10^{-4}$ \\ \hline
+		Bootstrap & $1.29\cdot10^{-5}$ & $1.34\cdot10^{-5}$ & $0.65$    \\ \hline
+	\end{tabular}\caption{In this table we have listed the strictly best MSE-values for the given methods and resampling technique.
+	\label{tab:anal6}}
+\end{table}
 
-
-\section*{Analysis}
 
 \clearpage
 \appendix
