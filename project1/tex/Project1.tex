@@ -319,7 +319,7 @@ Here we have implemented cross-validation as the resampling technique. This work
 
 When bootstrapping we saw overfitting at around $p=6$. Looking at the plots in figure \ref{fig:CV_OLS} there seems to be consistent overfitting after around $p=3$. In the bottom right plot we have plotted for higher polynomials to illustrate that this error does not decrease for higher $p$. This diverging behaviour takes place regardless of the number of resampling iterations. We see no obvious reason that the overfitting should start sooner compared to bootstrapping, and thus ground it in random fluctuations. We have consistently seen large variations in results based on number of resampling, and the random seed used when studying the model predictions. The lowest error we get using our standard seed is $MSE_{min}=0.0501$, for $p=3, k=10$.
 
-One possible explanation of the MSE difference between the bootstrap method and cross-validation might be that the test set we used for bootstrap resampling happened to be a favorable one, with fewer points generated with high values of $\epsilon$. Another important aspect is that we averaged a total of $90$ simulations for the bootstrap method, compared to averaging a maximum of $k=10$ resamplings with cross-validation. The mean MSE of the cross-validation method is thus more affected by a bad fit than the mean MSE of the bootstrap method. A further analysis of the bootstrap method should therefore include additional simulations where different seed values are studied.
+One possible explanation of the MSE difference between the bootstrap method and cross-validation might be that the test set we used for bootstrap resampling happened to be a favorable one, with fewer points generated with high values of $\epsilon$. Another important aspect is that we averaged a total of $90$ simulations for the bootstrap method, compared to averaging a maximum of $k=10$ resamplings with cross-validation. The mean MSE of the cross-validation method is thus more affected by a bad fit than the mean MSE of the bootstrap method. A further analysis of the resampling methods should therefore include additional simulations where different seed values are studied. This would help us understand the deviations between bootstrapping and cross-validation better, allowing us to conclude whether one of the methods are more suitable. Additionally, it would enable us to estimate whether certain features in our results are a consequence of the specific randomness in the data set.
 
 
 \section*{Exercise 4: Ridge Regression on the Franke function with resampling}
@@ -336,7 +336,7 @@ where $\mathbf{I}$ is  the identity matrix. The parameter $\lambda$ can take any
 	\hat{\beta}^{Ridge} = (1 + \lambda)^{-1}\hat{\beta}^{OLS}
 \end{equation}
 
-Before we look at specific values of $\lambda$ or polynomial degrees, we make a heatmap of the MSE for several values of both, since the optimal $\lambda$-values depends on the polynomial degree in question. As equation \eqref{eq:beta_ridge_ols} shows, the $\hat{\beta}^{Ridge}$ parameters go to $0$ for large values of $\lambda$. Higher $\lambda$ values will therefore suppress the $\hat{\beta}^{OLS}$ parameters, so we expect the best $\lambda$-value to be quite small, since the OLS regression resulted in relatively low MSE values, indicating a good fit. In figure \ref{fig:Ridge-boot_heatmap} below, we have chosen values between $10^{-6}$ and $10^0$. The polynomial degree run from $1$ to $15$. The 0-polynomial is excluded as it would be extreme underfitting, giving high errors and reduces details in the magnitude of lower error values.
+Before we look at specific values of $\lambda$ or polynomial degrees, we make a heatmap of the MSE for several values of both, since the optimal $\lambda$-values depends on the polynomial degree in question. As equation \eqref{eq:beta_ridge_ols} shows, the $\hat{\beta}^{Ridge}$ parameters go to $0$ for large values of $\lambda$. Higher $\lambda$ values will therefore suppress the $\hat{\beta}^{OLS}$ parameters, so we expect the best $\lambda$-value to be quite small, since the OLS regression resulted in relatively low MSE values, indicating a good fit. In figure \ref{fig:Ridge-boot_heatmap}, we have chosen values between $10^{-6}$ and $10^0$. The polynomial degree run from $1$ to $15$. The 0-polynomial is excluded as it would be extreme underfitting, giving high errors and reduces details related the magnitude of other error values.
 
 \begin{figure}[h]
 	\begin{center}
@@ -350,7 +350,11 @@ There are several regions to note in figure \ref{fig:Ridge-boot_heatmap}. Firstl
 
 We now want to do the same analysis, using cross-validation instead of bootstrapping. We make a new heatmap, in the same $\lambda$-range as in figure \ref{fig:Ridge-boot_heatmap}, but limit ourselves to lower polynomials, as the MSE values for CV using OLS were quite large for high polynomial degrees. A plot up to $p=10$ was generated, but the high MSE values for larger values of $p$ caused the remaining MSE values to appear identical, so we have chosen to not include it.
 
+<<<<<<< HEAD
+Figure \ref{fig:Ridge_CV_heatmap} is similar to figure \ref{fig:Ridge-boot_heatmap}, the corresponding plot for bootstrapping, in that very low polynomial orders and high $\lambda$ values, as well as high polynomial degrees with low $\lambda$ values, gives a high MSE. The lowest errors are found within a region around $\lambda\in[10^{-1},\,10^{-3}]$ for $p>3$. The lowest MSE value is $MSE_\text{min}=0.0493$, for $p=3,\, \lambda=10^{-2.24}$. Our study of resampling methods with ridge regression thus yielded similar result as it did for OLS, where cross validation caused a distinct increas in the MSE for $p>3$, while it remained low for bootstrapping until we reached $p>8$.
+=======
 Figure \ref{fig:Ridge_CV_heatmap} is similar to figure \ref{fig:Ridge-boot_heatmap}, the corresponding plot for bootstrapping, in that very low polynomial orders and high $\lambda$ values, as well as high polynomial degrees with low $\lambda$ values, gives a high MSE. The lowest errors are found within a region around $\lambda\in[10^{-1},\,10^{-3}]$ for $p>3$. The lowest MSE value is $MSE_\text{min}=0.0493$, for $p=3,\, \lambda=10^{-2.24}$.
+>>>>>>> 36eb51052d5a528a58678a456f21a0858b9beb66
 
 \begin{figure}[h]
 	\begin{center}
@@ -360,11 +364,9 @@ Figure \ref{fig:Ridge_CV_heatmap} is similar to figure \ref{fig:Ridge-boot_heatm
 	\label{fig:Ridge_CV_heatmap}
 \end{figure}
 
-For low $\lambda$ and polynomial degree, the error is quite constant, though making a small dip around $log10(\lambda)=-2$. This dip was also seen for bootstrapping. This indicates that Ridge-regression is better then normal OLS. Without this dip, the best results using Ridge would have been for very small $\lambda$. making the method virtually similar to OLS.We can however conclude that Ridge give better results on our dataset.
+Since we were able to get a slightly better $MSE_\text{min}$ with ridge, as compared to OLS, it indicates that Ridge-regression is somewhat better than normal OLS, but not by much. The best results when using Ridge did arise from very small $\lambda$ values, making the method virtually similar to OLS. Another advantage of the ridge regression was that the $\lambda$ parameter provided more options for higher order polynomials, making our model less sensitive to one specific choice. Before making any conclusions, we will perform a bias-variance trade-off analysis for ridge regression.
 
-
-
-We now want to study the bias-variance trade-off using Ridge. Using high $\lambda$, Ridge should suppress the estimators, giving very low variance, even for high polynomial degrees. The bias should for the same reason be high, as this would be akin to underfitting. For low $\lambda$, the variance should be much higher, as this is similar to OLS.  Using 3 values for $\lambda$, figure \ref{fig:Ridge_boot_BVT} shows the bias, variance and error for polynomials between $p=0$ and $p=20$. For $\lambda=100$, Ridge suppresses the estimators.   the bias quickly converges to a value, and the variance never increases.
+To study the regression method further, we now want to study the bias-variance trade-off using Ridge. Using high $\lambda$, Ridge should suppress the estimators, giving very low variance, even for high polynomial degrees. The bias should for the same reason be high, as this would be akin to underfitting. For low $\lambda$, the variance should be much higher, as this is similar to OLS.  Using 3 values for $\lambda$, figure \ref{fig:Ridge_boot_BVT} shows the bias, variance and error for polynomials between $p=0$ and $p=20$. For $\lambda=100$, Ridge suppresses the estimators.   the bias quickly converges to a value, and the variance never increases.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{LBVT_Ridge_Bootstrap_n30_eps0_2_p20_lmbm8_2.pdf}
@@ -396,18 +398,13 @@ A third regression method is Lasso. This has the following cost-function:
 \begin{equation*}
 	C(\mathbf{X}, \boldsymbol{\beta}) = \frac{1}{n}\left[\left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)^T \left(\mathbf{y}-\mathbf{X}\boldsymbol\beta \right)+\lambda ||\boldsymbol{\beta}||_1 \right].
 \end{equation*}
-The optimal parameters do not have a nice, simple expression, due to the L1-norm. For this reason we do not implement the method ourselves in the code, rather calling the function from a package.  The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, for very low $\lambda$, this should be the same as OLS, just as with Ridge.
+The optimal parameters do not have a nice, simple expression, due to the L1-norm. For this reason we do not implement the method ourselves in the code, rather calling the function from a package.  The main difference between Ridge and Lasso is that while Ridge suppresses the estimators for as function of $\lambda$, Lasso sets the estimators to 0 for some $\lambda$. Again, as is the case for Ridge, for very low $\lambda$, this should be the same as OLS.
 
-Figure \ref{fig:Lasso_boot_heatmap} shows a the error for a range of $\lambda$s and polynomial degrees, just like figure \ref{fig:Ridge-boot_heatmap}. The Lasso-function we call is quite slow for low values of $\lambda$, so we can not choose too small values.  In figure \ref{fig:Lasso_boot_heatmap}, we have made two heatmaps in different ranges. On the right, we have used higher $\lambda$ and higher polynomial degrees. This was mainly to show that for high $\lambda$, the error is the same everywhere, as we should expect from Lasso. This is the big red area in the figure. The lowest errors are ion the dark blue field. The two plots show the minimum to be in different places. However, the value of the two minimum errors are the same, to the 7th decimal point. We also see that there is a band of lower errors for $log10(\lambda)\approx-5$, compared to $log10(\lambda)\approx-6$. This is the same dip we saw using Ridge. We get that also Lasso is better than OLS.
+In figure \ref{fig:Lasso_boot_heatmap}, we choose $\lambda$ in the range $10^{-6}$ to $10^{-1}$. For higher values, the error is exactly the same everywhere, as we should expect from Lasso. The polynomial degree range from 1 to 10. Lasso is extremely slow, so higher polynomial degrees and lower $\lambda$ is not viable to get results for in reasonable time. We see in the figure that the error is high for higher $\lambda$, and decrease with it. We clearly see the underfit for low polynomial degrees, but have not reached the overfit for higher, as we saw in figures \ref{fig:Ridge-boot_heatmap} and \ref{fig:Ridge_CV_heatmap} for Ridge. We do however see a dip in the errors, along $lambda=10^{-5}$. This indicates that Lasso might give better results than OLS, as there is a benefit in not using as low as possible $\lambda$. The lowest error we get is $MSE_{min}=0.0473$ for $p=7$ and $\lambda=10^{-5.0}$. NOTE: Må fylle inn her når resultatet er klart.
 
 \begin{figure}[h]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_6_lmbm1_m6.pdf}
-	\endminipage\hfill
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmb2_m6.pdf}
-	\endminipage
-	\caption{MSE using Lasso and bootstrapping, as function of $\lambda$ and polynomial degrees. On the left, the lowest error is $MSE_{best}=0.0473$, for $p=3$ and $log10(\lambda)  = -5,33$. The right plot is to show that for high $\lambda$, the error is just flat and constant everywhere. This is the red field on top. }
+	\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmbm1_m6.pdf}
+	\caption{MSE using Lasso with bootstrapping, as function of $\lambda$ and polynomial degrees. The lowest error is $MSE_{min}=0.0473$, for $p=7$ and $\lambda = 10^{-5.0}$.}
 	\label{fig:Lasso_boot_heatmap}
 \end{figure}
 
@@ -437,7 +434,7 @@ Having used our data analysis methods to study the Franke function we will now m
 	\label{fig:terrain_raw}
 \end{figure}
 
-We will analyze the data using the same methods above. Namely OLS, Ridge- and Lasso-regression. We will implement Bootstrapping and cross validation for them all, and try to evaluate bias and variance. The first three sections (OLS, Ridge and Lasso) will cover each numerical method separately. Then in the last section (Analysis) we will try to conclude which one is best. 
+We will analyze the data using the same methods above. Namely OLS, Ridge- and Lasso-regression. We will implement Bootstrapping and cross validation for them all, and try to evaluate bias and variance. The first three sections (OLS, Ridge and Lasso) will cover each numerical method separately. Then in the last section (Analysis) we will try to conclude which one is best.
 
 \subsection*{OLS}
 We begin by studying the MSE using OLS-regression and bootstrapping as the resampling technique. Our results should mirror those we got in exercise 2, where the test MSE decreases in the beginning, and increases when we start overfitting. Choosing $B = 50$ iterations and max polynomial degree $p_\text{max} = 30$ we get the MSE illustrated in figure \ref{fig:terrain_OLS_MSE_bootstrap}. Because of the small variation in MSE we plotted the $\log(\text{MSE})$ along the $y$-axis.
@@ -509,7 +506,7 @@ To easier see variations when we plot for $50$ data points, we use a logarithmic
 \subsection*{Ridge}
 Next we evaluate the terrain data using Ridge regression, using bootstrap and cross validation as the resampling technique. Considering the unnoticeable variations in bias and variance in figure \ref{fig:terrain_OLS_BVT}, we omit those plots for further analysis. When using fewer datapoints, it would make more sense in including them, as we also saw in figure \ref{fig:terrain_OLS_BVT}.
 
-Now, when we implement bootstrapping, we will use $B=90$ iterations, looking at polynomial degrees between $p_\text{min} = 8$ and $p_\text{max} = 19$, and $\lambda$-values between $10^{-2}$ and $10^{-18}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Ridge_MSE_Boot}. 
+Now, when we implement bootstrapping, we will use $B=90$ iterations, looking at polynomial degrees between $p_\text{min} = 8$ and $p_\text{max} = 19$, and $\lambda$-values between $10^{-2}$ and $10^{-18}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Ridge_MSE_Boot}.
 \begin{figure}[h]
 	\includegraphics[width=0.8\linewidth]{SRTM_Contour_PL_Ridge_Bootstrap90_n50_eps0.2_p8_19_lmbm2_m19.pdf}
 	\caption{This contour shows the MSE (colorbar), when using bootstrapping, as a function of polynomial degree ($x$-axis) and $\log(\lambda)$ ($y$-axis). The red X marks for what values of $p$ and $\lambda$ we have the minimum MSE.}
@@ -517,7 +514,7 @@ Now, when we implement bootstrapping, we will use $B=90$ iterations, looking at 
 \end{figure}
 In figure \ref{fig:terrain_Ridge_MSE_Boot} we see that we get the lowest $\text{MSE} \approx 1.34\cdot10^{-5}$ (the red x) for a small $\lambda \approx 10^{-12}$ and large $p = 17$. The small $\lambda$ indicates that ordinary OLS should be a good fit. This is because when $\lambda$ shrinks, we approach OLS.
 
-We implement cross-validation as our resampling technique. We will use 10 iterations, looking at polynomial degrees between $p_\text{min} = 1$ and $p_\text{max} = 9$, and $\lambda$-values between $10$ and $10^{-9}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Ridge_MSE_CV}. 
+We implement cross-validation as our resampling technique. We will use 10 iterations, looking at polynomial degrees between $p_\text{min} = 1$ and $p_\text{max} = 9$, and $\lambda$-values between $10$ and $10^{-9}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Ridge_MSE_CV}.
 \begin{figure}[h]
 	\includegraphics[width=0.8\linewidth]{SRTM_Contour_PL_Ridge_CV10_n50_eps0.2_p1_9_lmb1_m9.pdf}
 	\caption{This contour shows the MSE (colorbar), when using cross-validation, as a function of polynomial degree ($x$-axis) and $\log(\lambda)$ ($y$-axis). The red X marks for what values of $p$ and $\lambda$ we have the minimum MSE.}
@@ -526,7 +523,7 @@ We implement cross-validation as our resampling technique. We will use 10 iterat
 In figure \ref{fig:terrain_Ridge_MSE_CV} we see that the lowest $\text{MSE} \approx 1.51\cdot10^{-5}$ (the red x) is with a small $\lambda \approx 10^{-7}$ and $p = 6$.
 
 \subsection*{Lasso}
-Lastly we evaluate the terrain data using Lasso regression. Here we will also implement bootstrap and cross validation as the resampling technique.  When bootstrapping, we will use $B=90$ iterations, looking at polynomial degrees between $p_\text{min} = 4$ and $p_\text{max} = 11$, and $\lambda$-values between $10^{-6}$ and $10^{-10}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Lasso_MSE_Boot}. 
+Lastly we evaluate the terrain data using Lasso regression. Here we will also implement bootstrap and cross validation as the resampling technique.  When bootstrapping, we will use $B=90$ iterations, looking at polynomial degrees between $p_\text{min} = 4$ and $p_\text{max} = 11$, and $\lambda$-values between $10^{-6}$ and $10^{-10}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Lasso_MSE_Boot}.
 \begin{figure}[h]
 	\includegraphics[width=0.8\linewidth]{SRTM_Contour_PL_Lasso_Bootstrap90_n50_eps0.2_p4_11_lmbm6_m10.pdf}
 	\caption{This contour shows the MSE (colorbar), when using bootstrapping, as a function of polynomial degree ($x$-axis) and $\log(\lambda)$ ($y$-axis). The red X marks for what values of $p$ and $\lambda$ we have the minimum MSE.}
@@ -534,7 +531,7 @@ Lastly we evaluate the terrain data using Lasso regression. Here we will also im
 \end{figure}
 In figure \ref{fig:terrain_Lasso_MSE_Boot} we see that we get the lowest $\text{MSE} \approx 1.06\cdot10^{-4}$ (the red x) for a small $\lambda \approx 10^{-7}$ and large $p = 10$.
 
-When we use cross-validation, we still use 10 iterations, looking at polynomial degrees between $p_\text{min} = 5$ and $p_\text{max} = 14$, and $\lambda$-values between $10^{-1}$ and $10^{-9}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Lasso_MSE_CV}. 
+When we use cross-validation, we still use 10 iterations, looking at polynomial degrees between $p_\text{min} = 5$ and $p_\text{max} = 14$, and $\lambda$-values between $10^{-1}$ and $10^{-9}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Lasso_MSE_CV}.
 \begin{figure}[h]
 	\includegraphics[width=0.8\linewidth]{SRTM_Contour_PL_Lasso_CV10_n50_eps0.2_p5_14_lmbm1_m9.pdf}
 	\caption{This contour shows the MSE (colorbar), when using cross-validation, as a function of polynomial degree ($x$-axis) and $\log(\lambda)$ ($y$-axis). The red X marks for what values of $p$ and $\lambda$ we have the minimum MSE.}
