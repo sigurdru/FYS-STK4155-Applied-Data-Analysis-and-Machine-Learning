@@ -289,14 +289,14 @@ def Plot_lambda(results, args):
         if args.log:
             r = np.log10(r)
         ax.plot(np.log10(lmbs), r, label=f"Polynomial degree: {p}")
-    
+
     r = results["test_MSE"]
     min_val = np.min(r)
     mp, ml = np.where(r == min_val)
     mp = args.polynomial[mp[0]]
     ml = np.log10(lmbs[ml][0])
     print(f"Min MSE is {min_val} at p={mp}, l={ml}")
-    
+
 
     xlabel = "log10(lambda-parameter)"
     ylabel = "log10(Error)" if args.log else "Error"
@@ -357,7 +357,8 @@ def Plot_BVT_lambda(result, args):
 
     P = args.polynomial
 
-    c = np.linspace(0, 1, len(args.lmb))
+    # c = np.linspace(0, 1, len(args.lmb))
+    c = [0.1, 0.3, 0.9]
     cmap = cm.jet
     for j, lmb in enumerate(args.lmb):
         ax.plot(P, result["test_errors"][:, j], c=cmap(
