@@ -521,6 +521,8 @@ We implement cross-validation as our resampling technique. We will use 10 iterat
 \end{figure}
 In figure \ref{fig:terrain_Ridge_MSE_CV} we see that the lowest $\text{MSE} \approx 1.51\cdot10^{-5}$ (the red x) is with a small $\lambda \approx 10^{-7}$ and $p = 6$.
 
+Using the terrain data, our code for Ridge runs much faster than when using the Franke function, even for more data points. This is why we are able to use a much smaller value for $\lambda$.
+
 \subsection*{Lasso}
 Lastly we evaluate the terrain data using Lasso regression. Here we will also implement bootstrap and cross validation as the resampling technique.  When bootstrapping, we will use $B=90$ iterations, looking at polynomial degrees between $p_\text{min} = 4$ and $p_\text{max} = 11$, and $\lambda$-values between $10^{-6}$ and $10^{-10}$. The MSE as a function of both $\lambda$ and $p$-values is plotted in figure \ref{fig:terrain_Lasso_MSE_Boot}.
 \begin{figure}[h]
