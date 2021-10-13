@@ -399,12 +399,18 @@ The optimal parameters do not have a nice, simple expression, due to the L1-norm
 In figure \ref{fig:Lasso_boot_heatmap}, we choose $\lambda$ in the range $10^{-6}$ to $10^{-1}$. For higher values, the error is exactly the same everywhere, as we should expect from Lasso. The polynomial degree range from 1 to 10. Lasso is extremely slow, so higher polynomial degrees and lower $\lambda$ is not viable to get results for in reasonable time. We see in the figure that the error is high for higher $\lambda$, and decrease along with it. We clearly see the underfit for low polynomial degrees, but have not reached the overfit for higher, as we saw in figures \ref{fig:Ridge-boot_heatmap} and \ref{fig:Ridge_CV_heatmap} for Ridge. We do however see a dip in the errors, along $lambda=10^{-5}$. This indicates that Lasso might give better results than OLS, as there is a benefit in not using as low as possible $\lambda$. The lowest error we get is $MSE_{min}=0.0473$ for $p=7$ and $\lambda=10^{-5.0}$. 
 
 \begin{figure}[h]
-	\includegraphics[width=\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmbm1_m6.pdf}
+	\includegraphics[width=0.8\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmbm1_m6.pdf}
 	\caption{MSE using Lasso with bootstrapping, as function of $\lambda$ and polynomial degrees. The lowest error is $MSE_{min}=0.0473$, for $p=7$ and $\lambda = 10^{-5.0}$.}
 	\label{fig:Lasso_boot_heatmap}
 \end{figure}
 
-MÅ OGSÅ GJØRE BVT. jeg driver å lager plottet nå
+We have also plotted the bias and variance for Lasso in figure \ref{fig:Lasso_BVT}. It is very difficult to extrapolate any information from the plot, however we can notice some features.
+\begin{figure}[h]
+	\includegraphics[width=\linewidth]{LBVT_Lasso_Bootstrap_n30_eps0_2_p20_lmbm5_m2.pdf}
+	\caption{Here we have plotted the bias, variance and MSE as a function of polynomial degree, and for lambda values $\lambda = 10^{-8}, 10^{-4}, 10^{-2}$}
+	\label{fig:Lasso_BVT}
+\end{figure}
+
 
 As we did for Ridge-regression, we want also to run Lasso with cross-validation. At this point, our code gives us some very weird results. We should get that Lasso gives low errors for low $\lambda$, just as with OLS, increasing till a point where it becomes a straight line. This is what we got using bootstrapping. However, using CV we do not get this, see figure \ref{fig:Lasso_CV_heatmaps}. The error is high for low $\lambda$, and decrease as $\lambda$ increase, leveling out at some point. The upper plot shows the $log10$ of the error, so the uniform colour indicates that the error is the same everywhere in the upper region. The lower plot almost looks like it is the inverse of figure \ref{fig:Ridge_CV_heatmap}, the corresponding one for Ridge. This makes it look like we are simply plotting the results the wrong way. Having indulged this idea, messing with the code in attempts at reversing it, this has been ruled out. Had there been such a bug somewhere it should have revealed itself in our earlier results. It is the same functions that are being called, in different combinations. Only the combination Lasso with cross-validation gives these results. The analysis and plotting is exactly the same for all the heatmap-plots. What makes this problem even weirder and hard to resolve is that we do not get this with the terrain data. In the next section we will thus present Lasso-CV-results, which we have confidence in to be correct. We will get back to this then, but we are choosing a smaller region in the entire data to analyse. To further exacerbate the weirdness of the bug, by choosing a region of same size right next to the original in the same datafile, we again get the same wrong results as here with the Franke function. Intense staring at the code by multiple people outside our group has resulted in nothing further than several "Huh, that's weird. It shouldn't do that."
 
