@@ -372,7 +372,7 @@ In figure \ref{fig:Ridge_boot_BVT} we see that $\lambda=10^{-8}$ causes a signif
 	\label{fig:Ridge_boot_BVT}This is the lowest error of any method so far in this paper.
 \end{figure}
 
-
+The bias-variance trade-off analyzis for ridge regression gave the results we expected, but did not provide information regarding the comparison between OLS. A better approach to the bias-variance trade-off analyzis would perhaps be to create individual heatmaps of the bias and the variance, since a heatmap of the MSE has already been studied. This would allow to more accurately study various $\lambda$ values for different polynomial degrees. In figure \ref{fig:Ridge_boot_BVT} we have only considered three $\lambda$ values, neither of them corresponding to the one which gave the lowest MSE when bootstrapping. Since the MSE for ridge suggests good fits for $p\in[6,9]$ a heatmap of variance could perhaps have given us an idea of how sensitive these individual polynomial degrees would have been to overfitting.        
 
 %\begin{figure}[H]
 %	\minipage{0.49\textwidth}
