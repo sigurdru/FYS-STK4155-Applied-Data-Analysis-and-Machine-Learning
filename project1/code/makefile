@@ -5,39 +5,24 @@ exercise2:
 	python3 main.py -r Bootstrap -ri 90 -p 20
 	python3 main.py -r Bootstrap -ri 90 -p 10
 	python3 main.py -r Bootstrap -ri 90 -p 15 -a bias_var_tradeoff
-	python3 main.py -r Bootstrap -ri 90 -p 10 -a bias_var_tradeoff -e 0.5 
-	python3 main.py -r Bootstrap -ri 90 -p 10 -a bias_var_tradeoff -e 0.1 
 exercise3:
 	python3 main.py -r CV -ri 5 -p 6
-	python3 main.py -r CV -ri 7 -p 6 
-	python3 main.py -r CV -ri 10 -p 6 
+	python3 main.py -r CV -ri 7 -p 6
+	python3 main.py -r CV -ri 10 -p 6
 	python3 main.py -r CV -ri 10 -p 10
 exercise4:
-	python3 main.py -m Ridge -r Bootstrap -ri 90 -a lambda_analysis -l m6,2,101 -lc range -p 1,15
-	python3 main.py -m Ridge -r Bootstrap -ri 90 -a lambda_analysis -l m8,6,51 -lc range -p 1,3,6,8,10 -pc list
-	python3 main.py -m Ridge -r Bootstrap -ri 90 -a lambda_analysis -l m3,m1,101 -lc range -p 6,11
+	python3 main.py -m Ridge -r Bootstrap -ri 90 -a lambda_analysis -l m6,0,101 -lc range -p 1,15
 	python3 main.py -m Ridge -r CV -ri 10 -a lambda_analysis -l m6,2,51 -lc range -p 1,7
-	python3 main.py -m Ridge -r CV -ri 10 -a lambda_analysis -l m8,6,51 -lc range -p 1,3,4,6 -pc list
-	python3 main.py -m Ridge -r CV -ri 10 -a lambda_analysis -l m3,m1,51 -lc range -p 3,4 -pc list
-	python3 main.py -a BVT_lambda -m Ridge -r Bootstrap -ri 90 -p 20 -l 1e-8,1e-4,1e2 -lc list  # This should be open in full screen before saving
+	python3 main.py -a BVT_lambda -m Ridge -r Bootstrap -ri 90 -p 20 -l 1e-8,1e-4,1e2 -lc list
 exercise5:
-	echo "NOT DONE!"
-	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a lambda_analysis -l m4,m1,31 -lc range -p 1,7
-	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a lambda_analysis -l m4,2,51 -lc range -p 1,3,5,7,9 -pc list
-	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a simple_regression -l 0.0001 -lc value -p 20
-	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a simple_regression -l 0.01 -lc value -p 20
-	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a simple_regression -l 1 -lc value -p 20
-	python3 main.py --show -m Lasso -r Bootstrap -ri 90 -a simple_regression -l 100 -lc value -p 20
-	python3 main.py --show -m Lasso -r CV -ri 10 -a lambda_analysis -l m4,2,51 -lc range -p 1,7
-	python3 main.py --show -m Lasso -r CV -ri 10 -a lambda_analysis -l m4,6,101 -lc range -p 1,3,5,7,9 -pc list
-	python3 main.py --show -m Lasso -r CV -ri 10 -a simple_regression -l 0.0001 -lc value -p 10
-	python3 main.py --show -m Lasso -r CV -ri 10 -a simple_regression -l 0.01 -lc value -p 10
-	python3 main.py --show -m Lasso -r CV -ri 10 -a simple_regression -l 1 -lc value -p 10
-	python3 main.py --show -m Lasso -r CV -ri 10 -a simple_regression -l 100 -lc value -p 10
+	python3 main.py -m Lasso -r Bootstrap -ri 90 -a lambda_analysis -l m6,m1,31 -lc range -p 1,11
+	python3 main.py -a BVT_lambda -m Lasso -r Bootstrap -ri 90 -p 20 -l 1e-5,1e-4,1e2 -lc list
+	python3 main.py -m Lasso -r CV -ri 10 -a lambda_analysis -l m2,1,51 -lc range -p 1,16
+	python3 main.py -m Lasso -r CV -ri 10 -a lambda_analysis -l m6,m1,51 -lc range -p 1,7
 exercise6:
 	#Create OLS results
-	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 30 -p 15 -log
 	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 50 -p 30 -log
+	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 30 -p 15 -log
 	python3 main.py -d SRTM -r CV -ri 5 -n 50 -p 7 -log
 	python3 main.py -d SRTM -r CV -ri 10 -n 50 -p 7 -log
 	python3 main.py -d SRTM -r Bootstrap -ri 50 -n 50 -p 25 -a bias_var_tradeoff -log
@@ -48,7 +33,7 @@ exercise6:
 	#Create Lasso results
 	python3 main.py -d SRTM -n 50 -m Lasso -r Bootstrap -ri 90 -a lambda_analysis -l m10,m6,31 -lc range -p 4,12
 	python3 main.py -d SRTM -n 50 -m Lasso -r CV -ri 10 -a lambda_analysis -l m9,m1,31 -lc range -p 5,15
-	
+
 all: exercise1 exercise2 exercise3 exercise4 exercise5 exercise6
 
 
