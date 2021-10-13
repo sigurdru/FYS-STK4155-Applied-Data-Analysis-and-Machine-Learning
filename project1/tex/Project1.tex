@@ -355,9 +355,9 @@ Figure \ref{fig:Ridge_CV_heatmap} is similar to figure \ref{fig:Ridge-boot_heatm
 
 \begin{figure}[h]
 	\begin{center}
-		\includegraphics[width=0.8\linewidth]{Contour_PL_Ridge_CV10_n30_eps0.2_p1_6_lmb2_m6.pdf}
+		\includegraphics[width=0.9\linewidth]{Contour_PL_Ridge_CV10_n30_eps0.2_p1_6_lmb2_m6.pdf}
 	\end{center}
-	\caption{MSE using Ridge with cross-validation, k=10, as function of $\lambda$ and polynomial degree. The minimum value is $MSE=0.0493$ at $p=3$ and $log10(\lambda)=-2.24$)}
+	\caption{MSE using Ridge with cross-validation, k=10, as function of $\lambda$ and polynomial degree. The minimum value is $MSE=0.0493$ at $p=3$ and $log10(\lambda)=-2.24$}
 	\label{fig:Ridge_CV_heatmap}
 \end{figure}
 
@@ -400,7 +400,7 @@ The optimal parameters do not have a nice, simple expression, due to the L1-norm
 
 In figure \ref{fig:Lasso_boot_heatmap}, we choose $\lambda$ in the range $10^{-6}$ to $10^{-1}$. For higher values, the error is exactly the same everywhere, as we should expect from Lasso. The polynomial degree range from 1 to 10. Lasso is extremely slow, so higher polynomial degrees and lower $\lambda$ is not viable to get results for in reasonable time. We see in the figure that the error is high for higher $\lambda$, and decrease along with it. We clearly see the underfit for low polynomial degrees, but have not reached the overfit for higher, as we saw in figures \ref{fig:Ridge-boot_heatmap} and \ref{fig:Ridge_CV_heatmap} for Ridge. We do however see a dip in the errors, along $lambda=10^{-5}$. This indicates that Lasso might give better results than OLS, as there is a benefit in not using as low as possible $\lambda$. The lowest error we get is $MSE_{min}=0.0473$ for $p=7$ and $\lambda=10^{-5.0}$.
 
-\begin{figure}[h]
+\begin{figure}[b]
 	\includegraphics[width=0.8\linewidth]{Contour_PL_Lasso_Bootstrap90_n30_eps0.2_p1_10_lmbm1_m6.pdf}
 	\caption{MSE using Lasso with bootstrapping, as function of $\lambda$ and polynomial degrees. The lowest error is $MSE_{min}=0.0473$, for $p=7$ and $\lambda = 10^{-5.0}$.}
 	\label{fig:Lasso_boot_heatmap}
@@ -441,15 +441,13 @@ As we did for Ridge-regression, we want also to run Lasso with cross-validation.
 Bootstrap & 0.0474 & 0.0471 & 0.0473 \\ \hline
 CV & 0.0501 & 0.0493 &  \\ \hline
 \end{tabular}
-\caption{Lowest MSE for the various regression methods with resampling, using $B=90$ bootstrap iterations and $10$ $k$-folds}
+\caption{Lowest MSE for the various regression methods with resampling, using $B=90$ bootstrap iterations and $10$ $k$-folds for CV}
 \label{tab:franke_mse}
 \end{table}
 Table \ref{tab:franke_mse} shows the lowest MSE obtained with different regression and resampling methods. All the lowest values were obtain using $p=3$, expcept for the MSE from Ridge with bootstrapping, where $p=8$ was used. For ridge the $\lambda$ values used for bootstrapping and cross-validation was $\lambda=10^{-2.24}$ and $\lambda=10^{-2.28}$, respectively. For lasso we had $\lambda=10^{-5.33}$ for the lowest MSE obtained.
 
 
-=======
 \clearpage
->>>>>>> 2c95113747e1043c1b02c4480b0d2feee099915d
 \section*{Exercise 6: Analysis of real data}
 Having used our data analysis methods to study the Franke function we will now move on to study data from the real world. We will consider Norwegian terrain data\footnote{\href{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}{https://github.com/CompPhysics/MachineLearning/tree/master/doc/Projects/2021/Project1/DataFiles}}. Because the datasets are large, we will only consider one small part of \texttt{SRTM\_data\_Norway\_1.tif}, namely $f_{i,j}$ where $i,j\in[50,100]$, i.e. $N=50$ datapoints in each direction. It is useful to consider dimensionless data, thus we divide by the absolute highest/lowest point $z_{i,j} = f_{i,j}/\max{|f_{i,j}|}$, and let $i,j\in[50,100] \rightarrow x,y\in[0,1]$ when plotting. Figure \ref{fig:terrain_raw} shows the terrain we are studying.
 
