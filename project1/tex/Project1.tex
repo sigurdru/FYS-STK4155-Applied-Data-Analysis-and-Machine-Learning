@@ -580,10 +580,9 @@ We have approximated this function with our design matrix $\mathbf{X}$ and our p
 where $\mathbb{E}$ is the expected value. % Note sample value
 
 We want to show that the above expression can be written as
-NoteNOTE: husk å definer alt, skriv i teksten hva f, y, yhat og ytilde er!
 
 \begin{align*}
-  \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expy)^2 + \frac{1}{n}\sum_i (\tilde{y}_i - \expy )^2 + \sigma^2
+  \mathbb{E}\left[(\mathbf{y} - \mathbf{\tilde{y}})^2\right] &= \frac{1}{n} \sum_i (f_i - \expy)^2 + \frac{1}{n}\sum_i (\tilde{y}_i - \expy )^2 + \sigma^2.
 \end{align*}
 
 We begin by inserting our model expression for $\mathbf{y}$ and adding and subtracting $\expy$ inside the expected value, before we square the expression.
