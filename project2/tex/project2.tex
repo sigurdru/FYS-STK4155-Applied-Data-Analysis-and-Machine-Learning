@@ -12,20 +12,39 @@
 
 \collaborationImg{\includegraphics[width=30mm]{../../pictures/UIO.png}}
 
-\author{\Large Håkon Olav Torvik, Vetle Vikenes and Sigurd Sørlie Rustad} 
+\author{\Large Håkon Olav Torvik, Vetle Vikenes \& Sigurd Sørlie Rustad} 
 \title{\Huge Project 2}
 \affiliation{\large FYS-STK4155 – Applied Data Analysis and Machine Learning
 \\Autumn 2021\\Department of Physics\\University of Oslo\\\\\today}
 \begin{document}
 \abstract{
-	The diffusion equation is used to predict the evolution of many phenomena. In this report we are working with a constant collective diffusion coefficient, giving us a linear differential equation identical to the heat equation. We study it in both one and two dimensions, for each comparing numerical results with analytic results for various values of parameters such as the the number of integration points and time step size. In one dimension we use explicit forward Euler, implicit backward Euler and implicit Crank-Nicolson, and in two dimensions only forward Euler.
+	Abstract.
 }
 \maketitle
 
 \section{Introduction}
 \section{Theory}
+\subsection*{Stochastic Gradient Decent}
+Stochastic gradient decent (SGD) is like the name might indicate, a stochastic approximation to the ordinary gradient decent (GD) method. Both methods are often used to minimize the so-called cost/loss-function. Thus, lets say we have a cost function $C(\boldsymbol{\beta})$ which could be expressed as
+\begin{equation*}
+	C(\boldsymbol{\beta}) = \sum_{i = 1}^{n}c_i(\mathbf{x}_i, \boldsymbol{\beta}).
+\end{equation*}
+Where $n$ is the number of datapoints and $\mathbf x$ are the datapoints. The gradient with respect to the parameters $\boldsymbol{\beta}$ is then defined as
+\begin{align*}
+	\nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}) = \sum_{i = 1}^{n} \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
+\end{align*}
+The algorithm for GD is then:
+\begin{align}
+	\boldsymbol{\beta}_{k+1} = \boldsymbol{\beta}_k - \eta \nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}_k),
+	\label{eq:GD_algo}
+\end{align}
+where $\eta$ is what we call the learning rate. This algorithms finds (ideally), with each iteration, new $\beta_{k+1}$ values which decreases the cost function. This is of course not always the case, and depends on the value of $\eta$. If $\eta$ is to big, our answer can diverge, and if $\eta$ is very small we need a lot of iterations to reach the minima. Another challenge is that we can get trapped in local minima, meaning that we never reach the global minima. 
+
+Another challenge, which is reduced when using SGD, is the large number of computations. Instead of calculating every single derivative in \eqref{eq:GD_algo} we only calculate a substrata.
+
 \section{Methods}
 \section{Results}
+
 \section{Discussion}
 \section{Conclusion}
 \appendix
