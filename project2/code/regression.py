@@ -21,7 +21,7 @@ def Ordinary_least_squaresSG(xi, zi, args, beta, eta, epoch_i, i,lmb=0):
     m = int(n/M)  # number of minibatches
     gradients = 2.0 * xi.T @ ((xi @ beta)-zi)
     # eta = learning_schedule(epoch_i*m + i,args)
-    total_gradient = eta*   np.sum(gradients, axis=1)
+    total_gradient = np.sum(gradients, axis=1)
     return total_gradient
 
 
