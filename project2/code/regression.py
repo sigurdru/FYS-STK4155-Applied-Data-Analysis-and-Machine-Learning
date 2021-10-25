@@ -17,12 +17,15 @@ def Ordinary_least_squaresSG(xi, zi, args, beta, eta, epoch_i, i,lmb=0):
     """
     tts = args.tts  # train test split
     M = args.minibatch  # size of minibatch
-    n = int(args.num_points*(1-tts))**2  # number of datapoints for testing
+    n = int((args.num_points**2)*(1-tts))  # number of datapoints for testing
     m = int(n/M)  # number of minibatches
-    gradients = 2.0 * xi.T @ ((xi @ beta)-zi)
+
+    # Dividing by M to get correct gradient 
+    # Using zi.T[0] instead of zi, such that gradients have the same shape as beta 
+    gradients = 2.0 * xi.T @ ((xi @ beta)-zi.T[0]) / M
     # eta = learning_schedule(epoch_i*m + i,args)
-    total_gradient = np.sum(gradients, axis=1)
-    return total_gradient
+
+    return gradients
 
 
 def RidgeSG(xi, zi, args, beta, eta, epoch_i, i, lmb=0):

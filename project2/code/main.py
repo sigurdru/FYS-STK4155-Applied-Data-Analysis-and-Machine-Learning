@@ -126,7 +126,8 @@ def parse_args(args=None):
 
     #for dynamic etas
     exec('args.eta = ' + args.eta)
-    if np.shape(args.eta) == (): args.eta = [args.eta]
+    if np.shape(args.eta) == (): 
+        args.eta = [args.eta]
 
     return args
 

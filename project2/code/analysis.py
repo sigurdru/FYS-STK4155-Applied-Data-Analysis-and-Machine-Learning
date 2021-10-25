@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split as tts
 from regression import Ordinary_least_squaresSG, RidgeSG
 import utils
 import plot
-
+from sklearn.linear_model import SGDRegressor
 
 class NoneScaler(StandardScaler):
     """ 
@@ -61,7 +61,7 @@ def analyze_SGD(args):
     p = args.polynomial                     #polynomial degree
     n_epochs = args.num_epochs              #number of epochs
     M = args.minibatch                      #size of minibatch
-    n = int(args.num_points*(1-tts))**2     #number of datapoints for testing
+    n = int((args.num_points**2)*(1-tts))   #number of datapoints for testing
     m = int(n/M)                            # number of minibatches
 
     scaler = scale_conv[args.scaling]
@@ -72,33 +72,61 @@ def analyze_SGD(args):
     X = utils.create_X(x, y, p)
     #Split and scale data
     X_train, X_test, z_train, z_test = split_scale(X, z, args.tts, scaler)
-    pred_list = []
-    gradient_size = []
+    test_MSE = []
+    train_MSE = []
+    inds = np.arange(0, n)
+
     for eta in args.eta:
         # beta = (np.linalg.pinv(X.T @ X) @ X.T @ z)[:,0]
-        beta = np.random.randn(utils.get_features(p))*0.001
-        pred = (X_train @ beta)
-        MSEEE = MSE(z_train.T[0], pred)
+
+        beta = np.random.randn(utils.get_features(p))
         # print('MSE = %f with eta = %f' %(MSE(z_test.T[0], pred), eta))
-        pred_list.append(MSEEE)
-        print(beta.shape)
+
         for epoch_i in range(n_epochs):
-            for i in range(m):
-                random_index = np.random.randint(n-M)
-                xi = X_train[random_index:random_index + M]
-                zi = z_train[random_index:random_index + M]
-                total_gradient = reg_method(xi, zi, args, beta, eta, epoch_i, i)
-                beta = beta - eta*total_gradient
-            pred = (X_train @ beta)
-            MSEEE = MSE(z_train.T[0], pred)
-            gradient_size.append(sum(total_gradient**2))
+            # Initialize randomized training data for epoch 
+            np.random.shuffle(inds)
+            X_train_shuffle = X_train[inds]
+            z_train_shuffle = z_train[inds]
+
+            for i in range(0, n, M):
+                # Loop over mini batches 
+
+                # random_index = np.random.randint(n-M)
+                # xi = X_train[random_index:random_index + M]
+                # zi = z_train[random_index:random_index + M]
+
+                xi = X_train_shuffle[i:i+M]
+                zi = z_train_shuffle[i:i+M]
+
+                gradient = reg_method(xi, zi, args, beta, eta, epoch_i, i)
+                beta = beta - eta * gradient
+            
+            train_pred = (X_train @ beta)
+            test_pred = (X_test @ beta)
+            
+            train_MSE.append(MSE(z_train.T[0], train_pred))
+            test_MSE.append(MSE(z_test.T[0], test_pred))
             # print('MSE = %f with eta = %f' %(MSE(z_test.T[0], pred), eta))
-            pred_list.append(MSEEE)
+
+    # Comparing our own beta-values and MSE with sklearn 
+    sgdreg = SGDRegressor(max_iter=100, penalty=None, eta0=args.eta[0])
+    sgdreg.fit(X, z)
+    print('beta from own sgd: ', len(beta))
+    print(beta, '\n')
+    print('MSE own: ')
+    print(MSE(z_test.T[0], X_test @ beta), '\n')
+
+    print('beta from sklearn: ', len(sgdreg.coef_))
+    print(sgdreg.coef_, '\n')
+    print('MSE sklearn:')
+    print(MSE(z_test.T[0], X_test @ sgdreg.coef_))
+
     import matplotlib.pyplot as plt
-    plt.plot(pred_list)
+    plt.plot(train_MSE, label='train')
+    plt.plot(test_MSE, label='test')
+    plt.legend()
     plt.show()
-    plt.plot(gradient_size)
-    plt.show()
+
 # def analyze_MSGD(args):
 #     """
 #     Denne funksjonen er midlertidlig.
