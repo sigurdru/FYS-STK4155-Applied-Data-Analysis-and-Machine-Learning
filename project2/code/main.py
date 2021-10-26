@@ -13,6 +13,7 @@ def parse_args(args=None):
     )
     add_arg = parser.add_argument
 
+
     add_arg('-m', '--method',
             type=str,
             default='OLS',
@@ -85,6 +86,12 @@ def parse_args(args=None):
             help="Scale value of noice for Franke Function",
             )
 
+    add_arg('-l', '--lmb',
+            type=str,
+            default="0",
+            help='Lambda parameter',
+            )
+            
     add_arg("-d", "--dataset",
             type=str,
             default="Franke",
@@ -117,6 +124,8 @@ def parse_args(args=None):
             action="store_false",
             dest="save",
             )
+
+
 
     parser.set_defaults(show=False)
 

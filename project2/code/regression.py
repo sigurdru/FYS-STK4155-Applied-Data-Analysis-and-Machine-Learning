@@ -1,56 +1,70 @@
 import numpy as np
 
-def Ordinary_least_squaresSG(xi, zi, args, beta, eta, epoch_i, i,lmb=0):
+def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
     """
     Performs OLS regression using SGD
 
     Args:
-        x1, 2darray: design matrix
-        z1, 1darray: datapoints
-        beta, 1darray: parameters
-        epoch_i, int: epoch iteration
-        eta, float: learning rate
+        X, tuple: design matrix (train, test)
+        z1, tuple: datapoints (train, test)
         args, argparse
-        lmb, any: taken for compatibility reasons. Unused
+        beta, 1darray: parameters
+        eta, float: learning rate
+        gamma, float: Momentum parameter
+        lmb, float: For Ridge regression 
     Returns:
         total_gradient 1darray: total gradient
     """
-    tts = args.tts  # train test split
-    M = args.minibatch  # size of minibatch
-    n = int((args.num_points**2)*(1-tts))  # number of datapoints for testing
-    m = int(n/M)  # number of minibatches
 
-    # Dividing by M to get correct gradient 
-    # Using zi.T[0] instead of zi, such that gradients have the same shape as beta 
-    gradients = 2.0 * xi.T @ ((xi @ beta)-zi.T[0]) / M
+    M = args.minibatch  # size of minibatch
+    n = int((args.num_points**2)*(1-args.tts))  # number of datapoints for testing
+    v = 0 
+
+    X_train, X_test = X 
+    z_train, z_test = z 
+
+    inds = np.arange(0, n)
+
+    MSE_train = np.zeros(args.num_epochs)
+    MSE_test  = np.zeros(args.num_epochs)
+
+    for epoch_i in range(args.num_epochs):
+        # Initialize randomized training data for epoch 
+        np.random.shuffle(inds)
+        X_train_shuffle = X_train[inds]
+        z_train_shuffle = z_train[inds]
+
+        for i in range(0, n, M):
+            # Loop over mini batches 
+
+            # random_index = np.random.randint(n-M)
+            # xi = X_train[random_index:random_index + M]
+            # zi = z_train[random_index:random_index + M]
+
+            xi = X_train_shuffle[i:i+M]
+            zi = z_train_shuffle[i:i+M]
+
+            # Dividing by M to get correct gradient 
+            # Using zi.T[0] instead of zi, such that gradients have the same shape as beta 
+            gradient = 2.0 * xi.T @ ((xi @ beta)-zi.T[0]) / M \
+                        + 2 * lmb * beta 
+
+            v = v * gamma + eta * gradient
+            beta = beta - v 
+        
+        train_pred = (X_train @ beta)
+        test_pred = (X_test @ beta)
+
+        MSE_train[epoch_i] = MSE(z_train.T[0], train_pred)
+        MSE_test[epoch_i] = MSE(z_test.T[0], test_pred)
+
     # eta = learning_schedule(epoch_i*m + i,args)
 
-    return gradients
+    return MSE_train, MSE_test 
 
 
-def RidgeSG(xi, zi, args, beta, eta, epoch_i, i, lmb=0):
-    """
-    Performs Ridge regression using SGD
-
-    Args:
-        x1, 2darray: design matrix
-        z1, 1darray: datapoints
-        beta, 1darray: parameters
-        epoch_i, int: epoch iteration
-        eta, float: learning rate
-        lmb, float: hyper-parameter 
-        args, argparse
-    Returns:
-        total_gradient 1darray: total gradient
-    """
-    tts = args.tts  # train test split
-    M = args.minibatch  # size of minibatch
-    n = int(args.num_points*(1-tts))**2  # number of datapoints for testing
-    m = int(n/M)  # number of minibatches
-    gradients = 2.0 * xi.T @ ((xi @ beta)-zi) + 2*lmb*beta
-    # eta = learning_schedule(epoch_i*m + i,args)
-    total_gradient = eta * np.sum(gradients, axis=1)
-    return total_gradient
+def RidgeSG():
+    return None 
 
 
 # def learning_schedule(t, args):
@@ -61,3 +75,7 @@ def RidgeSG(xi, zi, args, beta, eta, epoch_i, i, lmb=0):
 #         return t0/(t+t1)
 #     else:
 #         return args.eta
+
+
+def MSE(y, y_pred):
+    return sum((y - y_pred) ** 2) / len(y)
