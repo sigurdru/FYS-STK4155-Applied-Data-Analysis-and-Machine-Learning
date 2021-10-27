@@ -62,7 +62,8 @@ def split_scale(X, z, ttsplit, scaler):
 def analyse(args):
     p = args.polynomial
     etas = args.eta
-    lmbs = np.ones(5)
+    # lmbs = np.ones(5)
+    lmbs = [0,]
     scaler = scale_conv[args.scaling]
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p)
@@ -79,19 +80,25 @@ def analyse(args):
                       lmb=lmb,
                       )
             NN.train(100)
+            print('finished training')
 
             train_pred = NN.predict(X_train)
             test_pred = NN.predict(X_test)
-            data["train_accuracy"][i][j] = accuracy_score(z_train, train_pred)
-            data["test_accuracy"][i][j] = accuracy_score(z_test, test_pred)
+
+            print('eta={:.2f}: MSE_test={:.3f}'.format(eta, MSE(z_test,test_pred)[0]))
+            data["train_accuracy"][i][j] = MSE(z_train, train_pred)
+            data["test_accuracy"][i][j] = MSE(z_test, test_pred)
+            # exit()
     for name, accuracy in data.items():
         fig, ax = plt.subplots()
         sns.heatmap(accuracy, ax=ax, annot=True)
         ax.set_title(name)
-        ax.set_xaxis("$\eta$")
-        ax.setylabel("$\lambda$")
+        ax.set_xlabel("$\eta$")
+        # ax.setylabel("$\lambda$")
         plt.show()
 
+def MSE(z, ztilde):
+    return sum((z - ztilde)**2) / len(z)
 # def SGD(args):
 #     for eta in self.args.eta:
 #         beta = np.random.randn(utils.get_features(self.p))
