@@ -1,14 +1,13 @@
 import numpy as np
 from numpy.lib import utils
 
-
 # class Regression:
 #     def __init__(self, args):
-
 #         beta = np.random.randn(utils.get_features(p))
 
 class Regression:
-    def __init__(self)
+    def __init__(self):
+        return None 
 
 
 def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
