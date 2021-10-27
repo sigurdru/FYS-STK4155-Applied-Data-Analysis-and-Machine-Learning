@@ -1,7 +1,7 @@
 import numpy as np
-import autograd.numpy as anp 
+import autograd.numpy as anp
 from tqdm import tqdm
-from autograd import elementwise_grad, grad 
+from autograd import elementwise_grad, grad
 
 class FFNN:  # FeedForwardNeuralNetwork
 
@@ -118,6 +118,49 @@ class FFNN:  # FeedForwardNeuralNetwork
 
     def MSE(self, t_):
         """
-        Cost function
+        cost function
         """
         return (t_ - self.t) ** 2
+
+
+def MSE(y, y_):
+    return sum((y - y_) ** 2) / len(y)
+
+if __name__ == "__main__":
+    # The above imports numpy as np so we have to redefine:
+    # import autograd.numpy as np
+    from utils import *
+    from sklearn.model_selection import train_test_split
+
+    class Args:
+        num_points = 20
+        epsilon = 0.2
+        polynomial = 8
+        dataset = "Franke"
+    args = Args()
+    epochs = 1000
+    batch_size = int(args.num_points * args.num_points * 0.8)
+
+    x, y, z = load_data(args)
+    X = create_X(x, y, args.polynomial)
+
+    X_, X_test, z_train, z_test = train_test_split(X, z, test_size=0.2)
+
+    beta = np.linalg.pinv(X_.T @ X_) @ X_.T @ z_train
+    ols_pred = X_test @ beta
+
+    MM = FFNN(X_,
+              z_train,
+              hidden_nodes=[10, 10],
+              batch_size=batch_size,
+              learning_rate=0.1,
+              lmb=0.0,
+              activation="sigmoid",
+              cost="MSE")
+
+    MM.train(epochs)
+    nn_pred = MM.predict(X_test)
+
+    print("Neural Network stochastic", MSE(z_test, nn_pred))
+
+    print("           OLS           ", MSE(z_test, ols_pred))
