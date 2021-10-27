@@ -15,78 +15,83 @@ class FFNN:  # FeedForwardNeuralNetwork
                  activation="sigmoid",
                  cost="MSE",
                  ):
-        self.X = design
-        # print(self.X.shape)
-        self.t = target
+                 
+        self.X = design             # Training data 
+        self.t = target             # Trainging outputs 
+        self.N = self.X.shape[0]    # Number of input values 
         self.static_target = target.copy()
-        self.N = self.X.shape[0]
-        inputs = self.X.shape[1]
-        outputs = self.t.shape[1]
 
-        self.batch_size = self.N
+        self.batch_size = self.N # Possibly redundant 
         self.eta = learning_rate
         self.lmb = lmb
-        bias0 = 0.01
+        bias0 = 0.01 # initial bias value 
 
-        self.num_nodes = [inputs,] + list(hidden_nodes) + [outputs,]
+        # Array with size of nodes [21,10,10,1]
+        # first corresponds to features in design matrix. 
+        self.nodes = np.array([self.X.shape[1], *hidden_nodes, self.t.shape[1]])
 
-        self.layer_activations = [np.zeros((self.N, n)) for n in self.num_nodes]
-        self.layer_activations[0]  = self.X.copy()
-        self.layer_inputs = self.layer_activations.copy()
-        self.lgradient = self.layer_activations.copy()
 
-        self.weights = [np.random.randn(n, m) for n, m in zip(self.num_nodes[1:], self.num_nodes[:-1])]
-        self.bias = [np.ones((1, n)) * bias0 for n in self.num_nodes]
-        # for w in self.layer_activations:
-            # print(w.shape)
-        # print(len(self.weights[1].T))
+        # There are four layers (1 input, 2 hidden, 1 output) 
+        # Shapes:
+        #  input : (720, 21)
+        #  hidden: (720, 10)
+        #  output: (720, 1)
+        self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
+        self.Layers[0]  = self.X.copy()
+
+        self.a = self.Layers.copy()  # Activation layer input (z in morten's notes)
+        self.da = self.Layers.copy() # Activation layer input gradient (delta_l in morten's notes)
+
+        # Initial zero for weights ensures correct association between weight nad layer indices
+        self.weights = [0] + [np.random.randn(n, m) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
         self.activation = self.sigmoid
         self.cost = self.MSE
-        self.activation_der = elementwise_grad(self.activation)#(0.2)
+        self.activation_der = elementwise_grad(self.activation)
         self.cost_der = elementwise_grad(self.cost)
-        # print(self.activation)
-        # grad_sigmoid = grad(self.sigmoid)
-        # print(self.activation_der(0.2))
-        # print(grad_sigmoid(1.0))
-        # exit()
+
 
     def update(self):
-        self.backprop()
+        """
+        Updates weights and biases with backwards propagation.
+         - Starts by calculating the gradients of each layer's activation function 
+         - Updates the weights and biases accordingly 
+        """
+        # Calculate gradient of output layer  
+        self.da[-1] = self.cost_der(self.Layers[-1]) * self.activation_der(self.a[-1])
+        
+        # Calculate gradient of previous layers backwards 
+        for i in reversed(range(1, len(self.nodes) - 1)):
+            self.da[i] = self.da[i + 1] @ self.weights[i + 1].T \
+                                * self.activation_der(self.a[i])
 
-        for n in range(1, len(self.num_nodes)):
-            a = self.lgradient[n].T @ self.layer_activations[n - 1]
-            # print(len(self.lgradient[n].T[0]))
-            # print(self.eta * (self.lgradient[n].T @ self.layer_activations[n - 1]) / self.batch_size)
-            # print(self.batch_size, self.eta)
-            # print(len(a))
-            # print(len(self.weights[n][0]))
-            # exit()
-            self.weights[n-1] -= self.eta * (self.lgradient[n].T @ self.layer_activations[n - 1]) / self.batch_size
-            self.bias[n] -= self.eta * np.mean(self.lgradient[n].T, axis=1)
-    
+        # Update weights and biases for each previous layer 
+        for n in range(1, len(self.nodes)):
+            # I don't think we should divide new weights by batch size 
+            self.weights[n] -= self.eta * (self.Layers[n - 1].T @ self.da[n]) #/ self.batch_size
+            self.bias[n] -= self.eta * np.mean(self.da[n].T, axis=1)
+
     def feed_forward(self):
-        for n in range(1, len(self.num_nodes)):
-            # print(self.layer_activations[n - 1].shape)
-            # print(self.weights[n-1].T.shape)
-            # print(self.bias[n].shape)
-            z_h = self.layer_activations[n - 1] @ self.weights[n-1].T + self.bias[n]
-            self.layer_inputs[n] = z_h
-            self.layer_activations[n] = self.activation(z_h)
+        # Update the value at each layer from 1st hidden layer to ouput  
+        for n in range(1, len(self.nodes)):
+            z_h = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
+            self.a[n] = z_h
+            self.Layers[n] = self.activation(z_h)
 
-    def backprop(self):
-        self.lgradient[-1] = self.cost_der(self.layer_activations[-1]) * self.activation_der(self.layer_inputs[-1])
-        for n in reversed(range(1, len(self.num_nodes) - 1)):
-            # print(n, (self.weights[n]))
-            self.lgradient[n] = self.lgradient[n + 1] @ self.weights[n] * self.activation_der(self.layer_inputs[n])
-            # exit()
-
-    def predict(self, x):
-        self.layer_activations[0] = x
-        self.feed_forward()
-        return self.layer_activations[-1]
+    def SGD(self):
+        # Initialize randomized training data batch, and target batch 
+        inds = np.random.choice(np.arange(self.N), size=self.batch_size, replace=False)
+        self.Layers[0] = self.X[inds]
+        self.t = self.static_target[inds]
     
     def train(self, epochs):
+        """
+        Training the neural network by looping over epochs:
+         1) Initializing the data [SGD]
+         2) Updates the layers with weights and biases 
+         3) Updates weights and biases with backpropagation 
+        """
         pbar = tqdm(range(epochs), desc="Training epochs")
         for _ in pbar:
             self.SGD()
@@ -94,14 +99,25 @@ class FFNN:  # FeedForwardNeuralNetwork
             self.update()
             pbar.update(1)
 
-    def SGD(self):
-        inds = np.random.choice(np.arange(self.N), size=self.batch_size, replace=False)
-        self.layer_activations[0] = self.X[inds]
-        self.t = self.static_target[inds]
+    def predict(self, x):
+        """
+        input: x (ndarray) 
+        Uses the final weights and biases from the trained network  
+        Returns the resulting ouput layer. 
+        """
+        self.Layers[0] = x
+        self.feed_forward()
+        return self.Layers[-1]
 
     def sigmoid(self, x):
+        """
+        Activation function
+        """
         y = 1 / (1 + anp.exp(-x))
         return y#1 / (1 + np.exp(-x))
 
     def MSE(self, t_):
+        """
+        Cost function
+        """
         return (t_ - self.t) ** 2
