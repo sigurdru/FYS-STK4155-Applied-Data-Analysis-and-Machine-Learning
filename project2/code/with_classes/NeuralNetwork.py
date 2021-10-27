@@ -1,6 +1,7 @@
 import numpy as np
+import autograd.numpy as anp
 from tqdm import tqdm
-from autograd import elementwise_grad
+from autograd import elementwise_grad, grad
 
 class FFNN:  # FeedForwardNeuralNetwork
 
@@ -28,7 +29,6 @@ class FFNN:  # FeedForwardNeuralNetwork
         bias0 = 0.01
 
         self.num_nodes = [inputs,] + list(hidden_nodes) + [outputs,]
-        # print(self.num_nodes)
 
         self.layer_activations = [np.zeros((self.N, n)) for n in self.num_nodes]
         self.layer_activations[0]  = self.X.copy()
@@ -39,34 +39,47 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.bias = [np.ones((1, n)) * bias0 for n in self.num_nodes]
         # for w in self.layer_activations:
             # print(w.shape)
-        # exit()
+        # print(len(self.weights[1].T))
 
         self.activation = self.sigmoid
         self.cost = self.MSE
-        self.activation_der = elementwise_grad(self.activation)
+        self.activation_der = elementwise_grad(self.activation)#(0.2)
         self.cost_der = elementwise_grad(self.cost)
+        # print(self.activation)
+        # grad_sigmoid = grad(self.sigmoid)
+        # print(self.activation_der(0.2))
+        # print(grad_sigmoid(1.0))
+        # exit()
 
     def update(self):
         self.backprop()
 
         for n in range(1, len(self.num_nodes)):
-            self.weights[n] -= self.eta * (self.lgradient[n].T @ self.layer_activations[n - 1]) / self.batch_size
+            a = self.lgradient[n].T @ self.layer_activations[n - 1]
+            # print(len(self.lgradient[n].T[0]))
+            # print(self.eta * (self.lgradient[n].T @ self.layer_activations[n - 1]) / self.batch_size)
+            # print(self.batch_size, self.eta)
+            # print(len(a))
+            # print(len(self.weights[n][0]))
+            # exit()
+            self.weights[n-1] -= self.eta * (self.lgradient[n].T @ self.layer_activations[n - 1]) / self.batch_size
             self.bias[n] -= self.eta * np.mean(self.lgradient[n].T, axis=1)
 
     def feed_forward(self):
         for n in range(1, len(self.num_nodes)):
-            print(self.layer_activations[n - 1].shape)
-            print(self.weights[n].T.shape)
-            print(self.bias[n].shape)
-            exit()
-            z_h = self.layer_activations[n - 1] @ self.weights[n].T + self.bias[n]
+            # print(self.layer_activations[n - 1].shape)
+            # print(self.weights[n-1].T.shape)
+            # print(self.bias[n].shape)
+            z_h = self.layer_activations[n - 1] @ self.weights[n-1].T + self.bias[n]
             self.layer_inputs[n] = z_h
             self.layer_activations[n] = self.activation(z_h)
 
     def backprop(self):
         self.lgradient[-1] = self.cost_der(self.layer_activations[-1]) * self.activation_der(self.layer_inputs[-1])
-        for n in range(len(self.num_nodes) - 2, 0, -1):
-            self.lgradient[n] = self.lgradient[n + 1] @ self.weights[n + 1] * self.activation_der(self.layer_inputs[n])
+        for n in reversed(range(1, len(self.num_nodes) - 1)):
+            # print(n, (self.weights[n]))
+            self.lgradient[n] = self.lgradient[n + 1] @ self.weights[n] * self.activation_der(self.layer_inputs[n])
+            # exit()
 
     def predict(self, x):
         self.layer_activations[0] = x
@@ -87,7 +100,8 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.t = self.static_target[inds]
 
     def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
+        y = 1 / (1 + anp.exp(-x))
+        return y#1 / (1 + np.exp(-x))
 
     def MSE(self, t_):
         return (t_ - self.t) ** 2
@@ -103,12 +117,12 @@ if __name__ == "__main__":
     from sklearn.model_selection import train_test_split
 
     class Args:
-        num_points = 30
+        num_points = 20
         epsilon = 0.2
         polynomial = 8
         dataset = "Franke"
     args = Args()
-    epochs = 100
+    epochs = 1000
     batch_size = int(args.num_points * args.num_points * 0.8)
 
     x, y, z = load_data(args)
@@ -123,7 +137,7 @@ if __name__ == "__main__":
               z_train,
               hidden_nodes=[10, 10],
               batch_size=batch_size,
-              learning_rate=0.001,
+              learning_rate=0.1,
               lmb=0.0,
               activation="sigmoid",
               cost="MSE")
