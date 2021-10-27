@@ -52,7 +52,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         for n in range(1, len(self.num_nodes)):
             self.weights[n] -= self.eta * (self.lgradient[n].T @ self.layer_activations[n - 1]) / self.batch_size
             self.bias[n] -= self.eta * np.mean(self.lgradient[n].T, axis=1)
-    
+
     def feed_forward(self):
         for n in range(1, len(self.num_nodes)):
             print(self.layer_activations[n - 1].shape)
@@ -67,12 +67,12 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.lgradient[-1] = self.cost_der(self.layer_activations[-1]) * self.activation_der(self.layer_inputs[-1])
         for n in range(len(self.num_nodes) - 2, 0, -1):
             self.lgradient[n] = self.lgradient[n + 1] @ self.weights[n + 1] * self.activation_der(self.layer_inputs[n])
-    
+
     def predict(self, x):
         self.layer_activations[0] = x
         self.feed_forward()
         return self.layer_activations[-1]
-    
+
     def train(self, epochs):
         pbar = tqdm(range(epochs), desc="Training epochs")
         for _ in pbar:
@@ -91,3 +91,46 @@ class FFNN:  # FeedForwardNeuralNetwork
 
     def MSE(self, t_):
         return (t_ - self.t) ** 2
+
+
+def MSE(y, y_):
+    return sum((y - y_) ** 2) / len(y)
+
+if __name__ == "__main__":
+    # The above imports numpy as np so we have to redefine:
+    # import autograd.numpy as np
+    from utils import *
+    from sklearn.model_selection import train_test_split
+
+    class Args:
+        num_points = 30
+        epsilon = 0.2
+        polynomial = 8
+        dataset = "Franke"
+    args = Args()
+    epochs = 100
+    batch_size = int(args.num_points * args.num_points * 0.8)
+
+    x, y, z = load_data(args)
+    X = create_X(x, y, args.polynomial)
+
+    X_, X_test, z_train, z_test = train_test_split(X, z, test_size=0.2)
+
+    beta = np.linalg.pinv(X_.T @ X_) @ X_.T @ z_train
+    ols_pred = X_test @ beta
+
+    MM = FFNN(X_,
+              z_train,
+              hidden_nodes=[10, 10],
+              batch_size=batch_size,
+              learning_rate=0.001,
+              lmb=0.0,
+              activation="sigmoid",
+              cost="MSE")
+
+    MM.train(epochs)
+    nn_pred = MM.predict(X_test)
+
+    print("Neural Network stochastic", MSE(z_test, nn_pred))
+
+    print("           OLS           ", MSE(z_test, ols_pred))
