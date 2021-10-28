@@ -33,9 +33,9 @@ class FFNN:  # FeedForwardNeuralNetwork
 
         # There are four layers (1 input, 2 hidden, 1 output) 
         # Shapes:
-        #  input : (720, 21)
-        #  hidden: (720, 10)
-        #  output: (720, 1)
+        #  input   : (720, 21)
+        #  hidden_n: (720, hidden_nodes[n])
+        #  output  : (720, 1)
         self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
         self.Layers[0]  = self.X.copy()
 
@@ -46,8 +46,18 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.weights = [0] + [np.random.randn(n, m) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
-        self.activation = self.sigmoid
-        self.cost = self.MSE
+
+        activation_funcs = {'sigmoid': self.sigmoid, 
+                            'tanh': self.tanh,
+                            'relu': self.relu,
+                            'leaky_relu': self.leaky_relu,
+                            'softmax': self.softmax}
+
+        cost_funcs = {'MSE': self.MSE,
+                      'accuracy': self.accuracy_score}
+
+        self.activation = activation_funcs[activation]
+        self.cost = cost_funcs[cost]
         self.activation_der = elementwise_grad(self.activation)
         self.cost_der = elementwise_grad(self.cost)
 
@@ -113,19 +123,33 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.feed_forward()
         return self.Layers[-1]
 
-    def sigmoid(self, x):
-        """
-        Activation function
-        """
-        y = 1 / (1 + anp.exp(-x))
-        return y#1 / (1 + np.exp(-x))
-
+    """
+    cost functions
+    """
     def MSE(self, t_):
-        """
-        cost function
-        """
         return anp.sum((t_ - self.t)**2) / len(self.t)
 
+    def accuracy_score(self,t_):
+        return None 
+
+
+    """
+    Activation functions 
+    """
+    def sigmoid(self, x):
+        return 1 / (1 + anp.exp(-x))
+
+    def tanh(self, x):
+        return anp.tanh(x) 
+
+    def relu(self, x):
+        return anp.where(x > 0, x, 0)
+
+    def leaky_relu(self, x):
+        return anp.where(x > 0, x, 0.01*x) 
+
+    def softmax(self, x):
+        return anp.exp(x) / anp.sum(anp.exp(x), axis=1, keepdims=True)
 
 def MSE(y, y_):
     return sum((y - y_) ** 2) / len(y)
