@@ -24,7 +24,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.batch_size = self.N # Possibly redundant 
         self.eta = learning_rate
         self.lmb = lmb
-        bias0 = 0.01 # initial bias value 
+        bias0 = 0.1 # initial bias value 
 
         # Array with size of nodes [21,10,10,1]
         # first corresponds to features in design matrix. 
@@ -59,7 +59,9 @@ class FFNN:  # FeedForwardNeuralNetwork
          - Updates the weights and biases accordingly 
         """
         # Calculate gradient of output layer  
-        self.da[-1] = self.cost_der(self.Layers[-1]) * self.activation_der(self.a[-1])
+        # self.da[-1] = self.cost_der(self.Layers[-1]) * self.activation_der(self.a[-1])
+        # self.da[-1] = self.MSE_der(self.Layers[-1]) 
+        self.da[-1] = self.cost_der(self.Layers[-1])
         
         # Calculate gradient of previous layers backwards 
         for i in reversed(range(1, len(self.nodes) - 1)):
@@ -78,6 +80,8 @@ class FFNN:  # FeedForwardNeuralNetwork
             z_h = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
             self.a[n] = z_h
             self.Layers[n] = self.activation(z_h)
+
+        self.Layers[-1] = z_h
 
     def SGD(self):
         # Initialize randomized training data batch, and target batch 
@@ -120,7 +124,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         """
         cost function
         """
-        return (t_ - self.t) ** 2
+        return anp.sum((t_ - self.t)**2) / len(self.t)
 
 
 def MSE(y, y_):
