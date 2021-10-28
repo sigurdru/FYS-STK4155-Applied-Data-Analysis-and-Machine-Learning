@@ -39,8 +39,8 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
         self.Layers[0]  = self.X.copy()
 
-        self.a = self.Layers.copy()  # Activation layer input (z in morten's notes)
-        self.da = self.Layers.copy() # Activation layer input gradient (delta_l in morten's notes)
+        self.z = self.Layers.copy()  # Activation layer input (z in morten's notes)
+        self.delta_l = self.Layers.copy() # Activation layer input gradient (delta_l in morten's notes)
 
         # Initial zero for weights ensures correct association between weight nad layer indices
         self.weights = [0] + [np.random.randn(n, m) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
@@ -62,33 +62,35 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.cost_der = elementwise_grad(self.cost)
 
 
-    def update(self):
+    def backprop(self):
         """
         Updates weights and biases with backwards propagation.
          - Starts by calculating the gradients of each layer's activation function 
          - Updates the weights and biases accordingly 
         """
         # Calculate gradient of output layer  
-        # self.da[-1] = self.cost_der(self.Layers[-1]) * self.activation_der(self.a[-1])
-        # self.da[-1] = self.MSE_der(self.Layers[-1]) 
-        self.da[-1] = self.cost_der(self.Layers[-1])
+        # self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.activation_der(self.z[-1])
+        # self.delta_l[-1] = self.MSE_der(self.Layers[-1]) 
+        self.delta_l[-1] = self.cost_der(self.Layers[-1])
         
         # Calculate gradient of previous layers backwards 
         for i in reversed(range(1, len(self.nodes) - 1)):
-            self.da[i] = self.da[i + 1] @ self.weights[i + 1].T \
-                                * self.activation_der(self.a[i])
+            self.delta_l[i] = self.delta_l[i + 1] @ self.weights[i + 1].T \
+                                * self.activation_der(self.z[i])
 
         # Update weights and biases for each previous layer 
-        for n in range(1, len(self.nodes)):
+        # self.weights[-1] -= self.eta * self.Layers[-2].T @ self.cost(self.Layers[-1])
+        for n in reversed(range(1, len(self.nodes))):
             # I don't think we should divide new weights by batch size 
-            self.weights[n] -= self.eta * (self.Layers[n - 1].T @ self.da[n]) #/ self.batch_size
-            self.bias[n] -= self.eta * np.mean(self.da[n].T, axis=1)
+            self.weights[n] -= self.eta * (self.Layers[n - 1].T @ self.delta_l[n]) #/ self.batch_size
+            self.bias[n] -= self.eta * np.mean(self.delta_l[n].T, axis=1)
+
 
     def feed_forward(self):
         # Update the value at each layer from 1st hidden layer to ouput  
         for n in range(1, len(self.nodes)):
             z_h = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
-            self.a[n] = z_h
+            self.z[n] = z_h
             self.Layers[n] = self.activation(z_h)
 
         self.Layers[-1] = z_h
@@ -110,7 +112,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         for _ in pbar:
             self.SGD()
             self.feed_forward()
-            self.update()
+            self.backprop()
             pbar.update(1)
 
     def predict(self, x):
@@ -127,7 +129,13 @@ class FFNN:  # FeedForwardNeuralNetwork
     cost functions
     """
     def MSE(self, t_):
-        return anp.sum((t_ - self.t)**2) / len(self.t)
+        # print('mse:')
+        # print(((t_ - self.t)**2) / len(self.t))
+        mse_sum = anp.sum((t_ - self.t)**2) / len(self.t)
+        mse = (t_ - self.t)**2 / len(self.t)
+        # print(np.shape(mse))
+        # exit()
+        return mse
 
     def accuracy_score(self,t_):
         return None 
@@ -146,7 +154,8 @@ class FFNN:  # FeedForwardNeuralNetwork
         return anp.where(x > 0, x, 0)
 
     def leaky_relu(self, x):
-        return anp.where(x > 0, x, 0.01*x) 
+        lr = anp.where(x > 0, x, 0.01*x) 
+        return lr 
 
     def softmax(self, x):
         return anp.exp(x) / anp.sum(anp.exp(x), axis=1, keepdims=True)
