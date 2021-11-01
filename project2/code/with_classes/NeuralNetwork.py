@@ -73,20 +73,20 @@ class FFNN:  # FeedForwardNeuralNetwork
          - Starts by calculating the gradients of each layer's activation function
          - Updates the weights and biases accordingly
         """
-        # Calculate gradient of output layer  
+        # Calculate gradient of output layer
         # self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.activation_der(self.z[-1])
-        # self.delta_l[-1] = self.MSE_der(self.Layers[-1]) 
+        # self.delta_l[-1] = self.MSE_der(self.Layers[-1])
         self.delta_l[-1] = self.cost_der(self.Layers[-1])
-        
-        # Calculate gradient of previous layers backwards 
+
+        # Calculate gradient of previous layers backwards
         for i in reversed(range(1, len(self.nodes) - 1)):
             self.delta_l[i] = self.delta_l[i + 1] @ self.weights[i + 1].T \
                                 * self.activation_der(self.z[i])
 
-        # Update weights and biases for each previous layer 
+        # Update weights and biases for each previous layer
         # self.weights[-1] -= self.eta * self.Layers[-2].T @ self.cost(self.Layers[-1])
         for n in reversed(range(1, len(self.nodes))):
-            # I don't think we should divide new weights by batch size 
+            # I don't think we should divide new weights by batch size
             self.weights[n] -= self.eta * (self.Layers[n - 1].T @ self.delta_l[n]) #/ self.batch_size
             self.bias[n] -= self.eta * np.mean(self.delta_l[n].T, axis=1)
 
@@ -116,8 +116,9 @@ class FFNN:  # FeedForwardNeuralNetwork
         indicies = np.arange(self.N)
         pbar = tqdm(range(epochs), desc="Training epochs")
         for _ in pbar:
-            for i in range(self.mini_batches):
-                choice = np.random.choice(indicies, size=self.batch_size, replace=False)
+            np.random.shuffle(indicies)
+            for i in range(0, self.N, self.mini_batches):
+                choice = indicies[i: i + self.batch_size]
                 self.Layers[0] = self.X[choice]
                 self.t = self.static_target[choice]
 
