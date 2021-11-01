@@ -2,6 +2,8 @@ import argparse
 from analysis import analyse
 import numpy as np
 
+np.random.seed(2021)
+
 def parse_args(args=None):
     """
     Uses argparse module to return an object containing
@@ -48,7 +50,7 @@ def parse_args(args=None):
     
     add_arg('-eta',
             type = str,
-            default='np.logspace(-4,1,7)',
+            default='np.logspace(-5,0,6)',
             help="""Desired learning rate, can be array or float. 
             For example:
                     -eta 'np.linspace(0.001, 1, 100)'
