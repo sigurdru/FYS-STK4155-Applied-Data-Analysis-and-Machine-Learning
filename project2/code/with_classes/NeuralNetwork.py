@@ -2,6 +2,8 @@ import numpy as np
 import autograd.numpy as anp
 from tqdm import tqdm
 from autograd import elementwise_grad, grad
+from SGD import mSGD
+
 
 class FFNN:  # FeedForwardNeuralNetwork
 
@@ -12,6 +14,7 @@ class FFNN:  # FeedForwardNeuralNetwork
                  batch_size=None,
                  learning_rate=0.1,
                  lmb=0,
+                 mom_gamma=0,
                  activation="sigmoid",
                  cost="MSE",
                  verbose=True,
@@ -31,13 +34,12 @@ class FFNN:  # FeedForwardNeuralNetwork
 
         self.eta = learning_rate
         self.lmb = lmb
-        bias0 = 0.01 # initial bias value
+        bias0 = 0.01  # initial bias value
         self.verbose = verbose
 
         # Array with size of nodes [21,10,10,1]
         # first corresponds to features in design matrix.
         self.nodes = np.array([self.X.shape[1], *hidden_nodes, self.t.shape[1]])
-
 
         # There are four layers (1 input, 2 hidden, 1 output)
         # Shapes:
@@ -54,6 +56,8 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.weights = [0] + [np.random.randn(n, m) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
+        self.sgd_w = mSGD(mom_gamma, self.nodes)
+        self.sgd_b = mSGD(mom_gamma, self.nodes)
 
         activation_funcs = {'sigmoid': self.sigmoid,
                             'tanh': self.tanh,
@@ -90,8 +94,10 @@ class FFNN:  # FeedForwardNeuralNetwork
         # self.weights[-1] -= self.eta * self.Layers[-2].T @ self.cost(self.Layers[-1])
         for n in reversed(range(1, len(self.nodes))):
             # I don't think we should divide new weights by batch size
-            self.weights[n] -= self.eta * (self.Layers[n - 1].T @ self.delta_l[n]) #/ self.batch_size
-            self.bias[n] -= self.eta * np.mean(self.delta_l[n].T, axis=1)
+            # self.weights[n] -= self.eta * (self.Layers[n - 1].T @ self.delta_l[n]) #/ self.batch_size
+            # self.bias[n] -= self.eta * np.sum(self.delta_l[n].T, axis=1)
+            self.weights[n] -= self.sgd_w(self.eta * (self.Layers[n - 1].T @ self.delta_l[n]), n) #/ self.batch_size
+            self.bias[n] -= self.sgd_b(self.eta * np.sum(self.delta_l[n].T, axis=1), n)
 
     def feed_forward(self):
         # Update the value at each layer from 1st hidden layer to ouput
@@ -119,7 +125,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         pbar = tqdm(range(epochs), desc="Training epochs")
         for _ in pbar:
             np.random.shuffle(indicies)
-            for i in range(0, self.mini_batches):
+            for i in range(0, self.N, self.batch_size):
                 choice = indicies[i: i + self.batch_size]
                 self.Layers[0] = self.X[choice]
                 self.t = self.static_target[choice]
@@ -136,6 +142,15 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.Layers[0] = x
         self.feed_forward()
         return self.Layers[-1]
+
+    def save(self, fname):
+        data = {"weights": self.weights, "biases": self.bias}
+        np.save(data, fname)
+
+    def load(self, fname):
+        data = np.load(fname)
+        self.weights = data["weights"]
+        self.bias = data["biases"]
 
     """
     cost functions
@@ -207,6 +222,7 @@ if __name__ == "__main__":
               batch_size=args.bs,
               learning_rate=0.2,
               lmb=0.0,
+              mom_gamma=0.0,
               activation="sigmoid",
               cost="MSE")
 

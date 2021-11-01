@@ -1,13 +1,17 @@
 import numpy as np
-from numpy.lib import utils
 
-# class Regression:
-#     def __init__(self, args):
-#         beta = np.random.randn(utils.get_features(p))
 
-class Regression:
-    def __init__(self):
-        return None 
+class mSGD:
+    def __init__(self, gamma=0, layer_sizes=[10,]):
+        self.g = gamma
+
+        self.prev_v = [np.zeros(i) for i in layer_sizes]
+
+    def __call__(self, eta_grad, layer):
+        v = self.g * self.prev_v[layer] + eta_grad
+        self.prev_v[layer] = v
+        return v
+
 
 
 def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
@@ -21,17 +25,17 @@ def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
         beta, 1darray: parameters
         eta, float: learning rate
         gamma, float: Momentum parameter
-        lmb, float: For Ridge regression 
+        lmb, float: For Ridge regression
     Returns:
         total_gradient 1darray: total gradient
     """
 
     M = args.minibatch  # size of minibatch
     n = int((args.num_points**2)*(1-args.tts))  # number of datapoints for testing
-    v = 0 
+    v = 0
 
-    X_train, X_test = X 
-    z_train, z_test = z 
+    X_train, X_test = X
+    z_train, z_test = z
 
     inds = np.arange(0, n)
 
@@ -39,13 +43,13 @@ def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
     MSE_test  = np.zeros(args.num_epochs)
 
     for epoch_i in range(args.num_epochs):
-        # Initialize randomized training data for epoch 
+        # Initialize randomized training data for epoch
         np.random.shuffle(inds)
         X_train_shuffle = X_train[inds]
         z_train_shuffle = z_train[inds]
 
         for i in range(0, n, M):
-            # Loop over mini batches 
+            # Loop over mini batches
 
             # random_index = np.random.randint(n-M)
             # xi = X_train[random_index:random_index + M]
@@ -54,14 +58,14 @@ def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
             xi = X_train_shuffle[i:i+M]
             zi = z_train_shuffle[i:i+M]
 
-            # Dividing by M to get correct gradient 
-            # Using zi.T[0] instead of zi, such that gradients have the same shape as beta 
+            # Dividing by M to get correct gradient
+            # Using zi.T[0] instead of zi, such that gradients have the same shape as beta
             gradient = 2.0 * xi.T @ ((xi @ beta)-zi.T[0]) / M \
-                        + 2 * lmb * beta 
+                        + 2 * lmb * beta
 
             v = v * gamma + eta * gradient
-            beta = beta - v 
-        
+            beta = beta - v
+
         train_pred = (X_train @ beta)
         test_pred = (X_test @ beta)
 
@@ -70,11 +74,11 @@ def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
 
     # eta = learning_schedule(epoch_i*m + i,args)
 
-    return MSE_train, MSE_test 
+    return MSE_train, MSE_test
 
 
 def RidgeSG():
-    return None 
+    return None
 
 
 # def learning_schedule(t, args):
