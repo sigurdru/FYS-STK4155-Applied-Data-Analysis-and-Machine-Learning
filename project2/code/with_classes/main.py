@@ -48,9 +48,9 @@ def parse_args(args=None):
             )
 
     add_arg('-eta',
-            type=str,
+            type = str,
             default='np.logspace(-5,0,6)',
-            help="""Desired learning rate, can be array or float.
+            help="""Desired learning rate, can be array or float. 
             For example:
                     -eta 'np.linspace(0.001, 1, 100)'
                     -eta 'np.logspace(0.001, 1, 10)'

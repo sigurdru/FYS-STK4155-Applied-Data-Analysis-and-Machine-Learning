@@ -14,6 +14,7 @@ class FFNN:  # FeedForwardNeuralNetwork
                  lmb=0,
                  activation="sigmoid",
                  cost="MSE",
+                 verbose=True,
                  ):
 
         self.X = design             # Training data
@@ -29,7 +30,8 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.mini_batches = self.N // self.batch_size
         self.eta = learning_rate
         self.lmb = lmb
-        bias0 = 0.1  # initial bias value
+        bias0 = 0.01 # initial bias value 
+        self.verbose = verbose
 
         # Array with size of nodes [21,10,10,1]
         # first corresponds to features in design matrix.
@@ -42,7 +44,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         #  hidden_n: (720, hidden_nodes[n])
         #  output  : (720, 1)
         self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
-        self.Layers[0]  = self.X.copy()
+        self.Layers[0] = self.X.copy()
 
         self.z = self.Layers.copy()  # Activation layer input (z in morten's notes)
         self.delta_l = self.Layers.copy() # Activation layer input gradient (delta_l in morten's notes)
@@ -172,6 +174,10 @@ class FFNN:  # FeedForwardNeuralNetwork
 def MSE(y, y_):
     return sum((y - y_) ** 2) / len(y)
 
+def R2(y, y_):
+    return 1 - sum((y - y_) ** 2) / sum((y - np.mean(y)) ** 2)
+
+
 if __name__ == "__main__":
     # The above imports numpy as np so we have to redefine:
     # import autograd.numpy as np
@@ -207,6 +213,9 @@ if __name__ == "__main__":
     MM.train(epochs)
     nn_pred = MM.predict(X_test)
 
-    print("Neural Network stochastic", MSE(z_test, nn_pred))
-
-    print("           OLS           ", MSE(z_test, ols_pred))
+    print("Neural Network stochastic ")
+    print("    MSE:", MSE(z_test, nn_pred))
+    print("    R2-score:", R2(z_test, nn_pred))
+    print("OLS")
+    print("    MSE:", MSE(z_test, ols_pred))
+    print("    R2-score:", R2(z_test, ols_pred))
