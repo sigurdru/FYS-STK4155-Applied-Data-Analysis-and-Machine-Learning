@@ -14,6 +14,7 @@ class FFNN:  # FeedForwardNeuralNetwork
                  lmb=0,
                  activation="sigmoid",
                  cost="MSE",
+                 verbose=True,
                  ):
                  
         self.X = design             # Training data 
@@ -25,6 +26,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.eta = learning_rate
         self.lmb = lmb
         bias0 = 0.01 # initial bias value 
+        self.verbose = verbose
 
         # Array with size of nodes [21,10,10,1]
         # first corresponds to features in design matrix. 
@@ -37,7 +39,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         #  hidden: (720, 10)
         #  output: (720, 1)
         self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
-        self.Layers[0]  = self.X.copy()
+        self.Layers[0] = self.X.copy()
 
         self.a = self.Layers.copy()  # Activation layer input (z in morten's notes)
         self.da = self.Layers.copy() # Activation layer input gradient (delta_l in morten's notes)
@@ -52,7 +54,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.cost_der = elementwise_grad(self.cost)
 
 
-    def update(self):
+    def backpropagation(self):
         """
         Updates weights and biases with backwards propagation.
          - Starts by calculating the gradients of each layer's activation function 
@@ -96,8 +98,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         for _ in pbar:
             self.SGD()
             self.feed_forward()
-            self.update()
-            pbar.update(1)
+            self.backpropagation()
 
     def predict(self, x):
         """
@@ -125,6 +126,10 @@ class FFNN:  # FeedForwardNeuralNetwork
 
 def MSE(y, y_):
     return sum((y - y_) ** 2) / len(y)
+
+def R2(y, y_):
+    return 1 - sum((y - y_) ** 2) / sum((y - np.mean(y)) ** 2)
+
 
 if __name__ == "__main__":
     # The above imports numpy as np so we have to redefine:
@@ -161,6 +166,9 @@ if __name__ == "__main__":
     MM.train(epochs)
     nn_pred = MM.predict(X_test)
 
-    print("Neural Network stochastic", MSE(z_test, nn_pred))
-
-    print("           OLS           ", MSE(z_test, ols_pred))
+    print("Neural Network stochastic ")
+    print("    MSE:", MSE(z_test, nn_pred))
+    print("    R2-score:", R2(z_test, nn_pred))
+    print("OLS")
+    print("    MSE:", MSE(z_test, ols_pred))
+    print("    R2-score:", R2(z_test, ols_pred))
