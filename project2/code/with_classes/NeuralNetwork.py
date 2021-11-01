@@ -28,9 +28,10 @@ class FFNN:  # FeedForwardNeuralNetwork
             self.batch_size = batch_size  # Possibly redundant
 
         self.mini_batches = self.N // self.batch_size
+
         self.eta = learning_rate
         self.lmb = lmb
-        bias0 = 0.01 # initial bias value 
+        bias0 = 0.01 # initial bias value
         self.verbose = verbose
 
         # Array with size of nodes [21,10,10,1]
@@ -40,9 +41,9 @@ class FFNN:  # FeedForwardNeuralNetwork
 
         # There are four layers (1 input, 2 hidden, 1 output)
         # Shapes:
-        #  input   : (720, 21)
-        #  hidden_n: (720, hidden_nodes[n])
-        #  output  : (720, 1)
+        #  input   : (k, 21)
+        #  hidden_n: (k, hidden_nodes[n])
+        #  output  : (k, 1)
         self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
         self.Layers[0] = self.X.copy()
 
@@ -92,7 +93,6 @@ class FFNN:  # FeedForwardNeuralNetwork
             self.weights[n] -= self.eta * (self.Layers[n - 1].T @ self.delta_l[n]) #/ self.batch_size
             self.bias[n] -= self.eta * np.mean(self.delta_l[n].T, axis=1)
 
-
     def feed_forward(self):
         # Update the value at each layer from 1st hidden layer to ouput
         for n in range(1, len(self.nodes)):
@@ -119,7 +119,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         pbar = tqdm(range(epochs), desc="Training epochs")
         for _ in pbar:
             np.random.shuffle(indicies)
-            for i in range(0, self.N, self.mini_batches):
+            for i in range(0, self.mini_batches):
                 choice = indicies[i: i + self.batch_size]
                 self.Layers[0] = self.X[choice]
                 self.t = self.static_target[choice]
@@ -143,7 +143,7 @@ class FFNN:  # FeedForwardNeuralNetwork
     def MSE(self, t_):
         # print('mse:')
         # print(((t_ - self.t)**2) / len(self.t))
-        mse_sum = anp.sum((t_ - self.t)**2) / len(self.t)
+        # mse_sum = anp.sum((t_ - self.t)**2) / len(self.t)
         mse = (t_ - self.t)**2 / len(self.t)
         # print(np.shape(mse))
         # exit()
@@ -183,19 +183,19 @@ if __name__ == "__main__":
     # import autograd.numpy as np
     from utils import *
     from sklearn.model_selection import train_test_split
+    np.random.seed(2021)
 
     class Args:
         num_points = 20
         epsilon = 0.2
         polynomial = 8
         dataset = "Franke"
+        bs = 32
     args = Args()
-    epochs = 1000
-    batch_size = int(args.num_points * args.num_points * 0.8)
+    epochs = 100
 
     x, y, z = load_data(args)
     X = create_X(x, y, args.polynomial)
-
     X_, X_test, z_train, z_test = train_test_split(X, z, test_size=0.2)
 
     beta = np.linalg.pinv(X_.T @ X_) @ X_.T @ z_train
@@ -204,8 +204,8 @@ if __name__ == "__main__":
     MM = FFNN(X_,
               z_train,
               hidden_nodes=[10, 10],
-              batch_size=batch_size,
-              learning_rate=0.1,
+              batch_size=args.bs,
+              learning_rate=0.2,
               lmb=0.0,
               activation="sigmoid",
               cost="MSE")
