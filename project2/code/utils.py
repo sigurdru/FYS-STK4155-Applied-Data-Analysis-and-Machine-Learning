@@ -70,7 +70,7 @@ def FrankeFunction(x, y, eps=0):
     return (term1 + term2 + term3 + term4 + noise).ravel().reshape(-1, 1)
 
 
-def create_X(x, y, n):
+def create_X(x, y, n, intercept=True):
     """
     Sets up design matrix
 
@@ -87,7 +87,11 @@ def create_X(x, y, n):
         X = np.zeros((len(x), n+1))
         for i in range(n+1):
             X[:, i] = x**i
-        return X
+        if intercept:
+            return X
+        else:
+            return X[:, 1:]
+
     if not 1 in x.shape:
         x = np.ravel(x)
         y = np.ravel(y)
@@ -100,4 +104,7 @@ def create_X(x, y, n):
         q = i * (i + 1) // 2
         for k in range(i + 1):
             X[:, q + k] = (x ** (i - k)) * (y ** k)
-    return X
+    if intercept:
+        return X
+    else:
+        return X[:, 1:]

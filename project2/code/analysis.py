@@ -1,26 +1,33 @@
+from collections import defaultdict
 import numpy as np
-import random
+# import random
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
 from sklearn.model_selection import train_test_split as tts
-#Our files
-from regression import SGD, RidgeSG
+# Our files
+# from regression impo/rt Ordinary_least_squaresSG, RidgeSG
 import utils
-import plot
+# import plot
 from sklearn.linear_model import SGDRegressor
-import sys
-import matplotlib.pyplot as plt 
+from NeuralNetwork import FFNN
+from collections import defaultdict
+from sklearn.metrics import accuracy_score
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib import cm
+import pandas as pd
 
 
 class NoneScaler(StandardScaler):
-    """ 
+    """
     To have option of no scaling
     """
+
     def transform(self, x):
         return x
 
-# Dicts converting from string to callable functions
-reg_conv = {"OLS": SGD, "Ridge": RidgeSG}
-scale_conv = {"None": NoneScaler(), "S": StandardScaler(with_std=False), "N": Normalizer(), "M": MinMaxScaler()}
+
+scale_conv = {"None": NoneScaler(), "S": StandardScaler(
+    with_std=False), "N": Normalizer(), "M": MinMaxScaler()}
 
 
 def split_scale(X, z, ttsplit, scaler):
@@ -54,94 +61,59 @@ def split_scale(X, z, ttsplit, scaler):
 
     return X_train, X_test, z_train, z_test
 
-def analyze_SGD(args):
-    """
-    Denne funksjonen er midlertidlig.
-    Prøver bare å lage en vanlig SGD med batches som funker
-    på FrankeFunction
-    """
-    #Setting up parameters and data
-    tts = args.tts                          #train test split
-    P = args.polynomial                     #polynomial degree
 
+def analyse(args):
+    p = args.polynomial
+    etas = args.eta
+    # lmbs = np.ones(5)
+    lmbs = [0,]
     scaler = scale_conv[args.scaling]
-    reg_method = reg_conv[args.method]
     x, y, z = utils.load_data(args)
+    X = utils.create_X(x, y, p)
+    X_train, X_test, z_train, z_test = split_scale(X, z, args.tts, scaler)
 
-    #create design matrix
-    X = utils.create_X(x, y, P)
-
-    #Split and scale data
-    X_train, X_test, z_train, z_test = split_scale(X, z, tts, scaler)
-
-    # To be implemented
-    # for i, p in enumerate(P):
+    ols_beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
+    ols_pred = X_test @ ols_beta
 
 
-    for eta in args.eta:
+    data = defaultdict(lambda: np.zeros((len(etas), len(lmbs)), dtype=float))
+    for i, eta in enumerate(etas):
+        for j, lmb in enumerate(lmbs):
+            NN = FFNN(X_train,
+                      z_train,
+                      hidden_nodes=[10, 10],
+                      batch_size=args.batch_size,
+                      learning_rate=eta,
+                      lmb=lmb,
+                      )
+            NN.train(200)
 
-        beta = np.random.randn(utils.get_features(P))    
-        inputs = ((X_train, X_test), (z_train, z_test), args, beta, eta)
-        MSE_train, MSE_test = reg_method(*inputs)
+            train_pred = NN.predict(X_train)
+            test_pred = NN.predict(X_test)
 
-        MSE_train_mom, MSE_test_mom = reg_method(*inputs, gamma=args.gamma) 
+            print('eta={:.2f}: MSE_test={:.3f}'.format(eta, MSE(z_test, test_pred)[0]))
+            data["train_MSE"][i][j] = MSE(z_train, train_pred)
+            data["test_MSE"][i][j] = MSE(z_test, test_pred)
 
-    # Plotting MSE as a function of epochs 
-    plt.plot(MSE_train, label='train')
-    plt.plot(MSE_test, label='test')
-    plt.plot(MSE_train_mom, '--', label='train momentum')
-    plt.plot(MSE_test_mom, '--', label='test momentum')
+    print("\n"*3)
+    print(f"Best NN train prediction: {(train:=data['train_MSE'])[(mn:=np.unravel_index(np.argmin(train), train.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
+    print(f"Best NN test prediction: {(test:=data['test_MSE'])[(mn:=np.unravel_index(np.argmin(test), test.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
+    print(f"OLS test prediction: {MSE(z_test, ols_pred)}")
 
-    plt.legend()
-    plt.show()
+    for name, accuracy in data.items():
+        fig, ax = plt.subplots()
+        data = pd.DataFrame(accuracy, index=np.log10(etas), columns=lmbs)
+        sns.heatmap(data, ax=ax, annot=True)
+        ax.set_title(name)
+        ax.set_ylabel("$\log10(\eta)$")
+        ax.set_xlabel("$\lambda$")
+        plt.show()
 
-    # Comparing our own beta-values and MSE with sklearn 
-    sgdreg = SGDRegressor(max_iter=100, penalty=None, eta0=args.eta[0])
-    sgdreg.fit(X, z)
-    print('beta from own sgd: ', len(beta))
-    print(beta, '\n')
-    print('MSE own: ')
-    print(MSE(z_test.T[0], X_test @ beta), '\n')
+def MSE(z, ztilde):
+    return sum((z - ztilde)**2) / len(z)
+# def SGD(args):
+#     for eta in self.args.eta:
+#         beta = np.random.randn(utils.get_features(self.p))
 
-    print('beta from sklearn: ', len(sgdreg.coef_))
-    print(sgdreg.coef_, '\n')
-    print('MSE sklearn:')
-    print(MSE(z_test.T[0], X_test @ sgdreg.coef_))
-
-
-# def analyze_MSGD(args):
-#     """
-#     Denne funksjonen er midlertidlig.
-#     Prøver bare å lage en vanlig SGD med batches som funker
-#     på FrankeFunction
-#     """
-#     #Setting up parameters and data
-#     tts = args.tts  # train test split
-#     p = args.polynomial  # polynomial degree
-#     n_epochs = args.num_epochs  # number of epochs
-#     eta = args.eta  # learning rate
-#     M = args.minibatch  # size of minibatch
-#     n = int(args.num_points*(1-tts))**2  # number of datapoints for testing
-#     m = int(n/M)  # number of minibatches
-
-#     scaler = scale_conv[args.scaling]
-#     x, y, z = utils.load_data(args)
-
-#     #create design matrix
-#     X = utils.create_X(x, y, p)
-#     #Split and scale data
-#     X_train, X_test, z_train, z_test = split_scale(X, z, args.tts, scaler)
-#     beta = np.random.rand(utils.get_features(p))
-#     indices = np.arange(n)
-#     for epoch_i in range(n_epochs):
-#         random_index = np.random.choice(indices, size=(M), replace=True)
-#         xi = X_train[random_index]
-#         zi = z_train[random_index]
-#         gradients = 2.0 * xi.T @ ((xi @ beta)-zi)
-#         eta = learning_schedule(epoch_i*m, args)
-#         total_gradient = np.sum(eta*gradients, axis=1)
-#         beta -= total_gradient
-#     pred = (X_test @ beta)
-#     print(MSE(z_test.T[0], pred))
-
-
+#         for epoch_i in range(self.args.n_epochs):
+#             pass
