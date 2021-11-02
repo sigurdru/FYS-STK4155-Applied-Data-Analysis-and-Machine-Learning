@@ -1,17 +1,6 @@
 import numpy as np
 
 
-class mSGD:
-    def __init__(self, gamma=0, layer_sizes=[10,]):
-        self.g = gamma
-
-        self.prev_v = [np.zeros(i) for i in layer_sizes]
-
-    def __call__(self, eta_grad, layer):
-        v = self.g * self.prev_v[layer] + eta_grad
-        self.prev_v[layer] = v
-        return v
-
 
 
 def SGD(X, z, args, beta, eta, lmb=0):
@@ -29,23 +18,23 @@ def SGD(X, z, args, beta, eta, lmb=0):
     Returns:
         total_gradient 1darray: total gradient
     """
-    
+
     n = int(X[0].shape[0])  # number of datapoints for training
     if args.batch_size == 0:
-        M = n 
+        M = n
     else:
         M = args.batch_size  # size of minibatch
 
     m = n // M
-    v = 0 
-    X_train, X_test = X 
-    z_train, z_test = z 
+    v = 0
+    X_train, X_test = X
+    z_train, z_test = z
 
     inds = np.arange(0, n)
 
     MSE_train = np.zeros(args.num_epochs)
     MSE_test  = np.zeros(args.num_epochs)
-    eta_0 = eta 
+    eta_0 = eta
 
     for epoch_i in range(args.num_epochs):
         # Initialize randomized training data for epoch
@@ -60,7 +49,7 @@ def SGD(X, z, args, beta, eta, lmb=0):
             zi = z_train_shuffle[i:i+M]
 
             gradient = 2 * xi.T @ ((xi @ beta)-zi.T[0]) / M \
-                        + 2 * lmb * beta 
+                        + 2 * lmb * beta
 
             v = v * args.gamma + eta * gradient
             beta = beta - v
