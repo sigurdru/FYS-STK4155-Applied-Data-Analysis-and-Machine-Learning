@@ -66,7 +66,7 @@ def parse_args(args=None):
 
     add_arg('-bs', '--batch_size',
             type=int,
-            default=30,
+            default=36,
             help='Set size of minibatch'
             )
 
