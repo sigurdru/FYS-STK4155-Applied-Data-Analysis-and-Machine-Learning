@@ -1,8 +1,8 @@
 import argparse
-from analysis import analyse
+from analysis import analyse, analyse_SGD_NN_plots
 import numpy as np
 
-np.random.seed(2021)
+# np.random.seed(696969)
 
 def parse_args(args=None):
     """
@@ -60,6 +60,7 @@ def parse_args(args=None):
 
     add_arg('-ga', '--gamma',
             type=float,
+            default=0,
             help='Desired momentum parameter'
             )
 
@@ -70,7 +71,7 @@ def parse_args(args=None):
 
     add_arg('-bs', '--batch_size',
             type=int,
-            default=None,
+            default=30,
             help='Set size of minibatch'
             )
 
