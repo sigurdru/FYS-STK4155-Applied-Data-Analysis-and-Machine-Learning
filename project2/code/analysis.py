@@ -94,9 +94,9 @@ def analyse_SGD(args):
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs), args.num_epochs), dtype=float))
 
+    beta0 = np.random.randn(utils.get_features(p))
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
-            beta0 = np.random.randn(utils.get_features(p))
 
             MSE_train, MSE_test = SGD.SGD((X_train, X_test), 
                                             (z_train, z_test), 
@@ -104,7 +104,6 @@ def analyse_SGD(args):
                                             beta0, 
                                             eta,
                                             lmb)
-
             data["train_MSE"][i][j] = MSE_train
             data["test_MSE"][i][j] = MSE_test
 
@@ -117,8 +116,9 @@ def analyse_SGD(args):
         fig, ax = plt.subplots()
         cols = np.arange(args.num_epochs)
         if len(lmbs) == 1:
-            data = pd.DataFrame(accuracy[:,0,:], index=etas, columns=cols)
-        sns.heatmap(data, ax=ax, annot=False)#, linewidths=0.01)
+            data = pd.DataFrame(accuracy[:,0,:], index=np.round(etas, 3), columns=cols[:])
+        ax = sns.heatmap(data, ax=ax, annot=False, cmap=cm.coolwarm, vmax=0.07, linewidths=0)
+        ax.invert_yaxis()
         ax.set_title(name)
         ax.set_ylabel("$\eta$")
         ax.set_xlabel("epochs")
