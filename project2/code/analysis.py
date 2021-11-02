@@ -82,17 +82,13 @@ def NN_regression(args):
 def linear_regression(args):
     p = args.polynomial
     etas = args.eta
-<<<<<<< HEAD
-    lmbs = args.lmb # Default 0 
+    lmbs = args.lmb 
 
     if args.batch_size == 0:
         batch_sizes = np.array([720, 360, 240, 144, 72, 48, 30, 24]) 
     else:
         batch_sizes = np.array([args.batch_size])
 
-=======
-    lmbs = args.lmb  # Default 0
->>>>>>> 3e28921612e9e00c347cfbf385f4effcc7a8515f
     scaler = scale_conv[args.scaling]
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p)
@@ -110,9 +106,9 @@ def linear_regression(args):
                                         args.num_epochs), dtype=float))
 
     beta0 = np.random.randn(utils.get_features(p))
+
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
-<<<<<<< HEAD
             for k, batch_size in enumerate(batch_sizes):
                 MSE_train, MSE_test = SGD.SGD((X_train, X_test), 
                                                 (z_train, z_test), 
@@ -122,56 +118,119 @@ def linear_regression(args):
                                                 batch_size,
                                                 lmb)
 
-                data["train_MSE"][i][j][k] = MSE_train
-                data["test_MSE"][i][j][k] = MSE_test
+                data["Train MSE"][i][j][k] = MSE_train
+                data["Test MSE"][i][j][k] = MSE_test
 
-                # plt.plot(data['train_MSE'][i][j], label='train')
-                # plt.plot(data['test_MSE'][i][j], label='test')
-                # plt.legend()
-                # plt.show()
-=======
-            beta0 = np.random.randn(utils.get_features(p))
+    if not args.gamma:
+        """
+        Plot MSE heatmaps for SGD without momentum
+        Different parameters are plotted based on inputs 
 
-            MSE_train, MSE_test = SGD.SGD((X_train, X_test),
-                                            (z_train, z_test),
-                                            args,
-                                            beta0,
-                                            eta,
-                                            lmb)
+        Number of epochs vs eta values:
+         - lmb: default (float)
+         - eta: array-like 
+         - bs : default (int)
 
-            data["train_MSE"][i][j] = MSE_train
-            data["test_MSE"][i][j] = MSE_test
+        Number of epochs vs number of minibatches:
+         - lmb: default (float)
+         - eta: 0.3 (float)
+         - bs : 0 
 
-            # plt.plot(data['train_MSE'][i][j], label='train')
-            # plt.plot(data['test_MSE'][i][j], label='test')
-            # plt.legend()
-            # plt.show()
->>>>>>> 3e28921612e9e00c347cfbf385f4effcc7a8515f
+        Lambda values vs eta values:
+         - lmb: Array-like 
+         - eta: Array-like  
+         - bs : default (int)
+        """
+        for name, accuracy in data.items():
+            fig, ax = plt.subplots()
+            if len(lmbs) == 1 and len(batch_sizes) == 1:
+                """
+                (x,y): (epochs, eta values) 
 
-    for name, accuracy in data.items():
-        fig, ax = plt.subplots()
-        cols = np.arange(args.num_epochs)
-        if len(lmbs) == 1 and len(batch_sizes) == 1:
-            data = pd.DataFrame(accuracy[:,0,0,:], index=np.round(etas, 3), columns=cols[:])
-            ax.set_ylabel("$\eta$")
-            ax.set_xlabel("Number of epochs")
+                Good simulation:
+                - Ne  : 150 
+                - eta : np.linspace(0.01, 0.05, 31)
+                """
+                cols = np.arange(args.num_epochs)
+                idx = np.round(etas, 3)
+                data = pd.DataFrame(accuracy[:,0,0,:], index=idx, columns=cols[:])
+                ylabel = "Learning rate $\eta$"
+                xlabel = "Number of epochs"
+                title = name + " for Franke function, using 20 minibatches"
+                ytick = 3
+                vmax = 0.07
+
+            if len(lmbs) == 1 and len(etas) == 1:
+                """
+                (x,y): (epochs, number of minibatches)
+
+                Good simulation:
+                - Ne : 150 
+                - eta: 0.3 
+                - bs : 0 
+                """
+                cols = np.arange(args.num_epochs)
+                idx = n_minibatches 
+                data = pd.DataFrame(accuracy[0,0,:,:], index=idx, columns=cols[:])
+                ylabel = "Number of minibatches"
+                xlabel = "Number of epochs"
+                title = name + " for Franke function, using $\eta=0.3$"
+                ytick = idx 
+                vmax = 0.07 
+
+            if len(lmbs) != 1 and len(n_minibatches) == 1:
+                """
+                (x,y): (log10[lambda], eta values)
+
+                Good simulation:
+                - Ne  : 200 
+                - lmb : np.logspace(-5, 0, 11)
+                - eta : np.linspace(0.1, 0.7, 11)
+                """
+                cols = np.log10(lmbs) 
+                idx = np.round(etas, 3)
+                data = pd.DataFrame(accuracy[:,:,0,-1], index=idx, columns=cols[:])
+                ylabel = "Learning rate $\eta$"
+                xlabel = "$\log_{10}(\lambda)$"
+                title = name + " for Franke function after 200 epochs, using 20 minibatches"
+                ytick = idx 
+                vmax = None 
 
 
-        if len(lmbs) == 1 and len(etas) == 1:
-            # n_mbs = 
-            data = pd.DataFrame(accuracy[0,0,:,:], index=n_minibatches, columns=cols[:])
-            ax.set_ylabel("Number of minibatches")
-            ax.set_xlabel("Number of epochs")
+            ax = sns.heatmap(data, 
+                            ax=ax, 
+                            annot=False, 
+                            cmap=cm.coolwarm, 
+                            vmax=vmax, 
+                            linewidths=0,
+                            xticklabels=len(cols)//10,
+                            yticklabels=ytick)
+            ax.invert_yaxis()
+            ax.set_ylabel(ylabel)
+            ax.set_xlabel(xlabel)
+            ax.set_title(title)
+            plt.show()
 
-        ax = sns.heatmap(data, 
-                        ax=ax, 
-                        annot=False, 
-                        cmap=cm.coolwarm, 
-                        vmax=0.07, 
-                        linewidths=0)
-        ax.invert_yaxis()
-        ax.set_title(name)
-        plt.show()
+    else:
+        gammas = np.array([0.1, 0.25, 0.5, 0.9])
+
+        for gamma in gammas:
+            plt.plot(data["Train MSE"].flatten(), label='Train MSE. $\gamma=0$')
+            plt.plot(data["Test MSE"].flatten() , label='Test MSE. $\gamma=0$')
+
+            mom_MSE_train, mom_MSE_test = SGD.SGD((X_train, X_test), 
+                                                (z_train, z_test), 
+                                                args, 
+                                                beta0, 
+                                                eta,
+                                                batch_size,
+                                                lmb,
+                                                gamma=gamma)
+            plt.plot(mom_MSE_train, '--', label='Train MSE. $\gamma={:.2f}$'.format(gamma))
+            plt.plot(mom_MSE_test , '--', label='Test MSE. $\gamma={:.2f}$'.format(gamma))
+            plt.legend()
+            plt.show()
+
 
 def logistic_regression(args):
     pass
