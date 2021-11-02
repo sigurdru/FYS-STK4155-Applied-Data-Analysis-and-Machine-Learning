@@ -14,7 +14,7 @@ class mSGD:
 
 
 
-def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
+def SGD(X, z, args, beta, eta, lmb=0):
     """
     Performs OLS regression using SGD
 
@@ -29,7 +29,8 @@ def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
     Returns:
         total_gradient 1darray: total gradient
     """
-    n = int((args.num_points**2)*(1-args.tts))  # number of datapoints for testing
+    
+    n = int(X[0].shape[0])  # number of datapoints for training
     if args.batch_size == 0:
         M = n 
     else:
@@ -61,7 +62,7 @@ def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
             gradient = 2 * xi.T @ ((xi @ beta)-zi.T[0]) / M \
                         + 2 * lmb * beta 
 
-            v = v * gamma + eta * gradient
+            v = v * args.gamma + eta * gradient
             beta = beta - v
 
         train_pred = (X_train @ beta)
