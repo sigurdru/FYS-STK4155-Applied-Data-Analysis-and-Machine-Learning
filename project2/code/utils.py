@@ -144,3 +144,6 @@ def split_scale(X, z, ttsplit, scaler):
 
 def MSE(z_target, z_tilde):
     return sum((z_target - z_tilde) ** 2) / len(z_target)
+
+def R2(z_target, z_tilde):
+    return 1 - sum((z_target - z_tilde) ** 2) / sum((z_target - np.mean(z_target)) ** 2)
