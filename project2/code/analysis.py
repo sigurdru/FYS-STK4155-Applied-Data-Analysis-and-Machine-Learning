@@ -77,20 +77,54 @@ def NN_regression(args):
 def linear_regression(args):
     p = args.polynomial
     etas = args.eta
+<<<<<<< HEAD
+    lmbs = args.lmb # Default 0 
+
+    if args.batch_size == 0:
+        batch_sizes = np.array([720, 360, 240, 144, 72, 48, 30, 24]) 
+    else:
+        batch_sizes = np.array([args.batch_size])
+
+=======
     lmbs = args.lmb  # Default 0
+>>>>>>> 3e28921612e9e00c347cfbf385f4effcc7a8515f
     scaler = scale_conv[args.scaling]
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p)
+
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
 
+    n_minibatches = X_train.shape[0] // batch_sizes
     ols_beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
     ols_pred = X_test @ ols_beta
 
 
-    data = defaultdict(lambda: np.zeros((len(etas), len(lmbs), args.num_epochs), dtype=float))
+    data = defaultdict(lambda: np.zeros((len(etas), 
+                                        len(lmbs),
+                                        len(batch_sizes), 
+                                        args.num_epochs), dtype=float))
 
+    beta0 = np.random.randn(utils.get_features(p))
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
+<<<<<<< HEAD
+            for k, batch_size in enumerate(batch_sizes):
+                MSE_train, MSE_test = SGD.SGD((X_train, X_test), 
+                                                (z_train, z_test), 
+                                                args, 
+                                                beta0, 
+                                                eta,
+                                                batch_size,
+                                                lmb)
+
+                data["train_MSE"][i][j][k] = MSE_train
+                data["test_MSE"][i][j][k] = MSE_test
+
+                # plt.plot(data['train_MSE'][i][j], label='train')
+                # plt.plot(data['test_MSE'][i][j], label='test')
+                # plt.legend()
+                # plt.show()
+=======
             beta0 = np.random.randn(utils.get_features(p))
 
             MSE_train, MSE_test = SGD.SGD((X_train, X_test),
@@ -107,16 +141,31 @@ def linear_regression(args):
             # plt.plot(data['test_MSE'][i][j], label='test')
             # plt.legend()
             # plt.show()
+>>>>>>> 3e28921612e9e00c347cfbf385f4effcc7a8515f
 
     for name, accuracy in data.items():
         fig, ax = plt.subplots()
         cols = np.arange(args.num_epochs)
-        if len(lmbs) == 1:
-            data = pd.DataFrame(accuracy[:,0,:], index=etas, columns=cols)
-        sns.heatmap(data, ax=ax, annot=False)#, linewidths=0.01)
+        if len(lmbs) == 1 and len(batch_sizes) == 1:
+            data = pd.DataFrame(accuracy[:,0,0,:], index=np.round(etas, 3), columns=cols[:])
+            ax.set_ylabel("$\eta$")
+            ax.set_xlabel("Number of epochs")
+
+
+        if len(lmbs) == 1 and len(etas) == 1:
+            # n_mbs = 
+            data = pd.DataFrame(accuracy[0,0,:,:], index=n_minibatches, columns=cols[:])
+            ax.set_ylabel("Number of minibatches")
+            ax.set_xlabel("Number of epochs")
+
+        ax = sns.heatmap(data, 
+                        ax=ax, 
+                        annot=False, 
+                        cmap=cm.coolwarm, 
+                        vmax=0.07, 
+                        linewidths=0)
+        ax.invert_yaxis()
         ax.set_title(name)
-        ax.set_ylabel("$\eta$")
-        ax.set_xlabel("epochs")
         plt.show()
 
 
