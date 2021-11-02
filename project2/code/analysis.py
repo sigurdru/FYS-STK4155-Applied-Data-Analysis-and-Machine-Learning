@@ -9,6 +9,7 @@ import utils
 # import plot
 from sklearn.linear_model import SGDRegressor
 from NeuralNetwork import FFNN
+import SGD 
 from collections import defaultdict
 from sklearn.metrics import accuracy_score
 import seaborn as sns
@@ -62,7 +63,7 @@ def split_scale(X, z, ttsplit, scaler):
     return X_train, X_test, z_train, z_test
 
 
-def analyse(args):
+def analyse_NN(args):
     p = args.polynomial
     etas = args.eta
     # lmbs = np.ones(5)
@@ -86,7 +87,7 @@ def analyse(args):
                       learning_rate=eta,
                       lmb=lmb,
                       )
-            NN.train(200)
+            NN.train(args.num_epochs)
 
             train_pred = NN.predict(X_train)
             test_pred = NN.predict(X_test)
@@ -108,6 +109,45 @@ def analyse(args):
         ax.set_ylabel("$\log10(\eta)$")
         ax.set_xlabel("$\lambda$")
         plt.show()
+
+
+def analyse_SGD(args):
+    p = args.polynomial
+    etas = args.eta
+    lmbs = args.lmb # Default 0 
+    scaler = scale_conv[args.scaling]
+    x, y, z = utils.load_data(args)
+    X = utils.create_X(x, y, p)
+    X_train, X_test, z_train, z_test = split_scale(X, z, args.tts, scaler)
+
+    ols_beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
+    ols_pred = X_test @ ols_beta
+
+
+    data = defaultdict(lambda: np.zeros((len(etas), len(lmbs), args.num_epochs), dtype=float))
+
+    for i, eta in enumerate(etas):
+        for j, lmb in enumerate(lmbs):
+            beta0 = np.random.randn(utils.get_features(p))
+
+            MSE_train, MSE_test = SGD.SGD((X_train, X_test), 
+                                            (z_train, z_test), 
+                                            args, 
+                                            beta0, 
+                                            eta,
+                                            lmb)
+
+            data["train_MSE"][i][j] = MSE_train 
+            data["test_MSE"][i][j] = MSE_test
+
+            plt.plot(data['train_MSE'][i][j], label='train')
+            plt.plot(data['test_MSE'][i][j], label='test')
+            plt.legend()
+            plt.show()
+        exit()
+
+
+
 
 def MSE(z, ztilde):
     return sum((z - ztilde)**2) / len(z)

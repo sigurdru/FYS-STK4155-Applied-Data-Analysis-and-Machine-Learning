@@ -1,8 +1,8 @@
 import argparse
-from analysis import analyse
+from analysis import analyse_NN, analyse_SGD
 import numpy as np
 
-np.random.seed(2021)
+# np.random.seed(2021)
 
 def parse_args(args=None):
     """
@@ -60,6 +60,7 @@ def parse_args(args=None):
 
     add_arg('-ga', '--gamma',
             type=float,
+            default=0,
             help='Desired momentum parameter'
             )
 
@@ -70,7 +71,7 @@ def parse_args(args=None):
 
     add_arg('-bs', '--batch_size',
             type=int,
-            default=None,
+            default=30,
             help='Set size of minibatch'
             )
 
@@ -90,7 +91,12 @@ def parse_args(args=None):
     add_arg('-l', '--lmb',
             type=str,
             default="0",
-            help='Lambda parameter',
+            help="""Lambda values for Ridge regression. Can be array or float.
+            For example:
+                 -l 'np.linspace(0.001, 1, 100'
+                 -l 'np.logspace(0.001, 1, 10)'
+                 -l 0.1 
+                 """,
             )
 
     add_arg("-d", "--dataset",
@@ -137,12 +143,17 @@ def parse_args(args=None):
     if np.shape(args.eta) == ():
         args.eta = [args.eta, ]
 
+    exec('args.lmb = ' + args.lmb)
+    if np.shape(args.lmb) == ():
+        args.lmb = [args.lmb, ]
+
+
     return args
 
 
 def main():
     args = parse_args()
-    analyse(args)
+    analyse_NN(args)
 
 
 if __name__ == "__main__":
