@@ -3,7 +3,7 @@ import utils
 
 
 
-def SGD(X, z, args, beta, eta, lmb=0):
+def SGD(X, z, args, beta, eta, batch_size, lmb=0):
     """
     Performs OLS regression using SGD
 
@@ -20,12 +20,12 @@ def SGD(X, z, args, beta, eta, lmb=0):
     """
 
     n = int(X[0].shape[0])  # number of datapoints for training
-    if args.batch_size == 0:
+    if batch_size == 0:
         M = n
     else:
-        M = args.batch_size  # size of minibatch
-
+        M = int(batch_size)  # size of minibatch
     m = n // M
+    
     v = 0
     X_train, X_test = X
     z_train, z_test = z
