@@ -17,9 +17,9 @@ def parse_args(args=None):
 
     add_arg('-m', '--method',
             type=str,
-            default='OLS',
-            choices=['OLS', 'Ridge'],
-            help='Choose which regression method to use.',
+            default='NN',
+            choices=['reg', 'NN'],
+            help='Choose which prediction method to use.',
             )
 
     add_arg("-tts",
@@ -48,7 +48,7 @@ def parse_args(args=None):
             )
 
     add_arg('-eta',
-            type = str,
+            type=str,
             default='0.1',
             help="""Desired learning rate, can be array or float.
             For example:
@@ -63,11 +63,6 @@ def parse_args(args=None):
             default=0,
             help='Desired momentum parameter'
             )
-
-    add_arg('-ls', '--learning_schedule',
-            type=bool,
-            default=False,
-            help='True if one wants to scale the learning as a function of epochs')
 
     add_arg('-bs', '--batch_size',
             type=int,
@@ -102,23 +97,15 @@ def parse_args(args=None):
     add_arg("-d", "--dataset",
             type=str,
             default="Franke",
-            choices=["Franke", "SRTM"],
-            help="Dataset to be used. If SRTM, -df must give path to file "
+            choices=["Franke", "Cancer", "MNIST"],
+            help="""Dataset to be used.
+                    Franke is continous fitting,
+                    Cancer is binary classification,
+                    MNIST is multi-category classification""",
             )
 
-    add_arg("-df", "--data-file",
-            type=str,
-            default=None,
-            help="Path to SRTM data file",
-            )
-
-    add_arg("--show",
-            dest="show",
+    add_arg("-show",
             action="store_true",
-            )
-
-    add_arg("--noshow",
-            action="store_false",
             dest="show",
             )
 
@@ -132,8 +119,6 @@ def parse_args(args=None):
             dest="save",
             )
 
-    parser.set_defaults(show=False)
-
     args = parser.parse_args(args)
 
     print("Runtime arguments:", args, "\n")
@@ -146,7 +131,6 @@ def parse_args(args=None):
     exec('args.lmb = ' + args.lmb)
     if np.shape(args.lmb) == ():
         args.lmb = [args.lmb, ]
-
 
     return args
 
