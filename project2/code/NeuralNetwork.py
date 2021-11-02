@@ -3,9 +3,10 @@ import autograd.numpy as anp
 from tqdm import tqdm
 from autograd import elementwise_grad, grad
 from SGD import mSGD
+from cost_activation import Costs, Activations
 
 
-class FFNN:  # FeedForwardNeuralNetwork
+class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
     def __init__(self,
                  design,
                  target,
@@ -22,13 +23,13 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.X = design             # Training data
         self.t = target             # Trainging outputs
         self.N = self.X.shape[0]    # Number of input values
-        self.static_target = target.copy() # unshuffled original data set 
+        self.static_target = target.copy() # unshuffled original data set
 
-        # Set mini batch size 
+        # Set mini batch size
         if batch_size == 0:
             self.batch_size = self.N
         else:
-            self.batch_size = batch_size  
+            self.batch_size = batch_size
 
         self.mini_batches = self.N // self.batch_size
 
@@ -59,18 +60,19 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.sgd_w = mSGD(gamma, self.nodes)
         self.sgd_b = mSGD(gamma, self.nodes)
 
-        # Activation functions available 
+        # Activation functions available
         activation_funcs = {'sigmoid': self.sigmoid,
                             'tanh': self.tanh,
+                            'sin': self.sin,
                             'relu': self.relu,
                             'leaky_relu': self.leaky_relu,
                             'softmax': self.softmax}
 
-        # Cost functions avaible 
+        # Cost functions avaible
         cost_funcs = {'MSE': self.MSE,
                       'accuracy': self.accuracy_score}
 
-        # Callable activation and cost function and their derivatives 
+        # Callable activation and cost function and their derivatives
         self.activation = activation_funcs[activation]
         self.cost = cost_funcs[cost]
         self.activation_der = elementwise_grad(self.activation)
@@ -83,11 +85,11 @@ class FFNN:  # FeedForwardNeuralNetwork
          - Starts by calculating the gradients of each layer's activation function
          - Updates the weights and biases accordingly
         """
-        # Calculate gradient of output layer  
-        # No activation for output layer, so only derivative of cost function 
+        # Calculate gradient of output layer
+        # No activation for output layer, so only derivative of cost function
         self.delta_l[-1] = self.cost_der(self.Layers[-1])
-        
-        # Calculate gradient of hidden layers backwards 
+
+        # Calculate gradient of hidden layers backwards
         for i in reversed(range(1, len(self.nodes) - 1)):
             self.delta_l[i] = self.delta_l[i + 1] @ self.weights[i + 1].T \
                                 * self.activation_der(self.z[i])
@@ -110,7 +112,7 @@ class FFNN:  # FeedForwardNeuralNetwork
             self.z[n] = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
             self.Layers[n] = self.activation(self.z[n])
 
-        self.Layers[-1] = self.z[n] # No acitvation func for output layer 
+        self.Layers[-1] = self.z[n] # No acitvation func for output layer
 
     def SGD(self):
         # Initialize randomized training data batch, and target batch
@@ -121,21 +123,20 @@ class FFNN:  # FeedForwardNeuralNetwork
     def train(self, epochs):
         """
         Training the neural network by looping over epochs:
-         1) Initializing shuffled minibatches 
+         1) Initializing shuffled minibatches
          2) Update each layers with their weights and biases
          3) Updates weights and biases with backpropagation
         """
-        indicies = np.arange(self.N) # Inidices of the design matrix  
-        pbar = tqdm(range(epochs), desc="Training epochs")
-
+        indicies = np.arange(self.N)
+        pbar = tqdm(range(epochs), desc=f"eta: {self.eta}, lambda: {self.lmb}. Training")
         for _ in pbar:
-            np.random.shuffle(indicies) # Shuffle indices 
+            np.random.shuffle(indicies) # Shuffle indices
 
             self.X_s = self.X[indicies] # Shuffled input
             self.static_s = self.static_target[indicies] # Shuffled target
 
             for i in range(0, self.N, self.batch_size):
-                # Loop over minibatches 
+                # Loop over minibatches
                 self.Layers[0] = self.X_s[i:i+self.batch_size]
                 self.t = self.static_s[i:i+self.batch_size]
 
@@ -161,35 +162,6 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.weights = data["weights"]
         self.bias = data["biases"]
 
-    """
-    cost functions
-    """
-    def MSE(self, t_):
-        mse = (t_ - self.t)**2 / (len(self.t))
-        return mse
-
-    def accuracy_score(self, t_):
-        # To be implemented 
-        return None
-
-
-    """
-    Activation functions
-    """
-    def sigmoid(self, x):
-        return 1 / (1 + anp.exp(-x))
-
-    def tanh(self, x):
-        return anp.tanh(x)
-
-    def relu(self, x):
-        return anp.where(x > 0, x, 0)
-
-    def leaky_relu(self, x):
-        return anp.where(x > 0, x, 0.01*x)
-
-    def softmax(self, x):
-        return anp.exp(x) / anp.sum(anp.exp(x), axis=1, keepdims=True)
 
 def MSE(y, y_):
     return sum((y - y_) ** 2) / len(y)
@@ -220,15 +192,16 @@ if __name__ == "__main__":
 
     MM = FFNN(X_,
               z_train,
-              hidden_nodes=[50, 11],
+              hidden_nodes=[16],
               batch_size=args.bs,
-              learning_rate=0.2,
-              lmb=1e-4,
-              gamma=0.9,
+              learning_rate=0.1,
+              lmb=0,
+              gamma=0,
               activation="sigmoid",
               cost="MSE")
 
     MM.train(epochs)
+    print(np.c_[MM.predict(X_), z_train])
     nn_pred = MM.predict(X_test)
 
     print("Neural Network stochastic ")
