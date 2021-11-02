@@ -8,7 +8,7 @@ import utils
 # import plot
 from sklearn.linear_model import SGDRegressor
 from NeuralNetwork import FFNN
-import SGD 
+import SGD
 from collections import defaultdict
 from sklearn.metrics import accuracy_score
 import seaborn as sns
@@ -31,7 +31,7 @@ scale_conv = {"None": NoneScaler(), "S": StandardScaler(
 
 
 
-def analyse_NN(args):
+def NN_regression(args):
     p = args.polynomial
     etas = args.eta
     # lmbs = np.ones(5)
@@ -79,9 +79,10 @@ def analyse_NN(args):
         plt.show()
 
 
-def analyse_SGD(args):
+def linear_regression(args):
     p = args.polynomial
     etas = args.eta
+<<<<<<< HEAD
     lmbs = args.lmb # Default 0 
 
     if args.batch_size == 0:
@@ -89,6 +90,9 @@ def analyse_SGD(args):
     else:
         batch_sizes = np.array([args.batch_size])
 
+=======
+    lmbs = args.lmb  # Default 0
+>>>>>>> 3e28921612e9e00c347cfbf385f4effcc7a8515f
     scaler = scale_conv[args.scaling]
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p)
@@ -108,6 +112,7 @@ def analyse_SGD(args):
     beta0 = np.random.randn(utils.get_features(p))
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
+<<<<<<< HEAD
             for k, batch_size in enumerate(batch_sizes):
                 MSE_train, MSE_test = SGD.SGD((X_train, X_test), 
                                                 (z_train, z_test), 
@@ -124,6 +129,24 @@ def analyse_SGD(args):
                 # plt.plot(data['test_MSE'][i][j], label='test')
                 # plt.legend()
                 # plt.show()
+=======
+            beta0 = np.random.randn(utils.get_features(p))
+
+            MSE_train, MSE_test = SGD.SGD((X_train, X_test),
+                                            (z_train, z_test),
+                                            args,
+                                            beta0,
+                                            eta,
+                                            lmb)
+
+            data["train_MSE"][i][j] = MSE_train
+            data["test_MSE"][i][j] = MSE_test
+
+            # plt.plot(data['train_MSE'][i][j], label='train')
+            # plt.plot(data['test_MSE'][i][j], label='test')
+            # plt.legend()
+            # plt.show()
+>>>>>>> 3e28921612e9e00c347cfbf385f4effcc7a8515f
 
     for name, accuracy in data.items():
         fig, ax = plt.subplots()
@@ -149,3 +172,9 @@ def analyse_SGD(args):
         ax.invert_yaxis()
         ax.set_title(name)
         plt.show()
+
+def logistic_regression(args):
+    pass
+
+def NN_classification(args):
+    pass

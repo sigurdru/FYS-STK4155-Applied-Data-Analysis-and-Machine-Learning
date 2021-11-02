@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from NeuralNetwork import FFNN
-from analysis import split_scale, NoneScaler
+from utils import split_scale
+from analysis import NoneScaler
 np.random.seed(2021)
 
 
