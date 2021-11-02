@@ -137,7 +137,10 @@ def parse_args(args=None):
 
 def main():
     args = parse_args()
-    analyse_NN(args)
+    if args.method == "reg":
+        analyse_SGD(args)
+    else:
+        analyse_NN(args)
 
 
 if __name__ == "__main__":
