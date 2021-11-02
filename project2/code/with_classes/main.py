@@ -1,5 +1,5 @@
 import argparse
-from analysis import analyse, analyse_SGD_NN_plots
+from analysis import analyse_NN, analyse_SGD
 import numpy as np
 
 # np.random.seed(696969)
@@ -143,7 +143,7 @@ def parse_args(args=None):
 
 def main():
     args = parse_args()
-    analyse(args)
+    analyse_NN(args)
 
 
 if __name__ == "__main__":

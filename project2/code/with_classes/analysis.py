@@ -14,6 +14,7 @@ from sklearn.metrics import accuracy_score
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib import cm
+from SGD import SGD
 
 class NoneScaler(StandardScaler):
     """ 
@@ -60,10 +61,54 @@ def split_scale(X, z, ttsplit, scaler):
     return X_train, X_test, z_train, z_test
 
 
-def analyse(args):
+def analyse_NN(args):
     p = args.polynomial
     etas = args.eta
     # lmbs = np.ones(5)
+    lmbs = [0,]
+    scaler = scale_conv[args.scaling]
+    x, y, z = utils.load_data(args)
+    X = utils.create_X(x, y, p)
+    X_train, X_test, z_train, z_test = split_scale(X, z, args.tts, scaler)
+    data = defaultdict(lambda: np.zeros((len(etas), len(lmbs)), dtype=float))
+
+    for i, eta in enumerate(etas):
+        for j, lmb in enumerate(lmbs):
+            NN = FFNN(X_train,
+                      z_train,
+                      hidden_nodes=[10,10],
+                      batch_size=args.batch_size,
+                      learning_rate=eta,
+                      lmb=lmb,
+                      )
+            NN.train(args.num_epochs) # Default 100 
+
+            train_pred = NN.predict(X_train)
+            test_pred = NN.predict(X_test)
+
+            print('eta={:.2f}: MSE_test={:.3f}'.format(eta, MSE(z_test,test_pred)[0]))
+            data["train_accuracy"][i][j] = MSE(z_train, train_pred)
+            data["test_accuracy"][i][j] = MSE(z_test, test_pred)
+
+
+    for name, accuracy in data.items():
+        plt.plot(etas, data[name], 'o-', label=name)
+        fig, ax = plt.subplots()
+        sns.heatmap(accuracy, ax=ax, annot=True)
+        # ax.set_title(name)
+        ax.set_xlabel("$\eta$")
+        # ax.setylabel("$\lambda$")
+        # plt.show()
+    plt.legend()
+    plt.show()
+
+
+def analyse_SGD(args):
+    """
+    To be completed 
+    """
+    p = args.polynomial
+    etas = args.eta
     lmbs = [0,]
     scaler = scale_conv[args.scaling]
     x, y, z = utils.load_data(args)
@@ -74,66 +119,47 @@ def analyse(args):
         for j, lmb in enumerate(lmbs):
             NN = FFNN(X_train,
                       z_train,
-                      hidden_nodes=[10, 10],
-                      batch_size=args.num_points,
+                      hidden_nodes=[10,10],
+                      batch_size=args.batch_size,
                       learning_rate=eta,
                       lmb=lmb,
                       )
-            NN.train(100)
-            print('finished training')
 
-            train_pred = NN.predict(X_train)
-            test_pred = NN.predict(X_test)
+            # rnd_seed = np.random.randint(0,1000)
+            np.random.seed(69420)
+            NN.train(args.num_epochs)
+            print('finished training')
+            
+            # train_pred = NN.predict(X_train)
+            # test_pred = NN.predict(X_test)
+            X_ = split_scale(X, z, 0, scaler)[0]
+            z_ = NN.predict(X_) 
+            z_NN = z_.reshape((x.shape[0], x.shape[1]))
+            z_MSE = MSE(z, z_)
+
+
+            # OLS_beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
+            # OLS_train_pred = X_train @ OLS_beta 
+            # OLS_test_pred = X_test @ OLS_beta
+            # z_OLS = (X @ OLS_beta).reshape((x.shape[0], x.shape[1]))
+
+            np.random.seed(100)
+            beta0 = np.random.randn(utils.get_features(p)) 
+            # beta_SGD = SGD((X_train, X_test), (z_train, z_test), args, beta0, eta, gamma=0)
+            # tr_m,te_m = SGD((X_train, X_test), (z_train, z_test), args, beta0, eta, gamma=args.gamma)
+
+            # z_SGD = (X_ @ beta_SGD).reshape((x.shape[0], x.shape[1]))
 
             fig = plt.figure()
             ax = fig.gca(projection="3d")
             # Plot the surface.
-            # print(np.shape(z))
-            # print(np.shape(train_pred))
-            # exit()
-            z = NN.predict(X).reshape((x.shape[0], x.shape[1]))
-            surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm,
-                                linewidth=0, antialiased=False)
-            # Customize the z axis.
-            # ax.zaxis.set_major_locator(LinearLocator(10))
-            # ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
+            # surf = ax.plot_surface(x, y, z_SGD, cmap=cm.coolwarm,linewidth=0, antialiased=False);ax.set_title('SGD')
+            surf = ax.plot_surface(x, y, z_NN, cmap=cm.coolwarm, linewidth=0, antialiased=False);ax.set_title('NN')
+            # surf = ax.plot_surface(x, y, z_OLS, cmap=cm.coolwarm, linewidth=0, antialiased=False);ax.set_title('OLS')
 
-            # Add a color bar which maps values to colors.
             fig.colorbar(surf, shrink=0.5, aspect=5)
             plt.show()
             exit()
 
-            OLS_beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
-            OLS_train_pred = X_train @ OLS_beta 
-            OLS_test_pred = X_test @ OLS_beta
-
-            print('eta={:.2f}: MSE_test={:.3f}'.format(eta, MSE(z_test,test_pred)[0]))
-            data["train_accuracy"][i][j] = MSE(z_train, train_pred)
-            data["test_accuracy"][i][j] = MSE(z_test, test_pred)
-            data["OLS_train"][i][j] = MSE(z_train, OLS_train_pred)
-            data["OLS_test"][i][j] = MSE(z_test, OLS_test_pred)
-            # exit()
-
-            # plt.plot()
-    # print(data["train_accuracy"]);exit()
-
-    for name, accuracy in data.items():
-        # exit()
-        plt.plot(etas, data[name], 'o-', label=name)
-        # fig, ax = plt.subplots()
-        # sns.heatmap(accuracy, ax=ax, annot=True)
-        # ax.set_title(name)
-        # ax.set_xlabel("$\eta$")
-        # ax.setylabel("$\lambda$")
-        # plt.show()
-    plt.legend()
-    plt.show()
-
 def MSE(z, ztilde):
     return sum((z - ztilde)**2) / len(z)
-# def SGD(args):
-#     for eta in self.args.eta:
-#         beta = np.random.randn(utils.get_features(self.p))
-
-#         for epoch_i in range(self.args.n_epochs):
-#             pass
