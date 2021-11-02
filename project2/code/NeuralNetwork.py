@@ -3,9 +3,10 @@ import autograd.numpy as anp
 from tqdm import tqdm
 from autograd import elementwise_grad, grad
 from SGD import mSGD
+from cost_activation import Costs, Activations
 
 
-class FFNN:  # FeedForwardNeuralNetwork
+class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
     def __init__(self,
                  design,
                  target,
@@ -60,6 +61,7 @@ class FFNN:  # FeedForwardNeuralNetwork
 
         activation_funcs = {'sigmoid': self.sigmoid,
                             'tanh': self.tanh,
+                            'sin': self.sin,
                             'relu': self.relu,
                             'leaky_relu': self.leaky_relu,
                             'softmax': self.softmax}
@@ -128,7 +130,7 @@ class FFNN:  # FeedForwardNeuralNetwork
          3) Updates weights and biases with backpropagation
         """
         indicies = np.arange(self.N)
-        pbar = tqdm(range(epochs), desc="Training epochs")
+        pbar = tqdm(range(epochs), desc=f"eta: {self.eta}, lambda: {self.lmb}. Training")
         for _ in pbar:
             np.random.shuffle(indicies)
             for i in range(0, self.N, self.batch_size):
@@ -158,39 +160,6 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.weights = data["weights"]
         self.bias = data["biases"]
 
-    """
-    cost functions
-    """
-    def MSE(self, t_):
-        # print('mse:')
-        # print(((t_ - self.t)**2) / len(self.t))
-        # mse_sum = anp.sum((t_ - self.t)**2) / len(self.t)
-        mse = (t_ - self.t)**2 / len(self.t)
-        # print(np.shape(mse))
-        # exit()
-        return mse
-
-    def accuracy_score(self, t_):
-        return None
-
-
-    """
-    Activation functions
-    """
-    def sigmoid(self, x):
-        return 1 / (1 + anp.exp(-x))
-
-    def tanh(self, x):
-        return anp.tanh(x)
-
-    def relu(self, x):
-        return anp.where(x > 0, x, 0)
-
-    def leaky_relu(self, x):
-        return anp.where(x > 0, x, 0.01*x)
-
-    def softmax(self, x):
-        return anp.exp(x) / anp.sum(anp.exp(x), axis=1, keepdims=True)
 
 def MSE(y, y_):
     return sum((y - y_) ** 2) / len(y)
@@ -221,15 +190,16 @@ if __name__ == "__main__":
 
     MM = FFNN(X_,
               z_train,
-              hidden_nodes=[50, 11],
+              hidden_nodes=[16],
               batch_size=args.bs,
-              learning_rate=0.2,
-              lmb=1e-4,
-              gamma=0.9,
+              learning_rate=0.1,
+              lmb=0,
+              gamma=0,
               activation="sigmoid",
               cost="MSE")
 
     MM.train(epochs)
+    print(np.c_[MM.predict(X_), z_train])
     nn_pred = MM.predict(X_test)
 
     print("Neural Network stochastic ")
