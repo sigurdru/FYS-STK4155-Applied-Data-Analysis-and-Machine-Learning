@@ -93,6 +93,12 @@ def parse_args(args=None):
                  """,
             )
 
+    add_arg("-hn", "--hidden_nodes",
+            type=str,
+            default="10,10",
+            help="Number of nodes in each hidden layer",
+            )
+
     add_arg("-d", "--dataset",
             type=str,
             default="Franke",
@@ -136,6 +142,8 @@ def parse_args(args=None):
     exec('args.lmb = ' + args.lmb)
     if np.shape(args.lmb) == ():
         args.lmb = [args.lmb, ]
+
+    exec(f"args.hidden_nodes=[{args.hidden_nodes},]")
 
     return args
 
