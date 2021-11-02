@@ -1,8 +1,7 @@
 import argparse
-from analysis import analyse_NN, analyse_SGD
+from analysis import NN_classification, NN_regression, linear_regression, logistic_regression
 import numpy as np
 
-# np.random.seed(2021)
 
 def parse_args(args=None):
     """
@@ -119,6 +118,12 @@ def parse_args(args=None):
             dest="save",
             )
 
+    add_arg("-seed",
+            type=int,
+            default=2021,
+            help="Random seed. If 0, no seed is used"
+            )
+
     args = parser.parse_args(args)
 
     print("Runtime arguments:", args, "\n")
@@ -137,11 +142,19 @@ def parse_args(args=None):
 
 def main():
     args = parse_args()
-    if args.method == "reg":
-        analyse_SGD(args)
-    else:
-        analyse_NN(args)
+    if args.seed:
+        np.random.seed(args.seed)
 
+    if args.dataset == "Franke":
+        if args.method == "reg":
+            linear_regression(args)
+        else:
+            NN_regression(args)
+    else:
+        if args.method == "reg":
+            logistic_regression(args)
+        else:
+            NN_classification(args)
 
 if __name__ == "__main__":
     main()

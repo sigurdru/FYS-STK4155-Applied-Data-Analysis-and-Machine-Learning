@@ -8,7 +8,7 @@ import utils
 # import plot
 from sklearn.linear_model import SGDRegressor
 from NeuralNetwork import FFNN
-import SGD 
+import SGD
 from collections import defaultdict
 from sklearn.metrics import accuracy_score
 import seaborn as sns
@@ -31,7 +31,7 @@ scale_conv = {"None": NoneScaler(), "S": StandardScaler(
 
 
 
-def analyse_NN(args):
+def NN_regression(args):
     p = args.polynomial
     etas = args.eta
     # lmbs = np.ones(5)
@@ -79,10 +79,10 @@ def analyse_NN(args):
         plt.show()
 
 
-def analyse_SGD(args):
+def linear_regression(args):
     p = args.polynomial
     etas = args.eta
-    lmbs = args.lmb # Default 0 
+    lmbs = args.lmb  # Default 0
     scaler = scale_conv[args.scaling]
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p)
@@ -98,10 +98,10 @@ def analyse_SGD(args):
         for j, lmb in enumerate(lmbs):
             beta0 = np.random.randn(utils.get_features(p))
 
-            MSE_train, MSE_test = SGD.SGD((X_train, X_test), 
-                                            (z_train, z_test), 
-                                            args, 
-                                            beta0, 
+            MSE_train, MSE_test = SGD.SGD((X_train, X_test),
+                                            (z_train, z_test),
+                                            args,
+                                            beta0,
                                             eta,
                                             lmb)
 
@@ -123,3 +123,9 @@ def analyse_SGD(args):
         ax.set_ylabel("$\eta$")
         ax.set_xlabel("epochs")
         plt.show()
+
+def logistic_regression(args):
+    pass
+
+def NN_classification(args):
+    pass
