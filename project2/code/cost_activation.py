@@ -25,6 +25,3 @@ class Activations:
 
     def softmax(self, x):
         return np.exp(x) / np.sum(np.exp(x), axis=1, keepdims=True)
-
-    def sin(self, x):
-        return np.sin(x / np.max(np.abs(x)))

@@ -157,7 +157,6 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         self.weights = data["weights"]
         self.bias = data["biases"]
 
-
 if __name__ == "__main__":
     from utils import *
     from sklearn.model_selection import train_test_split
@@ -170,7 +169,7 @@ if __name__ == "__main__":
         dataset = "Franke"
         bs = 32
     args = Args()
-    epochs = 100
+    epochs = 1000
 
     x, y, z = load_data(args)
     X = create_X(x, y, args.polynomial, intercept=False)
@@ -190,6 +189,6 @@ if __name__ == "__main__":
     print(np.c_[MM.predict(X_), z_train])
     nn_pred = MM.predict(X_test)
 
-    print("Neural Network stochastic ")
+    print("Neural Network")
     print("    MSE:", MSE(z_test, nn_pred))
     print("    R2-score:", R2(z_test, nn_pred))
