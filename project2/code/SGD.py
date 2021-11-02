@@ -1,5 +1,5 @@
 import numpy as np
-
+import utils 
 
 
 
@@ -57,8 +57,8 @@ def SGD(X, z, args, beta, eta, lmb=0):
         train_pred = (X_train @ beta)
         test_pred = (X_test @ beta)
 
-        MSE_train[epoch_i] = MSE(z_train.T[0], train_pred)
-        MSE_test[epoch_i] = MSE(z_test.T[0], test_pred)
+        MSE_train[epoch_i] = utils.MSE(z_train.T[0], train_pred)
+        MSE_test[epoch_i] = utils.MSE(z_test.T[0], test_pred)
 
         # eta = learning_schedule(epoch_i*m + i,args)
 
@@ -81,6 +81,3 @@ def learning_schedule(t, args):
     t1 = 1
     return t0/(t+t1)
 
-
-def MSE(y, y_pred):
-    return sum((y - y_pred) ** 2) / len(y)
