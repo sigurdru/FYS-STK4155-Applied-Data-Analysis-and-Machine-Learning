@@ -58,15 +58,8 @@ def SGD(X, z, args, beta, eta, gamma=0, lmb=0):
             xi = X_train_shuffle[i:i+M]
             zi = z_train_shuffle[i:i+M]
 
-<<<<<<< HEAD:project2/code/with_classes/SGD.py
             gradient = 2 * xi.T @ ((xi @ beta)-zi.T[0]) / M \
                         + 2 * lmb * beta 
-=======
-            # Dividing by M to get correct gradient
-            # Using zi.T[0] instead of zi, such that gradients have the same shape as beta
-            gradient = 2.0 * xi.T @ ((xi @ beta)-zi.T[0]) / M \
-                        + 2 * lmb * beta
->>>>>>> 40a16e79c48db34b21749e5cb49ee2365bf2c4c7:project2/code/SGD.py
 
             v = v * gamma + eta * gradient
             beta = beta - v
