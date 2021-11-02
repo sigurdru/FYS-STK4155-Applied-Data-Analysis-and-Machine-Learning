@@ -236,19 +236,27 @@ def NN_classification(args):
     dataset = utils.load_data(args)
     X, z_ = dataset.data, dataset.target.reshape(-1, 1)
     z = utils.categorical(z_)
-    NN = FFNN(X,
-              z,
+    scaler = scale_conv[args.scaling]
+    X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
+    print(X_train)
+
+    NN = FFNN(X_train,
+              z_train,
               hidden_nodes=args.hidden_nodes,
               batch_size=args.batch_size,
               learning_rate=args.eta[0],
               lmb=args.lmb[0],
               clas=True,
-              activation="sigmoid",
+              activation="leaky_relu",
               cost="accuracy",
               )
     NN.train(args.num_epochs)
-    probs = NN.predict(X)
+
+    probs = NN.predict(X_train)
     pred = np.argmax(probs, axis=1).reshape(-1, 1)
-    print(sum(z_))
-    print(np.sum(pred == z_) / len(z_))
+    print(np.sum(pred == z_train) / len(z_train))
+
+    probs = NN.predict(X_test)
+    pred = np.argmax(probs, axis=1).reshape(-1, 1)
+    print(np.sum(pred == z_test) / len(z_test))
 
