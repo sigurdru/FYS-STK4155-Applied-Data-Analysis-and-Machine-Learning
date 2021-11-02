@@ -28,7 +28,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         if batch_size == 0:
             self.batch_size = self.N
         else:
-            self.batch_size = batch_size  # Possibly redundant
+            self.batch_size = batch_size  
 
         self.mini_batches = self.N // self.batch_size
 
@@ -41,8 +41,8 @@ class FFNN:  # FeedForwardNeuralNetwork
         # first value corresponds to nr. of features in design matrix.
         self.nodes = np.array([self.X.shape[1], *hidden_nodes, self.t.shape[1]])
 
-        # There are four layers (1 input, 2 hidden, 1 output)
-        # Shapes:
+        # All layers of neural network (1 input, n hidden, 1 output)
+        # Shapes (k = nr. of data points):
         #  input   : (k, 21)
         #  hidden_n: (k, hidden_nodes[n])
         #  output  : (k, 1)
@@ -59,6 +59,7 @@ class FFNN:  # FeedForwardNeuralNetwork
         self.sgd_w = mSGD(gamma, self.nodes)
         self.sgd_b = mSGD(gamma, self.nodes)
 
+        # Activation functions available 
         activation_funcs = {'sigmoid': self.sigmoid,
                             'tanh': self.tanh,
                             'relu': self.relu,
