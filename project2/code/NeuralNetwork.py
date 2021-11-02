@@ -1,9 +1,22 @@
-import numpy as np
-import autograd.numpy as anp
+import autograd.numpy as np
 from tqdm import tqdm
-from autograd import elementwise_grad, grad
-from SGD import mSGD
+from autograd import elementwise_grad
 from cost_activation import Costs, Activations
+
+
+class Optimizer:
+    """
+    Learning optimizer for neural network.
+    Set gamma to give more or less momentum
+    """
+    def __init__(self, gamma=0, layer_sizes=None):
+        self.g = min(1, max(gamma, 0))  # ensure between 0 and 1
+        self.prev_v = [np.zeros(i) for i in layer_sizes]
+
+    def __call__(self, eta_grad, layer=0):
+        v = self.g * self.prev_v[layer] + eta_grad
+        self.prev_v[layer] = v
+        return v
 
 
 class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
@@ -17,53 +30,47 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
                  gamma=0,
                  activation="sigmoid",
                  cost="MSE",
-                 verbose=True,
                  ):
 
         self.X = design             # Training data
-        self.t = target             # Trainging outputs
+        self.static_target = target      # Trainging outputs
         self.N = self.X.shape[0]    # Number of input values
-        self.static_target = target.copy() # unshuffled original data set
 
         # Set mini batch size
-        if batch_size == 0:
+        if batch_size in [0, None]:
             self.batch_size = self.N
         else:
             self.batch_size = batch_size
-
         self.mini_batches = self.N // self.batch_size
 
         self.eta = learning_rate
         self.lmb = lmb
         bias0 = 0.01  # initial bias value
-        self.verbose = verbose
 
-        # Array with size of nodes [21,10,10,1]
         # first value corresponds to nr. of features in design matrix.
-        self.nodes = np.array([self.X.shape[1], *hidden_nodes, self.t.shape[1]])
+        self.nodes = np.array([self.X.shape[1], *hidden_nodes, self.static_target.shape[1]])
 
         # All layers of neural network (1 input, n hidden, 1 output)
-        # Shapes (k = nr. of data points):
-        #  input   : (k, 21)
-        #  hidden_n: (k, hidden_nodes[n])
-        #  output  : (k, 1)
+        # Shapes (N = nr. of data points):
+        #  input   : (N, 21)
+        #  hidden_n: (N, hidden_nodes[n])
+        #  output  : (N, 1)
         self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
         self.Layers[0] = self.X.copy()
 
         self.z = self.Layers.copy()  # Activation layer input
-        self.delta_l = self.Layers.copy() # Activation layer input gradient
+        self.delta_l = self.Layers.copy()  # Activation layer input gradient
 
         # Initial zero for weights ensures that weights[n] corresponds to Layers[n]
         self.weights = [0] + [np.random.randn(n, m) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
-        self.sgd_w = mSGD(gamma, self.nodes)
-        self.sgd_b = mSGD(gamma, self.nodes)
+        self.optim_w = Optimizer(gamma, self.nodes)
+        self.optim_b = Optimizer(gamma, self.nodes)
 
         # Activation functions available
         activation_funcs = {'sigmoid': self.sigmoid,
                             'tanh': self.tanh,
-                            'sin': self.sin,
                             'relu': self.relu,
                             'leaky_relu': self.leaky_relu,
                             'softmax': self.softmax}
@@ -77,7 +84,6 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         self.cost = cost_funcs[cost]
         self.activation_der = elementwise_grad(self.activation)
         self.cost_der = elementwise_grad(self.cost)
-
 
     def backpropagation(self):
         """
@@ -94,31 +100,20 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
             self.delta_l[i] = self.delta_l[i + 1] @ self.weights[i + 1].T \
                                 * self.activation_der(self.z[i])
 
-
         # Update weights and biases for each previous layer
         for n in reversed(range(1, len(self.nodes))):
-
+            # find weight gradient with l2-norm
             weight_gradient = self.Layers[n - 1].T @ self.delta_l[n] + self.lmb * self.weights[n]
-            self.weights[n] -= self.sgd_w(self.eta * weight_gradient, n)
-            self.bias[n] -= self.sgd_b(self.eta * np.sum(self.delta_l[n], axis=0), n)
-
-            # self.weights[n] -= self.sgd_w(self.eta * (self.Layers[n - 1].T @ self.delta_l[n]), n) #/ self.batch_size
-            # self.bias[n] -= self.sgd_b(self.eta * np.sum(self.delta_l[n].T, axis=1), n)
+            self.weights[n] -= self.optim_w(self.eta * weight_gradient, n)
+            self.bias[n] -= self.optim_b(self.eta * np.sum(self.delta_l[n], axis=0), n)
 
     def feed_forward(self):
         # Update the value at each layer from 1st hidden layer to ouput
         for n in range(1, len(self.nodes)):
-            # z_h = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
             self.z[n] = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
             self.Layers[n] = self.activation(self.z[n])
 
-        self.Layers[-1] = self.z[n] # No acitvation func for output layer
-
-    def SGD(self):
-        # Initialize randomized training data batch, and target batch
-        inds = np.random.choice(np.arange(self.N), size=self.batch_size, replace=False)
-        self.Layers[0] = self.X[inds]
-        self.t = self.static_target[inds]
+        self.Layers[-1] = self.z[n]  # No acitvation func for output layer
 
     def train(self, epochs):
         """
@@ -130,15 +125,15 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         indicies = np.arange(self.N)
         pbar = tqdm(range(epochs), desc=f"eta: {self.eta}, lambda: {self.lmb}. Training")
         for _ in pbar:
-            np.random.shuffle(indicies) # Shuffle indices
+            np.random.shuffle(indicies)  # Shuffle indices
 
-            self.X_s = self.X[indicies] # Shuffled input
-            self.static_s = self.static_target[indicies] # Shuffled target
+            self.X_s = self.X[indicies]  # Shuffled input
+            self.shuffle_t = self.static_target[indicies]  # Shuffled target
 
             for i in range(0, self.N, self.batch_size):
                 # Loop over minibatches
-                self.Layers[0] = self.X_s[i:i+self.batch_size]
-                self.t = self.static_s[i:i+self.batch_size]
+                self.Layers[0] = self.X_s[i: i + self.batch_size]
+                self.t = self.shuffle_t[i: i + self.batch_size]
 
                 self.feed_forward()
                 self.backpropagation()
@@ -163,16 +158,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         self.bias = data["biases"]
 
 
-def MSE(y, y_):
-    return sum((y - y_) ** 2) / len(y)
-
-def R2(y, y_):
-    return 1 - sum((y - y_) ** 2) / sum((y - np.mean(y)) ** 2)
-
-
 if __name__ == "__main__":
-    # The above imports numpy as np so we have to redefine:
-    # import autograd.numpy as np
     from utils import *
     from sklearn.model_selection import train_test_split
     np.random.seed(2021)
@@ -195,8 +181,8 @@ if __name__ == "__main__":
               hidden_nodes=[16],
               batch_size=args.bs,
               learning_rate=0.1,
-              lmb=0,
-              gamma=0,
+              lmb=1e-3,
+              gamma=0.2,
               activation="sigmoid",
               cost="MSE")
 
