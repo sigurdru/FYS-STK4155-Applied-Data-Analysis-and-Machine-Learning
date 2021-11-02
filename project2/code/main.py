@@ -1,6 +1,8 @@
 import argparse
-import analysis
+from analysis import analyse
 import numpy as np
+
+np.random.seed(2021)
 
 def parse_args(args=None):
     """
@@ -12,7 +14,6 @@ def parse_args(args=None):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     add_arg = parser.add_argument
-
 
     add_arg('-m', '--method',
             type=str,
@@ -30,7 +31,7 @@ def parse_args(args=None):
 
     add_arg('-p', '--polynomial',
             type=int,
-            default="5",
+            default=5,
             help='Polynomial degree.',
             )
 
@@ -45,14 +46,14 @@ def parse_args(args=None):
             default=100,
             help='Number of epochs',
             )
-    
+
     add_arg('-eta',
             type = str,
-            default='0.1',
+            default='np.logspace(-5,0,6)',
             help="""Desired learning rate, can be array or float. 
             For example:
                     -eta 'np.linspace(0.001, 1, 100)'
-                    -eta 'np.logspace(0.001, 1, 10)' 
+                    -eta 'np.logspace(0.001, 1, 10)'
                     -eta 1
                     """,
             )
@@ -67,9 +68,9 @@ def parse_args(args=None):
             default=False,
             help='True if one wants to scale the learning as a function of epochs')
 
-    add_arg('-MB', '--minibatch',
+    add_arg('-bs', '--batch_size',
             type=int,
-            default=20,
+            default=None,
             help='Set size of minibatch'
             )
 
@@ -91,7 +92,7 @@ def parse_args(args=None):
             default="0",
             help='Lambda parameter',
             )
-            
+
     add_arg("-d", "--dataset",
             type=str,
             default="Franke",
@@ -125,25 +126,24 @@ def parse_args(args=None):
             dest="save",
             )
 
-
-
     parser.set_defaults(show=False)
 
     args = parser.parse_args(args)
 
     print("Runtime arguments:", args, "\n")
 
-    #for dynamic etas
+    # for dynamic etas
     exec('args.eta = ' + args.eta)
-    if np.shape(args.eta) == (): 
-        args.eta = [args.eta]
+    if np.shape(args.eta) == ():
+        args.eta = [args.eta, ]
 
     return args
 
 
 def main():
     args = parse_args()
-    analysis.analyze_SGD(args)
+    analyse(args)
+
 
 if __name__ == "__main__":
     main()
