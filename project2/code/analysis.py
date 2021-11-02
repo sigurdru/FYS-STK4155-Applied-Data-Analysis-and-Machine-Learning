@@ -153,8 +153,8 @@ def logistic_regression(args):
 def NN_classification(args):
     if args.dataset == "Cancer":
         cancer = utils.load_data(args)
-        X, z = cancer
-        z = z.reshape(-1, 1)
+        X, z = cancer.data, cancer.target.reshape(-1, 1)
+        # z = z.reshape(-1, 1)
         print(X.shape)
         print(z.shape)
         for i, eta in enumerate(args.eta):
@@ -165,7 +165,8 @@ def NN_classification(args):
                           batch_size=args.batch_size,
                           learning_rate=eta,
                           lmb=lmb,
-                          activation="softmax",
+                          clas=True,
+                          activation="sigmoid",
                           cost="accuracy",
                           )
                 NN.train(args.num_epochs)
