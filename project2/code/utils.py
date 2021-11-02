@@ -1,54 +1,42 @@
 import numpy as np
 import imageio
 from sklearn.model_selection import train_test_split as tts
+from sklearn.datasets import load_breast_cancer, load_digits
+# from torchvision.datasets import MNIST
+
 
 def get_features(i):
     """ Returns the number of features of the design matrix for polynomial degree i """
     return (i + 1) * (i + 2) // 2
 
+
 def load_data(args):
     """
     Creates / loads specified dataset.
     3 possibile datasets:
-        Franke:  Bivariate analytic function we will study
-        Test:    Simpler exponential func to test implementation of methods towards scikit-learn
-        SRTM:    Real-world terrain data loaded from file
+        Franke:   Bivariate analytic function, continuous fitting
+        Cancer:   Wisconsin breast cancer data, binary classification
+        MNIST:    Handwritten digits, multi-category classification
     Args:
-        args (argparse): object to store runtime args, specifies dataset and size
+        args (argparse): object to store runtime args, specifies dataset
     Returns
         x, y (2darray): uniformly drawn numbers in domain (0, 1)
         z    (2darray): function values
     """
-    N = args.num_points
     if args.dataset == "Franke":
+        N = args.num_points
         x = np.sort(np.random.uniform(size=N))
         y = np.sort(np.random.uniform(size=N))
         x, y = np.meshgrid(x, y)
         z = FrankeFunction(x, y, eps=args.epsilon)
+        return x, y, z
 
-    elif args.dataset == "SRTM":
-        if args.data_file is None:
-            path = "./../DataFiles/SRTM_data_Norway_1.tif"
-        else:
-            path = args.data_file
+    elif args.dataset == "Cancer":
+        return load_breast_cancer()
 
-        # numbers stolen from other group, can be changed
-        xstart = 50
-        ystart = 50
+    elif args.dataset == "MNIST":
+        return load_digits()
 
-        terrain = imageio.imread(path)
-        # to not deal with too large image, only NxN
-        if N != 0:
-            # Plot entire terrain map by setting N=0
-            terrain = terrain[xstart: xstart + N, ystart: ystart + N]
-        nx, ny = terrain.shape
-        x = np.sort(np.random.uniform(size=nx))
-        y = np.sort(np.random.uniform(size=ny))
-        x, y = np.meshgrid(x, y)
-
-        z = terrain.ravel().reshape(-1, 1) / np.max(terrain)
-
-    return x, y, z
 
 def FrankeFunction(x, y, eps=0):
     """
@@ -111,6 +99,15 @@ def create_X(x, y, n, intercept=True):
         return X[:, 1:]
 
 
+def categorical(y):
+    N = len(y)
+    M = np.max(y) + 1
+    Y = np.zeros((N, M))
+    for i in range(N):
+        Y[i, y[i]] = 1
+    return Y
+
+
 def split_scale(X, z, ttsplit, scaler):
     """
     Split and scale data
@@ -147,3 +144,6 @@ def MSE(z_target, z_tilde):
 
 def R2(z_target, z_tilde):
     return 1 - sum((z_target - z_tilde) ** 2) / sum((z_target - np.mean(z_target)) ** 2)
+
+def accuracy_score(target, t):
+    return np.sum(target == t) / len(target)

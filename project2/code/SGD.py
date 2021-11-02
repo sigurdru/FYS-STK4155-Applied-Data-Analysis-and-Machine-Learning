@@ -3,7 +3,7 @@ import utils
 
 
 
-def SGD(X, z, args, beta, eta, lmb=0):
+def SGD(X, z, args, beta, eta, batch_size, lmb=0, gamma=0):
     """
     Performs OLS regression using SGD
 
@@ -20,12 +20,12 @@ def SGD(X, z, args, beta, eta, lmb=0):
     """
 
     n = int(X[0].shape[0])  # number of datapoints for training
-    if args.batch_size == 0:
+    if batch_size == 0:
         M = n
     else:
-        M = args.batch_size  # size of minibatch
-
+        M = int(batch_size)  # size of minibatch
     m = n // M
+    
     v = 0
     X_train, X_test = X
     z_train, z_test = z
@@ -34,7 +34,9 @@ def SGD(X, z, args, beta, eta, lmb=0):
 
     MSE_train = np.zeros(args.num_epochs)
     MSE_test  = np.zeros(args.num_epochs)
-    eta_0 = eta
+
+
+    eta_0 = eta # To be used for learning schedule 
 
     for epoch_i in range(args.num_epochs):
         # Initialize randomized training data for epoch
@@ -50,15 +52,17 @@ def SGD(X, z, args, beta, eta, lmb=0):
 
             gradient = 2 * xi.T @ ((xi @ beta)-zi.T[0]) / M \
                         + 2 * lmb * beta
-
-            v = v * args.gamma + eta * gradient
+            v = v * gamma + eta * gradient
             beta = beta - v
 
         train_pred = (X_train @ beta)
         test_pred = (X_test @ beta)
 
-        MSE_train[epoch_i] = utils.MSE(z_train.T[0], train_pred)
-        MSE_test[epoch_i] = utils.MSE(z_test.T[0], test_pred)
+        tr_mse = utils.MSE(z_train.T[0], train_pred)
+        te_mse = utils.MSE(z_test.T[0], test_pred)
+        
+        MSE_train[epoch_i] = tr_mse if tr_mse < 1 else np.nan
+        MSE_test[epoch_i] = te_mse if te_mse < 1 else np.nan
 
         # eta = learning_schedule(epoch_i*m + i,args)
 

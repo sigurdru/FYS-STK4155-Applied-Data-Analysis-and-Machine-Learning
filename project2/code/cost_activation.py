@@ -7,7 +7,7 @@ class Costs:
         return mse
 
     def accuracy_score(self, t_):
-        raise NotImplementedError()
+        return -(self.t * np.log(t_) + (1 - self.t) * np.log(1 - t_))
 
 
 class Activations:
@@ -20,8 +20,9 @@ class Activations:
     def relu(self, x):
         return np.where(x > 0, x, 0)
 
-    def leaky_relu(self, x):
-        return np.where(x > 0, x, 0.01*x)
+    def leaky_relu(self, x, leak=0.01):
+        return np.where(x > 0, x, leak * x)
 
     def softmax(self, x):
-        return np.exp(x) / np.sum(np.exp(x), axis=1, keepdims=True)
+        exp = np.exp(x)
+        return exp / np.sum(exp, axis=1, keepdims=True)

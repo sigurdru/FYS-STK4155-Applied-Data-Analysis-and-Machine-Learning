@@ -1,8 +1,7 @@
 import argparse
-from analysis import analyse_NN, analyse_SGD
+from analysis import NN_classification, NN_regression, linear_regression, logistic_regression
 import numpy as np
 
-# np.random.seed(2021)
 
 def parse_args(args=None):
     """
@@ -66,7 +65,7 @@ def parse_args(args=None):
 
     add_arg('-bs', '--batch_size',
             type=int,
-            default=30,
+            default=36,
             help='Set size of minibatch'
             )
 
@@ -94,6 +93,12 @@ def parse_args(args=None):
                  """,
             )
 
+    add_arg("-hn", "--hidden_nodes",
+            type=str,
+            default="10,10",
+            help="Number of nodes in each hidden layer",
+            )
+
     add_arg("-d", "--dataset",
             type=str,
             default="Franke",
@@ -119,6 +124,12 @@ def parse_args(args=None):
             dest="save",
             )
 
+    add_arg("-seed",
+            type=int,
+            default=2021,
+            help="Random seed. If 0, no seed is used"
+            )
+
     args = parser.parse_args(args)
 
     print("Runtime arguments:", args, "\n")
@@ -132,13 +143,26 @@ def parse_args(args=None):
     if np.shape(args.lmb) == ():
         args.lmb = [args.lmb, ]
 
+    exec(f"args.hidden_nodes=[{args.hidden_nodes},]")
+
     return args
 
 
 def main():
     args = parse_args()
-    analyse_NN(args)
+    if args.seed:
+        np.random.seed(args.seed)
 
+    if args.dataset == "Franke":
+        if args.method == "reg":
+            linear_regression(args)
+        else:
+            NN_regression(args)
+    else:
+        if args.method == "reg":
+            logistic_regression(args)
+        else:
+            NN_classification(args)
 
 if __name__ == "__main__":
     main()
