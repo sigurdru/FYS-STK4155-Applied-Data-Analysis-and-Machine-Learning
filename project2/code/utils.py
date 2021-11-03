@@ -133,9 +133,13 @@ def split_scale(X, z, ttsplit, scaler):
     X_train = scaler.transform(X_train)
     X_test = scaler.transform(X_test)
 
-    scaler.fit(z_train)
-    z_train = scaler.transform(z_train)
-    z_test = scaler.transform(z_test)
+    if np.min(z) < 0 or np.max(z) > 1:
+        """
+        Avoid scaling binary classification targets of 0 and 1  
+        """
+        scaler.fit(z_train)
+        z_train = scaler.transform(z_train)
+        z_test = scaler.transform(z_test)
 
     return X_train, X_test, z_train, z_test
 
