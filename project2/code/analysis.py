@@ -27,7 +27,7 @@ class NoneScaler(StandardScaler):
 
 
 scale_conv = {"None": NoneScaler(), "S": StandardScaler(
-    with_std=False), "N": Normalizer(), "M": MinMaxScaler()}
+    with_std=True), "N": Normalizer(), "M": MinMaxScaler()}
 
 
 def NN_regression(args):
@@ -234,15 +234,15 @@ def logistic_regression(args):
 
 def NN_classification(args):
     if args.dataset == "Cancer":
+        scaler = scale_conv[args.scaling]
         cancer = utils.load_data(args)
         X, z = cancer.data, cancer.target.reshape(-1, 1)
+        X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
         # z = z.reshape(-1, 1)
-        print(X.shape)
-        print(z.shape)
         for i, eta in enumerate(args.eta):
             for j, lmb in enumerate(args.lmb):
-                NN = FFNN(X,
-                          z,
+                NN = FFNN(X_train,
+                          z_train,
                           hidden_nodes=args.hidden_nodes,
                           batch_size=args.batch_size,
                           learning_rate=eta,
@@ -251,9 +251,11 @@ def NN_classification(args):
                           activation="sigmoid",
                           cost="accuracy",
                           )
-                NN.train(args.num_epochs)
-                print(NN.weights)
 
+                NN.train(args.num_epochs)
+                Y = NN.predict(X)
+                print('accuracy:')
+                print(np.sum(z == Y, where=True) / len(z) )
     else:
         train, test = utils.load_data(args)
         # X_train, z_train = train.
