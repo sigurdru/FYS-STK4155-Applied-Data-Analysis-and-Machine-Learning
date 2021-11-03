@@ -19,7 +19,15 @@ class Optimizer:
         return v
 
 
-class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
+class FFNN(Costs, Activations):  
+    """
+    Feed Forward Neural Network
+
+    from cost_activations.py:
+    Costs, Activations
+     - contains different cost and activation functions 
+       used for backpropagation 
+    """
     def __init__(self,
                  design,
                  target,
@@ -28,46 +36,41 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
                  learning_rate=0.1,
                  lmb=0,
                  gamma=0,
-                 clas=False,
                  activation="sigmoid",
                  cost="MSE",
                  output_activation="none"
                  ):
+
         self.X = design             # Training data
-        # self.t = target 
-        self.static_target = target      # Trainging outputs
         self.N = self.X.shape[0]    # Number of input values
+        self.static_target = target # Trainging outputs
 
         # Set mini batch size
         if batch_size in [0, None]:
             self.batch_size = self.N
         else:
             self.batch_size = batch_size
-        self.mini_batches = self.N // self.batch_size
 
-        self.clas = clas  # wether we do classification or not
         self.eta = learning_rate
         self.lmb = lmb
         bias0 = 0.01  # initial bias value
 
-        # first value corresponds to nr. of features in design matrix.
+        # Number of nodes in all layers 
         self.nodes = np.array([self.X.shape[1], *hidden_nodes, self.static_target.shape[1]])
 
         # All layers of neural network (1 input, n hidden, 1 output)
-        # Shapes (N = nr. of data points):
-        #  input   : (N, 21)
-        #  hidden_n: (N, hidden_nodes[n])
-        #  output  : (N, 1)
+        # Number of rows in each layer corresponds to the number of data points   
         self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
         self.Layers[0] = self.X.copy()
 
-        self.z = self.Layers.copy()  # Activation layer input
-        self.delta_l = self.Layers.copy()  # Activation layer input gradient
+        self.z = self.Layers.copy()         # Activation layer input
+        self.delta_l = self.Layers.copy()   # Activation layer input gradient
 
         # Initial zero for weights ensures that weights[n] corresponds to Layers[n]
         self.weights = [0] + [np.random.normal(scale=2 / n, size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
+        # Calculate gradients with momentum (gamma=0 by default)
         self.optim_w = Optimizer(gamma, self.nodes)
         self.optim_b = Optimizer(gamma, self.nodes)
 
@@ -92,6 +95,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         self.out_der = elementwise_grad(self.activation_out)
         self.cost_der = elementwise_grad(self.cost)
 
+
     def backpropagation(self):
         """
         Updates weights and biases with backwards propagation.
@@ -103,10 +107,11 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         if self.activation_out.__name__ == 'softmax' and self.cost.__name__ == 'cross_entropy':
             # Analytical derivative for softmax and cross entropy 
             self.delta_l[-1] = self.Layers[-1] - self.t
+
         else:
             self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
 
-        # Calculate gradient of hidden layers backwards
+        # Calculate gradients of the hidden layers
         for i in reversed(range(1, len(self.nodes) - 1)):
             self.delta_l[i] = self.delta_l[i + 1] @ self.weights[i + 1].T \
                                 * self.activation_der(self.z[i])
@@ -120,12 +125,12 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
 
 
     def feed_forward(self):
-        # Update the value at each layer from 1st hidden layer to ouput
+        # Update the hidden layers
         for n in range(1, len(self.nodes)):
             self.z[n] = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
             self.Layers[n] = self.activation(self.z[n])
 
-        self.Layers[-1] = self.activation_out(self.z[n])  # Different activation func for output layer
+        self.Layers[-1] = self.activation_out(self.z[n]) # Update final layer 
 
 
     def train(self, epochs, train_history=False):
@@ -137,11 +142,12 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         """
 
         history = np.zeros(epochs)
+        errors = np.zeros(epochs)
 
         indicies = np.arange(self.N)
         pbar = tqdm(range(epochs), desc=f"eta: {self.eta}, lambda: {self.lmb}. Training")
 
-        for _ in pbar:
+        for epoch in pbar:
             np.random.shuffle(indicies)  # Shuffle indices
 
             self.X_s = self.X[indicies]  # Shuffled input
@@ -160,18 +166,22 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
                 self.t = self.static_target
                 output = self.predict(self.X)
                 pred = np.argmax(output, axis=1).reshape(-1,1)
+
+                loss = output - self.t
+
                 if self.nodes[-1] > 1:
                     r = np.argmax(self.t, axis=1).reshape(-1,1)
-                    history[_] = np.sum(pred == r) / len(r)
+                    history[epoch] = np.sum(pred == r) / len(r)
+                    errors[epoch] = np.mean(loss, axis=0)[0]
                 else:
-                    history[_] = np.sum(self.cost(pred), axis=1)
-        return history 
+                    history[epoch] = np.sum(self.cost(pred), axis=1)
+        return history, errors
+
 
     def predict(self, x):
         """
         input: x (ndarray)
-        Uses the final weights and biases from the trained network
-        Returns the resulting ouput layer.
+        Calculate output layer with updated weights and biases
         """
         self.Layers[0] = x
         self.feed_forward()
@@ -180,11 +190,17 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         return self.Layers[-1]
 
     def save(self, fname):
+        """
+        Save weights and biases of trained network  
+        """
         data = {"weights": self.weights, "biases": self.bias}
         fname += + ".npy" if ".npy" not in fname else ""
         np.save("../saved_nets/" + fname, data)
 
     def load(self, fname):
+        """
+        Load weights and biases from trained network 
+        """
         fname += ".npy" if ".npy" not in fname else ""
         data = np.load("../saved_nets/" + fname, allow_pickle=True).item()
         self.weights = data["weights"]
