@@ -181,10 +181,12 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
 
     def save(self, fname):
         data = {"weights": self.weights, "biases": self.bias}
-        np.save(data, fname)
+        fname += + ".npy" if ".npy" not in fname else ""
+        np.save("../saved_nets/" + fname, data)
 
     def load(self, fname):
-        data = np.load(fname)
+        fname += ".npy" if ".npy" not in fname else ""
+        data = np.load("../saved_nets/" + fname, allow_pickle=True).item()
         self.weights = data["weights"]
         self.bias = data["biases"]
 
