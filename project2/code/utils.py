@@ -1,8 +1,8 @@
 import numpy as np
 import imageio
 from sklearn.model_selection import train_test_split as tts
-from sklearn.datasets import load_breast_cancer as lbc
-from torchvision.datasets import MNIST
+from sklearn.datasets import load_breast_cancer, load_digits
+# from torchvision.datasets import MNIST
 
 
 def get_features(i):
@@ -32,12 +32,10 @@ def load_data(args):
         return x, y, z
 
     elif args.dataset == "Cancer":
-        return lbc(return_X_y=False)
+        return load_breast_cancer()
 
     elif args.dataset == "MNIST":
-        train = MNIST(root="data/", download=True)
-        test = MNIST(root="data/", train=False)
-        return train, test
+        return load_digits()
 
 
 def FrankeFunction(x, y, eps=0):
@@ -99,6 +97,15 @@ def create_X(x, y, n, intercept=True):
         return X
     else:
         return X[:, 1:]
+
+
+def categorical(y):
+    N = len(y)
+    M = np.max(y) + 1
+    Y = np.zeros((N, M))
+    for i in range(N):
+        Y[i, y[i]] = 1
+    return Y
 
 
 def split_scale(X, z, ttsplit, scaler):

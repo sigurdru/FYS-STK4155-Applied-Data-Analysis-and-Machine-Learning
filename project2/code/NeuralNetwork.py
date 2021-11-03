@@ -79,7 +79,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
 
         # Cost functions avaible
         cost_funcs = {'MSE': self.MSE,
-                      'accuracy': self.accuracy_score}
+                      'cross_entropy': self.cross_entropy}
 
         # Callable activation and cost function and their derivatives
         self.activation = activation_funcs[activation]
@@ -102,6 +102,9 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
 
         else:
             self.delta_l[-1] = self.cost_der(self.Layers[-1])
+        # print(self.out_der(self.z[-1]))
+        # print(np.max(self.delta_l[-1]))
+        # input()
 
         # Calculate gradient of hidden layers backwards
         for i in reversed(range(1, len(self.nodes) - 1)):
@@ -112,6 +115,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         for n in reversed(range(1, len(self.nodes))):
             # find weight gradient with l2-norm
             weight_gradient = self.Layers[n - 1].T @ self.delta_l[n] + self.lmb * self.weights[n]
+            # print(weight_gradient)
             self.weights[n] -= self.optim_w(self.eta * weight_gradient, n)
             self.bias[n] -= self.optim_b(self.eta * np.sum(self.delta_l[n], axis=0), n)
 
@@ -149,7 +153,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
 
                 self.feed_forward()
                 self.backpropagation()
-
+                # input()
     def predict(self, x):
         """
         input: x (ndarray)
