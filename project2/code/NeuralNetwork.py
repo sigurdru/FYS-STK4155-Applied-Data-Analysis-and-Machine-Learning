@@ -75,7 +75,8 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
                             'tanh': self.tanh,
                             'relu': self.relu,
                             'leaky_relu': self.leaky_relu,
-                            'softmax': self.softmax}
+                            'softmax': self.softmax,
+                            'logsoftmax': self.logsoftmax}
 
         # Cost functions avaible
         cost_funcs = {'MSE': self.MSE,
@@ -98,7 +99,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         # No activation for output layer, so only derivative of cost function
         if self.clas:
             self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
-            # self.delta_l[-1] = self.Layers[-1] - self.t 
+            # self.delta_l[-1] = self.Layers[-1] - self.t
 
         else:
             self.delta_l[-1] = self.cost_der(self.Layers[-1])
@@ -129,7 +130,8 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
             self.Layers[-1] = self.softmax(self.z[n])  # Different activation func for output layer
         else:
             self.Layers[-1] = self.z[n]  # No acitvation func for output layer
-            
+        # print(self.Layers[-1])
+
     def train(self, epochs):
         """
         Training the neural network by looping over epochs:
@@ -154,6 +156,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
                 self.feed_forward()
                 self.backpropagation()
                 # input()
+
     def predict(self, x):
         """
         input: x (ndarray)
@@ -168,10 +171,12 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
 
     def save(self, fname):
         data = {"weights": self.weights, "biases": self.bias}
-        np.save(data, fname)
+        fname += + ".npy" if ".npy" not in fname else ""
+        np.save("../saved_nets/" + fname, data)
 
     def load(self, fname):
-        data = np.load(fname)
+        fname += ".npy" if ".npy" not in fname else ""
+        data = np.load("../saved_nets/" + fname, allow_pickle=True).item()
         self.weights = data["weights"]
         self.bias = data["biases"]
 
