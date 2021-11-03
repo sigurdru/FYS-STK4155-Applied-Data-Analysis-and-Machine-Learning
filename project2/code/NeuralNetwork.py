@@ -31,9 +31,10 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
                  clas=False,
                  activation="sigmoid",
                  cost="MSE",
+                 output_activation="none"
                  ):
-
         self.X = design             # Training data
+        # self.t = target 
         self.static_target = target      # Trainging outputs
         self.N = self.X.shape[0]    # Number of input values
 
@@ -64,7 +65,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         self.delta_l = self.Layers.copy()  # Activation layer input gradient
 
         # Initial zero for weights ensures that weights[n] corresponds to Layers[n]
-        self.weights = [0] + [np.random.randn(n, m) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        self.weights = [0] + [np.random.normal(scale=2 / n, size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
         self.optim_w = Optimizer(gamma, self.nodes)
@@ -75,7 +76,8 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
                             'tanh': self.tanh,
                             'relu': self.relu,
                             'leaky_relu': self.leaky_relu,
-                            'softmax': self.softmax}
+                            'softmax': self.softmax,
+                            'none': self.none}
 
         # Cost functions avaible
         cost_funcs = {'MSE': self.MSE,
@@ -83,9 +85,11 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
 
         # Callable activation and cost function and their derivatives
         self.activation = activation_funcs[activation]
+        self.activation_out = activation_funcs[output_activation]
         self.cost = cost_funcs[cost]
+
         self.activation_der = elementwise_grad(self.activation)
-        self.out_der = elementwise_grad(self.softmax)
+        self.out_der = elementwise_grad(self.activation_out)
         self.cost_der = elementwise_grad(self.cost)
 
     def backpropagation(self):
@@ -94,17 +98,13 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
          - Starts by calculating the gradients of each layer's activation function
          - Updates the weights and biases accordingly
         """
-        # Calculate gradient of output layer
-        # No activation for output layer, so only derivative of cost function
-        if self.clas:
-            self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
-            # self.delta_l[-1] = self.Layers[-1] - self.t 
 
+        # Calculate gradient of output layer
+        if self.activation_out.__name__ == 'softmax' and self.cost.__name__ == 'cross_entropy':
+            # Analytical derivative for softmax and cross entropy 
+            self.delta_l[-1] = self.Layers[-1] - self.t
         else:
-            self.delta_l[-1] = self.cost_der(self.Layers[-1])
-        # print(self.out_der(self.z[-1]))
-        # print(np.max(self.delta_l[-1]))
-        # input()
+            self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
 
         # Calculate gradient of hidden layers backwards
         for i in reversed(range(1, len(self.nodes) - 1)):
@@ -114,10 +114,10 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         # Update weights and biases for each previous layer
         for n in reversed(range(1, len(self.nodes))):
             # find weight gradient with l2-norm
-            weight_gradient = self.Layers[n - 1].T @ self.delta_l[n] + self.lmb * self.weights[n]
-            # print(weight_gradient)
+            weight_gradient = self.Layers[n - 1].T @ self.delta_l[n] + self.lmb * self.weights[n] #/ len(self.z[n])
             self.weights[n] -= self.optim_w(self.eta * weight_gradient, n)
             self.bias[n] -= self.optim_b(self.eta * np.sum(self.delta_l[n], axis=0), n)
+
 
     def feed_forward(self):
         # Update the value at each layer from 1st hidden layer to ouput
@@ -125,20 +125,22 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
             self.z[n] = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
             self.Layers[n] = self.activation(self.z[n])
 
-        if self.clas:
-            self.Layers[-1] = self.softmax(self.z[n])  # Different activation func for output layer
-        else:
-            self.Layers[-1] = self.z[n]  # No acitvation func for output layer
-            
-    def train(self, epochs):
+        self.Layers[-1] = self.activation_out(self.z[n])  # Different activation func for output layer
+
+
+    def train(self, epochs, train_history=False):
         """
         Training the neural network by looping over epochs:
          1) Initializing shuffled minibatches
          2) Update each layers with their weights and biases
          3) Updates weights and biases with backpropagation
         """
+
+        history = np.zeros(epochs)
+
         indicies = np.arange(self.N)
         pbar = tqdm(range(epochs), desc=f"eta: {self.eta}, lambda: {self.lmb}. Training")
+
         for _ in pbar:
             np.random.shuffle(indicies)  # Shuffle indices
 
@@ -153,7 +155,18 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
 
                 self.feed_forward()
                 self.backpropagation()
-                # input()
+
+            if train_history:
+                self.t = self.static_target
+                output = self.predict(self.X)
+                pred = np.argmax(output, axis=1).reshape(-1,1)
+                if self.nodes[-1] > 1:
+                    r = np.argmax(self.t, axis=1).reshape(-1,1)
+                    history[_] = np.sum(pred == r) / len(r)
+                else:
+                    history[_] = np.sum(self.cost(pred), axis=1)
+        return history 
+
     def predict(self, x):
         """
         input: x (ndarray)
@@ -161,9 +174,9 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         Returns the resulting ouput layer.
         """
         self.Layers[0] = x
-        # print(self.Layers[-1].T)
-        # exit()
         self.feed_forward()
+        # if self.nodes[-1] > 1:
+            # return np.argmax(self.Layers[-1], axis=1).reshape(-1,1)
         return self.Layers[-1]
 
     def save(self, fname):

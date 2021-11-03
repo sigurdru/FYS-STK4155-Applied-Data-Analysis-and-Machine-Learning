@@ -154,6 +154,9 @@ def main():
         np.random.seed(args.seed)
 
     if args.dataset == "Franke":
+        print('e')
+        if args.scaling == "S":
+                args.scaling = "S_Franke"
         if args.method == "reg":
             linear_regression(args)
         else:

@@ -26,8 +26,11 @@ class NoneScaler(StandardScaler):
         return x
 
 
-scale_conv = {"None": NoneScaler(), "S": StandardScaler(
-    with_std=True), "N": Normalizer(), "M": MinMaxScaler()}
+scale_conv = {"None": NoneScaler(),
+                "S": StandardScaler(),
+                "N": Normalizer(), 
+                "M": MinMaxScaler(),
+                "S_Franke": StandardScaler(with_std=False)}
 
 
 def NN_regression(args):
@@ -38,6 +41,7 @@ def NN_regression(args):
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p, intercept=False if p == 1 else True)
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
+
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs)), dtype=float))
     for i, eta in enumerate(etas):
@@ -250,43 +254,26 @@ def NN_classification(args):
               learning_rate=args.eta[0],
               lmb=args.lmb[0],
               clas=True,
-              activation="leaky_relu",
+              activation="sigmoid",
               cost="cross_entropy",
+              output_activation="softmax"
               )
-    # print(NN.weights[-1])
-    NN.train(args.num_epochs)
-    print(NN.weights[-1])
-    # exit()
-    # exit()
-    # probs = NN.predict(X)
-    # sum_probs = np.sum(probs, axis=1)
-    # print(max(sum_probs), min(sum_probs))
-    # pred = np.argmax(probs, axis=1).reshape(-1, 1)
-    # print(np.sum(pred == z_) / len(z_))
-    print("\n"*5)
+
+    prob_hist = NN.train(args.num_epochs, train_history=True)
+    train_output = NN.predict(X_train)
+    train_pred = np.argmax(train_output, axis=1)
+    train_target = np.argmax(z_train, axis=1)
+
+    test_output = NN.predict(X_test)
+    test_pred = np.argmax(test_output, axis=1)
+    test_target = np.argmax(z_test, axis=1)
+    print('Train acc: ', np.sum(train_pred == train_target)/len(train_pred))
+    print('Test acc : ', np.sum(test_pred == test_target) / len(test_pred))
+    print("\n"*2)
+
     # Train data
-    probs = NN.predict(X_train)
-    # probs = classify(probs)
-    # print(np.c_[probs, z_train])
-    sum_probs = np.sum(probs, axis=1)
-    print(max(sum_probs), min(sum_probs))
-    pred = np.argmax(probs, axis=1).reshape(-1, 1)
-    real = np.argmax(z_train, axis=1).reshape(-1, 1)
-    # print(np.c_[pred, real][:100, :])
-    print(np.sum(pred == real) / len(real))
-    
-    plt.hist(pred, bins=np.arange(10) + 0.5)
+    # prob_hist = NN.train(args.num_epochs, train_history=True)
+    plt.plot(np.arange(args.num_epochs), prob_hist)
     plt.show()
 
-
-    # Test data
-    probs = NN.predict(X_test)
-    # probs = classify(probs)
-    # print(np.c_[probs, z_test])
-    sum_probs = np.sum(probs, axis=1)
-    print(max(sum_probs), min(sum_probs))
-    pred = np.argmax(probs, axis=1).reshape(-1, 1)
-    real = np.argmax(z_test, axis=1).reshape(-1, 1)
-    # print(np.c_[pred, real])
-    print(np.sum(pred == real) / len(real))
 
