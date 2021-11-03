@@ -27,7 +27,7 @@ class NoneScaler(StandardScaler):
 
 
 scale_conv = {"None": NoneScaler(), "S": StandardScaler(
-    with_std=False), "N": Normalizer(), "M": MinMaxScaler()}
+    with_std=True), "N": Normalizer(), "M": MinMaxScaler()}
 
 
 def NN_regression(args):
@@ -231,6 +231,10 @@ def linear_regression(args):
 def logistic_regression(args):
     pass
 
+def classify(x):
+    return np.round(x * 2)
+
+
 
 def NN_classification(args):
     dataset = utils.load_data(args)
@@ -238,7 +242,6 @@ def NN_classification(args):
     z = utils.categorical(z_)
     scaler = scale_conv[args.scaling]
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
-    print(X_train)
 
     NN = FFNN(X_train,
               z_train,
@@ -248,15 +251,42 @@ def NN_classification(args):
               lmb=args.lmb[0],
               clas=True,
               activation="leaky_relu",
-              cost="accuracy",
+              cost="cross_entropy",
               )
+    # print(NN.weights[-1])
     NN.train(args.num_epochs)
-
+    print(NN.weights[-1])
+    # exit()
+    # exit()
+    # probs = NN.predict(X)
+    # sum_probs = np.sum(probs, axis=1)
+    # print(max(sum_probs), min(sum_probs))
+    # pred = np.argmax(probs, axis=1).reshape(-1, 1)
+    # print(np.sum(pred == z_) / len(z_))
+    print("\n"*5)
+    # Train data
     probs = NN.predict(X_train)
+    # probs = classify(probs)
+    # print(np.c_[probs, z_train])
+    sum_probs = np.sum(probs, axis=1)
+    print(max(sum_probs), min(sum_probs))
     pred = np.argmax(probs, axis=1).reshape(-1, 1)
-    print(np.sum(pred == z_train) / len(z_train))
+    real = np.argmax(z_train, axis=1).reshape(-1, 1)
+    # print(np.c_[pred, real][:100, :])
+    print(np.sum(pred == real) / len(real))
+    
+    plt.hist(pred, bins=np.arange(10) + 0.5)
+    plt.show()
 
+
+    # Test data
     probs = NN.predict(X_test)
+    # probs = classify(probs)
+    # print(np.c_[probs, z_test])
+    sum_probs = np.sum(probs, axis=1)
+    print(max(sum_probs), min(sum_probs))
     pred = np.argmax(probs, axis=1).reshape(-1, 1)
-    print(np.sum(pred == z_test) / len(z_test))
+    real = np.argmax(z_test, axis=1).reshape(-1, 1)
+    # print(np.c_[pred, real])
+    print(np.sum(pred == real) / len(real))
 

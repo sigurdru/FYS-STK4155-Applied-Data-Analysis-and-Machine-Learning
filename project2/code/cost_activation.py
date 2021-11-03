@@ -6,13 +6,13 @@ class Costs:
         mse = (t_ - self.t)**2 / len(self.t)
         return mse
 
-    def accuracy_score(self, t_):
+    def cross_entropy(self, t_):
         return -(self.t * np.log(t_) + (1 - self.t) * np.log(1 - t_))
 
 
 class Activations:
     def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
+        return 1 / (1 + np.exp(-x))  
 
     def tanh(self, x):
         return np.tanh(x)

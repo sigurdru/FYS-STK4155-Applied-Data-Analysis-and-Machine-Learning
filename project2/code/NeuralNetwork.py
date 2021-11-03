@@ -79,7 +79,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
 
         # Cost functions avaible
         cost_funcs = {'MSE': self.MSE,
-                      'accuracy': self.accuracy_score}
+                      'cross_entropy': self.cross_entropy}
 
         # Callable activation and cost function and their derivatives
         self.activation = activation_funcs[activation]
@@ -96,32 +96,15 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         """
         # Calculate gradient of output layer
         # No activation for output layer, so only derivative of cost function
-        # for l in self.delta_l:
-        #     print(l)
-        #     print(l.shape)
-        #     print()
-        # print("\n"*3)
-        # print(self.Layers[-1])
-        # print(self.Layers[-1].shape)
-        # print()
-        # print(self.cost_der(self.Layers[-1]))
-        # print(self.cost_der(self.Layers[-1]).shape)
-        # print()
-        # print(self.z[-1])
-        # print(self.z[-1].shape)
-        # print()
-        # print(self.out_der(self.z[-1]))
-        # print(self.out_der(self.z[-1]).shape)
-        # print()
         if self.clas:
             self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
+            # self.delta_l[-1] = self.Layers[-1] - self.t 
+
         else:
             self.delta_l[-1] = self.cost_der(self.Layers[-1])
-        # for l in self.delta_l:
-        #     print(l)
-        #     print(l.shape)
-        #     print()
-        # print("\n"*3)
+        # print(self.out_der(self.z[-1]))
+        # print(np.max(self.delta_l[-1]))
+        # input()
 
         # Calculate gradient of hidden layers backwards
         for i in reversed(range(1, len(self.nodes) - 1)):
@@ -132,6 +115,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         for n in reversed(range(1, len(self.nodes))):
             # find weight gradient with l2-norm
             weight_gradient = self.Layers[n - 1].T @ self.delta_l[n] + self.lmb * self.weights[n]
+            # print(weight_gradient)
             self.weights[n] -= self.optim_w(self.eta * weight_gradient, n)
             self.bias[n] -= self.optim_b(self.eta * np.sum(self.delta_l[n], axis=0), n)
 
@@ -145,7 +129,7 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
             self.Layers[-1] = self.softmax(self.z[n])  # Different activation func for output layer
         else:
             self.Layers[-1] = self.z[n]  # No acitvation func for output layer
-
+            
     def train(self, epochs):
         """
         Training the neural network by looping over epochs:
@@ -166,16 +150,10 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
                 # Loop over minibatches
                 self.Layers[0] = self.X_s[i: i + self.batch_size]
                 self.t = self.shuffle_t[i: i + self.batch_size]
-                # print(self.Layers[0])
-                # print(self.t)
 
-                # print(self.weights[-1])
                 self.feed_forward()
-                # print(self.weights[-1])
                 self.backpropagation()
-                # print(self.weights[-1])
                 # input()
-
     def predict(self, x):
         """
         input: x (ndarray)
@@ -183,6 +161,8 @@ class FFNN(Costs, Activations):  # FeedForwardNeuralNetwork
         Returns the resulting ouput layer.
         """
         self.Layers[0] = x
+        # print(self.Layers[-1].T)
+        # exit()
         self.feed_forward()
         return self.Layers[-1]
 
