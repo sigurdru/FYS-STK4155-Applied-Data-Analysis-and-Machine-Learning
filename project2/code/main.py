@@ -113,7 +113,12 @@ def parse_args(args=None):
                     Cancer is binary classification,
                     MNIST is multi-category classification""",
             )
-
+            
+    add_arg("-pred",
+            action="store_true",
+            dest="pred",
+            )
+    
     add_arg("-show",
             action="store_true",
             dest="show",
@@ -159,9 +164,6 @@ def main():
         np.random.seed(args.seed)
 
     if args.dataset == "Franke":
-        print('e')
-        if args.scaling == "S":
-                args.scaling = "S_Franke"
         if args.method == "reg":
             linear_regression(args)
         else:

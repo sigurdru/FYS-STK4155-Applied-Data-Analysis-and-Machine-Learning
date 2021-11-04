@@ -50,8 +50,11 @@ def SGD(X, z, args, beta, eta, batch_size, lmb=0, gamma=0):
             xi = X_train_shuffle[i:i+M]
             zi = z_train_shuffle[i:i+M]
 
+
             gradient = 2 * xi.T @ ((xi @ beta)-zi.T[0]) / M \
                         + 2 * lmb * beta
+            # print(gradient)
+            # input()
             v = v * gamma + eta * gradient
             beta = beta - v
 
@@ -66,7 +69,7 @@ def SGD(X, z, args, beta, eta, batch_size, lmb=0, gamma=0):
 
         # eta = learning_schedule(epoch_i*m + i,args)
 
-    return MSE_train, MSE_test
+    return MSE_train, MSE_test, beta 
 
 
 def RidgeSG():

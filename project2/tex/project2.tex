@@ -19,11 +19,13 @@
 \\Autumn 2021\\Department of Physics\\University of Oslo\\\\\today}
 \begin{document}
 \abstract{
-	Abstract.
+	Abstract coming soon.
 }
 \maketitle
-
+\pagestyle{myplain}
 \section{Introduction}
+All the code, results and instructions on running the code can be found in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}.
+
 \section{Theory}
 In the theory-section we aim to give a brief explanation of the main concepts and terminology used in this report. For a more in-depth explanation we recommend reading the appropriate sections in \cite{2019}, which has been of great inspiration and help for us throughout the project.
 
@@ -67,6 +69,9 @@ Still the method can be optimized even further by adding momentum. This is done 
 \end{align}
 Here $\gamma$ is what we could refer to as the mass, and is another free parameter. One of the benefits is for example that this lets us move faster in regions where the gradient is small.
 
+\subsection{Logistic Regression}
+This method is used for classification situations. This means we want to predict discrete outputs, i.e. true of false. 
+
 \subsection{Feed-Forward Deep Neural Networks}
 Neural networks are neural-inspired nonlinear models, which are taught by a way of supervised learning. We will in this section explain what we mean by non-linearity, the basic architecture of a neural network and how the network learns. 
 \subsubsection{Architecture of Neural Networks}
@@ -90,7 +95,7 @@ We mentioned that the different nodes are connected through weights, biases and 
 where $x_i$ are the values of neuron $i$ in the input layer, $w_i$ are the weights between neurons $i$ and $j$, $b$ is what we refer to as the bias and $\sigma$ is the activation functions (more on them in the next section). Every neuron is connected like this, with different weights and biases. In this project the activation function is the same for each neuron. Note that when we train the data, what we are really doing, is adjusting these parameters to give a desired result. We cover how this is done in the back propagation algorithm section.
 
 \subsubsection{Activation Functions}
-The activation functions are where the non-linearity term comes in, because they are non-linear. Now there are many such functions, in our project we have implemented the ones displayed in figure \ref{fig:activation_functions}. The exact functions are as follows
+The activation functions are where the non-linearity term comes in, because they are non-linear. Now there are many such functions, in our project we have implemented the ones\sn{FLERE?} displayed in figure \ref{fig:activation_functions}. The exact functions are as follows
 \begin{align}
 	\text{Sigmoid: }\sigma(x) &= \frac{1}{1 + e^{-x}}\label{eq:sigmoid} \\
 	\text{RELU: }\sigma(x) &= \max(0,x) \label{eq:RELU} \\
@@ -107,10 +112,70 @@ Where $\alpha$ is some parameter which we have set to $\alpha = 0.1$ in figure \
 \end{figure}
 
 \subsubsection{Cost Function and Regularization}
-Before one can start training the data, we must have a cost function.
-\subsubsection{The Back Propagation Algorithm}
-\subsection{Logistic Regression}
+Before one can start training the data, we must have a cost function. This will tell us how well or poorly our network is performing, and is what we want to minimize when we train the network. For continuous date it is common to use mean square error (MSE) as the cost function. Which is just the difference between desired output ($\hat{\mathbf{x}}$) and actual output ($\mathbf{x}$), squared, divided by the number of datapoints $n$ (see equation \eqref{eq:MSE})
+\begin{align}
+	C(\mathbf{x}) = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2.
+	\label{eq:MSE}
+\end{align}
+One can also implement regularization, which helps prevent overfitting in the network. Common ones are $L_1$ and $L_2$ which is done by adding a regularization term to the end of the cost function (see equations \eqref{eq:L1} and \eqref{eq:L2}).
+\begin{align}
+	L_1: \ \ C(\mathbf{x}) &= \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \abs{\mathbf{w}_j} \label{eq:L1} \\
+	L_2: \ \ C(\mathbf{x}) &= \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \mathbf{w}^2_j \label{eq:L2}
+\end{align}
+\sn{RIKTIG?}Here $\lambda$ is some regularization parameter and $\mathbf{w}$ are weights.
 
+For classification scenarios one will often use cross-entropy as the cost function. This is given by equation \eqref{eq:cross_entropy}.
+\begin{align}
+	C(\mathbf{x}) = 
+	\label{eq:cross_entropy}
+\end{align}
+lol\sn{NOT DONE}
+\subsubsection{The Backpropagation Algorithm}
+With a desired cost function we are ready to train the neural network. This is done by the backpropagation algorithm. The method entails finding the derivative of the cost function, with respect to all parameters. When we have a neural network, we have thousands of parameters which can be tuned (weights and biases), meaning that we have to approximate the derivative somehow. The backpropagation algorithm does just that, by exploiting the layered structure displayed in figure \ref{fig:neural_network}.
+
+Before we can embark on deriving the algorithm we will introduce some notation. We assume $L$ total layers while $l = 1, \dots , L$ indexes which one. Next we need to index the weights, nodes and biases. Let $w_{jk}^l$ be the weight connecting $k$-th neuron in layer $l-1$ and $j$-th neuron in layer $l$. The index order in $j$ and $k$ are such that we can do matrix multiplication with index notation later down the road. We also let $b_j^l$ be the $j$-th neuron bias in layer $l$. Thus the activation of the $j$-th neuron in layer $l$ ($a^l_j$) becomes
+\begin{align}
+	a_j^l = \sigma\left(\sum_{k} w_{jk}^l a_k^{l-1} + b_j^l\right) = \sigma(z_j^l), \ \ z_j^l \equiv \sum_{k} w_{jk}^l a_k^{l-1} + b_j^l.
+	\label{eq:activation_of_node_ajl}
+\end{align} 
+Here $\sigma$ is an activation function.
+
+Now the cost function will depend directly on the activation of the output layer ($a^L_j$). However the activation of the output layer depends on the previous layers, meaning that the cost function depends indirectly on all the previous layers. Lets define define the error $\Delta_j^L$ of the $j$-th neuron in layer $L$, as the change in cost function with respect to $z^L_j$.
+\begin{align}
+	\Delta_j^L \equiv \del{C}{z_j^L}
+	\label{eq:backprop0}
+\end{align}
+We can similarly define the error of neuron $j$ in layer $l$ ($\Delta_j^l$), as the change in the cost function with respect to $z_j^l$,
+\begin{align}
+	\Delta_j^l \equiv \del{C}{z_j^l} = \del{C}{a_j^l}\del{a_j^l}{z^l_j} = \del{C}{a_j^l}\der{\sigma(z^l_j)}{z^l_j}.
+	\label{eq:backprop1}
+\end{align}
+In the next few lines we are going to derive several equations needed for the algorithm, it will be apparent why after we have found them. Notice that \eqref{eq:backprop1} also can be written as
+\begin{align}
+	\Delta_j^l = \del{C}{z_j^l} = \del{C}{b_j^l}\del{b_j^l}{z^l_j} = \del{C}{b_j^l}.
+	\label{eq:backprop2}
+\end{align}
+Because $\partial b_j^l/\partial z^l_j = 1$ from \eqref{eq:activation_of_node_ajl}. Again using the chain rule we can rewrite \eqref{eq:backprop1}
+\begin{align}
+	\Delta_j^l &= \del{C}{z_j^l} = \sum_{k} \del{E}{z_k^{l+1}}\del{z_k^{l+1}}{z^l_j} = \sum_{k} \Delta_k^{l+1}\del{z_k^{l+1}}{z^l_j} \nonumber \\
+	 &= \left(\sum_{k} \Delta_k^{l+1} w_{kj}^{l+1}\right)\der{\sigma(z^l_j)}{z^l_j}.
+	 \label{eq:backprop3}
+\end{align}
+To find the last equation, we differentiate the cost function with respect to the weight $w^l_{jk}$
+\begin{align}
+	\del{C}{w_{jk}^l} = \del{C}{z_j^l}\del{z_j^l}{w_{jk}^j} = \Delta l a_k^{l-1}.
+	\label{eq:backprop4}
+\end{align}
+Now why have we done all this work, well because the equations \eqref{eq:backprop1}, \eqref{eq:backprop2}, \eqref{eq:backprop3} and \eqref{eq:backprop4} define what we call the backpropagation algorithm. Then, what exactly is the algorithm? In entails six steps:
+\begin{description}
+	\item[1 Activation:] First activate the neurons in the activation layer ($a^1_j$) with desired data.
+	\item[2 Feedforward:] Activate the nodes in following layers, this is done by equation \eqref{eq:activation_of_node_ajl}.
+	\item[3 Error at layer $L$:] Calculate the error at the last layer using \eqref{eq:backprop1}.
+	\item[4 Backpropagate error:] With \eqref{eq:backprop3} we can the calculate the error, iterating backwards in the network.
+	\item[5 Calculate gradient:] Find the gradient by using equations \eqref{eq:backprop2} and \eqref{eq:backprop4}.
+	\item[6 Update parameters:] Update the parameters similarly to \eqref{eq:SGD_algo}, however $\boldsymbol{\beta}_t$ are our weights and biases in this case.\sn{RIKTIG?}
+\end{description}
+One thing we haven't mentioned is how one initializes the network. In order to do the first step, activation, we have to give the network some initial weights and biases. \sn{HOW?}
 
 
 \section{Methods}

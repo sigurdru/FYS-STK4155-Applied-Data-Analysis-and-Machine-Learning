@@ -2,6 +2,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 from autograd import elementwise_grad
 from cost_activation import Costs, Activations
+import utils 
 
 
 class Optimizer:
@@ -108,6 +109,9 @@ class FFNN(Costs, Activations):
         if self.activation_out.__name__ == 'softmax' and self.cost.__name__ == 'cross_entropy':
             # Analytical derivative for softmax and cross entropy 
             self.delta_l[-1] = self.Layers[-1] - self.t
+
+        elif self.activation_out.__name__ == 'none':
+            self.delta_l[-1] = self.cost_der(self.Layers[-1])
 
         else:
             self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
