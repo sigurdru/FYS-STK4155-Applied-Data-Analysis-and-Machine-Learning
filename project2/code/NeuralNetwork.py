@@ -198,20 +198,24 @@ class FFNN(Costs, Activations):
             # return np.argmax(self.Layers[-1], axis=1).reshape(-1,1)
         return self.Layers[-1]
 
-    def save(self, fname):
+    def save(self, fname=None):
         """
         Save weights and biases of trained network  
         """
+        if fname is None:
+            fname = f"a{self.activation.__name__}_o{self.activation_out.__name__}_c{self.cost.__name__}"
+            for i in self.nodes:
+                fname += "_" + str(i)
         data = {"weights": self.weights, "biases": self.bias}
         fname += + ".npy" if ".npy" not in fname else ""
-        np.save("../saved_nets/" + fname, data)
+        np.save("../output/saved_nets/" + fname, data)
 
     def load(self, fname):
         """
         Load weights and biases from trained network 
         """
         fname += ".npy" if ".npy" not in fname else ""
-        data = np.load("../saved_nets/" + fname, allow_pickle=True).item()
+        data = np.load("../output/saved_nets/" + fname, allow_pickle=True).item()
         self.weights = data["weights"]
         self.bias = data["biases"]
 
