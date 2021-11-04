@@ -99,6 +99,11 @@ def parse_args(args=None):
             help="Number of nodes in each hidden layer",
             )
 
+    add_arg("-act_func",
+            type=str,
+            default="sigmoid",
+            help="activation function used in hidden layers") 
+
     add_arg("-d", "--dataset",
             type=str,
             default="Franke",
@@ -108,7 +113,12 @@ def parse_args(args=None):
                     Cancer is binary classification,
                     MNIST is multi-category classification""",
             )
-
+            
+    add_arg("-pred",
+            action="store_true",
+            dest="pred",
+            )
+    
     add_arg("-show",
             action="store_true",
             dest="show",
@@ -154,9 +164,6 @@ def main():
         np.random.seed(args.seed)
 
     if args.dataset == "Franke":
-        print('e')
-        if args.scaling == "S":
-                args.scaling = "S_Franke"
         if args.method == "reg":
             linear_regression(args)
         else:

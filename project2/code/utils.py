@@ -143,6 +143,12 @@ def split_scale(X, z, ttsplit, scaler):
 
     return X_train, X_test, z_train, z_test
 
+def rescale_data(scaled_data, initial_data):
+    """
+    Reverse scaling of data for plotting fit 
+    """
+    return scaled_data * np.std(initial_data) + np.mean(initial_data)
+
 def MSE(z_target, z_tilde):
     return sum((z_target - z_tilde) ** 2) / len(z_target)
 

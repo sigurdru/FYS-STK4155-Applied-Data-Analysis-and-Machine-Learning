@@ -2,6 +2,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 from autograd import elementwise_grad
 from cost_activation import Costs, Activations
+import utils 
 
 
 class Optimizer:
@@ -38,7 +39,8 @@ class FFNN(Costs, Activations):
                  gamma=0,
                  activation="sigmoid",
                  cost="MSE",
-                 output_activation="none"
+                 output_activation="none",
+                 test_data=None,
                  ):
 
         self.X = design             # Training data
@@ -50,6 +52,7 @@ class FFNN(Costs, Activations):
             self.batch_size = self.N
         else:
             self.batch_size = batch_size
+        self.test_data = test_data
 
         self.eta = learning_rate
         self.lmb = lmb
@@ -67,7 +70,7 @@ class FFNN(Costs, Activations):
         self.delta_l = self.Layers.copy()   # Activation layer input gradient
 
         # Initial zero for weights ensures that weights[n] corresponds to Layers[n]
-        self.weights = [0] + [np.random.normal(scale=2 / n, size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        self.weights = [0] + [np.random.normal(scale=1 / n, size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
         # Calculate gradients with momentum (gamma=0 by default)
@@ -102,11 +105,13 @@ class FFNN(Costs, Activations):
          - Starts by calculating the gradients of each layer's activation function
          - Updates the weights and biases accordingly
         """
-
         # Calculate gradient of output layer
         if self.activation_out.__name__ == 'softmax' and self.cost.__name__ == 'cross_entropy':
             # Analytical derivative for softmax and cross entropy 
             self.delta_l[-1] = self.Layers[-1] - self.t
+
+        elif self.activation_out.__name__ == 'none':
+            self.delta_l[-1] = self.cost_der(self.Layers[-1])
 
         else:
             self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
@@ -148,11 +153,31 @@ class FFNN(Costs, Activations):
         pbar = tqdm(range(epochs), desc=f"eta: {self.eta}, lambda: {self.lmb}. Training")
 
         for epoch in pbar:
+
+            if train_history:
+                if self.test_data is None:
+                    t = self.static_target
+                    x = self.X
+                else:
+                    t = self.test_data[1]
+                    x = self.test_data[0]
+                self.t = t
+                output = self.predict(x)
+                # print(np.c_[output, np.sum(output, axis=1)])
+                pred = np.argmax(output, axis=1).reshape(-1,1)
+                loss = output - self.t
+
+                if self.nodes[-1] > 1:
+                    r = np.argmax(self.t, axis=1).reshape(-1,1)
+                    history[epoch] = np.sum(pred == r) / len(r)
+                    errors[epoch] = np.mean(loss, axis=0)[0]
+                else:
+                    history[epoch] = np.sum(self.cost(pred), axis=1)
+                
             np.random.shuffle(indicies)  # Shuffle indices
 
             self.X_s = self.X[indicies]  # Shuffled input
             self.shuffle_t = self.static_target[indicies]  # Shuffled target
-
 
             for i in range(0, self.N, self.batch_size):
                 # Loop over minibatches
@@ -162,19 +187,6 @@ class FFNN(Costs, Activations):
                 self.feed_forward()
                 self.backpropagation()
 
-            if train_history:
-                self.t = self.static_target
-                output = self.predict(self.X)
-                pred = np.argmax(output, axis=1).reshape(-1,1)
-
-                loss = output - self.t
-
-                if self.nodes[-1] > 1:
-                    r = np.argmax(self.t, axis=1).reshape(-1,1)
-                    history[epoch] = np.sum(pred == r) / len(r)
-                    errors[epoch] = np.mean(loss, axis=0)[0]
-                else:
-                    history[epoch] = np.sum(self.cost(pred), axis=1)
         return history, errors
 
 
