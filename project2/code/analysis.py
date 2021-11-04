@@ -1,4 +1,5 @@
 from collections import defaultdict
+import enum
 import numpy as np
 # import random
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
@@ -15,6 +16,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import pandas as pd
+import plot
 
 
 class NoneScaler(StandardScaler):
@@ -26,8 +28,11 @@ class NoneScaler(StandardScaler):
         return x
 
 
-scale_conv = {"None": NoneScaler(), "S": StandardScaler(
-    with_std=True), "N": Normalizer(), "M": MinMaxScaler()}
+scale_conv = {"None": NoneScaler(),
+                "S": StandardScaler(),
+                "N": Normalizer(), 
+                "M": MinMaxScaler(),
+                "S_Franke": StandardScaler(with_std=False)}
 
 
 def NN_regression(args):
@@ -38,6 +43,7 @@ def NN_regression(args):
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p, intercept=False if p == 1 else True)
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
+
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs)), dtype=float))
     for i, eta in enumerate(etas):
@@ -57,175 +63,79 @@ def NN_regression(args):
             tr_mse = utils.MSE(z_train, train_pred)
             te_mse = utils.MSE(z_test, test_pred)
 
-            data["train_MSE"][i][j] = tr_mse if tr_mse < 1 else np.nan
-            data["test_MSE"][i][j] = te_mse if te_mse < 1 else np.nan
+            data["train MSE"][i][j] = tr_mse if tr_mse < 1 else np.nan
+            data["test MSE"][i][j] = te_mse if te_mse < 1 else np.nan
 
     print("\n"*3)
     print(f"Best NN train prediction: {(train:=data['train_MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
     print(f"Best NN test prediction: {(test:=data['test_MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
+    plot.eta_lambda(data, args)
 
-    for name, accuracy in data.items():
-        fig, ax = plt.subplots()
-        data = pd.DataFrame(accuracy, index=np.log10(etas), columns=np.log10(lmbs))
-        sns.heatmap(data, ax=ax, annot=True, cmap=cm.coolwarm)
-        ax.set_title(name)
-        ax.set_ylabel("$\log10(\eta)$")
-        ax.set_xlabel("$\log10(\lambda)$")
-        plt.show()
+
 
 
 def linear_regression(args):
+    print("Doing linear regression")
     p = args.polynomial
     etas = args.eta
     lmbs = args.lmb
-
-    if args.batch_size == 0:
-        batch_sizes = np.array([720, 360, 240, 144, 72, 48, 30, 24])
-    else:
-        batch_sizes = np.array([args.batch_size])
-
     scaler = scale_conv[args.scaling]
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p)
 
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
+    beta0 = np.random.randn(utils.get_features(p))  # use same beta0 in all runs for comparisonability
+    if args.gamma >= 0:
+        if args.batch_size == 0:
+            batch_sizes = np.array([720, 360, 240, 144, 72, 48, 30, 24])
+        else:
+            batch_sizes = np.array([args.batch_size])
+        args.batch_size = batch_sizes
 
-    n_minibatches = X_train.shape[0] // batch_sizes
-    ols_beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
-    ols_pred = X_test @ ols_beta
+        n_minibatches = X_train.shape[0] // batch_sizes
+        args.nmb = n_minibatches
 
-
-    data = defaultdict(lambda: np.zeros((len(etas),
-                                        len(lmbs),
-                                        len(batch_sizes),
-                                        args.num_epochs), dtype=float))
-
-    beta0 = np.random.randn(utils.get_features(p))
-
-    for i, eta in enumerate(etas):
-        for j, lmb in enumerate(lmbs):
-            for k, batch_size in enumerate(batch_sizes):
-                MSE_train, MSE_test = SGD.SGD((X_train, X_test),
-                                                (z_train, z_test),
-                                                args,
-                                                beta0,
-                                                eta,
-                                                batch_size,
-                                                lmb)
-
-                data["Train MSE"][i][j][k] = MSE_train
-                data["Test MSE"][i][j][k] = MSE_test
-
-    if not args.gamma:
-        """
-        Plot MSE heatmaps for SGD without momentum
-        Different parameters are plotted based on inputs
-
-        Number of epochs vs eta values:
-         - lmb: default (float)
-         - eta: array-like
-         - bs : default (int)
-
-        Number of epochs vs number of minibatches:
-         - lmb: default (float)
-         - eta: 0.3 (float)
-         - bs : 0
-
-        Lambda values vs eta values:
-         - lmb: Array-like
-         - eta: Array-like
-         - bs : default (int)
-        """
-        for name, accuracy in data.items():
-            fig, ax = plt.subplots()
-            if len(lmbs) == 1 and len(batch_sizes) == 1:
-                """
-                (x,y): (epochs, eta values)
-
-                Good simulation:
-                - Ne  : 150
-                - eta : np.linspace(0.01, 0.05, 31)
-                """
-                cols = np.arange(args.num_epochs)
-                idx = np.round(etas, 3)
-                data = pd.DataFrame(accuracy[:,0,0,:], index=idx, columns=cols[:])
-                ylabel = "Learning rate $\eta$"
-                xlabel = "Number of epochs"
-                title = name + " for Franke function, using 20 minibatches"
-                ytick = 3
-                vmax = 0.07
-
-            if len(lmbs) == 1 and len(etas) == 1:
-                """
-                (x,y): (epochs, number of minibatches)
-
-                Good simulation:
-                - Ne : 150
-                - eta: 0.3
-                - bs : 0
-                """
-                cols = np.arange(args.num_epochs)
-                idx = n_minibatches
-                data = pd.DataFrame(accuracy[0,0,:,:], index=idx, columns=cols[:])
-                ylabel = "Number of minibatches"
-                xlabel = "Number of epochs"
-                title = name + " for Franke function, using $\eta=0.3$"
-                ytick = idx
-                vmax = 0.07
-
-            if len(lmbs) != 1 and len(n_minibatches) == 1:
-                """
-                (x,y): (log10[lambda], eta values)
-
-                Good simulation:
-                - Ne  : 200
-                - lmb : np.logspace(-5, 0, 11)
-                - eta : np.linspace(0.1, 0.7, 11)
-                """
-                cols = np.log10(lmbs)
-                idx = np.round(etas, 3)
-                data = pd.DataFrame(accuracy[:,:,0,-1], index=idx, columns=cols[:])
-                ylabel = "Learning rate $\eta$"
-                xlabel = "$\log_{10}(\lambda)$"
-                title = name + " for Franke function after 200 epochs, using 20 minibatches"
-                ytick = idx
-                vmax = None
+        data = defaultdict(lambda: np.zeros((len(etas),
+                                            len(lmbs),
+                                            len(batch_sizes),
+                                            args.num_epochs), dtype=float))
 
 
-            ax = sns.heatmap(data,
-                            ax=ax,
-                            annot=False,
-                            cmap=cm.coolwarm,
-                            vmax=vmax,
-                            linewidths=0,
-                            xticklabels=len(cols)//10,
-                            yticklabels=ytick)
-            ax.invert_yaxis()
-            ax.set_ylabel(ylabel)
-            ax.set_xlabel(xlabel)
-            ax.set_title(title)
-            plt.show()
+        for i, eta in enumerate(etas):
+            for j, lmb in enumerate(lmbs):
+                for k, batch_size in enumerate(batch_sizes):
+                    MSE_train, MSE_test = SGD.SGD((X_train, X_test),
+                                                    (z_train, z_test),
+                                                    args,
+                                                    beta0,
+                                                    eta,
+                                                    batch_size,
+                                                    lmb)
 
+                    data["Train MSE"][i][j][k] = MSE_train
+                    data["Test MSE"][i][j][k] = MSE_test
+        plot.parameter_based(data, args)
+        
     else:
-        gammas = np.array([0.1, 0.25, 0.5, 0.9])
-
-        for gamma in gammas:
-            plt.plot(data["Train MSE"].flatten(), label='Train MSE. $\gamma=0$')
-            plt.plot(data["Test MSE"].flatten() , label='Test MSE. $\gamma=0$')
+        gammas = np.array([0, 0.25, 0.5, 0.9])
+        args.gamma = gammas
+        data = defaultdict(lambda: np.zeros((len(gammas), args.num_epochs)))
+        
+        for i, gamma in enumerate(gammas):
 
             mom_MSE_train, mom_MSE_test = SGD.SGD((X_train, X_test),
                                                 (z_train, z_test),
                                                 args,
                                                 beta0,
-                                                eta,
-                                                batch_size,
-                                                lmb,
+                                                args.eta[0],
+                                                args.batch_size,
+                                                args.lmb[0],
                                                 gamma=gamma)
-            plt.plot(mom_MSE_train, '--', label='Train MSE. $\gamma={:.2f}$'.format(gamma))
-            plt.plot(mom_MSE_test , '--', label='Test MSE. $\gamma={:.2f}$'.format(gamma))
-            plt.legend()
-            plt.show()
 
+            data["Train MSE"][i] = mom_MSE_train
+            data["Test MSE"][i] = mom_MSE_test
+
+        plot.momentum(data, args)
 
 
 def logistic_regression(args):
@@ -249,44 +159,28 @@ def NN_classification(args):
               batch_size=args.batch_size,
               learning_rate=args.eta[0],
               lmb=args.lmb[0],
-              clas=True,
-              activation="leaky_relu",
+              activation="sigmoid",
               cost="cross_entropy",
+              output_activation="softmax"
               )
-    # print(NN.weights[-1])
-    NN.train(args.num_epochs)
-    print(NN.weights[-1])
-    # exit()
-    # exit()
-    # probs = NN.predict(X)
-    # sum_probs = np.sum(probs, axis=1)
-    # print(max(sum_probs), min(sum_probs))
-    # pred = np.argmax(probs, axis=1).reshape(-1, 1)
-    # print(np.sum(pred == z_) / len(z_))
-    print("\n"*5)
-    # Train data
-    probs = NN.predict(X_train)
-    # probs = classify(probs)
-    # print(np.c_[probs, z_train])
-    sum_probs = np.sum(probs, axis=1)
-    print(max(sum_probs), min(sum_probs))
-    pred = np.argmax(probs, axis=1).reshape(-1, 1)
-    real = np.argmax(z_train, axis=1).reshape(-1, 1)
-    # print(np.c_[pred, real][:100, :])
-    print(np.sum(pred == real) / len(real))
-    
-    plt.hist(pred, bins=np.arange(10) + 0.5)
+
+    prob_hist, prob_err = NN.train(args.num_epochs, train_history=True)
+    train_output = NN.predict(X_train)
+    train_pred = np.argmax(train_output, axis=1)
+    train_target = np.argmax(z_train, axis=1)
+
+    test_output = NN.predict(X_test)
+    test_pred = np.argmax(test_output, axis=1)
+    test_target = np.argmax(z_test, axis=1)
+    print('Train acc: ', np.sum(train_pred == train_target)/len(train_pred))
+    print('Test acc : ', np.sum(test_pred == test_target) / len(test_pred))
+    print("\n"*2)
+
+    # Plot of accuracy as a function of epochs 
+    plt.plot(np.arange(args.num_epochs), prob_hist)
     plt.show()
 
-
-    # Test data
-    probs = NN.predict(X_test)
-    # probs = classify(probs)
-    # print(np.c_[probs, z_test])
-    sum_probs = np.sum(probs, axis=1)
-    print(max(sum_probs), min(sum_probs))
-    pred = np.argmax(probs, axis=1).reshape(-1, 1)
-    real = np.argmax(z_test, axis=1).reshape(-1, 1)
-    # print(np.c_[pred, real])
-    print(np.sum(pred == real) / len(real))
+    # Plot of error in output as a function of epochs
+    plt.plot(np.arange(args.num_epochs), prob_err)
+    plt.show()
 

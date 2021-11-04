@@ -7,7 +7,8 @@ class Costs:
         return mse
 
     def cross_entropy(self, t_):
-        return -(self.t * np.log(t_) + (1 - self.t) * np.log(1 - t_))
+        a = -(self.t * np.log(t_) + (1 + self.t) * np.log(1 - t_))
+        return a
 
 
 class Activations:
@@ -24,5 +25,10 @@ class Activations:
         return np.where(x > 0, x, leak * x)
 
     def softmax(self, x):
-        exp = np.exp(x)
-        return exp / np.sum(exp, axis=1, keepdims=True)
+        exp = np.exp(x - np.max(x))
+        s = np.sum(exp, axis=1, keepdims=True)
+        return exp/s
+
+    def none(self, x):
+        # No activation
+        return x 
