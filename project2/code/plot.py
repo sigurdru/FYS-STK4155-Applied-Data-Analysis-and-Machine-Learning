@@ -1,12 +1,14 @@
 """
 In this file we perform all plotting in this project.
 """
+from collections import defaultdict
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import os
 import seaborn as sns
 import pandas as pd
+from datetime import datetime
 
 # to suppress warnings from fig.tight_layout() in some plotsFalse
 # import warnings
@@ -17,19 +19,20 @@ plt.style.use('seaborn')
 plt.rc('text', usetex=True)
 plt.rc('font', family='DejaVu Sans')
 path_plots = '../output/plots/'
+archive = path_plots + "archive.txt"
 
 
-def show_push_save(fig, args):
+def show_push_save(fig, func, args):
     """
     This function handles wether you want to show,
     save and/or push the file.
     
     Args:
-        fname (str): Name of file
         fig (matplotlib.figure): Figure you want to handle
+        func (string):  function sending fig, for easier fname creation
         args (argparse)
     """
-    file = path_plots + set_fname(args) + ".pdf"
+    file = path_plots + set_fname(func, args)
     if args.save:
         print("Saving plot: ", file)
         fig.savefig(file)
@@ -43,12 +46,36 @@ def show_push_save(fig, args):
     else:
         plt.clf()
 
-def set_fname(args):
+def set_fname(func, args):
     """
-    This function should automatically set filenames so we don't
-    get redundant code. Add functionality when needed.
+    This function should automatically set filenames from args
+    Also adds runtime args to a text_file for easy archivation
     """
-    pass
+    fname = ""
+    # train or test
+    if func["train"]:
+        fname += "train"
+    else:
+        fname += "test"
+    fname += "_" + func["z"]  # varying parameter
+    fname += "__" + func["x"] + "_" + func["y"]  # as func of
+    fname += "__" + args.method + "_" + args.dataset  # reg or NN, used on dataset
+    fname += "__" + str(int(np.random.uniform() * 1e6))  # random number to identify plot
+    fname += ".pdf"
+    
+    if args.save:
+    # save configuration to file
+        with open(archive, "a+") as file:
+            print("Writing run configuration to archive")
+            file.write("\n\n\n")
+            file.write(fname + "\n")
+            file.write(str(args))
+            file.write("\n")
+            file.write(str(datetime.now()))
+            file.write("\n")
+
+    return fname
+
 
 def parameter_based(data, args):
     """
@@ -72,6 +99,8 @@ def parameter_based(data, args):
     """
     for name, accuracy in data.items():
         fig, ax = plt.subplots()
+        func = defaultdict(lambda: None)
+        func["train"] = name.split()[0].lower()=="train"
         if len(args.lmb) == 1 and len(args.batch_size) == 1:
             """
             (x,y): (epochs, eta values)
@@ -88,6 +117,10 @@ def parameter_based(data, args):
             title = name + " for Franke function, using 20 minibatches"
             ytick = 3
             vmax = 0.07
+            
+            func["x"] = "epochs"
+            func["y"] = "eta"
+            func["z"] = "MSE"
 
         if len(args.lmb) == 1 and len(args.eta) == 1:
             """
@@ -107,6 +140,10 @@ def parameter_based(data, args):
             ytick = idx
             vmax = 0.07
 
+            func["x"] = "epochs"
+            func["y"] = "minibatches"
+            func["z"] = "MSE"
+
         if len(args.lmb) != 1 and len(args.nmb) == 1:
             """
             (x,y): (log10[lambda], eta values)
@@ -125,6 +162,10 @@ def parameter_based(data, args):
             ytick = idx
             vmax = None
 
+            func["x"] = "lambda"
+            func["y"] = "eta"
+            func["z"] = "MSE"
+
 
         ax = sns.heatmap(data,
                         ax=ax,
@@ -138,19 +179,25 @@ def parameter_based(data, args):
         ax.set_ylabel(ylabel)
         ax.set_xlabel(xlabel)
         ax.set_title(title)
-        show_push_save(fig, args)
+        show_push_save(fig, func, args)
 
 
 def momentum(data, args):
-    for name, accuracy in data:
-        fig, ax = plt.subplot()
+    for name, accuracy in data.items():
+        func = defaultdict(lambda: None)
+        func["train"] = name.split()[0].lower()=="train"
+        fig, ax = plt.subplots()
+        
         for i, mse in enumerate(accuracy):    
             ax.plot(mse, label=f'{name}. $\gamma={args.gamma[i]:.2f}$')
         ax.set_title(name + "during training for different momentums")
         ax.set_xlabel("Number of epochs")
         ax.set_ylabel("MSE")
         plt.legend()
-        show_push_save(fig, args)
+        func["x"] = "epochs"
+        func["y"] = "MSE"
+        func["z"] = "momentum"
+        show_push_save(fig, func, args)
 
 def eta_lambda(data, args):
     pass

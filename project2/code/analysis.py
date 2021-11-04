@@ -81,6 +81,7 @@ def NN_regression(args):
 
 
 def linear_regression(args):
+    print("Doing linear regression")
     p = args.polynomial
     etas = args.eta
     lmbs = args.lmb
@@ -89,9 +90,8 @@ def linear_regression(args):
     X = utils.create_X(x, y, p)
 
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
-    beta0 = np.random.randn(utils.get_features(p))
-
-    if not args.gamma:
+    beta0 = np.random.randn(utils.get_features(p))  # use same beta0 in all runs for comparisonability
+    if args.gamma >= 0:
         if args.batch_size == 0:
             batch_sizes = np.array([720, 360, 240, 144, 72, 48, 30, 24])
         else:
@@ -138,8 +138,8 @@ def linear_regression(args):
                                                 args.lmb[0],
                                                 gamma=gamma)
 
-            data["train_MSE"][i] = mom_MSE_train
-            data["test_MSE"][i] = mom_MSE_test
+            data["Train MSE"][i] = mom_MSE_train
+            data["Test MSE"][i] = mom_MSE_test
 
         plot.momentum(data, args)
 
