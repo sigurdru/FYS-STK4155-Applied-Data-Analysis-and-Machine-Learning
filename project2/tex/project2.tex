@@ -29,7 +29,7 @@ All the code, results and instructions on running the code can be found in our G
 \section{Theory}
 In the theory-section we aim to give a brief explanation of the main concepts and terminology used in this report. For a more in-depth explanation we recommend reading the appropriate sections in \cite{2019}, which has been of great inspiration and help for us throughout the project.
 
-\subsection{Gradient Decent}
+\subsection{Gradient Decent}\label{sec:GD}
 In this section we cover gradient decent and different variations of it. More specifically we describe gradient decent (GD), stochastic gradient decent (SGD) and adding momentum to the aforementioned methods.
 \subsubsection{Ordinary Gradient Decent}
 Gradient decent methods is often used to minimize the so-called cost/loss-function, which tells us how well our model is (more on this here \ref{sec:cost_func_and_regul}). Thus, lets say we have a cost function $C(\boldsymbol{\beta})$ which could be expressed as
@@ -47,9 +47,9 @@ The algorithm for GD is then:
 \boldsymbol{\beta}_{t+1} &= \boldsymbol{\beta}_t - \mathbf{v}_t,
 \label{eq:GD_algo}
 \end{align}
-where $\eta$ is what we call the learning rate. This algorithms finds (ideally), with each iteration, new $\boldsymbol{\beta}_{t+1}$ values which decreases the cost function. This is of course not always the case, and depends on the value of $\eta$. There are many potential problems when choosing the wrong learning rate. For example, if it is to big, our answer can diverge. If $\eta$ is too small we will need too many iterations to reach the minima. Potentially we can also get stuck in a local minima.
+where $\eta$ is what we call the learning rate\sn{DYNAMIC $\eta$ MISSING}. This algorithms finds (ideally), with each iteration, new $\boldsymbol{\beta}_{t+1}$ values which decreases the cost function. This is of course not always the case, and depends on the value of $\eta$. There are many potential problems when choosing the wrong learning rate. For example, if it is to big, our answer can diverge. If $\eta$ is too small we will need too many iterations to reach the minima. Potentially we can also get stuck in a local minima.
 
-\subsubsection{Stochastic Gradient Decent}
+\subsubsection{Stochastic Gradient Decent}\label{sec:SGD}
 Another challenge, which is reduced when using SGD, are the large number of computations needed when calculating the gradient. Instead of calculating the total derivative as in \eqref{eq:Total_gradient}, we approximate it. This is done by performing the gradient on a subset of the data, called a minibatch. With $n$ still denoting the total number of datapoints, we will have $N_B=n/M$ minibatches, where $M$ is the size of each minibatch. The minibatches are denoted by $B_k$. Thus our approximated gradient, using a single minibatch $B_k$ is defined as
 \begin{align}
 \nabla_{\boldsymbol{\beta}} C^{MB}(\boldsymbol{\beta}) \equiv \sum_{i \in B_k} \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
@@ -69,7 +69,7 @@ Still the methods can be optimized even further by adding momentum. This is done
 \end{align}
 Here $\gamma$ is what we could refer to as the mass, and is another free parameter. One of the benefits is for example that this lets us move faster in regions where the gradient is small.
 
-\subsection{Logistic Regression}
+\subsection{Logistic Regression}\label{sec:logistic_regression}
 Gradient decent is used when we have a continuous output, like fitting a function to data. Logistic Regression is used for classification situations, meaning that we want to predict discrete outputs, i.e. true of false. In our case we want a model that takes in some values $\mathbf{x}_i$ and spits out zero or one. These values should correspond to the actual classification $y_i\in\{0,1\}$ corresponding to true or false respectively. Lets define our model as
 \begin{align}
 	\sigma(s_i), \ \ \text{where }s_i = \bo x_i^T \bo w + b_0 \equiv \bo X_i^T \bo W
@@ -82,9 +82,9 @@ where $n$ are the number of samples we want to classify. Now with a cost functio
 \begin{align}
 	\nabla_{\bo W} C(\bo W) = \sum_{i = 1}^n \left[\sigma(\bo X_i^T \bo W - y_i)\right]\bo X_i = \bo 0.
 \end{align}
-Thus the only thing left to do is perform an algorithm similar to \ref{eq:SGD_algo}, where we in this case are updating $\bo W_t$.
+Thus the only thing left to do is perform an algorithm similar to \ref{eq:SGD_algo}, where we in this case are updating $\bo W_t$.\sn{RIKTIG?}
 
-\subsection{Feed-Forward Deep Neural Networks}
+\subsection{Feed-Forward Deep Neural Networks}\label{sec:NeuralNetwork}
 Neural networks are neural-inspired nonlinear models, which are taught by a way of supervised learning. We will in this section explain what we mean by non-linearity, the basic architecture of a neural network and how the network learns. 
 \subsubsection{Architecture of Neural Networks}
 The structure we are going to use in this report is similar to that in figure \ref{fig:neural_network}. The gray circles are what we refer to as nodes. For now we just need to know that they hold some numerical value. One initializes the network by giving the nodes in the input layer numerical values. These values would correspond to some actual physical property, for example brightness of pixels in a picture. Then, each node in the input layer is connected to each node in the hidden layer $h_1$. In figure \ref{fig:neural_network} we have three such hidden layers, where each node in one layer is connected to every node in the next layer. Now the nodes are connected through what we will refer to as weights, biases and activation functions (more on that later). The connections are what assigns the numerical value of the nodes in the next layer. Lastly we have the output layer, which outputs values dependent on the problem. If we have a classification situation, where we for example wanted to classify the type of animal in different pictures, then one node could correspond to  a lion, next to a zebra and so fourth. By this we would know what animal the network \textit{thinks} is in the picture by looking at what neuron has the highest numerical value.
@@ -189,10 +189,40 @@ Now why have we done all this work, well because the equations \eqref{eq:backpro
 \end{description}
 One thing we haven't mentioned is how one initializes the network. In order to do the first step, activation, we have to give the network some initial weights and biases. \sn{HOW?}
 
-
 \section{Methods}
+As we mentioned in the introduction, we wish to study different ways of fitting two types of datasets. The first which we can classify as \textit{continuous} is the Franke Function \eqref{eq:FF},
+\begin{align}
+\begin{split}\label{eq:FF}
+f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10})
+\\
++ &\frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2).
+\end{split}
+\end{align}
+We will use both stochastic gradient decent and feed forward neural network to try and fit the data. Both methods are covered in the theory sections \ref{sec:GD} and \ref{sec:NeuralNetwork} respectively.
+
+Next we will embark on an classification problem. Namely classifying if breast tissue is malignant or benign, by studying the data provided by Wisconsin breast cancer data\footnote{\href{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}}. We will again use a feed forward neural network, and logistic regression. The latter is covered in the theory section \ref{sec:logistic_regression}.
+
+\subsection{Franke Function}
+\subsubsection{Stochastic Gradient Descent}
+\subsubsection{Feed Forward Neural Network}
+
+\subsection{Wisconsin Breast Cancer Data}
+\subsubsection{Feed Forward Neural Network}
+\subsubsection{Logistic Regression}
+
 \section{Results}
+
+%Section ideas:
+%\subsection{Franke Function}
+%\subsubsection{Stochastic Gradient Descent}
+%\subsubsection{Feed Forward Neural Network}
+%
+%\subsection{Wisconsin Breast Cancer Data}
+%\subsubsection{Feed Forward Neural Network}
+%\subsubsection{Logistic Regression}
+
 \section{Discussion}
+
 \section{Conclusion}
 \appendix
 \section{Appendix}
