@@ -63,21 +63,15 @@ def NN_regression(args):
             tr_mse = utils.MSE(z_train, train_pred)
             te_mse = utils.MSE(z_test, test_pred)
 
-            data["train_MSE"][i][j] = tr_mse if tr_mse < 1 else np.nan
-            data["test_MSE"][i][j] = te_mse if te_mse < 1 else np.nan
+            data["train MSE"][i][j] = tr_mse if tr_mse < 1 else np.nan
+            data["test MSE"][i][j] = te_mse if te_mse < 1 else np.nan
 
     print("\n"*3)
     print(f"Best NN train prediction: {(train:=data['train_MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
     print(f"Best NN test prediction: {(test:=data['test_MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
+    plot.eta_lambda(data, args)
 
-    for name, accuracy in data.items():
-        fig, ax = plt.subplots()
-        data = pd.DataFrame(accuracy, index=np.log10(etas), columns=np.log10(lmbs))
-        sns.heatmap(data, ax=ax, annot=True, cmap=cm.coolwarm)
-        ax.set_title(name)
-        ax.set_ylabel("$\log10(\eta)$")
-        ax.set_xlabel("$\log10(\lambda)$")
-        plt.show()
+
 
 
 def linear_regression(args):

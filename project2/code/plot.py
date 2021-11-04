@@ -200,5 +200,17 @@ def momentum(data, args):
         show_push_save(fig, func, args)
 
 def eta_lambda(data, args):
-    pass
-    
+    for name, accuracy in data.items():
+        func = defaultdict(lambda:None)
+        func["train"] = name.split()[0].lower()=="train"
+        func["x"] = "eta"
+        func["y"] = "lambda"
+        func["z"] = name.split()[1]
+
+        fig, ax = plt.subplots()
+        data = pd.DataFrame(accuracy, index=args.eta, columns=args.lmb)
+        sns.heatmap(data, ax=ax, annot=True, cmap=cm.coolwarm)
+        ax.set_title(name + f"as function of learning rate and lambda for {args.dataset}-data")
+        ax.set_xlabel("$\eta$")
+        ax.set_ylabel("$\lambda$")
+        show_push_save(fig, func, args)
