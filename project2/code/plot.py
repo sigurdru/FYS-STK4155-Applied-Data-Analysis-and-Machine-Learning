@@ -13,34 +13,10 @@ import os
 plt.style.use('seaborn')
 plt.rc('text', usetex=True)
 plt.rc('font', family='DejaVu Sans')
-path_plots = '../output/plots'
+path_plots = '../output/plots/'
 
 
-def set_ax_info(ax, xlabel, ylabel, title=None, zlabel=None):
-    """Write title and labels on an axis with the correct fontsizes.
-
-    Args:
-        ax (matplotlib.axis): the axis on which to display information
-        title (str): the desired title on the axis
-        xlabel (str): the desired lab on the x-axis
-        ylabel (str): the desired lab on the y-axis
-        zlabel (str): the desired lab on the z-axis
-
-    """
-    if zlabel is None:
-        ax.set_xlabel(xlabel, fontsize=20)
-        ax.set_ylabel(ylabel, fontsize=20)
-        ax.set_title(title, fontsize=20)
-        ax.tick_params(axis='both', which='major', labelsize=15)
-        ax.ticklabel_format(style='plain')
-        ax.legend(fontsize=15)
-    else:
-        ax.set_xlabel(xlabel, fontsize=18)
-        ax.set_ylabel(ylabel, fontsize=18)
-        ax.set_zlabel(zlabel, fontsize=18)
-        ax.tick_params(axis='both', which='major', labelsize=12)
-
-def show_push_save(fig, fname, args):
+def show_push_save(fig, args):
     """
     This function handles wether you want to show,
     save and/or push the file.
@@ -50,11 +26,11 @@ def show_push_save(fig, fname, args):
         fig (matplotlib.figure): Figure you want to handle
         args (argparse)
     """
+    file = path_plots + set_fname(args) + ".pdf"
     if args.save:
-        print("Saving plot: ", fname + ".pdf")
-        fig.savefig(os.path.join(path_plots, fname + '.pdf'))
+        print("Saving plot: ", file)
+        fig.savefig(file)
     if args.push:
-        file = os.path.join(path_plots, fname + ".pdf")
         os.system(f"git add {file}")
         os.system("git commit -m 'plots'")
         os.system("git push")
