@@ -32,7 +32,7 @@ In the theory-section we aim to give a brief explanation of the main concepts an
 \subsection{Gradient Decent}
 In this section we cover gradient decent and different variations of it. More specifically we describe gradient decent (GD), stochastic gradient decent (SGD) and adding momentum to the aforementioned methods.
 \subsubsection{Ordinary Gradient Decent}
-Gradient decent methods is often used to minimize the so-called cost/loss-function. Thus, lets say we have a cost function $C(\boldsymbol{\beta})$ which could be expressed as
+Gradient decent methods is often used to minimize the so-called cost/loss-function, which tells us how well our model is (more on this here \ref{sec:cost_func_and_regul}). Thus, lets say we have a cost function $C(\boldsymbol{\beta})$ which could be expressed as
 \begin{equation}
 C(\boldsymbol{\beta}) = \sum_{i = 1}^{n}c_i(\mathbf{x}_i, \boldsymbol{\beta}).
 \end{equation}
@@ -47,7 +47,7 @@ The algorithm for GD is then:
 \boldsymbol{\beta}_{t+1} &= \boldsymbol{\beta}_t - \mathbf{v}_t,
 \label{eq:GD_algo}
 \end{align}
-where $\eta$ is what we call the learning rate. This algorithms finds (ideally), with each iteration, new $\beta_{k+1}$ values which decreases the cost function. This is of course not always the case, and depends on the value of $\eta$. There are many potential problems when choosing the wrong learning rate. For example, if it is to big, our answer can diverge. If $\eta$ is too small we will need too many iterations to reach the minima, or reach a local minima.
+where $\eta$ is what we call the learning rate. This algorithms finds (ideally), with each iteration, new $\boldsymbol{\beta}_{t+1}$ values which decreases the cost function. This is of course not always the case, and depends on the value of $\eta$. There are many potential problems when choosing the wrong learning rate. For example, if it is to big, our answer can diverge. If $\eta$ is too small we will need too many iterations to reach the minima. Potentially we can also get stuck in a local minima.
 
 \subsubsection{Stochastic Gradient Decent}
 Another challenge, which is reduced when using SGD, are the large number of computations needed when calculating the gradient. Instead of calculating the total derivative as in \eqref{eq:Total_gradient}, we approximate it. This is done by performing the gradient on a subset of the data, called a minibatch. With $n$ still denoting the total number of datapoints, we will have $N_B=n/M$ minibatches, where $M$ is the size of each minibatch. The minibatches are denoted by $B_k$. Thus our approximated gradient, using a single minibatch $B_k$ is defined as
@@ -63,14 +63,26 @@ Then the aim is to use this approximated gradient, for all $N_B$ minibatches, to
 This not only speeds up the algorithms, it also helps prevent getting stuck in local minima because of the stochastic nature.
 
 \subsubsection{Adding Momentum}
-Still the method can be optimized even further by adding momentum. This is done by a small modification in the parameter $\mathbf{v}_t$ in equations \eqref{eq:GD_algo} and \eqref{eq:SGD_algo}. Namely we add a so-called mass term, to simulate the step sizes having momentum
+Still the methods can be optimized even further by adding momentum. This is done by a small modification in the parameter $\mathbf{v}_t$ in equations \eqref{eq:GD_algo} and \eqref{eq:SGD_algo}. Namely we add a so-called mass term, to simulate the step sizes having momentum
 \begin{align}
 	\mathbf{v}_t = \eta \nabla_{\boldsymbol{\beta}_t} C(\boldsymbol{\beta}) \rightarrow \mathbf{v}_t = \gamma \mathbf{v}_{t-1} + \eta \nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}_t).
 \end{align}
 Here $\gamma$ is what we could refer to as the mass, and is another free parameter. One of the benefits is for example that this lets us move faster in regions where the gradient is small.
 
 \subsection{Logistic Regression}
-This method is used for classification situations. This means we want to predict discrete outputs, i.e. true of false. 
+Gradient decent is used when we have a continuous output, like fitting a function to data. Logistic Regression is used for classification situations, meaning that we want to predict discrete outputs, i.e. true of false. In our case we want a model that takes in some values $\mathbf{x}_i$ and spits out zero or one. These values should correspond to the actual classification $y_i\in\{0,1\}$ corresponding to true or false respectively. Lets define our model as
+\begin{align}
+	\sigma(s_i), \ \ \text{where }s_i = \bo x_i^T \bo w + b_0 \equiv \bo X_i^T \bo W
+\end{align}
+Where $\bo x_i^T$ is our data/input, $\bo w$ and $b_0$ are parameters in the model. As a shorthand we also defined $\bo W = (b_0, \bo w)$ and $\bo X_i = (1, \bo x_i)$. We also have $\sigma$ which is some soft classifier that maps our output between zero and one (i.e. the Sigmoid \eqref{eq:sigmoid}). The reason why we want a soft classifier and not a hard one (like $\sigma = 1$ if $s\geq0$ and $0$ otherwise.), is because then we can interpret the output as a probability. Here we also need a cost function to minimize. It is common to choose the cross entropy, which we derive in \ref{sec:cost_func_and_regul}. However we will just use it without derivation for now. The cross entropy for this model is given as
+\begin{align}
+	C(\bo W) = \sum_{i = 1}^{n} -y_i \log\sigma(\bo X_i^T \bo W) - (1 - y_i)\log\left[1 - \sigma(\bo X^T_i \bo W)\right],
+\end{align}
+where $n$ are the number of samples we want to classify. Now with a cost function and model in hand we are ready to minimize the cost function in order to find the optimal parameters for the model. We have a convex cost function, therefore a minimization leads to
+\begin{align}
+	\nabla_{\bo W} C(\bo W) = \sum_{i = 1}^n \left[\sigma(\bo X_i^T \bo W - y_i)\right]\bo X_i = \bo 0.
+\end{align}
+Thus the only thing left to do is perform an algorithm similar to \ref{eq:SGD_algo}, where we in this case are updating $\bo W_t$.
 
 \subsection{Feed-Forward Deep Neural Networks}
 Neural networks are neural-inspired nonlinear models, which are taught by a way of supervised learning. We will in this section explain what we mean by non-linearity, the basic architecture of a neural network and how the network learns. 
@@ -111,7 +123,7 @@ Where $\alpha$ is some parameter which we have set to $\alpha = 0.1$ in figure \
 	\caption{Some activation functions, namely Sigmoid, RELU and Leaky RELU.}\label{fig:activation_functions}
 \end{figure}
 
-\subsubsection{Cost Function and Regularization}
+\subsubsection{Cost Function and Regularization}\label{sec:cost_func_and_regul}
 Before one can start training the data, we must have a cost function. This will tell us how well or poorly our network is performing, and is what we want to minimize when we train the network. For continuous date it is common to use mean square error (MSE) as the cost function. Which is just the difference between desired output ($\hat{\mathbf{x}}$) and actual output ($\mathbf{x}$), squared, divided by the number of datapoints $n$ (see equation \eqref{eq:MSE})
 \begin{align}
 	C(\mathbf{x}) = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2.
