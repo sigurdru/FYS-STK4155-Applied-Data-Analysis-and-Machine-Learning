@@ -99,6 +99,11 @@ def parse_args(args=None):
             help="Number of nodes in each hidden layer",
             )
 
+    add_arg("-act_func",
+            type=str,
+            default="sigmoid",
+            help="activation function used in hidden layers") 
+
     add_arg("-d", "--dataset",
             type=str,
             default="Franke",

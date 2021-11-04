@@ -159,9 +159,11 @@ def NN_classification(args):
               batch_size=args.batch_size,
               learning_rate=args.eta[0],
               lmb=args.lmb[0],
-              activation="sigmoid",
+              gamma=args.gamma,
+              activation=args.act_func,
               cost="cross_entropy",
-              output_activation="softmax"
+              output_activation="softmax",
+              test_data=(X_test, z_test),
               )
 
     prob_hist, prob_err = NN.train(args.num_epochs, train_history=True)
@@ -174,13 +176,13 @@ def NN_classification(args):
     test_target = np.argmax(z_test, axis=1)
     print('Train acc: ', np.sum(train_pred == train_target)/len(train_pred))
     print('Test acc : ', np.sum(test_pred == test_target) / len(test_pred))
-    print("\n"*2)
+    # print("\n"*2)
 
     # Plot of accuracy as a function of epochs 
-    plt.plot(np.arange(args.num_epochs), prob_hist)
+    plt.scatter(np.arange(args.num_epochs), prob_hist)
     plt.show()
 
-    # Plot of error in output as a function of epochs
-    plt.plot(np.arange(args.num_epochs), prob_err)
-    plt.show()
+    # # Plot of error in output as a function of epochs
+    # plt.plot(np.arange(args.num_epochs), prob_err)
+    # plt.show()
 
