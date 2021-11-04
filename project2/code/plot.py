@@ -47,13 +47,12 @@ def show_push_save(fig, func, args):
         plt.clf()
 
 def set_fname(func, args):
-    np.random.seed()
+    np.random.seed()  # resetting seed
     """
     This function should automatically set filenames from args
     Also adds runtime args to a text_file for easy archivation
     """
     fname = ""
-    # train or test
     fname += args.method + "_" + args.dataset  # reg or NN, used on dataset
     fname += "__" + func["x"] + "_" + func["y"] + "__"  # as func of
     if func["train"]:
@@ -64,8 +63,8 @@ def set_fname(func, args):
     fname += "__" + str(int(np.random.uniform() * 1e6))  # random number to identify plot
     fname += ".pdf"
     
-    if args.save:
     # save configuration to file
+    if args.save:
         with open(archive, "a+") as file:
             print("Writing run configuration to archive")
             file.write("\n\n")
