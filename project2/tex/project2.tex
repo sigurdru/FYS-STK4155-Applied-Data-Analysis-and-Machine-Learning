@@ -73,6 +73,7 @@ Here $\gamma$ is what we could refer to as the mass, and is another free paramet
 Gradient decent is used when we have a continuous output, like fitting a function to data. Logistic Regression is used for classification situations, meaning that we want to predict discrete outputs, i.e. true of false. In our case we want a model that takes in some values $\mathbf{x}_i$ and spits out zero or one. These values should correspond to the actual classification $y_i\in\{0,1\}$ corresponding to true or false respectively. Lets define our model as
 \begin{align}
 	\sigma(s_i), \ \ \text{where }s_i = \bo x_i^T \bo w + b_0 \equiv \bo X_i^T \bo W
+	\label{eq:log_reg_model}
 \end{align}
 Where $\bo x_i^T$ is our data/input, $\bo w$ and $b_0$ are parameters in the model. As a shorthand we also defined $\bo W = (b_0, \bo w)$ and $\bo X_i = (1, \bo x_i)$. We also have $\sigma$ which is some soft classifier that maps our output between zero and one (i.e. the Sigmoid \eqref{eq:sigmoid}). The reason why we want a soft classifier and not a hard one (like $\sigma = 1$ if $s\geq0$ and $0$ otherwise.), is because then we can interpret the output as a probability. Here we also need a cost function to minimize. It is common to choose the cross entropy, which we derive in \ref{sec:cost_func_and_regul}. However we will just use it without derivation for now. The cross entropy for this model is given as
 \begin{align}
@@ -136,12 +137,24 @@ One can also implement regularization, which helps prevent overfitting in the ne
 \end{align}
 \sn{RIKTIG?}Here $\lambda$ is some regularization parameter and $\mathbf{w}$ are weights.
 
-For classification scenarios one will often use cross-entropy as the cost function. This is given by equation \eqref{eq:cross_entropy}.
+We mentioned when talking about logistic regression (section \ref{sec:logistic_regression}), that for classification scenarios one will often use cross-entropy as the cost function. Continuing with the model defined by \eqref{eq:log_reg_model}, we want to find an appropriate cost function. We define the probability of an outcome $y_i$ given parameters $\bo X_i$ and $\bo W$ as
 \begin{align}
-	C(\mathbf{x}) = 
+	P(y_i = 1|\bo X_i, \bo W) &= \frac{1}{1 + \exp(-\bo X_i^T \bo W)}, \\
+	P(y_i = 0|\bo X_i, \bo W) &= 1 - P(y_i = 1|\bo X_i, \bo W)
+\end{align}
+We can then map these probabilities to our soft classifier $\sigma(s_i)$
+\begin{align}
+	P(y_i = 1) = \sigma(s_i) = \sigma(\bo X_i^T \bo W).
+\end{align}
+Now we can define the cost function using Maximum Likelihood Estimation (MLE), which states that we should choose parameters that maximize the probability of our given data.
+
+
+Thus we arrive at the cross entropy equation \eqref{eq:cross_entropy}.
+\begin{align}
+	C(\bo W) = \sum_{i = 1}^{n} -y_i \log\sigma(\bo X_i^T \bo W) - (1 - y_i)\log\left[1 - \sigma(\bo X^T_i \bo W)\right]
 	\label{eq:cross_entropy}
 \end{align}
-lol\sn{NOT DONE}
+\sn{NOT DONE}
 \subsubsection{The Backpropagation Algorithm}
 With a desired cost function we are ready to train the neural network. This is done by the backpropagation algorithm. The method entails finding the derivative of the cost function, with respect to all parameters. When we have a neural network, we have thousands of parameters which can be tuned (weights and biases), meaning that we have to approximate the derivative somehow. The backpropagation algorithm does just that, by exploiting the layered structure displayed in figure \ref{fig:neural_network}.
 
