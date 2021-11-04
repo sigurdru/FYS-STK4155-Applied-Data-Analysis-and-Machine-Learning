@@ -2,6 +2,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 from autograd import elementwise_grad
 from cost_activation import Costs, Activations
+import utils 
 
 
 class Optimizer:
@@ -108,6 +109,9 @@ class FFNN(Costs, Activations):
             # Analytical derivative for softmax and cross entropy 
             self.delta_l[-1] = self.Layers[-1] - self.t
 
+        elif self.activation_out.__name__ == 'none':
+            self.delta_l[-1] = self.cost_der(self.Layers[-1])
+
         else:
             self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
 
@@ -162,19 +166,24 @@ class FFNN(Costs, Activations):
                 self.feed_forward()
                 self.backpropagation()
 
+
             if train_history:
-                self.t = self.static_target
+                # self.t = self.static_target
                 output = self.predict(self.X)
                 pred = np.argmax(output, axis=1).reshape(-1,1)
 
-                loss = output - self.t
+                loss = output - self.static_target
+                # print(np.mean(loss, axis=0))
+                # input()
 
                 if self.nodes[-1] > 1:
-                    r = np.argmax(self.t, axis=1).reshape(-1,1)
-                    history[epoch] = np.sum(pred == r) / len(r)
+                    target = np.argmax(self.static_target, axis=1).reshape(-1,1)
+                    history[epoch] = utils.accuracy_score(target, pred)
                     errors[epoch] = np.mean(loss, axis=0)[0]
                 else:
-                    history[epoch] = np.sum(self.cost(pred), axis=1)
+
+                    history[epoch] = utils.MSE(self.static_target, output)
+
         return history, errors
 
 
