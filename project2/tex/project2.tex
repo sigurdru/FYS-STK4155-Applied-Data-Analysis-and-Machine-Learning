@@ -124,10 +124,10 @@ The activation functions are where the non-linearity term comes in, because they
 	\text{RELU: }\sigma(x) &= \max(0,x) \label{eq:RELU} \\
 	\text{Leaky RELU: }\sigma(x) &= \begin{cases}
 	\alpha x,& \text{if } x\leq 0 \\
-	z,& \text{otherwise}
+	x,& \text{otherwise}
 	\end{cases} \label{eq:leaky_RELU}
 \end{align}
-Where $\alpha$ is some parameter which we have set to $\alpha = 0.1$ in figure \ref{fig:activation_functions}.
+Where $\alpha$ is some parameter which we have set to $\alpha = 0.01$ in figure \ref{fig:activation_functions}.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{pictures/activation_functions.pdf}
@@ -215,7 +215,13 @@ Now why have we done all this work, well because the equations \eqref{eq:backpro
 	\item[5 Calculate gradient:] Find the gradient by using equations \eqref{eq:backprop2} and \eqref{eq:backprop4}.
 	\item[6 Update parameters:] Update the parameters similarly to \eqref{eq:SGD_algo}, however $\boldsymbol{\beta}_t$ are our weights and biases in this case.\sn{RIKTIG?}
 \end{description}
-One thing we haven't mentioned is how one initializes the network. In order to do the first step, activation, we have to give the network some initial weights and biases. \sn{HOW?}
+
+\subsubsection{Initialization of weights}
+We mentioned earlier than then the network is created, it has weights and biases between the layers. These needs to be initialized in some way. The biases are simple to initialize, as they are a single number for every node. These are initialized as a small, non-zero value $b_0$, which we choose as $b_0=0.01$.
+
+Before 2006, most neural networks were performing quite badly on most tasks, as they did not learn during training. One of the (several) reasons were due to bad initialization of weights. A common way of doing this was using the standard normal distribution $W_{i,j} \sim  \mathcal{N}(0, 1)$. The problem with this is that it does not consider the size of the layers. In 2010, it was shown that when using sigmoid as the activation function, Xavier-initialization give better results \cite{xavier}. This is given as $W_{i, j}\sim\mathcal{U} \left(-\frac{1}{\sqrt{n}}, \frac{1}{\sqrt{n}} \right)$, where $\mathcal{U}$ is the uniform distribution, and $n$ is the number of nodes in the preceding layer.
+
+In 2015, He-initialization was shown to work well with ReLU and Leaky ReLU \cite{He}. Here, the weights are initialized using the normal distribution, but with a variance given by $v = 2/(1 + \alpha^2)n$, where again $n$ is the number of nodes in the preceding layer, and $\alpha$ is the parameter of the Leaky ReLU-function. For ReLU, this is 0. We use these initializations for our weights given the activation-function, but will not study the particular effects of this in depth.
 
 \section{Methods}
 As we mentioned in the introduction, we wish to study different ways of fitting two types of datasets. The first which we can classify as \textit{continuous} is the Franke Function \eqref{eq:FF},
