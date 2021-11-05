@@ -72,7 +72,14 @@ class FFNN(Costs, Activations):
         self.delta_l = self.Layers.copy()   # Activation layer input gradient
 
         # Initial zero for weights ensures that weights[n] corresponds to Layers[n]
-        self.weights = [0] + [np.random.normal(scale=1 / n, size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        if activation == "sigmoid":  # Xavier initialization
+            self.weights = [0] + [np.random.uniform(-1/np.sqrt(n), 1/np.sqrt(n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        elif activation == "tanh":  # Normalized Xaviet initialization
+            self.weights = [0] + [np.random.uniform(-np.sqrt(1/(n + m)), np.sqrt(6/(n + m)), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        elif activation == "relu":  # He initialization
+            self.weights = [0] + [np.random.normal(scale=np.sqrt(2/n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        elif activation == "leaky_relu":  # He initialization
+            self.weights = [0] + [np.random.normal(scale=np.sqrt(2/(1 + 0.01**2)/n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
         # Calculate gradients with momentum (gamma=0 by default)
