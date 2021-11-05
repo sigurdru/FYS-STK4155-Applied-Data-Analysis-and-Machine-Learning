@@ -13,7 +13,7 @@ class Costs:
 
 class Activations:
     def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))  
+        return 1 / (1 + np.exp(-x))
 
     def tanh(self, x):
         return np.tanh(x)
@@ -25,10 +25,10 @@ class Activations:
         return np.where(x > 0, x, leak * x)
 
     def softmax(self, x):
-        exp = np.exp(x - np.max(x))
+        exp = np.exp(x)
         s = np.sum(exp, axis=1, keepdims=True)
         return exp/s
 
     def none(self, x):
         # No activation
-        return x 
+        return x
