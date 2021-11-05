@@ -39,6 +39,9 @@ def NN_regression(args):
     etas = args.eta
     lmbs = args.lmb
     scaler = scale_conv[args.scaling]
+    if args.pred:
+        # Reduce noise for surface plot comparison
+        args.epsilon = 0.05 
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p, intercept=False if p == 1 else True)
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
@@ -76,24 +79,15 @@ def NN_regression(args):
 
             if args.pred:
                 """
-                Should be inputs to a separate plot script in the future
+                Plot fitted surface with original data  
                 """
                 X_ = utils.split_scale(X, z, 0, scaler)[0] # Scale design matrix 
-                z_ = utils.split_scale(X, z, 0, scaler)[-1]# Scale targets 
 
                 # Calculate output. Rescale values to the original 
                 z_pred = utils.rescale_data(NN.predict(X_), z)
-                z_pred_ = z_pred.reshape((x.shape[0], x.shape[1]))
 
-                z_target = z.reshape((x.shape[0], x.shape[1]))
+                plot.surface_fit(z_pred, z, x, y, args)
 
-                fig = plt.figure()
-                ax = fig.gca(projection="3d")
-                surf = ax.plot_surface(x,y,z_target, alpha=0.3, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-                surf = ax.plot_surface(x,y,z_pred_, cmap=cm.jet, linewidth=0, antialiased=False)
-
-                fig.colorbar(surf, shrink=0.5, aspect=5)
-                plt.show()
 
     # print("\n"*3)
     # print(f"Best NN train prediction: {(train:=data['train_MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
@@ -107,6 +101,11 @@ def linear_regression(args):
     etas = args.eta
     lmbs = args.lmb
     scaler = scale_conv[args.scaling]
+
+    if args.pred:
+        # Reduce noise for surface plot comparison 
+        args.epsilon = 0.05
+
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p, intercept=False if p == 1 else True)
 
@@ -145,24 +144,15 @@ def linear_regression(args):
 
                     if args.pred:
                         """
-                        Should be inputs to a separate plot script in the future
+                        Plot fitted prediction vs data set with epsilon=0.05
                         """
                         X_ = utils.split_scale(X, z, 0, scaler)[0] # Scale design matrix 
 
 
                         # Calculate output. Rescale values to the original 
                         z_pred = utils.rescale_data(X_ @ beta, z)
-                        z_pred_ = z_pred.reshape((x.shape[0], x.shape[1]))
 
-                        z_target = z.reshape((x.shape[0], x.shape[1]))
-
-                        fig = plt.figure()
-                        ax = fig.gca(projection="3d")
-                        surf = ax.plot_surface(x,y,z_target, alpha=0.3, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-                        surf = ax.plot_surface(x,y,z_pred_, cmap=cm.jet, linewidth=0, antialiased=False)
-
-                        fig.colorbar(surf, shrink=0.5, aspect=5)
-                        plt.show()
+                        plot.surface_fit(z_pred, z, x, y, args)
 
         plot.parameter_based(data, args)
         

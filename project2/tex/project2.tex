@@ -24,11 +24,13 @@
 \maketitle
 \pagestyle{myplain}
 \section{Introduction}
-In the modern world, digital data has become one of the most valuable commodities there is. Not because of scarcity, like most other valuables, but rather the exact opposite; the vast abundance of data available makes being able to understand trends and patterns in it extremely valuable for companies looking to expand. However, the data is complex, having many features, and understanding how one affect another is impossible by pure staring. Luckily, there exists statistical methods that let us find the deeper connections, make models and even predict outcomes.
+In the modern world, digital data has become one of the most valuable commodities there is. Not because of scarcity, like most other valuables, but rather the exact opposite; the vast abundance of data available makes being able to understand trends and patterns in it extremely valuable for companies looking to expand. However, the data is complex, having many features, and understanding how one affect another is impossible with purely human analysis. Luckily, there exists statistical methods that let us find the deeper connections, make models and even predict outcomes. In this paper we wish to study some of these methods, look at their limitations and strengths.
 
-In this paper, we will study some of these methods, and use them to fit continuous data, also known as regression, as well as classifying discrete data. For regression, we first use Stochastic Gradient Descent to fit a bi-variate continuous function known as the Franke Function. Then we develop a neural network and train it to predict the same function. Next, we use logistic regression to predict wether a tumor is malignant or not. The neural network is also trained for the same task.
+First we will study a bi-variate continuous function known as the Franke function. We will use both stochastic gradient decent and a feed-forward deep neural network, with back propagation. Then we can also compare results with those obtained in a previous paper, using ordinary least squares and ridge regression. Note that all methods used in this report is briefly covered in the theory section.
 
-All the code, results and instructions on running the code can be found in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}}.
+Next we will embark on a classification problem, namely wether of not breast tissue is benign or malignant. Here we will also use a feed-forward deep neural network, along with logistic regression. 
+
+We will on no way answer all questions linked to the aforementioned methods. Such that anyone can reproduce or continue our studies, we list all the code, results and instructions on running the code in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}}. 
 
 \section{Theory}
 In the theory-section we aim to give a brief explanation of the main concepts and terminology used in this report. For a more in-depth explanation we recommend reading the appropriate sections in \cite{2019}, which has been of great inspiration and help for us throughout the project.
@@ -237,8 +239,15 @@ We will use both stochastic gradient decent and feed forward neural network to t
 Next we will embark on an classification problem. Namely classifying if breast tissue is malignant or benign, by studying the data provided by Wisconsin breast cancer data\footnote{\href{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}}. We will again use a feed forward neural network, and logistic regression. The latter is covered in the theory section \ref{sec:logistic_regression}.
 
 \subsection{Franke Function}
+Before we can study Franke Function we have to initialize the data. We will use the same parameters as in a previous project, such that we can compare results. One can find the previous project on our GitHub\footnote{https://github.com/sigurdru/FYS-STK4155/tree/main/project1} with all the code and instructions on how to run it. In that project we initialized the data with $N=30\times30$ randomly (uniformly) distributed datapoints in $x$- and $y$-direction. To simulate it being real data, we also added normally distributed noise with mean zero and standard deviation $\epsilon = 0.2$ ($N(0,\epsilon)$). In the previous project we, among other things, used ordinary least squares (OLS) and ridge regression to fit the Franke function. Information on those methods can be found in the aforementioned report. We can then compare the optimal MSE's in that project, with those obtained in this.
+
 \subsubsection{Stochastic Gradient Descent}
+As mentioned we want to fit the Franke function \eqref{eq:FF} using stochastic gradient decent (algorithm \eqref{eq:SGD_algo}). Writing our own code, we perform an analysis of the MSE (equation \eqref{eq:MSE}) for different learning rates $\eta$. The cost function used is ordinary MSE. We also implement $L_2$ regularization \eqref{eq:L2}, and plot the MSE's for different values of hyper-parameters $\lambda$.\sn{Scaling the learning rate}
+
+The specific parameters we will test for are\sn{HVILKE PARAMETERE VI TESTER FOR HER}
+
 \subsubsection{Feed Forward Neural Network}
+Next we want to perform the same analysis, using a feed forward neural network and back propagation. We perform tests with different number of hidden layers and nodes. Also...
 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
