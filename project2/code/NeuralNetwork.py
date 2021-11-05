@@ -174,7 +174,7 @@ class FFNN(Costs, Activations):
                 if self.nodes[-1] > 1:
                     r = np.argmax(self.t, axis=1).reshape(-1,1)
                     history[epoch] = np.sum(pred == r) / len(r)
-                    errors[epoch] = np.mean(loss, axis=0)[0]
+                    errors[epoch] = max(np.mean(loss, axis=0))
                 else:
                     history[epoch] = np.sum(self.cost(pred), axis=1)
 
