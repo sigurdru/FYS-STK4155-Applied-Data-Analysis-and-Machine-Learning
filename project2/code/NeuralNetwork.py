@@ -2,7 +2,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 from autograd import elementwise_grad
 from cost_activation import Costs, Activations
-import utils 
+import utils
 
 
 class Optimizer:
@@ -20,14 +20,14 @@ class Optimizer:
         return v
 
 
-class FFNN(Costs, Activations):  
+class FFNN(Costs, Activations):
     """
     Feed Forward Neural Network
 
     from cost_activations.py:
     Costs, Activations
-     - contains different cost and activation functions 
-       used for backpropagation 
+     - contains different cost and activation functions
+       used for backpropagation
     """
     def __init__(self,
                  design,
@@ -35,6 +35,7 @@ class FFNN(Costs, Activations):
                  hidden_nodes=[10,],
                  batch_size=None,
                  learning_rate=0.1,
+                 dynamic_eta=False,
                  lmb=0,
                  gamma=0,
                  activation="sigmoid",
@@ -54,15 +55,16 @@ class FFNN(Costs, Activations):
             self.batch_size = batch_size
         self.test_data = test_data
 
-        self.eta = learning_rate
+        self.eta0 = learning_rate
+        self.de = dynamic_eta
         self.lmb = lmb
         bias0 = 0.01  # initial bias value
 
-        # Number of nodes in all layers 
+        # Number of nodes in all layers
         self.nodes = np.array([self.X.shape[1], *hidden_nodes, self.static_target.shape[1]])
 
         # All layers of neural network (1 input, n hidden, 1 output)
-        # Number of rows in each layer corresponds to the number of data points   
+        # Number of rows in each layer corresponds to the number of data points
         self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
         self.Layers[0] = self.X.copy()
 
@@ -107,7 +109,7 @@ class FFNN(Costs, Activations):
         """
         # Calculate gradient of output layer
         if self.activation_out.__name__ == 'softmax' and self.cost.__name__ == 'cross_entropy':
-            # Analytical derivative for softmax and cross entropy 
+            # Analytical derivative for softmax and cross entropy
             self.delta_l[-1] = self.Layers[-1] - self.t
 
         elif self.activation_out.__name__ == 'none':
@@ -135,7 +137,7 @@ class FFNN(Costs, Activations):
             self.z[n] = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
             self.Layers[n] = self.activation(self.z[n])
 
-        self.Layers[-1] = self.activation_out(self.z[n]) # Update final layer 
+        self.Layers[-1] = self.activation_out(self.z[n]) # Update final layer
 
 
     def train(self, epochs, train_history=False):
@@ -150,9 +152,11 @@ class FFNN(Costs, Activations):
         errors = np.zeros(epochs)
 
         indicies = np.arange(self.N)
-        pbar = tqdm(range(epochs), desc=f"eta: {self.eta}, lambda: {self.lmb}. Training")
+        pbar = tqdm(range(epochs), desc=f"eta: {self.eta0}, lambda: {self.lmb}. Training")
 
         for epoch in pbar:
+
+            self.eta = self.eta0 * (1 - epoch / epochs) if self.de else self.eta0
 
             if train_history:
                 if self.test_data is None:
@@ -173,7 +177,7 @@ class FFNN(Costs, Activations):
                     errors[epoch] = np.mean(loss, axis=0)[0]
                 else:
                     history[epoch] = np.sum(self.cost(pred), axis=1)
-                
+
             np.random.shuffle(indicies)  # Shuffle indices
 
             self.X_s = self.X[indicies]  # Shuffled input
@@ -186,6 +190,8 @@ class FFNN(Costs, Activations):
 
                 self.feed_forward()
                 self.backpropagation()
+
+            pbar.set_description(f"eta: {self.eta:.3f}, lambda: {self.lmb}. Training")
 
         return history, errors
 
@@ -203,7 +209,7 @@ class FFNN(Costs, Activations):
 
     def save(self, fname=None):
         """
-        Save weights and biases of trained network  
+        Save weights and biases of trained network
         """
         if fname is None:
             fname = f"a{self.activation.__name__}_o{self.activation_out.__name__}_c{self.cost.__name__}"
@@ -215,7 +221,7 @@ class FFNN(Costs, Activations):
 
     def load(self, fname):
         """
-        Load weights and biases from trained network 
+        Load weights and biases from trained network
         """
         fname += ".npy" if ".npy" not in fname else ""
         data = np.load("../output/saved_nets/" + fname, allow_pickle=True).item()
