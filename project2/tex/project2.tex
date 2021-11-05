@@ -26,7 +26,7 @@
 \section{Introduction}
 In the modern world, digital data has become one of the most valuable commodities there is. Not because of scarcity, like most other valuables, but rather the exact opposite; the vast abundance of data available makes being able to understand trends and patterns in it extremely valuable for companies looking to expand. However, the data is complex, having many features, and understanding how one affect another is impossible by pure staring. Luckily, there exists statistical methods that let us find the deeper connections, make models and even predict outcomes.
 
-In this paper, we will study some of these methods, and use them to fit continuous data, also known as regression, as well as classifying discrete data. For regression, we first use Stochastic Gradient Descent to fit a bi-variate continuous function known as the Franke Function. Then we develop a neural network and train it to predict the same function. Next, we use logistic regression to predict wether a tumor is malignant or not. The neural network is also train for the same task.
+In this paper, we will study some of these methods, and use them to fit continuous data, also known as regression, as well as classifying discrete data. For regression, we first use Stochastic Gradient Descent to fit a bi-variate continuous function known as the Franke Function. Then we develop a neural network and train it to predict the same function. Next, we use logistic regression to predict wether a tumor is malignant or not. The neural network is also trained for the same task.
 
 All the code, results and instructions on running the code can be found in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}}.
 
@@ -87,6 +87,7 @@ Gradient decent is used when we have a continuous output, like fitting a functio
 Where $\bo x_i^T$ is our data/input, $\bo w$ and $b_0$ are parameters in the model. As a shorthand we also defined $\bo W = (b_0, \bo w)$ and $\bo X_i = (1, \bo x_i)$. We also have $\sigma$ which is some soft classifier that maps our output between zero and one (i.e. the Sigmoid \eqref{eq:sigmoid}). The reason why we want a soft classifier and not a hard one (like $\sigma = 1$ if $s\geq0$ and $0$ otherwise.), is because then we can interpret the output as a probability. Here we also need a cost function to minimize. It is common to choose the cross entropy, which we derive in \ref{sec:cost_func_and_regul}. However we will just use it without derivation for now. The cross entropy for this model is given as
 \begin{align}
 	C(\bo W) = \sum_{i = 1}^{n} -y_i \log\sigma(\bo X_i^T \bo W) - (1 - y_i)\log\left[1 - \sigma(\bo X^T_i \bo W)\right],
+	\label{eq:cross_entropy2}
 \end{align}
 where $n$ are the number of samples we want to classify. Now with a cost function and model in hand we are ready to minimize the cost function in order to find the optimal parameters for the model. We have a convex cost function, therefore a minimization leads to
 \begin{align}
@@ -134,7 +135,7 @@ Where $\alpha$ is some parameter which we have set to $\alpha = 0.1$ in figure \
 \end{figure}
 
 \subsubsection{Cost Function and Regularization}\label{sec:cost_func_and_regul}
-Before one can start training the data, we must have a cost function. This will tell us how well or poorly our network is performing, and is what we want to minimize when we train the network. For continuous date it is common to use mean square error (MSE) as the cost function. Which is just the difference between desired output ($\hat{\mathbf{x}}$) and actual output ($\mathbf{x}$), squared, divided by the number of datapoints $n$ (see equation \eqref{eq:MSE})
+Before one can start training the data, we must have a cost function. This will tell us how well or poorly our network is performing, and is what we want to minimize when we train the network. For continuous data it is common to use mean square error (MSE) as the cost function. Which is just the difference between desired output ($\hat{\mathbf{x}}$) and actual output ($\mathbf{x}$), squared, divided by the number of datapoints $n$ (see equation \eqref{eq:MSE})
 \begin{align}
 	C(\mathbf{x}) = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2.
 	\label{eq:MSE}
@@ -155,15 +156,20 @@ We can then map these probabilities to our soft classifier $\sigma(s_i)$
 \begin{align}
 	P(y_i = 1) = \sigma(s_i) = \sigma(\bo X_i^T \bo W).
 \end{align}
-Now we can define the cost function using Maximum Likelihood Estimation (MLE), which states that we should choose parameters that maximize the probability of our given data.
-
-
-Thus we arrive at the cross entropy equation \eqref{eq:cross_entropy}.
+Now we can define the cost function using Maximum Likelihood Estimation (MLE), which states that we should choose parameters that maximize the probability of our given data. Consider the dataset $\mathcal{D}\{(y_i, \bo x_i)\}$, where we remind that $\bo x_i$ are the input parameters. Then the probability of our dataset given $\bo W$ is
 \begin{align}
-	C(\bo W) = \sum_{i = 1}^{n} -y_i \log\sigma(\bo X_i^T \bo W) - (1 - y_i)\log\left[1 - \sigma(\bo X^T_i \bo W)\right]
+	P(\mathcal{D}|\bo W) = \prod_{i=1}^{n} \left[\sigma(\bo X_i^T\bo W)\right]^{y_i} \left[1 - \sigma(\bo X_i^T\bo W)\right]^{(1 - y_i)}.
+\end{align}
+Again we remind that $n$ are the number datapoints we want to classify. This expression is difficult to work with, thus we take the logarithm.
+\begin{align}
+	l(\bo W) = \log(P(\mathcal{D}|\bo W)) = \sum_{i = 1}^n y_i\log(\sigma(\bo X_i^T \bo W)) + (1-y_i)\log(1 - \sigma(\bo X_i^T \bo W))
+\end{align}
+MLE entails finding the $\bo W$ that maximizes $l(\bo W)$, or more commonly, minimizes $-l(\bo W)$. Thus our cost function becomes
+\begin{align}
+	C(\bo W) = -l(\bo W) = \sum_{i = 1}^{n} -y_i \log\sigma(\bo X_i^T \bo W) - (1 - y_i)\log\left[1 - \sigma(\bo X^T_i \bo W)\right],
 	\label{eq:cross_entropy}
 \end{align}
-\sn{NOT DONE}
+Which is exactly what we wrote down in equation \eqref{eq:cross_entropy2}.
 \subsubsection{The Backpropagation Algorithm}
 With a desired cost function we are ready to train the neural network. This is done by the backpropagation algorithm. The method entails finding the derivative of the cost function, with respect to all parameters. When we have a neural network, we have thousands of parameters which can be tuned (weights and biases), meaning that we have to approximate the derivative somehow. The backpropagation algorithm does just that, by exploiting the layered structure displayed in figure \ref{fig:neural_network}.
 
