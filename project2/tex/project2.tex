@@ -59,9 +59,9 @@ An additional problem is that the  hypersurface is not a smooth terrain with a s
 
 
 \subsubsection{Stochastic Gradient Decent}\label{sec:SGD}
-Another challenge, which is reduced when using SGD, are the large number of computations needed when calculating the gradient. Instead of calculating the total derivative as in \eqref{eq:Total_gradient}, we approximate it. This is done by performing the gradient on a subset of the data, called a minibatch. With $n$ still denoting the total number of datapoints, we will have $N_B=n/M$ minibatches, where $M$ is the size of each minibatch. The minibatches are denoted by $B_k$. Thus our approximated gradient, using a single minibatch $B_k$ is defined as
+With large datasets, a large number of computations is needed when calculating the gradient. It takes a lot of time, and the model is only updated once per iteration, making improvement slow. Stochastic Gradient Decent. SGD, combats this by approximating the total gradient \eqref{eq:Total_gradient}. This is done by performing  gradient decent on a subset of the data, called a minibatch. With $n$ still denoting the total number of datapoints, we will have $N_B=n/M$ minibatches, where $M$ is the size of each minibatch. The minibatches are denoted by $B_k$. Thus our approximated gradient, using a single minibatch $B_k$ is defined as
 \begin{align}
-\nabla_{\boldsymbol{\beta}} C^{MB}(\boldsymbol{\beta}) \equiv \sum_{i \in B_k} \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
+\nabla_{\boldsymbol{\beta}} C^{MB}(\boldsymbol{\beta}) \equiv \sum_{i \in B_k}^M \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
 \end{align}
 Then the aim is to use this approximated gradient, for all $N_B$ minibatches, to update the parameters $\boldsymbol{\beta}$, at every step $k$. Doing this for all $N_B$ minibatches, are what we refer to as an epoch. The SGD algorithm then becomes very similar to \eqref{eq:GD_algo}, however with an approximated gradient.
 \begin{align}
@@ -69,14 +69,14 @@ Then the aim is to use this approximated gradient, for all $N_B$ minibatches, to
 \boldsymbol{\beta}_{t+1} &= \boldsymbol{\beta}_t - \mathbf{v}_t
 \label{eq:SGD_algo}
 \end{align}
-This not only speeds up the algorithms, it also helps prevent getting stuck in local minima because of the stochastic nature.
+This not only speeds up the algorithms, it also helps prevent getting stuck in local minima because of the stochastic nature. The dataset is shuffled after each epoch, creating new minibatches such that we never use the same one twice.
 
 \subsubsection{Adding Momentum}
-Still the methods can be optimized even further by adding momentum. This is done by a small modification in the parameter $\mathbf{v}_t$ in equations \eqref{eq:GD_algo} and \eqref{eq:SGD_algo}. Namely we add a so-called mass term, to simulate the step sizes having momentum
+These methods can still be optimized further by adding momentum. This is done by adding a term to the parameter $\mathbf{v}_t$ in equations \eqref{eq:GD_algo} and \eqref{eq:SGD_algo}. This so-called mass term, simulates the step sizes having momentum, such that every update of $\bbeta$ is a running average.
 \begin{align}
 	\mathbf{v}_t = \eta \nabla_{\boldsymbol{\beta}_t} C(\boldsymbol{\beta}) \rightarrow \mathbf{v}_t = \gamma \mathbf{v}_{t-1} + \eta \nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}_t).
 \end{align}
-Here $\gamma$ is what we could refer to as the mass, and is another free parameter. One of the benefits is for example that this lets us move faster in regions where the gradient is small.
+Here $\gamma$ is what we could refer to as the mass, and is a free parameter. One of the benefits is for example that this lets us move faster in regions where the gradient is small.
 
 \subsection{Logistic Regression}\label{sec:logistic_regression}
 Gradient decent is used when we have a continuous output, like fitting a function to data. Logistic Regression is used for classification situations, meaning that we want to predict discrete outputs, i.e. true of false. In our case we want a model that takes in some values $\mathbf{x}_i$ and spits out zero or one. These values should correspond to the actual classification $y_i\in\{0,1\}$ corresponding to true or false respectively. Lets define our model as
