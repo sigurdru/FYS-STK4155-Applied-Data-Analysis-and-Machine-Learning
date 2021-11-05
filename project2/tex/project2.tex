@@ -13,8 +13,8 @@
 
 \collaborationImg{\includegraphics[width=30mm]{../../pictures/UIO.png}}
 
-\author{\Large Håkon Olav Torvik, Vetle Vikenes \& Sigurd Sørlie Rustad} 
-\title{\Huge Project 2}
+\author{\Large Håkon Olav Torvik, Vetle Vikenes \& Sigurd Sørlie Rustad}
+\title{\Huge Machine Learning: Using regression and neural networks to fit continuous functions and classify data}
 \affiliation{\large FYS-STK4155 – Applied Data Analysis and Machine Learning
 \\Autumn 2021\\Department of Physics\\University of Oslo\\\\\today}
 \begin{document}
@@ -24,19 +24,25 @@
 \maketitle
 \pagestyle{myplain}
 \section{Introduction}
-All the code, results and instructions on running the code can be found in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}.
+In the modern world, digital data has become one of the most valuable commodities there is. Not because of scarcity, like most other valuables, but rather the exact opposite; the vast abundance of data available makes being able to understand trends and patterns in it extremely valuable for companies looking to expand. However, the data is complex, having many features, and understanding how one affect another is impossible by pure staring. Luckily, there exists statistical methods that let us find the deeper connections, make models and even predict outcomes.
+
+In this paper, we will study some of these methods, and use them to fit continuous data, also known as regression, as well as classifying discrete data. For regression, we first use Stochastic Gradient Descent to fit a bi-variate continuous function known as the Franke Function. Then we develop a neural network and train it to predict the same function. Next, we use logistic regression to predict wether a tumor is malignant or not. The neural network is also train for the same task.
+
+All the code, results and instructions on running the code can be found in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}}.
 
 \section{Theory}
 In the theory-section we aim to give a brief explanation of the main concepts and terminology used in this report. For a more in-depth explanation we recommend reading the appropriate sections in \cite{2019}, which has been of great inspiration and help for us throughout the project.
 
+In general, we have a dataset $\bo x$, where each point $\bo x_i$ takes a value $z_i$, for which we want to make a model $\bbeta$, such that for a new data point $\bo x_k \notin \bo x$ we can make a prediction for the value $z_k$.  The model $\bbeta$ is a vector, where each element is a parameter of our model, such that $\bbeta$ is sometimes called the parameters. For gradient decent, we have to chose what shape the model should be, as was done for linear regression in \cite{project1}, while the neural network makes its own model.
+
 \subsection{Gradient Decent}\label{sec:GD}
-In this section we cover gradient decent and different variations of it. More specifically we describe gradient decent (GD), stochastic gradient decent (SGD) and adding momentum to the aforementioned methods.
+In this section we cover gradient decent and different variations of it. More specifically we describe gradient decent (GD), stochastic gradient decent (SGD) and adding momentum to the aforementioned methods. All gradient decent methods start with an initial guess for what the model $\bbeta$ should be, and iteratively updates the guess by training on the dataset, either until it reaches a minimum, or a certain number of iterations have been performed.
 \subsubsection{Ordinary Gradient Decent}
-Gradient decent methods is often used to minimize the so-called cost/loss-function, which tells us how well our model is (more on this here \ref{sec:cost_func_and_regul}). Thus, lets say we have a cost function $C(\boldsymbol{\beta})$ which could be expressed as
+Gradient decent methods is often used to minimize the so-called cost/loss-function, which tells us how good our model at predicting the dataset is (more on this in section \ref{sec:cost_func_and_regul}). For now, we use a general cost function $C(\bbeta)$ for a given model $\bbeta$, which can be expressed as the sum over the cost function for each datapoint $\bo x_i$, as such:
 \begin{equation}
-C(\boldsymbol{\beta}) = \sum_{i = 1}^{n}c_i(\mathbf{x}_i, \boldsymbol{\beta}).
+C(\boldsymbol{\beta}) = \sum_{i = 1}^{n}c_i(\mathbf{x}_i, \boldsymbol{\beta}),
 \end{equation}
-Where $n$ denotes the number of datapoints and $\mathbf x$ are the datapoints. The gradient with respect to the parameters $\boldsymbol{\beta}$ is then defined as
+where $n$ denotes the number of datapoints. The gradient with respect to the parameters $\bbeta$, which represent the direction of optimal minimization of the cost function,  is then defined as
 \begin{align}
 \nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}) = \sum_{i = 1}^{n} \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
 \label{eq:Total_gradient}
@@ -47,7 +53,10 @@ The algorithm for GD is then:
 \boldsymbol{\beta}_{t+1} &= \boldsymbol{\beta}_t - \mathbf{v}_t,
 \label{eq:GD_algo}
 \end{align}
-where $\eta$ is what we call the learning rate\sn{DYNAMIC $\eta$ MISSING}. This algorithms finds (ideally), with each iteration, new $\boldsymbol{\beta}_{t+1}$ values which decreases the cost function. This is of course not always the case, and depends on the value of $\eta$. There are many potential problems when choosing the wrong learning rate. For example, if it is to big, our answer can diverge. If $\eta$ is too small we will need too many iterations to reach the minima. Potentially we can also get stuck in a local minima.
+where $\eta$ is what we call the learning rate, representing the step-length to move in the optimal direction.  This algorithms iteratively finds a new $\boldsymbol{\beta}_{t+1}$ which (ideally) decreases the cost function. This is of course not always the case, and depends on the value of $\eta$. For a model with $p$ parameters, the cost-function is the surface of a $p$-dimensional hypersurface, and minimizing this can lead to several problems. For example, if $\eta$  is to big, the cost-function can diverge and never find a minimum of the hypersurface, while if $\eta$ is too small we will need too many iterations to reach a minimum in reasonable time. One method of avoiding the cost-function diverging, is using a dynamic learning schedule, where the learning rate $\eta$ decreases during training. Our model then makes larger steps in the beginning, and then smaller and smaller, such that we should be able to converge to a minimum, and not making too big steps, circling around it.
+
+An additional problem is that the  hypersurface is not a smooth terrain with a single minimum. Our model can potentially move down into a local minimum, which can be close to the level of the global minimum, or far worse than it. When our model converges, we have no way of knowing if we have found the optimal, global minium, or are stuck in one of the many local minima, with no way of getting out.
+
 
 \subsubsection{Stochastic Gradient Decent}\label{sec:SGD}
 Another challenge, which is reduced when using SGD, are the large number of computations needed when calculating the gradient. Instead of calculating the total derivative as in \eqref{eq:Total_gradient}, we approximate it. This is done by performing the gradient on a subset of the data, called a minibatch. With $n$ still denoting the total number of datapoints, we will have $N_B=n/M$ minibatches, where $M$ is the size of each minibatch. The minibatches are denoted by $B_k$. Thus our approximated gradient, using a single minibatch $B_k$ is defined as
@@ -86,7 +95,7 @@ where $n$ are the number of samples we want to classify. Now with a cost functio
 Thus the only thing left to do is perform an algorithm similar to \ref{eq:SGD_algo}, where we in this case are updating $\bo W_t$.\sn{RIKTIG?}
 
 \subsection{Feed-Forward Deep Neural Networks}\label{sec:NeuralNetwork}
-Neural networks are neural-inspired nonlinear models, which are taught by a way of supervised learning. We will in this section explain what we mean by non-linearity, the basic architecture of a neural network and how the network learns. 
+Neural networks are neural-inspired nonlinear models, which are taught by a way of supervised learning. We will in this section explain what we mean by non-linearity, the basic architecture of a neural network and how the network learns.
 \subsubsection{Architecture of Neural Networks}
 The structure we are going to use in this report is similar to that in figure \ref{fig:neural_network}. The gray circles are what we refer to as nodes. For now we just need to know that they hold some numerical value. One initializes the network by giving the nodes in the input layer numerical values. These values would correspond to some actual physical property, for example brightness of pixels in a picture. Then, each node in the input layer is connected to each node in the hidden layer $h_1$. In figure \ref{fig:neural_network} we have three such hidden layers, where each node in one layer is connected to every node in the next layer. Now the nodes are connected through what we will refer to as weights, biases and activation functions (more on that later). The connections are what assigns the numerical value of the nodes in the next layer. Lastly we have the output layer, which outputs values dependent on the problem. If we have a classification situation, where we for example wanted to classify the type of animal in different pictures, then one node could correspond to  a lion, next to a zebra and so fourth. By this we would know what animal the network \textit{thinks} is in the picture by looking at what neuron has the highest numerical value.
 
@@ -114,7 +123,7 @@ The activation functions are where the non-linearity term comes in, because they
 	\text{RELU: }\sigma(x) &= \max(0,x) \label{eq:RELU} \\
 	\text{Leaky RELU: }\sigma(x) &= \begin{cases}
 	\alpha x,& \text{if } x\leq 0 \\
-	z,& \text{otherwise} 
+	z,& \text{otherwise}
 	\end{cases} \label{eq:leaky_RELU}
 \end{align}
 Where $\alpha$ is some parameter which we have set to $\alpha = 0.1$ in figure \ref{fig:activation_functions}.
@@ -162,7 +171,7 @@ Before we can embark on deriving the algorithm we will introduce some notation. 
 \begin{align}
 	a_j^l = \sigma\left(\sum_{k} w_{jk}^l a_k^{l-1} + b_j^l\right) = \sigma(z_j^l), \ \ z_j^l \equiv \sum_{k} w_{jk}^l a_k^{l-1} + b_j^l.
 	\label{eq:activation_of_node_ajl}
-\end{align} 
+\end{align}
 Here $\sigma$ is an activation function.
 
 Now the cost function will depend directly on the activation of the output layer ($a^L_j$). However the activation of the output layer depends on the previous layers, meaning that the cost function depends indirectly on all the previous layers. Lets define define the error $\Delta_j^L$ of the $j$-th neuron in layer $L$, as the change in cost function with respect to $z^L_j$.
