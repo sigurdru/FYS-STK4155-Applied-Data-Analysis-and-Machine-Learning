@@ -76,6 +76,33 @@ def set_fname(func, args):
 
     return fname
 
+def surface_fit(data_pred, data_target, x, y, args):
+    """
+    Plot Franke function
+    Compares fit result with data using epsilon=0.05 
+    """
+    
+    z_pred_ = data_pred.reshape(x.shape)
+    z_target = data_target.reshape(y.shape)
+
+    fig = plt.figure()
+    ax = fig.gca(projection="3d")
+    ax.plot_surface(x,y,z_target, alpha=0.3, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    surf = ax.plot_surface(x,y,z_pred_, cmap=cm.jet, linewidth=0, antialiased=False)
+
+    if args.method == "NN":
+        title = "Franke function prediction with Neural Network and noise $\epsilon=N(0,\,0.05)$"
+    else:
+        title = "Franke function prediction with SGD and noise $\epsilon=N(0,\,0.05)$"
+
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_title(title)
+
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+    plt.show()
+    exit()
+
 
 def parameter_based(data, args):
     """
