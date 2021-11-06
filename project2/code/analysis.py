@@ -213,16 +213,16 @@ def NN_classification(args):
                     activation=args.act_func,
                     cost="cross_entropy",
                     output_activation="softmax",
-                    test_data=(X_test, z_test),
                     )
-            NN.train(args.num_epochs, train_history=True, test=(z_test, X_test))
-
+            NN.train(args.num_epochs, train_history=True, test=(X_test, z_test))
             data["train accuracy"][i][j] = NN.predict_accuracy(X_train, z_train)
             data["test accuracy"][i][j] = NN.predict_accuracy(X_test, z_test)
     
             if args.pred:
                 plot.train_history(NN, args)
 
+    print(f"Best NN train prediction: {(train:=data['train accuracy'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
+    print(f"Best NN test prediction: {(test:=data['test accuracy'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
     plot.eta_lambda(data, args, NN=True)
 
     #         train_output = NN.predict(X_train)

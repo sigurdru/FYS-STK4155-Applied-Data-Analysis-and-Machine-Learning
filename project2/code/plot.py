@@ -249,8 +249,8 @@ def eta_lambda(data, args, NN=False):
 def train_history(NN, args):
     for mode in ("accuracy", "loss"):
         fig = plt.Figure()
-        plt.plot(np.arange(args.num_epochs), NN.history[f"train_{mode}"], 'o-', label="train")
-        plt.plot(np.arange(args.num_epochs), NN.history[f"test_{mode}"], 'o-', label="test")
+        plt.plot(NN.history[f"train_{mode}"], 'o-', label="train")
+        plt.plot(NN.history[f"test_{mode}"], 'o-', label="test")
         plt.legend()
 
         plt.title(mode + f" during training, as function of epochs")

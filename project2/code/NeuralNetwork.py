@@ -116,6 +116,7 @@ class FFNN(Costs, Activations):
         Updates weights and biases with backwards propagation.
          - Starts by calculating the gradients of each layer's activation function
          - Updates the weights and biases accordingly
+         - Returns wether or not the weights converged
         """
         # Calculate gradient of output layer
         if self.activation_out.__name__ == 'softmax' and self.cost.__name__ == 'cross_entropy':
@@ -135,12 +136,20 @@ class FFNN(Costs, Activations):
 
         # Update weights and biases for each previous layer
         for n in reversed(range(1, len(self.nodes))):
-            # find weight gradient with l2-norm
+            # find weight and bias gradient with l2-norm
             weight_gradient = self.Layers[n - 1].T @ self.delta_l[n] + self.lmb * self.weights[n] #/ len(self.z[n])
             bias_grad = np.sum(self.delta_l[n], axis=0) + self.lmb * self.bias[n]
-            self.weights[n] -= self.optim_w(self.eta * weight_gradient, n)
-            self.bias[n] -= self.optim_b(self.eta * bias_grad, n)
-
+            # calculate the weight and bias update
+            weight_change = self.optim_w(self.eta * weight_gradient, n)
+            bias_change = self.optim_b(self.eta * bias_grad, n)
+            # update weight and bias
+            self.weights[n] -= weight_change
+            self.bias[n] -= bias_change
+        
+        # If weight and bias to output layer doesnt change, end training
+        if max(m:=np.max(abs(weight_change)), np.max(abs(bias_change))) < 1e-8:
+            return True
+        return False
 
     def feed_forward(self):
         # Update the hidden layers
@@ -159,7 +168,7 @@ class FFNN(Costs, Activations):
          3) Updates weights and biases with backpropagation
         """
 
-        self.history = defaultdict(lambda: np.zeros(epochs))
+        self.history = defaultdict(lambda: [])
 
         indicies = np.arange(self.N)
         pbar = tqdm(range(epochs), desc=f"eta: {self.eta0}, lambda: {self.lmb}. Training")
@@ -171,7 +180,7 @@ class FFNN(Costs, Activations):
 
             # save training performance
             if train_history:
-                self.train_history(epoch, test)
+                self.train_history(test)
 
             np.random.shuffle(indicies)  # Shuffle indices
             self.X_s = self.X[indicies]  # Shuffled input
@@ -183,22 +192,24 @@ class FFNN(Costs, Activations):
                 self.t = self.shuffle_t[i: i + self.batch_size]
 
                 self.feed_forward()
-                self.backpropagation()
+                self.converged = self.backpropagation()
 
             pbar.set_description(f"eta: {self.eta:.4f}, lambda: {self.lmb:.4f}. Training")
+            if self.converged:
+                print(f"Network converged after {epoch} epochs")
+                break
 
-
-    def train_history(self, i, test):
+    def train_history(self, test):
         
-        for name, (t, x) in zip(("train", "test"), ((self.static_target, self.X), test)):
+        for name, (x, t) in zip(("train", "test"), ((self.X, self.static_target), test)):
             if self.nodes[-1] > 1:
-                self.history[name + "_accuracy"][i] = self.predict_accuracy(x, t)
+                self.history[name + "_accuracy"].append(self.predict_accuracy(x, t))
                 loss = self.predict(x) - t
-                self.history[name + "_loss"][i] = max(np.mean(loss, axis=0))
+                self.history[name + "_loss"].append(max(np.mean(loss, axis=0)))
             else:
                 self.t = t
                 pred = self.predict(x)
-                self.history[name + "_mse"][i] = np.sum(self.cost(pred), axis=1)
+                self.history[name + "_mse"].append(np.sum(self.cost(pred), axis=1))
             if test is None:
                 break
 
@@ -213,6 +224,8 @@ class FFNN(Costs, Activations):
 
     def predict_accuracy(self, x, y):
         probs = self.predict(x)
+        msg = "The probabilities do not sum to 1!\nWorry not, this probably just means there is a nan in there. Check for RuntimeWarnings in autograd.\nRerun, but with lower gamma or eta or something else"
+        assert (abs(np.sum(probs, axis=1) - 1) < 1e-10).all(), msg  # make sure probabilities sum to 1
         pred = np.argmax(probs, axis=1).reshape(-1, 1)
         true = np.argmax(y, axis=1).reshape(-1, 1)
         return np.sum(pred == true) / len(true)
