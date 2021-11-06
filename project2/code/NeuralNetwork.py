@@ -2,7 +2,7 @@ import autograd.numpy as np
 from tqdm import tqdm
 from autograd import elementwise_grad
 from cost_activation import Costs, Activations
-import utils 
+import utils
 
 
 class Optimizer:
@@ -20,14 +20,14 @@ class Optimizer:
         return v
 
 
-class FFNN(Costs, Activations):  
+class FFNN(Costs, Activations):
     """
     Feed Forward Neural Network
 
     from cost_activations.py:
     Costs, Activations
-     - contains different cost and activation functions 
-       used for backpropagation 
+     - contains different cost and activation functions
+       used for backpropagation
     """
     def __init__(self,
                  design,
@@ -35,6 +35,7 @@ class FFNN(Costs, Activations):
                  hidden_nodes=[10,],
                  batch_size=None,
                  learning_rate=0.1,
+                 dynamic_eta=False,
                  lmb=0,
                  gamma=0,
                  activation="sigmoid",
@@ -54,15 +55,16 @@ class FFNN(Costs, Activations):
             self.batch_size = batch_size
         self.test_data = test_data
 
-        self.eta = learning_rate
+        self.eta0 = learning_rate
+        self.de = dynamic_eta
         self.lmb = lmb
         bias0 = 0.01  # initial bias value
 
-        # Number of nodes in all layers 
+        # Number of nodes in all layers
         self.nodes = np.array([self.X.shape[1], *hidden_nodes, self.static_target.shape[1]])
 
         # All layers of neural network (1 input, n hidden, 1 output)
-        # Number of rows in each layer corresponds to the number of data points   
+        # Number of rows in each layer corresponds to the number of data points
         self.Layers = [np.zeros((self.N, n)) for n in self.nodes]
         self.Layers[0] = self.X.copy()
 
@@ -70,7 +72,14 @@ class FFNN(Costs, Activations):
         self.delta_l = self.Layers.copy()   # Activation layer input gradient
 
         # Initial zero for weights ensures that weights[n] corresponds to Layers[n]
-        self.weights = [0] + [np.random.normal(scale=1 / n, size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        if activation == "sigmoid":  # Xavier initialization
+            self.weights = [0] + [np.random.uniform(-1/np.sqrt(n), 1/np.sqrt(n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        elif activation == "tanh":  # Normalized Xaviet initialization
+            self.weights = [0] + [np.random.uniform(-np.sqrt(1/(n + m)), np.sqrt(6/(n + m)), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        elif activation == "relu":  # He initialization
+            self.weights = [0] + [np.random.normal(scale=np.sqrt(2/n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        elif activation == "leaky_relu":  # He initialization
+            self.weights = [0] + [np.random.normal(scale=np.sqrt(2/(1 + 0.01**2)/n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
         # Calculate gradients with momentum (gamma=0 by default)
@@ -107,7 +116,7 @@ class FFNN(Costs, Activations):
         """
         # Calculate gradient of output layer
         if self.activation_out.__name__ == 'softmax' and self.cost.__name__ == 'cross_entropy':
-            # Analytical derivative for softmax and cross entropy 
+            # Analytical derivative for softmax and cross entropy
             self.delta_l[-1] = self.Layers[-1] - self.t
 
         elif self.activation_out.__name__ == 'none':
@@ -135,7 +144,7 @@ class FFNN(Costs, Activations):
             self.z[n] = self.Layers[n - 1] @ self.weights[n] + self.bias[n]
             self.Layers[n] = self.activation(self.z[n])
 
-        self.Layers[-1] = self.activation_out(self.z[n]) # Update final layer 
+        self.Layers[-1] = self.activation_out(self.z[n]) # Update final layer
 
 
     def train(self, epochs, train_history=False):
@@ -150,9 +159,11 @@ class FFNN(Costs, Activations):
         errors = np.zeros(epochs)
 
         indicies = np.arange(self.N)
-        pbar = tqdm(range(epochs), desc=f"eta: {self.eta}, lambda: {self.lmb}. Training")
+        pbar = tqdm(range(epochs), desc=f"eta: {self.eta0}, lambda: {self.lmb}. Training")
 
         for epoch in pbar:
+
+            self.eta = self.eta0 * (1 - epoch / epochs) if self.de else self.eta0
 
             if train_history:
                 if self.test_data is None:
@@ -170,10 +181,10 @@ class FFNN(Costs, Activations):
                 if self.nodes[-1] > 1:
                     r = np.argmax(self.t, axis=1).reshape(-1,1)
                     history[epoch] = np.sum(pred == r) / len(r)
-                    errors[epoch] = np.mean(loss, axis=0)[0]
+                    errors[epoch] = max(np.mean(loss, axis=0))
                 else:
                     history[epoch] = np.sum(self.cost(pred), axis=1)
-                
+
             np.random.shuffle(indicies)  # Shuffle indices
 
             self.X_s = self.X[indicies]  # Shuffled input
@@ -186,6 +197,8 @@ class FFNN(Costs, Activations):
 
                 self.feed_forward()
                 self.backpropagation()
+
+            pbar.set_description(f"eta: {self.eta:.3f}, lambda: {self.lmb}. Training")
 
         return history, errors
 
@@ -203,7 +216,7 @@ class FFNN(Costs, Activations):
 
     def save(self, fname=None):
         """
-        Save weights and biases of trained network  
+        Save weights and biases of trained network
         """
         if fname is None:
             fname = f"a{self.activation.__name__}_o{self.activation_out.__name__}_c{self.cost.__name__}"
@@ -215,7 +228,7 @@ class FFNN(Costs, Activations):
 
     def load(self, fname):
         """
-        Load weights and biases from trained network 
+        Load weights and biases from trained network
         """
         fname += ".npy" if ".npy" not in fname else ""
         data = np.load("../output/saved_nets/" + fname, allow_pickle=True).item()

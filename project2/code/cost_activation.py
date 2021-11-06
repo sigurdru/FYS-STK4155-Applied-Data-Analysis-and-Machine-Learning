@@ -13,7 +13,7 @@ class Costs:
 
 class Activations:
     def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))  
+        return 1 / (1 + np.exp(-x))
 
     def tanh(self, x):
         return np.tanh(x)
@@ -31,4 +31,4 @@ class Activations:
 
     def none(self, x):
         # No activation
-        return x 
+        return x
