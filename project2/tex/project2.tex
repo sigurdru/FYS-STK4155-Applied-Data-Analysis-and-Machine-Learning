@@ -28,9 +28,9 @@ In the modern world, digital data has become one of the most valuable commoditie
 
 First we will study a bi-variate continuous function known as the Franke function. We will use both stochastic gradient decent and a feed-forward deep neural network, with back propagation. Then we can also compare results with those obtained in a previous paper, using ordinary least squares and ridge regression. Note that all methods used in this report is briefly covered in the theory section.
 
-Next we will embark on a classification problem, namely wether of not breast tissue is benign or malignant. Here we will also use a feed-forward deep neural network, along with logistic regression. 
+Next we will embark on a classification problem, namely wether of not breast tissue is benign or malignant. Here we will also use a feed-forward deep neural network, along with logistic regression.
 
-We will on no way answer all questions linked to the aforementioned methods. Such that anyone can reproduce or continue our studies, we list all the code, results and instructions on running the code in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}}. 
+We will on no way answer all questions linked to the aforementioned methods. Such that anyone can reproduce or continue our studies, we list all the code, results and instructions on running the code in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}}.
 
 \section{Theory}
 In the theory-section we aim to give a brief explanation of the main concepts and terminology used in this report. For a more in-depth explanation we recommend reading the appropriate sections in \cite{2019}, which has been of great inspiration and help for us throughout the project.
@@ -74,7 +74,7 @@ Then the aim is to use this approximated gradient, for all $N_B$ minibatches, to
 This not only speeds up the algorithms, it also helps prevent getting stuck in local minima because of the stochastic nature. The dataset is shuffled after each epoch, creating new minibatches such that we never use the same one twice.
 
 \subsubsection{Adding Momentum}
-These methods can still be optimized further by adding momentum. This is done by adding a term to the parameter $\mathbf{v}_t$ in equations \eqref{eq:GD_algo} and \eqref{eq:SGD_algo}. This so-called mass term, simulates the step sizes having momentum, such that every update of $\bbeta$ is a running average.
+These methods can still be optimized further by adding momentum. This is done by adding a term to the parameter $\mathbf{v}_t$ in equations \eqref{eq:GD_algo} and \eqref{eq:SGD_algo}. This so-called mass term, simulates the gradient having momentum, such that every update of $\bbeta$ is a running average.
 \begin{align}
 	\mathbf{v}_t = \eta \nabla_{\boldsymbol{\beta}_t} C(\boldsymbol{\beta}) \rightarrow \mathbf{v}_t = \gamma \mathbf{v}_{t-1} + \eta \nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}_t).
 \end{align}
