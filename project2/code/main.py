@@ -24,7 +24,7 @@ def parse_args(args=None):
     add_arg("-tts",
             type=float,
             default=0.2,
-            choices=[0.2, 0.25, 0.3, 0.4],
+            # choices=[0.2, 0.25, 0.3, 0.4],
             help="Train/test split ratio"
             )
 
@@ -56,6 +56,11 @@ def parse_args(args=None):
                     -eta 1
                     """,
             )
+
+    add_arg("-de", "--dynamic_eta",
+        action="store_true",
+        dest="dynamic_eta",
+    )
 
     add_arg('-ga', '--gamma',
             type=float,
@@ -97,6 +102,11 @@ def parse_args(args=None):
             type=str,
             default="10,10",
             help="Number of nodes in each hidden layer",
+            )
+
+    add_arg("-nowi", "--no_weight_initialization",
+            action="store_false",
+            dest="weight_initialization",
             )
 
     add_arg("-act_func",
