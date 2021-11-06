@@ -63,7 +63,7 @@ def set_fname(func, args):
     
     # save configuration to file
     if args.save:
-        with open(archive, "a+") as file:
+        with open(archive, "a") as file:
             print("Writing run configuration to archive")
             file.write("\n\n")
             file.write(fname + "\n")
@@ -125,7 +125,7 @@ def parameter_based(data, args):
     for name, accuracy in data.items():
         fig, ax = plt.subplots()
         func = defaultdict(lambda: None)
-        func["train"] = name
+        func["train"] = name.split()[0]
         if len(args.lmb) == 1 and len(args.batch_size) == 1:
             """
             (x,y): (epochs, eta values)
@@ -210,7 +210,7 @@ def parameter_based(data, args):
 def momentum(data, args):
     for name, accuracy in data.items():
         func = defaultdict(lambda: None)
-        func["train"] = name
+        func["train"] = name.split()[0]
         fig, ax = plt.subplots()
         
         for i, mse in enumerate(accuracy):    
@@ -227,13 +227,12 @@ def momentum(data, args):
 def eta_lambda(data, args, NN=False):
     for name, accuracy in data.items():
         func = defaultdict(lambda:None)
-        func["train"] = name
+        func["train"] = name.split()[0]
         func["x"] = "eta"
         func["y"] = "lambda"
         func["z"] = name.split()[1]
 
         fig, ax = plt.subplots()
-        # col = np.log10(args.lmb)
         col = np.round(args.lmb, 4)
         row = np.round(args.eta, 4)
         data = pd.DataFrame(accuracy, index=row, columns=col)
@@ -244,6 +243,27 @@ def eta_lambda(data, args, NN=False):
             ax.set_title(name + f"as function of learning rate and lambda for {args.dataset}-data")
         ax.set_ylabel("$\eta$")
         ax.set_xlabel("$\lambda$")
+        show_push_save(fig, func, args)
+
+def eta_gamma(data, args, NN=False):
+    for name, accuracy in data.items():
+        func = defaultdict(lambda:None)
+        func["train"] = name.split()[0]
+        func["x"] = "eta"
+        func["y"] = "gamma"
+        func["z"] = name.split()[1]
+
+        fig, ax = plt.subplots()
+        col = args.lmb
+        row = np.round(args.eta, 4)
+        data = pd.DataFrame(accuracy, index=row, columns=col)
+        sns.heatmap(data, ax=ax, annot=True, cmap=cm.coolwarm)
+        if NN:
+            ax.set_title(name + f" gridsearch, using {args.act_func.replace('_', '')} activation function on {args.dataset}-data")
+        else:
+            ax.set_title(name + f"as function of learning rate and lambda for {args.dataset}-data")
+        ax.set_ylabel("$\eta$")
+        ax.set_xlabel("$\gamma$")
         show_push_save(fig, func, args)
 
 def train_history(NN, args):

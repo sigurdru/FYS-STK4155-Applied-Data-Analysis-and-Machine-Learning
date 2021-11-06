@@ -147,7 +147,7 @@ class FFNN(Costs, Activations):
             self.bias[n] -= bias_change
         
         # If weight and bias to output layer doesnt change, end training
-        if max(m:=np.max(abs(weight_change)), np.max(abs(bias_change))) < 1e-8:
+        if max(np.max(abs(weight_change)), np.max(abs(bias_change))) < 1e-8:
             return True
         return False
 
@@ -224,8 +224,10 @@ class FFNN(Costs, Activations):
 
     def predict_accuracy(self, x, y):
         probs = self.predict(x)
-        msg = "The probabilities do not sum to 1!\nWorry not, this probably just means there is a nan in there. Check for RuntimeWarnings in autograd.\nRerun, but with lower gamma or eta or something else"
-        assert (abs(np.sum(probs, axis=1) - 1) < 1e-10).all(), msg  # make sure probabilities sum to 1
+        msg = "\n\nThe probabilities do not sum to 1!\nWorry not, this probably just means there is a nan in there. Check for RuntimeWarnings in autograd.\nRerun, but with lower gamma or eta or something else\n"
+        if not (abs(np.sum(probs, axis=1) - 1) < 1e-10).all(): # make sure probabilities sum to 1
+            print(msg)
+            return np.nan
         pred = np.argmax(probs, axis=1).reshape(-1, 1)
         true = np.argmax(y, axis=1).reshape(-1, 1)
         return np.sum(pred == true) / len(true)
