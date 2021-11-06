@@ -25,7 +25,7 @@ class Activations:
         return np.where(x > 0, x, leak * x)
 
     def softmax(self, x):
-        exp = np.exp(x - np.max(x))
+        exp = np.exp(x)
         s = np.sum(exp, axis=1, keepdims=True)
         return exp/s
 
