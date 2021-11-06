@@ -1,3 +1,4 @@
+from collections import defaultdict
 import autograd.numpy as np
 from tqdm import tqdm
 from autograd import elementwise_grad
@@ -38,10 +39,10 @@ class FFNN(Costs, Activations):
                  dynamic_eta=False,
                  lmb=0,
                  gamma=0,
+                 wi=True,
                  activation="sigmoid",
                  cost="MSE",
                  output_activation="none",
-                 test_data=None,
                  ):
 
         self.X = design             # Training data
@@ -53,7 +54,6 @@ class FFNN(Costs, Activations):
             self.batch_size = self.N
         else:
             self.batch_size = batch_size
-        self.test_data = test_data
 
         self.eta0 = learning_rate
         self.de = dynamic_eta
@@ -72,14 +72,17 @@ class FFNN(Costs, Activations):
         self.delta_l = self.Layers.copy()   # Activation layer input gradient
 
         # Initial zero for weights ensures that weights[n] corresponds to Layers[n]
-        if activation == "sigmoid":  # Xavier initialization
-            self.weights = [0] + [np.random.uniform(-1/np.sqrt(n), 1/np.sqrt(n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
-        elif activation == "tanh":  # Normalized Xaviet initialization
-            self.weights = [0] + [np.random.uniform(-np.sqrt(1/(n + m)), np.sqrt(6/(n + m)), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
-        elif activation == "relu":  # He initialization
-            self.weights = [0] + [np.random.normal(scale=np.sqrt(2/n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
-        elif activation == "leaky_relu":  # He initialization
-            self.weights = [0] + [np.random.normal(scale=np.sqrt(2/(1 + 0.01**2)/n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        if wi:
+            if activation == "sigmoid":  # Xavier initialization
+                self.weights = [0] + [np.random.uniform(-1/np.sqrt(n), 1/np.sqrt(n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+            elif activation == "tanh":  # Normalized Xaviet initialization
+                self.weights = [0] + [np.random.uniform(-np.sqrt(1/(n + m)), np.sqrt(6/(n + m)), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+            elif activation == "relu":  # He initialization
+                self.weights = [0] + [np.random.normal(scale=np.sqrt(2/n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+            elif activation == "leaky_relu":  # He initialization
+                self.weights = [0] + [np.random.normal(scale=np.sqrt(2/(1 + 0.01**2)/n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+        else: # no fancy initialization
+            self.weights = [0] + [np.random.normal(size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
 
         # Calculate gradients with momentum (gamma=0 by default)
@@ -124,7 +127,7 @@ class FFNN(Costs, Activations):
 
         else:
             self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
-
+        
         # Calculate gradients of the hidden layers
         for i in reversed(range(1, len(self.nodes) - 1)):
             self.delta_l[i] = self.delta_l[i + 1] @ self.weights[i + 1].T \
@@ -134,8 +137,9 @@ class FFNN(Costs, Activations):
         for n in reversed(range(1, len(self.nodes))):
             # find weight gradient with l2-norm
             weight_gradient = self.Layers[n - 1].T @ self.delta_l[n] + self.lmb * self.weights[n] #/ len(self.z[n])
+            bias_grad = np.sum(self.delta_l[n], axis=0) + self.lmb * self.bias[n]
             self.weights[n] -= self.optim_w(self.eta * weight_gradient, n)
-            self.bias[n] -= self.optim_b(self.eta * np.sum(self.delta_l[n], axis=0), n)
+            self.bias[n] -= self.optim_b(self.eta * bias_grad, n)
 
 
     def feed_forward(self):
@@ -147,7 +151,7 @@ class FFNN(Costs, Activations):
         self.Layers[-1] = self.activation_out(self.z[n]) # Update final layer
 
 
-    def train(self, epochs, train_history=False):
+    def train(self, epochs, train_history=False, test=None):
         """
         Training the neural network by looping over epochs:
          1) Initializing shuffled minibatches
@@ -155,38 +159,21 @@ class FFNN(Costs, Activations):
          3) Updates weights and biases with backpropagation
         """
 
-        history = np.zeros(epochs)
-        errors = np.zeros(epochs)
+        self.history = defaultdict(lambda: np.zeros(epochs))
 
         indicies = np.arange(self.N)
         pbar = tqdm(range(epochs), desc=f"eta: {self.eta0}, lambda: {self.lmb}. Training")
 
         for epoch in pbar:
 
+            # Learning schedule
             self.eta = self.eta0 * (1 - epoch / epochs) if self.de else self.eta0
 
+            # save training performance
             if train_history:
-                if self.test_data is None:
-                    t = self.static_target
-                    x = self.X
-                else:
-                    t = self.test_data[1]
-                    x = self.test_data[0]
-                self.t = t
-                output = self.predict(x)
-                # print(np.c_[output, np.sum(output, axis=1)])
-                pred = np.argmax(output, axis=1).reshape(-1,1)
-                loss = output - self.t
-
-                if self.nodes[-1] > 1:
-                    r = np.argmax(self.t, axis=1).reshape(-1,1)
-                    history[epoch] = np.sum(pred == r) / len(r)
-                    errors[epoch] = max(np.mean(loss, axis=0))
-                else:
-                    history[epoch] = np.sum(self.cost(pred), axis=1)
+                self.train_history(epoch, test)
 
             np.random.shuffle(indicies)  # Shuffle indices
-
             self.X_s = self.X[indicies]  # Shuffled input
             self.shuffle_t = self.static_target[indicies]  # Shuffled target
 
@@ -198,10 +185,22 @@ class FFNN(Costs, Activations):
                 self.feed_forward()
                 self.backpropagation()
 
-            pbar.set_description(f"eta: {self.eta:.3f}, lambda: {self.lmb}. Training")
+            pbar.set_description(f"eta: {self.eta:.4f}, lambda: {self.lmb:.4f}. Training")
 
-        return history, errors
 
+    def train_history(self, i, test):
+        
+        for name, (t, x) in zip(("train", "test"), ((self.static_target, self.X), test)):
+            if self.nodes[-1] > 1:
+                self.history[name + "_accuracy"][i] = self.predict_accuracy(x, t)
+                loss = self.predict(x) - t
+                self.history[name + "_loss"][i] = max(np.mean(loss, axis=0))
+            else:
+                self.t = t
+                pred = self.predict(x)
+                self.history[name + "_mse"][i] = np.sum(self.cost(pred), axis=1)
+            if test is None:
+                break
 
     def predict(self, x):
         """
@@ -210,9 +209,13 @@ class FFNN(Costs, Activations):
         """
         self.Layers[0] = x
         self.feed_forward()
-        # if self.nodes[-1] > 1:
-            # return np.argmax(self.Layers[-1], axis=1).reshape(-1,1)
         return self.Layers[-1]
+
+    def predict_accuracy(self, x, y):
+        probs = self.predict(x)
+        pred = np.argmax(probs, axis=1).reshape(-1, 1)
+        true = np.argmax(y, axis=1).reshape(-1, 1)
+        return np.sum(pred == true) / len(true)
 
     def save(self, fname=None):
         """

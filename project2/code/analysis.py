@@ -187,43 +187,65 @@ def classify(x):
 
 
 def NN_classification(args):
+    etas = args.eta
+    lmbs = args.lmb
+
     dataset = utils.load_data(args)
     X, z_ = dataset.data, dataset.target.reshape(-1, 1)
     z = utils.categorical(z_)
     scaler = scale_conv[args.scaling]
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
 
-    NN = FFNN(X_train,
-              z_train,
-              hidden_nodes=args.hidden_nodes,
-              batch_size=args.batch_size,
-              learning_rate=args.eta[0],
-              lmb=args.lmb[0],
-              gamma=args.gamma,
-              activation=args.act_func,
-              cost="cross_entropy",
-              output_activation="softmax",
-              test_data=(X_test, z_test),
-              )
-    # NN.train(args.num_epochs)
-    # exit()
-    prob_hist, prob_err = NN.train(args.num_epochs, train_history=True)
-    train_output = NN.predict(X_train)
-    train_pred = np.argmax(train_output, axis=1)
-    train_target = np.argmax(z_train, axis=1)
+    data = defaultdict(lambda: np.zeros((len(etas), len(lmbs))))
 
-    test_output = NN.predict(X_test)
-    test_pred = np.argmax(test_output, axis=1)
-    test_target = np.argmax(z_test, axis=1)
-    print('Train acc: ', np.sum(train_pred == train_target)/len(train_pred))
-    print('Test acc : ', np.sum(test_pred == test_target) / len(test_pred))
-    # print("\n"*2)
+    for i, eta in enumerate(etas):
+        for j, lmb in enumerate(lmbs):
+    
+            NN = FFNN(X_train,
+                    z_train,
+                    hidden_nodes=args.hidden_nodes,
+                    batch_size=args.batch_size,
+                    learning_rate=eta,
+                    dynamic_eta=args.dynamic_eta,
+                    lmb=lmb,
+                    gamma=args.gamma,
+                    wi=args.weight_initialization,
+                    activation=args.act_func,
+                    cost="cross_entropy",
+                    output_activation="softmax",
+                    test_data=(X_test, z_test),
+                    )
+            NN.train(args.num_epochs, train_history=True, test=(z_test, X_test))
 
-    # Plot of accuracy as a function of epochs 
-    plt.plot(np.arange(args.num_epochs), prob_hist, 'o-')
-    plt.show()
+            data["train accuracy"][i][j] = NN.predict_accuracy(X_train, z_train)
+            data["test accuracy"][i][j] = NN.predict_accuracy(X_test, z_test)
+    
+            if args.pred:
+                plot.train_history(NN, args)
 
-    # # Plot of error in output as a function of epochs
-    # plt.plot(np.arange(args.num_epochs), prob_err)
+    plot.eta_lambda(data, args, NN=True)
+
+    #         train_output = NN.predict(X_train)
+    #         train_pred = np.argmax(train_output, axis=1)
+    #         train_target = np.argmax(z_train, axis=1)
+
+    #         test_output = NN.predict(X_test)
+    #         test_pred = np.argmax(test_output, axis=1)
+    #         test_target = np.argmax(z_test, axis=1)
+            
+    # print('Train acc: ', np.sum(train_pred == train_target)/len(train_pred))
+    # print('Test acc : ', np.sum(test_pred == test_target) / len(test_pred))
+
+    # # print(NN.history)
+    # # print("\n"*2)
+
+    # # Plot of accuracy as a function of epochs 
+    # plt.plot(np.arange(args.num_epochs), NN.history["train_accuracy"], 'o-', label="train")
+    # plt.plot(np.arange(args.num_epochs), NN.history["test_accuracy"], 'o-', label="test")
+    # plt.legend()
     # plt.show()
+
+    # # # Plot of error in output as a function of epochs
+    # # plt.plot(np.arange(args.num_epochs), prob_err)
+    # # plt.show()
 

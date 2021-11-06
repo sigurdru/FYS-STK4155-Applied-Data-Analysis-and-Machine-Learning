@@ -56,9 +56,7 @@ def set_fname(func, args):
     fname += args.method + "_" + args.dataset  # reg or NN, used on dataset
     fname += "__" + func["x"] + "_" + func["y"] + "__"  # as func of
     if func["train"]:
-        fname += "train"
-    else:
-        fname += "test"
+        fname += func["train"]
     fname += "_" + func["z"]  # varying parameter
     fname += "__" + str(int(np.random.uniform() * 1e6))  # random number to identify plot
     fname += ".pdf"
@@ -127,7 +125,7 @@ def parameter_based(data, args):
     for name, accuracy in data.items():
         fig, ax = plt.subplots()
         func = defaultdict(lambda: None)
-        func["train"] = name.split()[0].lower()=="train"
+        func["train"] = name
         if len(args.lmb) == 1 and len(args.batch_size) == 1:
             """
             (x,y): (epochs, eta values)
@@ -212,7 +210,7 @@ def parameter_based(data, args):
 def momentum(data, args):
     for name, accuracy in data.items():
         func = defaultdict(lambda: None)
-        func["train"] = name.split()[0].lower()=="train"
+        func["train"] = name
         fig, ax = plt.subplots()
         
         for i, mse in enumerate(accuracy):    
@@ -226,18 +224,42 @@ def momentum(data, args):
         func["z"] = "momentum"
         show_push_save(fig, func, args)
 
-def eta_lambda(data, args):
+def eta_lambda(data, args, NN=False):
     for name, accuracy in data.items():
         func = defaultdict(lambda:None)
-        func["train"] = name.split()[0].lower()=="train"
+        func["train"] = name
         func["x"] = "eta"
         func["y"] = "lambda"
         func["z"] = name.split()[1]
 
         fig, ax = plt.subplots()
-        data = pd.DataFrame(accuracy, index=args.eta, columns=args.lmb)
+        # col = np.log10(args.lmb)
+        col = np.round(args.lmb, 4)
+        row = np.round(args.eta, 4)
+        data = pd.DataFrame(accuracy, index=row, columns=col)
         sns.heatmap(data, ax=ax, annot=True, cmap=cm.coolwarm)
-        ax.set_title(name + f"as function of learning rate and lambda for {args.dataset}-data")
-        ax.set_xlabel("$\eta$")
-        ax.set_ylabel("$\lambda$")
+        if NN:
+            ax.set_title(name + f" gridsearch, using {args.act_func} activation function on {args.dataset}-data")
+        else:
+            ax.set_title(name + f"as function of learning rate and lambda for {args.dataset}-data")
+        ax.set_ylabel("$\eta$")
+        ax.set_xlabel("$\lambda$")
         show_push_save(fig, func, args)
+
+def train_history(NN, args):
+    for mode in ("accuracy", "loss"):
+        fig = plt.Figure()
+        plt.plot(np.arange(args.num_epochs), NN.history[f"train_{mode}"], 'o-', label="train")
+        plt.plot(np.arange(args.num_epochs), NN.history[f"test_{mode}"], 'o-', label="test")
+        plt.legend()
+
+        plt.title(mode + f" during training, as function of epochs")
+        plt.xlabel(f"Epochs")
+        plt.ylabel(mode)
+
+        func = defaultdict(lambda: None)
+        func["z"] = "train_" + mode
+        func["x"] = "epochs"
+        func["y"] = mode
+        show_push_save(fig, func, args)
+        exit()
