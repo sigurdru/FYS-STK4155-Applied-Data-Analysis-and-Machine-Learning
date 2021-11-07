@@ -1,4 +1,7 @@
+
+NN_classification:
+	python3 main.py -d Cancer -hn 20,20 -eta 'np.logspace(-5, 0, 11)' -l 'np.logspace(-5, 1, 11)' -bs 35 -de -act_func sigmoid
+	python3 main.py -d Cancer -hn 20,20 -eta 'np.logspace(-5, 0, 11)' -l 'np.logspace(-5, 1, 11)' -bs 35 -de -act_func relu
+	python3 main.py -d Cancer -hn 20,20 -eta 'np.logspace(-5, 0, 11)' -l 'np.logspace(-5, 1, 11)' -bs 35 -de -act_func leaky_relu
 test:
-	python3 main.py -p 7 -n 30 -MB 150 -Ne 1000 -eta 'np.logspace(-6,-2,50)'
-test2:
-	python3 main.py -p 7 -n 100 -MB 2000 -Ne 0 -eta 0.0001
+	python3 main.py -d Cancer -hn 20,20 -eta 'np.logspace(-5, 0, 2)' -l 'np.logspace(-5, 1, 2)' -bs 35 -de -act_func leaky_relu
