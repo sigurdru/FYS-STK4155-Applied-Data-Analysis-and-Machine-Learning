@@ -99,7 +99,6 @@ def surface_fit(data_pred, data_target, x, y, args):
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
     plt.show()
-    exit()
 
 
 def parameter_based(data, args):
@@ -226,6 +225,7 @@ def momentum(data, args):
 
 def eta_lambda(data, args, NN=False):
     for name, accuracy in data.items():
+        print(name)
         func = defaultdict(lambda:None)
         func["train"] = name.split()[0]
         func["x"] = "eta"
@@ -238,32 +238,11 @@ def eta_lambda(data, args, NN=False):
         data = pd.DataFrame(accuracy, index=row, columns=col)
         sns.heatmap(data, ax=ax, annot=True, cmap=cm.coolwarm)
         if NN:
-            ax.set_title(name + f" gridsearch, using {args.act_func} activation function on {args.dataset}-data")
+            ax.set_title(name + f" gridsearch, using {args.act_func.replace('_', ' ')} activation function on {args.dataset}-data")
         else:
             ax.set_title(name + f"as function of learning rate and lambda for {args.dataset}-data")
         ax.set_ylabel("$\eta$")
         ax.set_xlabel("$\lambda$")
-        show_push_save(fig, func, args)
-
-def eta_gamma(data, args, NN=False):
-    for name, accuracy in data.items():
-        func = defaultdict(lambda:None)
-        func["train"] = name.split()[0]
-        func["x"] = "eta"
-        func["y"] = "gamma"
-        func["z"] = name.split()[1]
-
-        fig, ax = plt.subplots()
-        col = args.lmb
-        row = np.round(args.eta, 4)
-        data = pd.DataFrame(accuracy, index=row, columns=col)
-        sns.heatmap(data, ax=ax, annot=True, cmap=cm.coolwarm)
-        if NN:
-            ax.set_title(name + f" gridsearch, using {args.act_func.replace('_', '')} activation function on {args.dataset}-data")
-        else:
-            ax.set_title(name + f"as function of learning rate and lambda for {args.dataset}-data")
-        ax.set_ylabel("$\eta$")
-        ax.set_xlabel("$\gamma$")
         show_push_save(fig, func, args)
 
 def train_history(NN, args):
@@ -282,4 +261,3 @@ def train_history(NN, args):
         func["x"] = "epochs"
         func["y"] = mode
         show_push_save(fig, func, args)
-        exit()

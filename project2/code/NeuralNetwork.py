@@ -194,7 +194,7 @@ class FFNN(Costs, Activations):
                 self.feed_forward()
                 self.converged = self.backpropagation()
 
-            pbar.set_description(f"eta: {self.eta:.4f}, lambda: {self.lmb:.4f}. Training")
+            pbar.set_description(f"eta: {self.eta:.6f}, lambda: {self.lmb:.6f}. Training")
             if self.converged:
                 print(f"Network converged after {epoch} epochs")
                 break

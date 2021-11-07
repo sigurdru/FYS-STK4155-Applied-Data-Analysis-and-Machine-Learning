@@ -47,6 +47,7 @@ def NN_regression(args):
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs)), dtype=float))
+    np.random.seed(args.seed)
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
             NN = FFNN(X_train,
@@ -54,9 +55,10 @@ def NN_regression(args):
                       hidden_nodes=args.hidden_nodes,
                       batch_size=args.batch_size,
                       learning_rate=eta,
+                      dynamic_eta=args.dynamic_eta,
                       lmb=lmb,
                       )
-            hist, err = NN.train(args.num_epochs, train_history=False)
+            NN.train(args.num_epochs, train_history=args.pred, test=(X_test, z_test))
 
             # Rescale data to obtain correct values    
             train_pred = utils.rescale_data(NN.predict(X_train), z)
@@ -87,11 +89,11 @@ def NN_regression(args):
                 z_pred = utils.rescale_data(NN.predict(X_), z)
 
                 plot.surface_fit(z_pred, z, x, y, args)
-
-
-    # print("\n"*3)
-    # print(f"Best NN train prediction: {(train:=data['train_MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
-    # print(f"Best NN test prediction: {(test:=data['test_MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
+                plot.train_history(NN, args)
+                exit()
+    print("\n"*3)
+    print(f"Best NN train prediction: {(train:=data['train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+    print(f"Best NN test prediction: {(test:=data['test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     plot.eta_lambda(data, args)
 
 
