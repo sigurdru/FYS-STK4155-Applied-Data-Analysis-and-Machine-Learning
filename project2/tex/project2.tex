@@ -42,18 +42,18 @@ In this section we cover gradient decent and different variations of it. More sp
 \subsubsection{Ordinary Gradient Decent}
 Gradient decent methods is often used to minimize the so-called cost/loss-function, which tells us how good our model at predicting the dataset is (more on this in section \ref{sec:cost_func_and_regul}). For now, we use a general cost function $C(\bbeta)$ for a given model $\bbeta$, which can be expressed as the sum over the cost function for each datapoint $\bo x_i$, as such:
 \begin{equation}
-C(\boldsymbol{\beta}) = \sum_{i = 1}^{n}c_i(\mathbf{x}_i, \boldsymbol{\beta}),
+	C(\boldsymbol{\beta}) = \sum_{i = 1}^{n}c_i(\mathbf{x}_i, \boldsymbol{\beta}),
 \end{equation}
 where $n$ denotes the number of datapoints. The gradient with respect to the parameters $\bbeta$, which represent the direction of optimal minimization of the cost function,  is then defined as
 \begin{align}
-\nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}) = \sum_{i = 1}^{n} \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
-\label{eq:Total_gradient}
+	\nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}) = \sum_{i = 1}^{n} \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
+	\label{eq:Total_gradient}
 \end{align}
 The algorithm for GD is then:
 \begin{align}
-\mathbf{v}_t &= \eta \nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}_t) \nonumber \\
-\boldsymbol{\beta}_{t+1} &= \boldsymbol{\beta}_t - \mathbf{v}_t,
-\label{eq:GD_algo}
+	\mathbf{v}_t             & = \eta \nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}_t) \nonumber \\
+	\boldsymbol{\beta}_{t+1} & = \boldsymbol{\beta}_t - \mathbf{v}_t,
+	\label{eq:GD_algo}
 \end{align}
 where $\eta$ is what we call the learning rate, representing the step-length to move in the optimal direction.  This algorithms iteratively finds a new $\boldsymbol{\beta}_{t+1}$ which (ideally) decreases the cost function. This is of course not always the case, and depends on the value of $\eta$. For a model with $p$ parameters, the cost-function is the surface of a $p$-dimensional hypersurface, and minimizing this can lead to several problems. For example, if $\eta$  is to big, the cost-function can diverge and never find a minimum of the hypersurface, while if $\eta$ is too small we will need too many iterations to reach a minimum in reasonable time. One method of avoiding the cost-function diverging, is using a dynamic learning schedule, where the learning rate $\eta$ decreases during training. Our model then makes larger steps in the beginning, and then smaller and smaller, such that we should be able to converge to a minimum, and not making too big steps, circling around it.
 
@@ -63,13 +63,13 @@ An additional problem is that the  hypersurface is not a smooth terrain with a s
 \subsubsection{Stochastic Gradient Decent}\label{sec:SGD}
 With large datasets, a large number of computations is needed when calculating the gradient. It takes a lot of time, and the model is only updated once per iteration, making improvement slow. Stochastic Gradient Decent. SGD, combats this by approximating the total gradient \eqref{eq:Total_gradient}. This is done by performing  gradient decent on a subset of the data, called a minibatch. With $n$ still denoting the total number of datapoints, we will have $N_B=n/M$ minibatches, where $M$ is the size of each minibatch. The minibatches are denoted by $B_k$. Thus our approximated gradient, using a single minibatch $B_k$ is defined as
 \begin{align}
-\nabla_{\boldsymbol{\beta}} C^{MB}(\boldsymbol{\beta}) \equiv \sum_{i \in B_k}^M \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
+	\nabla_{\boldsymbol{\beta}} C^{MB}(\boldsymbol{\beta}) \equiv \sum_{i \in B_k}^M \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
 \end{align}
 Then the aim is to use this approximated gradient, for all $N_B$ minibatches, to update the parameters $\boldsymbol{\beta}$, at every step $k$. Doing this for all $N_B$ minibatches, are what we refer to as an epoch. The SGD algorithm then becomes very similar to \eqref{eq:GD_algo}, however with an approximated gradient.
 \begin{align}
-\mathbf{v}_t &= \eta\nabla_{\boldsymbol{\beta}} C^{MB}(\boldsymbol{\beta}_t) \nonumber \\
-\boldsymbol{\beta}_{t+1} &= \boldsymbol{\beta}_t - \mathbf{v}_t
-\label{eq:SGD_algo}
+	\mathbf{v}_t             & = \eta\nabla_{\boldsymbol{\beta}} C^{MB}(\boldsymbol{\beta}_t) \nonumber \\
+	\boldsymbol{\beta}_{t+1} & = \boldsymbol{\beta}_t - \mathbf{v}_t
+	\label{eq:SGD_algo}
 \end{align}
 This not only speeds up the algorithms, it also helps prevent getting stuck in local minima because of the stochastic nature. The dataset is shuffled after each epoch, creating new minibatches such that we never use the same one twice.
 
@@ -115,18 +115,18 @@ The structure we are going to use in this report is similar to that in figure \r
 
 We mentioned that the different nodes are connected through weights, biases and activation functions. Looking at figure \ref{fig:neural_network}, a neuron $j$ in layer $h_1$ is connected to $n$ input neurons, denoted by black lines. Each input neuron has a numerical value defined by the problem. The value neuron $j$ in $h_1$ then gets is defined as
 \begin{align}
-\sigma (x_1w_1 + x_2w_2 + \dots + x_3w_n + b),
+	\sigma (x_1w_1 + x_2w_2 + \dots + x_3w_n + b),
 \end{align}
 where $x_i$ are the values of neuron $i$ in the input layer, $w_i$ are the weights between neurons $i$ and $j$, $b$ is what we refer to as the bias and $\sigma$ is the activation functions (more on them in the next section). Every neuron is connected like this, with different weights and biases. In this project the activation function is the same for each neuron. Note that when we train the data, what we are really doing, is adjusting these parameters to give a desired result. We cover how this is done in the back propagation algorithm section.
 
 \subsubsection{Activation Functions}
 The activation functions are where the non-linearity term comes in, because they are non-linear. Now there are many such functions, in our project we have implemented the ones\sn{FLERE?} displayed in figure \ref{fig:activation_functions}. The exact functions are as follows
 \begin{align}
-	\text{Sigmoid: }\sigma(x) &= \frac{1}{1 + e^{-x}}\label{eq:sigmoid} \\
-	\text{RELU: }\sigma(x) &= \max(0,x) \label{eq:RELU} \\
-	\text{Leaky RELU: }\sigma(x) &= \begin{cases}
-	\alpha x,& \text{if } x\leq 0 \\
-	x,& \text{otherwise}
+	\text{Sigmoid: }\sigma(x)    & = \frac{1}{1 + e^{-x}}\label{eq:sigmoid}           \\
+	\text{RELU: }\sigma(x)       & = \max(0,x) \label{eq:RELU}                        \\
+	\text{Leaky RELU: }\sigma(x) & = \begin{cases}
+		\alpha x, & \text{if } x\leq 0 \\
+		x,        & \text{otherwise}
 	\end{cases} \label{eq:leaky_RELU}
 \end{align}
 Where $\alpha$ is some parameter which we have set to $\alpha = 0.01$ in figure \ref{fig:activation_functions}.
@@ -144,15 +144,15 @@ Before one can start training the data, we must have a cost function. This will 
 \end{align}
 One can also implement regularization, which helps prevent overfitting in the network. Common ones are $L_1$ and $L_2$ which is done by adding a regularization term to the end of the cost function (see equations \eqref{eq:L1} and \eqref{eq:L2}).
 \begin{align}
-	L_1: \ \ C(\mathbf{x}) &= \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \abs{\mathbf{w}_j} \label{eq:L1} \\
-	L_2: \ \ C(\mathbf{x}) &= \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \mathbf{w}^2_j \label{eq:L2}
+	L_1: \ \ C(\mathbf{x}) & = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \abs{\mathbf{w}_j} \label{eq:L1} \\
+	L_2: \ \ C(\mathbf{x}) & = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \mathbf{w}^2_j \label{eq:L2}
 \end{align}
 \sn{RIKTIG?}Here $\lambda$ is some regularization parameter and $\mathbf{w}$ are weights.
 
 We mentioned when talking about logistic regression (section \ref{sec:logistic_regression}), that for classification scenarios one will often use cross-entropy as the cost function. Continuing with the model defined by \eqref{eq:log_reg_model}, we want to find an appropriate cost function. We define the probability of an outcome $y_i$ given parameters $\bo X_i$ and $\bo W$ as
 \begin{align}
-	P(y_i = 1|\bo X_i, \bo W) &= \frac{1}{1 + \exp(-\bo X_i^T \bo W)}, \\
-	P(y_i = 0|\bo X_i, \bo W) &= 1 - P(y_i = 1|\bo X_i, \bo W)
+	P(y_i = 1|\bo X_i, \bo W) & = \frac{1}{1 + \exp(-\bo X_i^T \bo W)}, \\
+	P(y_i = 0|\bo X_i, \bo W) & = 1 - P(y_i = 1|\bo X_i, \bo W)
 \end{align}
 We can then map these probabilities to our soft classifier $\sigma(s_i)$
 \begin{align}
@@ -199,9 +199,9 @@ In the next few lines we are going to derive several equations needed for the al
 \end{align}
 Because $\partial b_j^l/\partial z^l_j = 1$ from \eqref{eq:activation_of_node_ajl}. Again using the chain rule we can rewrite \eqref{eq:backprop1}
 \begin{align}
-	\Delta_j^l &= \del{C}{z_j^l} = \sum_{k} \del{E}{z_k^{l+1}}\del{z_k^{l+1}}{z^l_j} = \sum_{k} \Delta_k^{l+1}\del{z_k^{l+1}}{z^l_j} \nonumber \\
-	 &= \left(\sum_{k} \Delta_k^{l+1} w_{kj}^{l+1}\right)\der{\sigma(z^l_j)}{z^l_j}.
-	 \label{eq:backprop3}
+	\Delta_j^l & = \del{C}{z_j^l} = \sum_{k} \del{E}{z_k^{l+1}}\del{z_k^{l+1}}{z^l_j} = \sum_{k} \Delta_k^{l+1}\del{z_k^{l+1}}{z^l_j} \nonumber \\
+	           & = \left(\sum_{k} \Delta_k^{l+1} w_{kj}^{l+1}\right)\der{\sigma(z^l_j)}{z^l_j}.
+	\label{eq:backprop3}
 \end{align}
 To find the last equation, we differentiate the cost function with respect to the weight $w^l_{jk}$
 \begin{align}
@@ -225,28 +225,31 @@ Before 2006, most neural networks were performing quite badly on most tasks, as 
 
 In 2015, He-initialization was shown to work well with ReLU and Leaky ReLU \cite{He}. Here, the weights are initialized using the normal distribution, but with a variance given by $v = 2/(1 + \alpha^2)n$, where again $n$ is the number of nodes in the preceding layer, and $\alpha$ is the parameter of the Leaky ReLU-function. For ReLU, this is 0. We use these initializations for our weights given the activation-function, but will not study the particular effects of this in depth.
 
+
 \section{Methods}
 As we mentioned in the introduction, we wish to study different ways of fitting two types of datasets. The first which we can classify as \textit{continuous} is the Franke Function \eqref{eq:FF},
 \begin{align}
-\begin{split}\label{eq:FF}
-f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10})
-\\
-+ &\frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2).
-\end{split}
+	\begin{split}\label{eq:FF}
+		f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10})
+		\\
+		+ &\frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2).
+	\end{split}
 \end{align}
 We will use both stochastic gradient decent and feed forward neural network to try and fit the data. Both methods are covered in the theory sections \ref{sec:GD} and \ref{sec:NeuralNetwork} respectively.
 
 Next we will embark on an classification problem. Namely classifying if breast tissue is malignant or benign, by studying the data provided by Wisconsin breast cancer data\footnote{\href{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}}. We will again use a feed forward neural network, and logistic regression. The latter is covered in the theory section \ref{sec:logistic_regression}.
 
 \subsection{Franke Function}
-Before we can study Franke Function we have to initialize the data. We will use the same parameters as in a previous project, such that we can compare results. One can find the previous project on our GitHub\footnote{https://github.com/sigurdru/FYS-STK4155/tree/main/project1} with all the code and instructions on how to run it. In that project we initialized the data with $N=30\times30$ randomly (uniformly) distributed datapoints in $x$- and $y$-direction. To simulate it being real data, we also added normally distributed noise with mean zero and standard deviation $\epsilon = 0.2$ ($N(0,\epsilon)$). In the previous project we, among other things, used ordinary least squares (OLS) and ridge regression to fit the Franke function. Information on those methods can be found in the aforementioned report. We can then compare the optimal MSE's in that project, with those obtained in this.
+In \cite{project1}, we already studied the Franke function using linear regression, specifically OLS and OLS with an L2 and L1 parameter $\lambda$, so-called Ridge and Lasso regression. The results from these methods will form the basis for comparing our results using SGD and neural networks. The rapport, along with the code can be found at our GitHub\footnote{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}. In order to have comparable results, we will use the same parameters for the data. Only the methods will be different. In that project we initialized the data with $N=30\times30$ randomly (uniformly) distributed datapoints in $x$- and $y$-direction. To simulate it being real data, we also added normally distributed noise with mean zero and standard deviation $0.2$: $\epsilon \sim \mathcal{N}(0,0.2)$. We also scale the data in the same way as before, subtracting the mean and dividing by the standard deviation.
 
 \subsubsection{Stochastic Gradient Descent}
-As mentioned we want to fit the Franke function \eqref{eq:FF} using stochastic gradient decent (algorithm \eqref{eq:SGD_algo}). Writing our own code, we perform an analysis of the MSE (equation \eqref{eq:MSE}) for different learning rates $\eta$. The cost function used is ordinary MSE. We also implement $L_2$ regularization \eqref{eq:L2}, and plot the MSE's for different values of hyper-parameters $\lambda$.\sn{Scaling the learning rate}
+As in \cite{project1}, we have to choose a model to fit the data to, when using SGD. The simplest is a bi-variate polynomial of degree $P$, such that our model will have $p$ features. This is the designmatrix $X$ used in the previous project. Having obtained good results for OLS using $P = 7$, we use the same polynomial degree for SGD. Writing our own code for implementing SGD, and perform an analysis of the MSE (equation \eqref{eq:MSE}) for different learning rates $\eta$ and $L_2$-regularization-parameter $\lambda$.
+
 
 The specific parameters we will test for are\sn{HVILKE PARAMETERE VI TESTER FOR HER}
 
 \subsubsection{Feed Forward Neural Network}
+When using the neural network to fit the Franke function, we use a lot of the same methods as for SGD. A key difference is that instead of iteratively updating a model $\bbeta$, we now train a network of several layers, each with many nodes. One of the results of this is that we do not have to choose the shape the model will take. Instead of giving our network the design matrix $X$ for a cartain polynomial degree $P$, we can pass it only the collection of points $[(x_i, y_i)]$, and let the network figure out the rest. By giving it the entire design matrix, we would pass more data, making it potentially learn better or quicker. If our data were of a physical nature, it would be benefitial, to constrain the predictions to within the laws of nature, which obviously have to be observed. The Franke function is however a pure mathematical object, so no constraints have to be made. We therefore only pass it the $x_i$ and $y_i$  values.
 Next we want to perform the same analysis, using a feed forward neural network and back propagation. We perform tests with different number of hidden layers and nodes. Also...
 
 \subsection{Wisconsin Breast Cancer Data}
