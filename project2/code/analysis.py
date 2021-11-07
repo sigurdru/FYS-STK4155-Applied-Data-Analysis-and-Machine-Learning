@@ -30,7 +30,7 @@ class NoneScaler(StandardScaler):
 
 scale_conv = {"None": NoneScaler(),
                 "S": StandardScaler(),
-                "N": Normalizer(), 
+                "N": Normalizer(),
                 "M": MinMaxScaler()}
 
 
@@ -41,7 +41,7 @@ def NN_regression(args):
     scaler = scale_conv[args.scaling]
     if args.pred:
         # Reduce noise for surface plot comparison
-        args.epsilon = 0.05 
+        args.epsilon = 0.05
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p, intercept=False if p == 1 else True)
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
@@ -58,7 +58,7 @@ def NN_regression(args):
                       )
             hist, err = NN.train(args.num_epochs, train_history=False)
 
-            # Rescale data to obtain correct values    
+            # Rescale data to obtain correct values
             train_pred = utils.rescale_data(NN.predict(X_train), z)
             test_pred = utils.rescale_data(NN.predict(X_test), z)
 
@@ -67,7 +67,7 @@ def NN_regression(args):
 
             tr_mse = utils.MSE(z_train_, train_pred)
             te_mse = utils.MSE(z_test_, test_pred)
-            
+
             print('mse train  : ', tr_mse)
             print('mse test   : ', te_mse)
 
@@ -79,11 +79,11 @@ def NN_regression(args):
 
             if args.pred:
                 """
-                Plot fitted surface with original data  
+                Plot fitted surface with original data
                 """
-                X_ = utils.split_scale(X, z, 0, scaler)[0] # Scale design matrix 
+                X_ = utils.split_scale(X, z, 0, scaler)[0] # Scale design matrix
 
-                # Calculate output. Rescale values to the original 
+                # Calculate output. Rescale values to the original
                 z_pred = utils.rescale_data(NN.predict(X_), z)
 
                 plot.surface_fit(z_pred, z, x, y, args)
@@ -103,7 +103,7 @@ def linear_regression(args):
     scaler = scale_conv[args.scaling]
 
     if args.pred:
-        # Reduce noise for surface plot comparison 
+        # Reduce noise for surface plot comparison
         args.epsilon = 0.05
 
     x, y, z = utils.load_data(args)
@@ -146,21 +146,21 @@ def linear_regression(args):
                         """
                         Plot fitted prediction vs data set with epsilon=0.05
                         """
-                        X_ = utils.split_scale(X, z, 0, scaler)[0] # Scale design matrix 
+                        X_ = utils.split_scale(X, z, 0, scaler)[0] # Scale design matrix
 
 
-                        # Calculate output. Rescale values to the original 
+                        # Calculate output. Rescale values to the original
                         z_pred = utils.rescale_data(X_ @ beta, z)
 
                         plot.surface_fit(z_pred, z, x, y, args)
 
         plot.parameter_based(data, args)
-        
+
     else:
         gammas = np.array([0, 0.25, 0.5, 0.9])
         args.gamma = gammas
         data = defaultdict(lambda: np.zeros((len(gammas), args.num_epochs)))
-        
+
         for i, gamma in enumerate(gammas):
 
             mom_MSE_train, mom_MSE_test, beta = SGD.SGD((X_train, X_test),
@@ -181,17 +181,20 @@ def linear_regression(args):
 def logistic_regression(args):
     pass
 
-def classify(x):
-    return np.round(x * 2)
-
-
 
 def NN_classification(args):
     etas = args.eta
     lmbs = args.lmb
 
     dataset = utils.load_data(args)
-    X, z_ = dataset.data, dataset.target.reshape(-1, 1)
+    z_ = dataset.target.reshape(-1, 1)
+    data = pd.DataFrame(dataset.data, columns=dataset.feature_names)
+    corrmat = data.corr()
+    X = data.loc[:, lambda x: abs(corrmat["mean radius"]) > 0.25]
+    print(X.shape)
+
+    # X = df
+
     z = utils.categorical(z_)
     scaler = scale_conv[args.scaling]
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
@@ -200,25 +203,27 @@ def NN_classification(args):
 
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
-    
+            np.random.seed(args.seed)
+
             NN = FFNN(X_train,
-                    z_train,
-                    hidden_nodes=args.hidden_nodes,
-                    batch_size=args.batch_size,
-                    learning_rate=eta,
-                    dynamic_eta=args.dynamic_eta,
-                    lmb=lmb,
-                    gamma=args.gamma,
-                    wi=args.weight_initialization,
-                    activation=args.act_func,
-                    cost="cross_entropy",
-                    output_activation="softmax",
-                    )
-            NN.train(args.num_epochs, train_history=True, test=(X_test, z_test))
+                      z_train,
+                      hidden_nodes=args.hidden_nodes,
+                      batch_size=args.batch_size,
+                      learning_rate=eta,
+                      dynamic_eta=args.dynamic_eta,
+                      lmb=lmb,
+                      gamma=args.gamma,
+                      wi=args.weight_initialization,
+                      activation=args.act_func,
+                      cost="cross_entropy",
+                      output_activation="softmax",
+                      )
+            NN.train(args.num_epochs, train_history=args.pred, test=(X_test, z_test))
             data["train accuracy"][i][j] = NN.predict_accuracy(X_train, z_train)
             data["test accuracy"][i][j] = NN.predict_accuracy(X_test, z_test)
             print("Test accuracy: ", data["test accuracy"][i][j])
-    
+            print()
+
             if args.pred:
                 plot.train_history(NN, args)
 
