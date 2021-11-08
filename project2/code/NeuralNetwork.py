@@ -6,7 +6,7 @@ from cost_activation import Costs, Activations
 import utils
 import warnings
 
-warnings.filterwarnings("error")
+warnings.filterwarnings("error", category=RuntimeWarning)
 
 
 
@@ -227,14 +227,14 @@ class FFNN(Costs, Activations):
         input: x (ndarray)
         Calculate output layer with updated weights and biases
         """
+        if self.converged is None:
+            return np.nan
+
         self.Layers[0] = x
         self.feed_forward()
         return self.Layers[-1]
 
     def predict_accuracy(self, x, y):
-        if self.converged is None:
-            return np.nan
-
         probs = self.predict(x)
         msg = "\n\nThe probabilities do not sum to 1!\nWorry not, this probably just means there is a nan in there. Check for RuntimeWarnings in autograd.\nRerun, but with lower gamma or eta or something else\n"
         if not (abs(np.sum(probs, axis=1) - 1) < 1e-10).all():  # make sure probabilities sum to 1
