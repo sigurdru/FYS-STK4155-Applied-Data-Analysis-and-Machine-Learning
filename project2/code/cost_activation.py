@@ -7,7 +7,7 @@ class Costs:
         return mse
 
     def cross_entropy(self, t_):
-        a = -(self.t * np.log(t_) + (1 + self.t) * np.log(1 - t_))
+        a = -(self.t * np.log(t_) + (1 - self.t) * np.log(1 - t_))
         return a
 
 
