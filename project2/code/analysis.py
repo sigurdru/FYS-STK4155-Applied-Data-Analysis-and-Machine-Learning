@@ -47,9 +47,9 @@ def NN_regression(args):
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs)), dtype=float))
-    np.random.seed(args.seed)
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
+            np.random.seed(args.seed)
             NN = FFNN(X_train,
                       z_train,
                       hidden_nodes=args.hidden_nodes,
@@ -132,6 +132,7 @@ def linear_regression(args):
         for i, eta in enumerate(etas):
             for j, lmb in enumerate(lmbs):
                 for k, batch_size in enumerate(batch_sizes):
+                    # np.random.seed(args.seed)
                     MSE_train, MSE_test, beta = SGD.SGD((X_train, X_test),
                                                     (z_train, z_test),
                                                     args,
