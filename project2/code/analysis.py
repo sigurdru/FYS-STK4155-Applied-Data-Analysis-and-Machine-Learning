@@ -193,8 +193,14 @@ def NN_classification(args):
     z_ = dataset.target.reshape(-1, 1)
     data = pd.DataFrame(dataset.data, columns=dataset.feature_names)
     corrmat = data.corr()
-    X = data.loc[:, lambda x: abs(corrmat["mean radius"]) > 0.25]
-
+    if args.dataset == "Cancer":
+        feat = "mean concavity"
+        X = data.loc[:, lambda x: abs(corrmat[feat]) < 0.8]
+        X.insert(0, feat, data[feat])
+    else:
+        X = dataset.data
+    print(X.shape)
+    
     z = utils.categorical(z_)
     scaler = scale_conv[args.scaling]
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
@@ -225,6 +231,7 @@ def NN_classification(args):
 
             if args.pred:
                 plot.train_history(NN, args)
+                exit()
 
     print(f"Best NN train prediction: {(train:=data['train accuracy'])[(mn:=np.unravel_index(np.nanargmax(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     print(f"Best NN test prediction: {(test:=data['test accuracy'])[(mn:=np.unravel_index(np.nanargmax(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
