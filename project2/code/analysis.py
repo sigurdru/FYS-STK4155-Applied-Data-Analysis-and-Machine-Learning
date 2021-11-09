@@ -157,6 +157,10 @@ def linear_regression(args):
                     if args.pred:
                         """
                         Plot fitted prediction vs data set with epsilon=0.05
+                        Good result:
+                         - Ne  : 10 000 (lol)
+                         - eta : 0.25 (to be adjusted)
+                         - ga  : 0.5 
                         """
                         # Scale the full design matrix 
                         X_ = utils.split_scale(X, z, 0, scaler)[0] # Scale design matrix
