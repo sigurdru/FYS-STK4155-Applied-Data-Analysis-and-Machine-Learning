@@ -4,6 +4,10 @@ from tqdm import tqdm
 from autograd import elementwise_grad
 from cost_activation import Costs, Activations
 import utils
+import warnings
+
+warnings.filterwarnings("error", category=RuntimeWarning)
+
 
 
 class Optimizer:
@@ -76,7 +80,7 @@ class FFNN(Costs, Activations):
             if activation == "sigmoid":  # Xavier initialization
                 self.weights = [0] + [np.random.uniform(-1/np.sqrt(n), 1/np.sqrt(n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
             elif activation == "tanh":  # Normalized Xaviet initialization
-                self.weights = [0] + [np.random.uniform(-np.sqrt(1/(n + m)), np.sqrt(6/(n + m)), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
+                self.weights = [0] + [np.random.uniform(-np.sqrt(6/(n + m)), np.sqrt(6/(n + m)), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
             elif activation == "relu":  # He initialization
                 self.weights = [0] + [np.random.normal(scale=np.sqrt(2/n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
             elif activation == "leaky_relu":  # He initialization
@@ -128,7 +132,7 @@ class FFNN(Costs, Activations):
 
         else:
             self.delta_l[-1] = self.cost_der(self.Layers[-1]) * self.out_der(self.z[-1])
-        
+
         # Calculate gradients of the hidden layers
         for i in reversed(range(1, len(self.nodes) - 1)):
             self.delta_l[i] = self.delta_l[i + 1] @ self.weights[i + 1].T \
@@ -137,7 +141,7 @@ class FFNN(Costs, Activations):
         # Update weights and biases for each previous layer
         for n in reversed(range(1, len(self.nodes))):
             # find weight and bias gradient with l2-norm
-            weight_gradient = self.Layers[n - 1].T @ self.delta_l[n] + self.lmb * self.weights[n] #/ len(self.z[n])
+            weight_gradient = self.Layers[n - 1].T @ self.delta_l[n] + self.lmb * self.weights[n]
             bias_grad = np.sum(self.delta_l[n], axis=0) + self.lmb * self.bias[n]
             # calculate the weight and bias update
             weight_change = self.optim_w(self.eta * weight_gradient, n)
@@ -145,11 +149,10 @@ class FFNN(Costs, Activations):
             # update weight and bias
             self.weights[n] -= weight_change
             self.bias[n] -= bias_change
-        
+
         # If weight and bias to output layer doesnt change, end training
         if max(np.max(abs(weight_change)), np.max(abs(bias_change))) < 1e-8:
-            return True
-        return False
+            self.converged = True
 
     def feed_forward(self):
         # Update the hidden layers
@@ -158,7 +161,6 @@ class FFNN(Costs, Activations):
             self.Layers[n] = self.activation(self.z[n])
 
         self.Layers[-1] = self.activation_out(self.z[n]) # Update final layer
-
 
     def train(self, epochs, train_history=False, test=None):
         """
@@ -169,7 +171,7 @@ class FFNN(Costs, Activations):
         """
 
         self.history = defaultdict(lambda: [])
-
+        self.converged = False
         indicies = np.arange(self.N)
         pbar = tqdm(range(epochs), desc=f"eta: {self.eta0}, lambda: {self.lmb}. Training")
 
@@ -191,16 +193,23 @@ class FFNN(Costs, Activations):
                 self.Layers[0] = self.X_s[i: i + self.batch_size]
                 self.t = self.shuffle_t[i: i + self.batch_size]
 
-                self.feed_forward()
-                self.converged = self.backpropagation()
+                try:
+                    self.feed_forward()
+                    self.backpropagation()
+                except RuntimeWarning:
+                    self.converged = None
+                    break
 
             pbar.set_description(f"eta: {self.eta:.6f}, lambda: {self.lmb:.6f}. Training")
             if self.converged:
                 print(f"Network converged after {epoch} epochs")
                 break
+            elif self.converged is None:
+                print("RuntimeWarning. Overflow or underflow encoutered")
+                break
 
     def train_history(self, test):
-        
+
         for name, (x, t) in zip(("train", "test"), ((self.X, self.static_target), test)):
             if self.nodes[-1] > 1:
                 self.history[name + "_accuracy"].append(self.predict_accuracy(x, t))
@@ -218,6 +227,9 @@ class FFNN(Costs, Activations):
         input: x (ndarray)
         Calculate output layer with updated weights and biases
         """
+        if self.converged is None:
+            return np.nan
+
         self.Layers[0] = x
         self.feed_forward()
         return self.Layers[-1]
@@ -225,7 +237,7 @@ class FFNN(Costs, Activations):
     def predict_accuracy(self, x, y):
         probs = self.predict(x)
         msg = "\n\nThe probabilities do not sum to 1!\nWorry not, this probably just means there is a nan in there. Check for RuntimeWarnings in autograd.\nRerun, but with lower gamma or eta or something else\n"
-        if not (abs(np.sum(probs, axis=1) - 1) < 1e-10).all(): # make sure probabilities sum to 1
+        if not (abs(np.sum(probs, axis=1) - 1) < 1e-10).all():  # make sure probabilities sum to 1
             print(msg)
             return np.nan
         pred = np.argmax(probs, axis=1).reshape(-1, 1)

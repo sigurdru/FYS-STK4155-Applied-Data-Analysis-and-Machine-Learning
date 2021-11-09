@@ -47,9 +47,9 @@ def NN_regression(args):
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs)), dtype=float))
-    np.random.seed(args.seed)
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
+            np.random.seed(args.seed)
             NN = FFNN(X_train,
                       z_train,
                       hidden_nodes=args.hidden_nodes,
@@ -132,6 +132,7 @@ def linear_regression(args):
         for i, eta in enumerate(etas):
             for j, lmb in enumerate(lmbs):
                 for k, batch_size in enumerate(batch_sizes):
+                    # np.random.seed(args.seed)
                     MSE_train, MSE_test, beta = SGD.SGD((X_train, X_test),
                                                     (z_train, z_test),
                                                     args,
@@ -192,17 +193,19 @@ def NN_classification(args):
     z_ = dataset.target.reshape(-1, 1)
     data = pd.DataFrame(dataset.data, columns=dataset.feature_names)
     corrmat = data.corr()
-    X = data.loc[:, lambda x: abs(corrmat["mean radius"]) > 0.25]
+    if args.dataset == "Cancer":
+        feat = "mean concavity"
+        X = data.loc[:, lambda x: abs(corrmat[feat]) < 0.8]
+        X.insert(0, feat, data[feat])
+    else:
+        X = dataset.data
     print(X.shape)
-
-    # X = df
-
+    
     z = utils.categorical(z_)
     scaler = scale_conv[args.scaling]
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs))))
-
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
             np.random.seed(args.seed)
@@ -228,7 +231,8 @@ def NN_classification(args):
 
             if args.pred:
                 plot.train_history(NN, args)
+                exit()
 
-    print(f"Best NN train prediction: {(train:=data['train accuracy'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
-    print(f"Best NN test prediction: {(test:=data['test accuracy'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {np.log10(etas[mn[0]])}, lambda = {lmbs[mn[1]]}")
+    print(f"Best NN train prediction: {(train:=data['train accuracy'])[(mn:=np.unravel_index(np.nanargmax(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+    print(f"Best NN test prediction: {(test:=data['test accuracy'])[(mn:=np.unravel_index(np.nanargmax(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     plot.eta_lambda(data, args, NN=True)
