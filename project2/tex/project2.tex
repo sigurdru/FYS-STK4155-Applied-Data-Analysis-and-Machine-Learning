@@ -11,6 +11,7 @@
 \usepackage{eurosym}
 \usepackage{footmisc}
 
+
 \collaborationImg{\includegraphics[width=30mm]{../../pictures/UIO.png}}
 
 \author{\Large Håkon Olav Torvik, Vetle Vikenes \& Sigurd Sørlie Rustad}
@@ -240,16 +241,38 @@ We will use both stochastic gradient decent and feed forward neural network to t
 Next we will embark on an classification problem. Namely classifying if breast tissue is malignant or benign, by studying the data provided by Wisconsin breast cancer data\footnote{\href{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}}. We will again use a feed forward neural network, and logistic regression. The latter is covered in the theory section \ref{sec:logistic_regression}.
 
 \subsection{Franke Function}
-In \cite{project1}, we already studied the Franke function using linear regression, specifically OLS and OLS with an L2 and L1 parameter $\lambda$, so-called Ridge and Lasso regression. The results from these methods will form the basis for comparing our results using SGD and neural networks. The rapport, along with the code can be found at our GitHub\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}. In order to have comparable results, we will use the same parameters for the data. Only the methods will be different. In that project we initialized the data with $N=30\times30$ randomly (uniformly) distributed datapoints in $x$- and $y$-direction. To simulate it being real data, we also added normally distributed noise with mean zero and standard deviation $0.2$: $\epsilon \sim \mathcal{N}(0,0.2)$. We also scale the data in the same way as before, subtracting the mean and dividing by the standard deviation.
+In \cite{project1}, we already studied the Franke function using linear regression, specifically OLS and OLS with an L2 and L1 parameter $\lambda$, so-called Ridge and Lasso regression. The results from these methods will form the basis for comparing our results using SGD and neural networks. The rapport, along with the code can be found at our GitHub\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}. In order to have comparable results, we will use the same parameters for the data. Only the methods will be different. In that project we initialized the data with $N=30\times30$ uniformly distributed datapoints in $x$- and $y$-direction. To simulate it being real data, we also added normally distributed noise with mean zero and standard deviation $0.2$: $\epsilon \sim \mathcal{N}(0,0.2)$. We also split the input and target data in the same way as before, using $80\,\%$ of the data for training and $20\,\%$ of the data for testing. The two splitted data sets are then scaled by subtracting the mean of the relevant training data.
 
 \subsubsection{Stochastic Gradient Descent}
-As in \cite{project1}, we have to choose a model to fit the data to, when using SGD. The simplest is a bi-variate polynomial of degree $P$, such that our model will have $p$ features. This is the designmatrix $X$ used in the previous project. Having obtained good results for OLS using $P = 7$, we use the same polynomial degree for SGD. Writing our own code for implementing SGD, and perform an analysis of the MSE (equation \eqref{eq:MSE}) for different learning rates $\eta$ and $L_2$-regularization-parameter $\lambda$.
+As in \cite{project1}, we have to choose a model to fit the data to, when using SGD. The simplest is a bi-variate polynomial of degree $P$, such that our model will have $p$ features. This is the design matrix $X$ used in the previous project. Having obtained good results for OLS using $P = 6$, we use the same polynomial degree for SGD. Writing our own code for implementing SGD, we will analyze the results with the MSE (equation \eqref{eq:MSE}) as our cost function for various parameters. We include the $L_2$ regularization term, equation \eqref{eq:L2}, in the gradient of the cost function, which gives the gradient corresponding to Ridge regression. The expression for the stochastic gradient is given in equation \eqref{eq:SGD_gradient}
 
+\begin{align} \label{eq:SGD_gradient}
+	\nabla_{\boldsymbol{\beta}}C^\mathrm{MB} (\boldsymbol{\beta})=2 X^T (X \boldsymbol{\beta} - \boldsymbol{z})/M + 2\lambda\boldsymbol{\beta}
+\end{align}
 
-The specific parameters we will test for are\sn{HVILKE PARAMETERE VI TESTER FOR HER}
+where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rates, $\eta$, number of epochs, $N_e$, number of minibatches, $N_B$, regularization parameter, $\lambda$ and the momentum parameter $\gamma$. 
+
+We begin by studying the MSE for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $36$ for the $720$ training data. 
+\sn{skal vi kommentere her at best eta påvirkes av batch size, eller skal det være i diskusjonen?} 
+We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.5]$. This will simplify our analysis, as studying all the parameters at once are a tedious process. We then choose one of the favorable learning rates to study the MSE for $9$ different minibatch sizes between $720$ and $24$, as a function of epochs, using $N_e\in[0,\,150]$ once again. Using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ evenly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. Finally, we study the MSE over $100$ epochs for $20$ evenly spaced values of $\gamma\in[0,\,0.95]$ 
+\sn{Burde man kanskje lagd tabell med parameterne?}. 
+
+After these parameters are studied, we will test an implementation of scaling the learning rate by reducing it from an initial value after each epoch. One possible advantage of this is that convergence is fastinitially, when the errors are large, but as we approach a minima the learning rates are reduced, preventing us from overshooting. The algorithm we use for scaling the learning rate is given in equation \eqref{eq:learning_schedule}, where $t$ denotes the epoch
+\begin{align} \label{eq:learning_schedule}
+	\eta_t = \eta_0 \cdot \closed{1 - \frac{t}{N_e}}
+\end{align}  
+
+Parameter for learning schedule \sn{TO BE DONE}.
+
+After the SGD has been studied and appropriate parameters have been estimated, we will plot the resulting fit of the gradient descent and compare it to the Franke function as an indication of the result. Although the fit was performed on a data set with noise $\epsilon\sim\mathcal{N}(0,\,0.2)$ we will use $\epsilon\sim\mathcal{N}(0,\,0.05)$ when plotting the prediction in order to see the details of the plot more clearly.   
+
 
 \subsubsection{Feed Forward Neural Network}
-When using the neural network to fit the Franke function, we use a lot of the same methods as for SGD. A key difference is that instead of iteratively updating a model $\bbeta$, we now train a network of several layers, each with many nodes. One of the results of this is that we do not have to choose the shape the model will take. Instead of giving our network the design matrix $X$ for a cartain polynomial degree $P$, we can pass it only the collection of points $[(x_i, y_i)]$, and let the network figure out the rest. By giving it the entire design matrix, we would pass more data, making it potentially learn better or quicker. If our data were of a physical nature, it would be benefitial, to constrain the predictions to within the laws of nature, which obviously have to be observed. The Franke function is however a pure mathematical object, so no constraints have to be made. We therefore only pass it the $x_i$ and $y_i$  values.
+When using the neural network to fit the Franke function, we use a lot of the same methods as for SGD. A key difference is that instead of iteratively updating a model $\bbeta$, we now train a network of several layers, each with many nodes. One of the results of this is that we do not have to choose the shape the model will take. 
+
+Instead of giving our network the design matrix $X$ for a certain polynomial degree $P$, we can pass it only the collection of points $[(x_i, y_i)]$, and let the network adjust the weights and biases accordingly. Since the Franke function is an exponential function we know that it can be approximated as a higher order polynomial, so by using the design matrix as an input we exploit this property such that the network converges faster. Having already fitted the Franke function with a design matrix with linear regression and SGD, we now choose the $x_i$ and $y_i$ values only. Not providing the network with any initial information has the advantage that we get a more rigorous test of the network's performance, since we ensure that the result is not directly reliant on the information in question. Another important motivation for this is that if we were to fit some other data, e.g. terrain data, we may not have any a priori information regarding the input data. Omitting the design matrix when we train our neural network will thus yield a final model capable of fitting various types of data.  
+
+
 Next we want to perform the same analysis, using a feed forward neural network and back propagation. We perform tests with different number of hidden layers and nodes. Also...
 
 \subsection{Wisconsin Breast Cancer Data}
