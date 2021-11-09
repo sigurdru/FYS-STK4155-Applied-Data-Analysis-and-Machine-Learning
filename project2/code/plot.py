@@ -99,6 +99,7 @@ def surface_fit(data_pred, data_target, x, y, args):
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
     plt.show()
+    exit()
 
 
 def parameter_based(data, args):
@@ -131,15 +132,17 @@ def parameter_based(data, args):
 
             Good simulation:
             - Ne  : 150
-            - eta : np.linspace(0.01, 0.05, 31)
+            - eta : np.linspace(0.01, 0.5, 21)
             """
             cols = np.arange(args.num_epochs)
             idx = np.round(args.eta, 3)
             data = pd.DataFrame(accuracy[:,0,0,:], index=idx, columns=cols[:])
             ylabel = r"Learning rate $\eta$"
             xlabel = "Number of epochs"
-            title = name + " for Franke function, using 20 minibatches"
-            ytick = 3
+            title = name + " for Franke function\n" + "using 20 minibatches"
+            xtick = len(cols)//10
+            xrot=0
+
             vmax = 0.07
 
             func["x"] = "epochs"
@@ -152,7 +155,7 @@ def parameter_based(data, args):
 
             Good simulation:
             - Ne : 150
-            - eta: 0.3
+            - eta: 0.25
             - bs : 0
             """
             cols = np.arange(args.num_epochs)
@@ -160,9 +163,11 @@ def parameter_based(data, args):
             data = pd.DataFrame(accuracy[0,0,:,:], index=idx, columns=cols[:])
             ylabel = "Number of minibatches"
             xlabel = "Number of epochs"
-            title = name + r" for Franke function, using $\eta=0.3$"
+            title = name + r" for Franke function, using $\eta=0.25$"
             ytick = idx
+            xtick = len(cols) // 10
             vmax = 0.07
+            xrot=0
 
             func["x"] = "epochs"
             func["y"] = "minibatches"
@@ -182,14 +187,15 @@ def parameter_based(data, args):
             data = pd.DataFrame(accuracy[:,:,0,-1], index=idx, columns=cols[:])
             ylabel = r"Learning rate $\eta$"
             xlabel = r"$\log_{10}(\lambda)$"
-            title = name + " for Franke function after 200 epochs, using 20 minibatches"
+            title = name + " for Franke function after 150 epochs\n" + "using 20 minibatches"
             ytick = idx
+            xtick = cols
+            xrot=0
             vmax = None
 
             func["x"] = "lambda"
             func["y"] = "eta"
             func["z"] = "MSE"
-
 
         ax = sns.heatmap(data,
                         ax=ax,
@@ -197,31 +203,64 @@ def parameter_based(data, args):
                         cmap=cm.coolwarm,
                         vmax=vmax,
                         linewidths=0,
-                        xticklabels=len(cols)//10,
-                        yticklabels=ytick)
+                        xticklabels=xtick,
+                        yticklabels=idx)
+
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=xrot, fontsize=12)
         ax.invert_yaxis()
-        ax.set_ylabel(ylabel)
-        ax.set_xlabel(xlabel)
-        ax.set_title(title)
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.set_xlabel(xlabel, fontsize=15)
+        ax.set_title(title, fontsize=18)
+        cbar = ax.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=13)
         show_push_save(fig, func, args)
 
 
 def momentum(data, args):
+    """
+    Optimal simulation:
+     - Ne  : 100
+     - eta : 0.25
+    """
     for name, accuracy in data.items():
         func = defaultdict(lambda: None)
         func["train"] = name.split()[0]
         fig, ax = plt.subplots()
 
-        for i, mse in enumerate(accuracy):
-            ax.plot(mse, label=rf'{name}. $\gamma={args.gamma[i]:.2f}$')
-        ax.set_title(name + "during training for different momentums")
-        ax.set_xlabel("Number of epochs")
-        ax.set_ylabel("MSE")
-        plt.legend()
+        cols = np.arange(args.num_epochs)
+        idx = np.round(args.gamma,2)
+        data = pd.DataFrame(accuracy, index=idx, columns=cols)
+        ylabel = r"Momentum parameter $\gamma$"
+        xlabel = "Number of epochs"
+        title = name + r" for Franke function, using $\eta=0.25$\n" + "and 20 minibatches"
+        xtick = len(cols)//10
+        ytick = idx
+        xrot = 0
+
         func["x"] = "epochs"
-        func["y"] = "MSE"
-        func["z"] = "momentum"
+        func["y"] = "gamma"
+        func["z"] = "MSE"
+
+        ax = sns.heatmap(data,
+                        ax=ax,
+                        annot=False,
+                        cmap=cm.coolwarm,
+                        vmax=0.06,
+                        linewidths=0,
+                        xticklabels=xtick,
+                        yticklabels=ytick)
+
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=xrot, fontsize=12)
+        ax.invert_yaxis()
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.set_xlabel(xlabel, fontsize=15)
+        ax.set_title(title, fontsize=18)
+        cbar = ax.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=13)
         show_push_save(fig, func, args)
+
 
 def eta_lambda(data, args, NN=False):
     for name, accuracy in data.items():

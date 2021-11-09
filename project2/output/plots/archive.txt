@@ -278,3 +278,41 @@ Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta
        3.98107171e-04, 1.00000000e-03, 2.51188643e-03, 6.30957344e-03,
        1.58489319e-02, 3.98107171e-02, 1.00000000e-01]), hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Franke', pred=False, show=False, push=False, save=True, seed=2021)
 2021-11-08 12:37:33.761162
+
+
+reg_Franke__epochs_eta__Train_MSE__306877.pdf
+Namespace(method='reg', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.01  , 0.0345, 0.059 , 0.0835, 0.108 , 0.1325, 0.157 , 0.1815,
+       0.206 , 0.2305, 0.255 , 0.2795, 0.304 , 0.3285, 0.353 , 0.3775,
+       0.402 , 0.4265, 0.451 , 0.4755, 0.5   ]), dynamic_eta=False, gamma=0, batch_size=array([36]), scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, show=True, push=True, save=True, seed=2021, nmb=array([20]))
+2021-11-09 11:45:40.233917
+
+
+reg_Franke__epochs_eta__Test_MSE__262224.pdf
+Namespace(method='reg', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.01  , 0.0345, 0.059 , 0.0835, 0.108 , 0.1325, 0.157 , 0.1815,
+       0.206 , 0.2305, 0.255 , 0.2795, 0.304 , 0.3285, 0.353 , 0.3775,
+       0.402 , 0.4265, 0.451 , 0.4755, 0.5   ]), dynamic_eta=False, gamma=0, batch_size=array([36]), scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, show=True, push=True, save=True, seed=2021, nmb=array([20]))
+2021-11-09 11:45:54.069836
+
+
+reg_Franke__epochs_minibatches__Train_MSE__136234.pdf
+Namespace(method='reg', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=[0.25], dynamic_eta=False, gamma=0, batch_size=array([720, 360, 240, 144,  72,  48,  36,  30,  24]), scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, show=True, push=True, save=True, seed=2021, nmb=array([ 1,  2,  3,  5, 10, 15, 20, 24, 30]))
+2021-11-09 11:47:42.143062
+
+
+reg_Franke__epochs_minibatches__Test_MSE__440533.pdf
+Namespace(method='reg', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=[0.25], dynamic_eta=False, gamma=0, batch_size=array([720, 360, 240, 144,  72,  48,  36,  30,  24]), scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, show=True, push=True, save=True, seed=2021, nmb=array([ 1,  2,  3,  5, 10, 15, 20, 24, 30]))
+2021-11-09 11:47:52.856703
+
+
+reg_Franke__lambda_eta__Train_MSE__866968.pdf
+Namespace(method='reg', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.1 , 0.14, 0.18, 0.22, 0.26, 0.3 , 0.34, 0.38, 0.42, 0.46, 0.5 ]), dynamic_eta=False, gamma=0, batch_size=array([36]), scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, show=True, push=True, save=True, seed=2021, nmb=array([20]))
+2021-11-09 11:49:58.428062
+
+
+reg_Franke__lambda_eta__Test_MSE__764274.pdf
+Namespace(method='reg', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.1 , 0.14, 0.18, 0.22, 0.26, 0.3 , 0.34, 0.38, 0.42, 0.46, 0.5 ]), dynamic_eta=False, gamma=0, batch_size=array([36]), scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, show=True, push=True, save=True, seed=2021, nmb=array([20]))
+2021-11-09 11:50:36.792218
