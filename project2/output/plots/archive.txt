@@ -1,0 +1,28 @@
+
+
+NN_Cancer__eta_lambda__train_accuracy__840979.pdf
+Namespace(act_func='sigmoid', batch_size=35, dataset='Cancer', dynamic_eta=True, epsilon=0.2, eta=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), gamma=0, hidden_nodes=[20, 20], lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), method='NN', num_epochs=100, num_points=30, polynomial=5, pred=False, push=False, save=True, scaling='S', seed=2021, show=False, tts=0.2, weight_initialization=True)
+2021-11-08 08:59:46.329306
+
+
+NN_Cancer__eta_lambda__test_accuracy__903092.pdf
+Namespace(act_func='sigmoid', batch_size=35, dataset='Cancer', dynamic_eta=True, epsilon=0.2, eta=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), gamma=0, hidden_nodes=[20, 20], lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), method='NN', num_epochs=100, num_points=30, polynomial=5, pred=False, push=False, save=True, scaling='S', seed=2021, show=False, tts=0.2, weight_initialization=True)
+2021-11-08 08:59:51.198807
+
+
+reg_Franke__epochs_minibatches__Train_MSE__757216.pdf
+Namespace(act_func='sigmoid', batch_size=array([36]), dataset='Franke', dynamic_eta=False, epsilon=0.2, eta=[0.1], gamma=0, hidden_nodes=[10, 10], lmb=[0], method='reg', nmb=array([20]), num_epochs=100, num_points=30, polynomial=5, pred=False, push=False, save=True, scaling='S', seed=2021, show=False, tts=0.2, weight_initialization=True)
+2021-11-08 09:07:43.759106
+
+
+reg_Franke__epochs_minibatches__Test_MSE__577354.pdf
+Namespace(act_func='sigmoid', batch_size=array([36]), dataset='Franke', dynamic_eta=False, epsilon=0.2, eta=[0.1], gamma=0, hidden_nodes=[10, 10], lmb=[0], method='reg', nmb=array([20]), num_epochs=100, num_points=30, polynomial=5, pred=False, push=False, save=True, scaling='S', seed=2021, show=False, tts=0.2, weight_initialization=True)
+2021-11-08 09:07:46.918933
