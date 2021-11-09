@@ -119,7 +119,10 @@ def linear_regression(args):
 
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
     beta0 = np.random.randn(utils.get_features(p))  # use same beta0 in all runs for comparisonability
+
     if args.gamma >= 0:
+        # Analyze SGD 
+        # Set gamma negative to study momentum
         if args.batch_size == 0:
             batch_sizes = np.array([720, 360, 240, 144, 72, 48, 36, 30, 24])
         else:

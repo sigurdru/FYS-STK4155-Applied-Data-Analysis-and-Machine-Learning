@@ -155,7 +155,7 @@ def parameter_based(data, args):
 
             Good simulation:
             - Ne : 150
-            - eta: 0.3
+            - eta: 0.25
             - bs : 0
             """
             cols = np.arange(args.num_epochs)
