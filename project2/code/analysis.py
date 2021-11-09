@@ -87,10 +87,10 @@ def NN_regression(args):
 
                 # Calculate output. Rescale values to the original
                 z_pred = utils.rescale_data(NN.predict(X_), z)
-
+                
+                # Plot result of fit and exit
                 plot.surface_fit(z_pred, z, x, y, args)
-                plot.train_history(NN, args)
-                exit()
+
     print("\n"*3)
     print(f"Best NN train prediction: {(train:=data['train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     print(f"Best NN test prediction: {(test:=data['test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
@@ -161,6 +161,7 @@ def linear_regression(args):
                         # Calculate prediction. Rescale values 
                         z_pred = X_ @ beta + np.mean(z)
 
+                        # Plot result of fit, and exit
                         plot.surface_fit(z_pred, z, x, y, args)
 
         plot.parameter_based(data, args)
