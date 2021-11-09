@@ -91,11 +91,12 @@ def surface_fit(data_pred, data_target, x, y, args):
     if args.method == "NN":
         title = "Franke function prediction with Neural Network and noise $\epsilon=N(0,\,0.05)$"
     else:
-        title = "Franke function prediction with SGD and noise $\epsilon=N(0,\,0.05)$"
+        title = "SGD prediction of Franke function with noise $\epsilon=N(0,\,0.05)$.\n" \
+                + "Using $\eta={:.2f}$, $\gamma={:.1f}$ and $10^{:.0f}$ epochs".format(args.eta[0], args.gamma, np.log10(args.num_epochs))
 
     ax.set_xlabel('x')
     ax.set_ylabel('y')
-    ax.set_title(title)
+    ax.set_title(title, fontsize=15)
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
     plt.show()
