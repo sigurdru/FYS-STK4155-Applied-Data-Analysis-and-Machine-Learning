@@ -72,18 +72,92 @@ def SGD(X, z, args, beta, eta, batch_size, lmb=0, gamma=0):
     return MSE_train, MSE_test, beta 
 
 
+def SGDL(X, z, W, args, eta, batch_size, lmb=0, gamma=0):
+    """
+    Stochastic gradient decent for logistic regression
+
+    Args:
+        X, tuple: design matrix (train, test)
+        z1, tuple: datapoints (train, test)
+        args, argparse
+        W, 1darray: weights and biases
+        eta, float: learning rate
+        gamma, float: Momentum parameter
+        lmb, float: For Ridge regression
+    Returns:
+        accuracy_train, 1d array: accuuacy score for train data
+        accuracy_test, 1d array: accuuacy score for test data
+        W, 1d array: weights and biases
+    """
+    #initialize
+    X_train, X_test = X
+    z_train, z_test = z
+    n_points = np.shape(X_train)[0]
+    v = 0
+
+    inds = np.arange(0, n_points)
+
+    #Setup accuracy's
+    accuracy_train = np.zeros(args.num_epochs)
+    accuracy_test = np.zeros(args.num_epochs)
+
+    eta_0 = eta  # To be used for learning schedule
+
+    # train_pred = output_activation(X_train @ W)
+    # train_pred_bool = np.where(train_pred < 0.5, 0, 1)
+    # a = utils.accuracy_score(train_pred_bool, z_train)
+
+    # test_pred = output_activation(X_test @ W)
+    # test_pred_bool = np.where(test_pred < 0.5, 0, 1)
+    # print(test_pred_bool, z_test)
+    # b = utils.accuracy_score(test_pred_bool, z_test)
+    # print(a)
+    # print(b)
+    # exit()
+
+    for epoch_i in range(args.num_epochs):
+        # Initialize randomized training data for epoch
+        np.random.shuffle(inds)
+        X_train_shuffle = X_train[inds]
+        z_train_shuffle = z_train[inds]
+
+        for i in range(0, n_points, batch_size):
+            # Loop over mini batches
+
+            xi = X_train_shuffle[i:i+batch_size]
+            zi = z_train_shuffle[i:i+batch_size]
+            gradient = xi.T@(output_activation(xi@W) - zi)
+            v = v * gamma + eta * gradient
+            W = W - v
+        train_pred = output_activation(X_train @ W)
+        test_pred = output_activation(X_test @ W)
+        train_pred_bool = np.where(train_pred<0.5, 0, 1)
+        test_pred_bool = np.where(test_pred<0.5, 0, 1)
+        accuracy_train[epoch_i] = utils.accuracy_score(train_pred_bool, z_train)
+        accuracy_test[epoch_i] = utils.accuracy_score(test_pred_bool, z_test)
+    
+    import matplotlib.pyplot as plt
+    plt.plot(accuracy_test, label='test')
+    plt.plot(accuracy_train, label='train')
+    plt.legend()
+    plt.show()
+    exit()    
+    return accuracy_train, accuracy_test, W
+
+
+def output_activation(s):
+    """
+    Output activation for SGDL
+    """
+    return (1/(1+np.exp(-s)))
+
+
+
 def RidgeSG():
     return None
 
 
 def learning_schedule(t, args):
-    # if args.learning_schedule == True:
-    #     t0 = 1
-    #     t1 = 10
-    #     # return args.t0/(t+args.t1)
-    #     return t0/(t+t1)
-    # else:
-    #     return args.eta
     t0 = 10
     t1 = 1
     return t0/(t+t1)

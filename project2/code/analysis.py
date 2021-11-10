@@ -182,7 +182,43 @@ def linear_regression(args):
 
 
 def logistic_regression(args):
-    pass
+    etas = args.eta
+    lmbs = args.lmb
+    batch_size = args.batch_size
+
+    #import dataset
+    dataset = utils.load_data(args)
+    z = dataset.target.reshape(-1, 1)
+    X = dataset.data
+    n_features = np.shape(X)[1]
+
+    #split and scale data
+    scaler = scale_conv[args.scaling]
+    X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
+    #for easier updates of weights
+    n_test_patients = np.shape(X_test)[0]
+    n_train_patients = np.shape(X_train)[0]
+    X_train = np.c_[X_train, np.ones((n_train_patients, 1))]
+    X_test = np.c_[X_test, np.ones((n_test_patients, 1))]
+    #initialize weights and bias
+    W = np.random.randn(n_features + 1,1)
+
+    data = defaultdict(lambda: np.zeros((len(etas), len(lmbs), args.num_epochs), dtype=float))
+    for i, eta in enumerate(etas):
+        for j, lmb in enumerate(lmbs):
+            np.random.seed(args.seed)
+            MSE_train, MSE_test, beta = SGD.SGDL((X_train, X_test),
+                                                (z_train, z_test),
+                                                W,
+                                                args,
+                                                eta,
+                                                batch_size,
+                                                lmb,
+                                                args.gamma)
+            data["Train MSE"][i][j] = MSE_train
+            data["Test MSE"][i][j] = MSE_test
+    print(data["Test MSE"])
+
 
 
 def NN_classification(args):
@@ -199,7 +235,7 @@ def NN_classification(args):
         X.insert(0, feat, data[feat])
     else:
         X = dataset.data
-    print(X.shape)
+    # print(X.shape)
     
     z = utils.categorical(z_)
     scaler = scale_conv[args.scaling]
