@@ -102,18 +102,6 @@ def SGDL(X, z, W, args, eta, batch_size, lmb=0, gamma=0):
 
     eta_0 = eta  # To be used for learning schedule
 
-    # train_pred = output_activation(X_train @ W)
-    # train_pred_bool = np.where(train_pred < 0.5, 0, 1)
-    # a = utils.accuracy_score(train_pred_bool, z_train)
-
-    # test_pred = output_activation(X_test @ W)
-    # test_pred_bool = np.where(test_pred < 0.5, 0, 1)
-    # print(test_pred_bool, z_test)
-    # b = utils.accuracy_score(test_pred_bool, z_test)
-    # print(a)
-    # print(b)
-    # exit()
-
     for epoch_i in range(args.num_epochs):
         # Initialize randomized training data for epoch
         np.random.shuffle(inds)
@@ -135,12 +123,6 @@ def SGDL(X, z, W, args, eta, batch_size, lmb=0, gamma=0):
         accuracy_train[epoch_i] = utils.accuracy_score(train_pred_bool, z_train)
         accuracy_test[epoch_i] = utils.accuracy_score(test_pred_bool, z_test)
     
-    import matplotlib.pyplot as plt
-    plt.plot(accuracy_test, label='test')
-    plt.plot(accuracy_train, label='train')
-    plt.legend()
-    plt.show()
-    exit()    
     return accuracy_train, accuracy_test, W
 
 
