@@ -262,6 +262,89 @@ def momentum(data, args):
         cbar.ax.tick_params(labelsize=13)
         show_push_save(fig, func, args)
 
+def plot_logistic_regression(data, args):
+    """
+    Plots accuracy score for different values of lambda and eta
+    """
+    for name, accuracy in data.items():
+        accuracy = accuracy[:,:,-1]
+        func = defaultdict(lambda: None)
+        func["train"] = name.split()[0]
+        fig, ax = plt.subplots()
+
+        cols = args.lmb
+        idx = np.round(args.eta, 5)
+        data = pd.DataFrame(accuracy, index=idx, columns=cols)
+        xlabel = r"Hyper-parameter $\lambda$"
+        ylabel = r"Learning rate $\eta$"
+        title = name + f" for Cancer data, using {args.batch_size} minibatches"
+        xtick = cols
+        ytick = idx
+        xrot = 0
+
+        func["y"] = "eta"
+        func["x"] = "lambda"
+        func["z"] = "accuracy"
+        ax = sns.heatmap(data,
+                         ax=ax,
+                         annot=True,
+                         cmap=cm.coolwarm,
+                         linewidths=0.1,
+                         xticklabels=xtick,
+                         yticklabels=ytick)
+
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=xrot, fontsize=12)
+        ax.invert_yaxis()
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.set_xlabel(xlabel, fontsize=15)
+        ax.set_title(title, fontsize=18)
+        cbar = ax.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=13)
+        show_push_save(fig, func, args)
+
+
+def plot_logistic_regression_epochs(data, args):
+    """
+    Plots accuracy score as a function of epochs and learnign rate
+    """
+    for name, accuracy in data.items():
+
+        accuracy = accuracy[:, 0, :]
+        func = defaultdict(lambda: None)
+        func["train"] = name.split()[0]
+        fig, ax = plt.subplots()
+        
+        cols = np.arange(args.num_epochs)
+        idx = np.round(args.eta, 5)
+        data = pd.DataFrame(accuracy, index=idx, columns=cols)
+        xlabel = "Number of epochs"
+        ylabel = r"Learning rate $\eta$"
+        title = name + f" for Cancer data, using {args.batch_size} minibatches"
+        xtick = len(cols)//10
+        ytick = idx
+        xrot = 0
+
+        func["x"] = "epochs"
+        func["y"] = "eta"
+        func["z"] = "accuracy"
+        ax = sns.heatmap(data,
+                         ax=ax,
+                         annot=False,
+                         cmap=cm.coolwarm,
+                         linewidths=0,
+                         xticklabels=xtick,
+                         yticklabels=ytick)
+
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=xrot, fontsize=12)
+        ax.invert_yaxis()
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.set_xlabel(xlabel, fontsize=15)
+        ax.set_title(title, fontsize=18)
+        cbar = ax.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=13)
+        show_push_save(fig, func, args)
 
 def eta_lambda(data, args, NN=False):
     for name, accuracy in data.items():

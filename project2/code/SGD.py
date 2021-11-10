@@ -1,6 +1,6 @@
 import numpy as np
 import utils 
-
+from tqdm import tqdm
 
 
 def SGD(X, z, args, beta, eta0, batch_size, lmb=0, gamma=0):
@@ -101,8 +101,8 @@ def SGDL(X, z, W, args, eta, batch_size, lmb=0, gamma=0):
     accuracy_test = np.zeros(args.num_epochs)
 
     eta_0 = eta  # To be used for learning schedule
-
-    for epoch_i in range(args.num_epochs):
+    pbar = tqdm(range(args.num_epochs), desc=f"eta: {eta:.6f}, lambda: {lmb:.6f}. Training")
+    for epoch_i in pbar:
         # Initialize randomized training data for epoch
         np.random.shuffle(inds)
         X_train_shuffle = X_train[inds]
@@ -113,7 +113,7 @@ def SGDL(X, z, W, args, eta, batch_size, lmb=0, gamma=0):
 
             xi = X_train_shuffle[i:i+batch_size]
             zi = z_train_shuffle[i:i+batch_size]
-            gradient = xi.T@(output_activation(xi@W) - zi)
+            gradient = xi.T@(output_activation(xi@W) - zi) + 2*lmb*W
             v = v * gamma + eta * gradient
             W = W - v
         train_pred = output_activation(X_train @ W)

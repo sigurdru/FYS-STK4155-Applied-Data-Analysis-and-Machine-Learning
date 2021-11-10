@@ -221,7 +221,7 @@ def logistic_regression(args):
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
             np.random.seed(args.seed)
-            MSE_train, MSE_test, beta = SGD.SGDL((X_train, X_test),
+            accuracy_train, accuracy_test, beta = SGD.SGDL((X_train, X_test),
                                                 (z_train, z_test),
                                                 W,
                                                 args,
@@ -229,10 +229,17 @@ def logistic_regression(args):
                                                 batch_size,
                                                 lmb,
                                                 args.gamma)
-            data["Train MSE"][i][j] = MSE_train
-            data["Test MSE"][i][j] = MSE_test
-    print(data["Test MSE"])
-
+            data["Train accuracy"][i][j] = accuracy_train
+            data["Test accuracy"][i][j] = accuracy_test
+    if np.size(args.lmb) == 1 and np.size(args.eta) != 1:
+        plot.plot_logistic_regression_epochs(data, args)
+    elif np.size(args.lmb) != 1 and np.size(args.eta) != 1:
+        plot.plot_logistic_regression(data, args)
+    else:
+        print('Train accuracy: ')
+        print(data["Train accuracy"][-1][-1][-1])
+        print('Test accuracy: ')
+        print(data["Test accuracy"][-1][-1][-1])
 
 
 def NN_classification(args):
