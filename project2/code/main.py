@@ -30,7 +30,7 @@ def parse_args(args=None):
 
     add_arg('-p', '--polynomial',
             type=int,
-            default=5,
+            default=6,
             help='Polynomial degree.',
             )
 

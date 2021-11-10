@@ -87,10 +87,10 @@ def NN_regression(args):
 
                 # Calculate output. Rescale values to the original
                 z_pred = utils.rescale_data(NN.predict(X_), z)
-
+                
+                # Plot result of fit and exit
                 plot.surface_fit(z_pred, z, x, y, args)
-                plot.train_history(NN, args)
-                exit()
+
     print("\n"*3)
     print(f"Best NN train prediction: {(train:=data['train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     print(f"Best NN test prediction: {(test:=data['test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
@@ -102,20 +102,29 @@ def linear_regression(args):
     p = args.polynomial
     etas = args.eta
     lmbs = args.lmb
-    scaler = scale_conv[args.scaling]
 
     if args.pred:
         # Reduce noise for surface plot comparison
         args.epsilon = 0.05
+
+    if args.scaling == "S":
+        # Don't divide data by std for Franke 
+        # Since std<1, causing too much increase of data values  
+        scaler = StandardScaler(with_std=False)
+    else:
+        scaler = scale_conv[args.scaling]
 
     x, y, z = utils.load_data(args)
     X = utils.create_X(x, y, p, intercept=False if p == 1 else True)
 
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
     beta0 = np.random.randn(utils.get_features(p))  # use same beta0 in all runs for comparisonability
+
     if args.gamma >= 0:
+        # Analyze SGD 
+        # Set gamma negative to study momentum
         if args.batch_size == 0:
-            batch_sizes = np.array([720, 360, 240, 144, 72, 48, 30, 24])
+            batch_sizes = np.array([720, 360, 240, 144, 72, 48, 36, 30, 24])
         else:
             batch_sizes = np.array([args.batch_size])
         args.batch_size = batch_sizes
@@ -148,19 +157,24 @@ def linear_regression(args):
                     if args.pred:
                         """
                         Plot fitted prediction vs data set with epsilon=0.05
+                        Good result:
+                         - Ne  : 10 000 (lol)
+                         - eta : 0.25 (to be adjusted)
+                         - ga  : 0.5 
                         """
+                        # Scale the full design matrix 
                         X_ = utils.split_scale(X, z, 0, scaler)[0] # Scale design matrix
 
+                        # Calculate prediction. Rescale values 
+                        z_pred = X_ @ beta + np.mean(z)
 
-                        # Calculate output. Rescale values to the original
-                        z_pred = utils.rescale_data(X_ @ beta, z)
-
+                        # Plot result of fit, and exit
                         plot.surface_fit(z_pred, z, x, y, args)
 
         plot.parameter_based(data, args)
 
     else:
-        gammas = np.array([0, 0.25, 0.5, 0.9])
+        gammas = np.linspace(0, 0.95, 20)
         args.gamma = gammas
         data = defaultdict(lambda: np.zeros((len(gammas), args.num_epochs)))
 
