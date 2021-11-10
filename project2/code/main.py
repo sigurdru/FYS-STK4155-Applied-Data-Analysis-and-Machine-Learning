@@ -128,7 +128,17 @@ def parse_args(args=None):
             action="store_true",
             dest="pred",
             )
-    
+
+    add_arg("-history",
+            action="store_true",
+            dest="history",
+            )
+
+    add_arg("-convergence",
+            action="store_true",
+            dest="convergence",
+            )
+
     add_arg("-show",
             action="store_true",
             dest="show",
