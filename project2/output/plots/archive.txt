@@ -328,3 +328,17 @@ reg_Franke__epochs_gamma__Test_MSE__597266.pdf
 Namespace(method='reg', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=[0.25], dynamic_eta=False, gamma=array([0.  , 0.05, 0.1 , 0.15, 0.2 , 0.25, 0.3 , 0.35, 0.4 , 0.45, 0.5 ,
        0.55, 0.6 , 0.65, 0.7 , 0.75, 0.8 , 0.85, 0.9 , 0.95]), batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, show=True, push=True, save=True, seed=2021)
 2021-11-09 11:53:12.590170
+
+
+reg_Franke__epochs_eta__Train_MSE__overfit_489047.pdf
+Namespace(method='reg', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.01  , 0.0545, 0.099 , 0.1435, 0.188 , 0.2325, 0.277 , 0.3215,
+       0.366 , 0.4105, 0.455 , 0.4995, 0.544 , 0.5885, 0.633 , 0.6775,
+       0.722 , 0.7665, 0.811 , 0.8555, 0.9   ]), dynamic_eta=False, gamma=0, batch_size=array([36]), scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, show=True, push=True, save=True, seed=2021, nmb=array([20]))
+2021-11-10 10:46:45.597300
+
+
+reg_Franke__epochs_eta__Test_MSE__overfit_395885.pdf
+Namespace(method='reg', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.01  , 0.0545, 0.099 , 0.1435, 0.188 , 0.2325, 0.277 , 0.3215,
+       0.366 , 0.4105, 0.455 , 0.4995, 0.544 , 0.5885, 0.633 , 0.6775,
+       0.722 , 0.7665, 0.811 , 0.8555, 0.9   ]), dynamic_eta=False, gamma=0, batch_size=array([36]), scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, show=True, push=True, save=True, seed=2021, nmb=array([20]))
+2021-11-10 10:46:56.369737
