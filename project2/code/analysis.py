@@ -48,6 +48,7 @@ def NN_regression(args):
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs)), dtype=float))
     MSE  = defaultdict(lambda: np.zeros((len(etas), args.num_epochs), dtype=float))
+    R2   = defaultdict(lambda: np.zeros((len(etas), args.num_epochs), dtype=float))
 
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
@@ -89,7 +90,8 @@ def NN_regression(args):
                 # MSE at each epoch
                 MSE["train MSE"][i] = NN.history["train_mse"]
                 MSE["test MSE"][i]  = NN.history["test_mse"]
-
+                R2["train R2"][i]   = NN.history["train_R2"]
+                R2["test R2"][i]    = NN.history["test_R2"]
 
             if args.pred:
                 """
@@ -105,8 +107,9 @@ def NN_regression(args):
 
     if args.convergence:
         # Plot MSE for different etas as a function of epochs 
-        plot.eta_epochs(MSE, args)
-        plot.eta_epochs(MSE, args, vmax=0.07)
+        # plot.eta_epochs(MSE, args)
+        # plot.eta_epochs(MSE, args, vmax=0.07)
+        plot.eta_epochs(R2, args, vmin=0.55)
 
     else:
         print("\n"*3)

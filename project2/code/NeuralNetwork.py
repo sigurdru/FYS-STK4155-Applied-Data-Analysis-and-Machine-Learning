@@ -226,8 +226,9 @@ class FFNN(Costs, Activations):
             else:
                 # Franke function MSE 
                 pred = utils.rescale_data(self.predict(x), self.z_Franke)
-                train_target = utils.rescale_data(t, self.z_Franke)
-                self.history[name + "_mse"].append(utils.MSE(train_target, pred)[0])
+                target = utils.rescale_data(t, self.z_Franke)
+                self.history[name + "_mse"].append(utils.MSE(target, pred)[0])
+                self.history[name + "_R2"].append(utils.R2(target, pred)[0])
 
             if test is None:
                 break

@@ -368,7 +368,7 @@ def eta_lambda(data, args, NN=False):
         ax.set_xlabel(r"$\lambda$")
         show_push_save(fig, func, args)
 
-def eta_epochs(data, args, vmax=None):
+def eta_epochs(data, args, vmax=None, vmin=None):
     for name, accuracy in data.items():
         func = defaultdict(lambda: None)
         func["train"] = name.split()[0]
@@ -386,13 +386,14 @@ def eta_epochs(data, args, vmax=None):
 
         func["x"] = "epochs"
         func["y"] = "eta"
-        func["z"] = "MSE"
+        func["z"] = name.split()[1]
 
         ax = sns.heatmap(data,
                         ax=ax,
                         annot=False,
                         cmap=cm.coolwarm,
                         vmax=vmax,
+                        vmin=vmin,
                         linewidths=0,
                         xticklabels=xtick,
                         yticklabels=ytick)
