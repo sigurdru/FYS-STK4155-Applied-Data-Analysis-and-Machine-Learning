@@ -219,6 +219,12 @@ Now why have we done all this work, well because the equations \eqref{eq:backpro
 	\item[6 Update parameters:] Update the parameters similarly to \eqref{eq:SGD_algo}, however $\boldsymbol{\beta}_t$ are our weights and biases in this case.\sn{RIKTIG?}
 \end{description}
 
+The expression for updating the weights and biases are 
+\begin{align}
+	w_{jk}^l \leftarrow & w_{jk}^l - \eta \Delta_j^l a_k^{l-1} \label{eq:update_weights} \\ 
+	b_j^l \leftarrow & b_j^l - \eta \Delta_j^l \label{eq:update_biases} 
+\end{align}
+
 \subsubsection{Initialization of weights}
 We mentioned earlier than then the network is created, it has weights and biases between the layers. These needs to be initialized in some way. The biases are simple to initialize, as they are a single number for every node. These are initialized as a small, non-zero value $b_0$, which we choose as $b_0=0.01$.
 
@@ -272,8 +278,12 @@ When using the neural network to fit the Franke function, we use a lot of the sa
 
 Instead of giving our network the design matrix $X$ for a certain polynomial degree $P$, we can pass it only the collection of points $[(x_i, y_i)]$, and let the network adjust the weights and biases accordingly. Since the Franke function is an exponential function we know that it can be approximated as a higher order polynomial, so by using the design matrix as an input we exploit this property such that the network converges faster. Having already fitted the Franke function with a design matrix with linear regression and SGD, we now choose the $x_i$ and $y_i$ values only. Not providing the network with any initial information has the advantage that we get a more rigorous test of the network's performance, since we ensure that the result is not directly reliant on the information in question. Another important motivation for this is that if we were to fit some other data, e.g. terrain data, we may not have any a priori information regarding the input data. Omitting the design matrix when we train our neural network will thus yield a final model capable of fitting various types of data.  
 
+Since we are dealing with a regression problem and we're fitting a continuous function, a natural choice of the cost function is the MSE. For the neural network we will not compute the total MSE of the output layer as we have previously done, but the individual MSE of each output node. This takes into account the error at each individual output neuron when we update the weights with backpropagation. 
 
-Next we want to perform the same analysis, using a feed forward neural network and back propagation. We perform tests with different number of hidden layers and nodes. Also...
+We choose two hidden layers in the neural network with ten nodes each for the Franke function. For the hidden layers we use the sigmoid activation function from equation \eqref{eq:sigmoid}. To train our network we first initialize the weights and biases for the different layers. We initialize the weights randomly using a normal distribution of $\mathcal{N}(0,1)$. The biases are a single non-zero number for each node, and we choose $b_0=0.01$ for all nodes initially. For the output layer we don't use any activtion function, meaning that the output of the Neural network should be the prediction of the Franke function. 
+
+Having initialized the neural network we are now going to train it. Each training iteration begins by randomly shuffling the data and dividing them into minibatches, just as we did when we performed the SGD analysis. For each minibatch we begin by using the input data to update each layer of the network until we reach the output layer. Then we use the backpropagation algorithm to update the weights and biases at every node. With no activation function in the output layer, the error of this layer is given by equation \eqref{eq:backprop0} i.e. the derivative of the MSE. Iterating backwards we get the error in the previous layers by using equation \eqref{eq:backprop3}. The weights and biases at each layer are then updated with equations \eqref{eq:update_weights} and \eqref{eq:update_biases} respectively. Doing this for all minibatches we complete one epoch. We initially train our network 
+
 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
