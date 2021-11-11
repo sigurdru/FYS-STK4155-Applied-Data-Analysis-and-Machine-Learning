@@ -304,7 +304,11 @@ Having initialized the neural network we are now going to train it. Each trainin
 
 For the first simulation we choose $21$ linearly distributed values of $\eta\in[10^{-3},\,0.9]$. We will then repeat this analysis using $21$ new $\eta$ values on an interval where the resulting MSE was low. 
 
-FUCK VI MANGLER R2. 
+In addition to the MSE, we also want to plot the $R^2$ score, given in equation \eqref{eq:R2_score}, where $\boldsymbol{z}$ and $\boldsymbol{\tilde{z}}$ is the target and prediction values, respectively.
+\begin{align} \label{eq:R2_score}
+	R^2(\boldsymbol{z}, \boldsymbol{\tilde{z}}) &= 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z})^2}, \hspace{3mm} \bar{z} = \frac{1}{n}\sum_{i=0}^{n-1}z_i
+\end{align}
+For the $R^2$ score, we will study different $\eta$ values as a function of epochs. 
 
 We now study regularization parameters. HÅKON OLAV 
 
@@ -368,7 +372,71 @@ The MSE as a function of epochs for different number of minibatches is shown in 
 \end{figure}
 
 
+We plot the MSE for train and test with different regularization parameters, shown in the left and right panel of figure \ref{fig:SGD_Franke_lambda_eta}
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Train_MSE__866968.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Test_MSE__764274.pdf}
+	\endminipage
+	\caption{SGD}
+	\label{fig:SGD_Franke_lambda_eta}
+\end{figure}
+
+
+Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE for train and test data for different momentum parameters as a function of epochs. 
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Train_MSE__623867.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Test_MSE__597266.pdf}
+	\endminipage
+	\caption{SGD}
+	\label{fig:SGD_Franke_epochs_gamma}
+\end{figure}
+
+
 \subsubsection{Feed Forward Neural Network}
+We plot 
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_MSE__569887.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__271070.pdf}
+	\endminipage
+	\caption{NN}
+	\label{fig:NN_Franke_epochs_eta_MSE}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__582234.pdf}
+	\caption{NN}
+	\label{fig:NN_Franke_epochs_eta_MSE_limited}
+\end{figure}
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_R2__738371.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__296747.pdf}
+	\endminipage
+	\caption{NN}
+	\label{fig:NN_Franke_epochs_eta_R2}
+\end{figure}
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__190748.pdf}
+	\caption{NN}
+	\label{fig:NN_Franke_epochs_eta_R2_limited}
+\end{figure}
 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
