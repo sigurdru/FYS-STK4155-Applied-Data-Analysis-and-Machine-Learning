@@ -11,7 +11,6 @@ NN_regression:
 	python3 main.py -d Franke -p 1 -eta 'np.logspace(-4, 0, 11)' -l 'np.logspace(-5, -1, 11)' -de -Ne 100 -ga 0.5
 	python3 main.py -d Franke -p 1 -eta 'np.logspace(-4, 0, 11)' -l 'np.logspace(-5, -1, 11)' -de -Ne 100 -act_func relu
 	python3 main.py -d Franke -p 1 -eta 'np.logspace(-4, 0, 11)' -l 'np.logspace(-5, -1, 11)' -de -Ne 100 -act_func leaky_relu
-LOGREG_TEST:
-	py main.py -d Cancer -m reg 
-	py main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -0.5, 11)' -Ne 200 -nosave -show 
- 	py main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -1, 11)' -l 'np.logspace(-5, -3, 11)' -Ne 100 -nosave -show
+Logistic_regression:
+	py main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -0.5, 11)' -Ne 200
+ 	py main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -1, 11)' -l 'np.logspace(-5, -3, 11)' -Ne 200

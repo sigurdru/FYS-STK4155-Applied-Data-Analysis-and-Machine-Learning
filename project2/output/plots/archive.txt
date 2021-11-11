@@ -412,3 +412,35 @@ Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta
        0.23  , 0.2525, 0.275 , 0.2975, 0.32  , 0.3425, 0.365 , 0.3875,
        0.41  , 0.4325, 0.455 , 0.4775, 0.5   ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, convergence=True, show=False, push=True, save=True, seed=2021)
 2021-11-10 20:08:43.046838
+
+
+reg_Cancer__lambda_eta__Train_accuracy__378969.pdf
+Namespace(act_func='sigmoid', batch_size=5, convergence=False, dataset='Cancer', dynamic_eta=False, epsilon=0.2, eta=array([1.00000000e-05, 2.51188643e-05, 6.30957344e-05, 1.58489319e-04,
+       3.98107171e-04, 1.00000000e-03, 2.51188643e-03, 6.30957344e-03,
+       1.58489319e-02, 3.98107171e-02, 1.00000000e-01]), gamma=0, hidden_nodes=[10, 10], history=False, lmb=array([1.00000000e-05, 1.58489319e-05, 2.51188643e-05, 3.98107171e-05,
+       6.30957344e-05, 1.00000000e-04, 1.58489319e-04, 2.51188643e-04,
+       3.98107171e-04, 6.30957344e-04, 1.00000000e-03]), method='reg', num_epochs=200, num_points=30, polynomial=6, pred=False, push=False, save=True, scaling='S', seed=2021, show=True, tts=0.2, weight_initialization=True)
+2021-11-11 09:41:10.002561
+
+
+reg_Cancer__lambda_eta__Test_accuracy__860729.pdf
+Namespace(act_func='sigmoid', batch_size=5, convergence=False, dataset='Cancer', dynamic_eta=False, epsilon=0.2, eta=array([1.00000000e-05, 2.51188643e-05, 6.30957344e-05, 1.58489319e-04,
+       3.98107171e-04, 1.00000000e-03, 2.51188643e-03, 6.30957344e-03,
+       1.58489319e-02, 3.98107171e-02, 1.00000000e-01]), gamma=0, hidden_nodes=[10, 10], history=False, lmb=array([1.00000000e-05, 1.58489319e-05, 2.51188643e-05, 3.98107171e-05,
+       6.30957344e-05, 1.00000000e-04, 1.58489319e-04, 2.51188643e-04,
+       3.98107171e-04, 6.30957344e-04, 1.00000000e-03]), method='reg', num_epochs=200, num_points=30, polynomial=6, pred=False, push=False, save=True, scaling='S', seed=2021, show=True, tts=0.2, weight_initialization=True)
+2021-11-11 09:41:32.154657
+
+
+reg_Cancer__epochs_eta__Train_accuracy__705107.pdf
+Namespace(act_func='sigmoid', batch_size=5, convergence=False, dataset='Cancer', dynamic_eta=False, epsilon=0.2, eta=array([1.00000000e-05, 2.81838293e-05, 7.94328235e-05, 2.23872114e-04,
+       6.30957344e-04, 1.77827941e-03, 5.01187234e-03, 1.41253754e-02,
+       3.98107171e-02, 1.12201845e-01, 3.16227766e-01]), gamma=0, hidden_nodes=[10, 10], history=False, lmb=[0], method='reg', num_epochs=200, num_points=30, polynomial=6, pred=False, push=False, save=True, scaling='S', seed=2021, show=True, tts=0.2, weight_initialization=True)
+2021-11-11 09:44:00.728013
+
+
+reg_Cancer__epochs_eta__Test_accuracy__924831.pdf
+Namespace(act_func='sigmoid', batch_size=5, convergence=False, dataset='Cancer', dynamic_eta=False, epsilon=0.2, eta=array([1.00000000e-05, 2.81838293e-05, 7.94328235e-05, 2.23872114e-04,
+       6.30957344e-04, 1.77827941e-03, 5.01187234e-03, 1.41253754e-02,
+       3.98107171e-02, 1.12201845e-01, 3.16227766e-01]), gamma=0, hidden_nodes=[10, 10], history=False, lmb=[0], method='reg', num_epochs=200, num_points=30, polynomial=6, pred=False, push=False, save=True, scaling='S', seed=2021, show=True, tts=0.2, weight_initialization=True)
+2021-11-11 09:44:26.109516

@@ -272,10 +272,10 @@ def plot_logistic_regression(data, args):
         func["train"] = name.split()[0]
         fig, ax = plt.subplots()
 
-        cols = args.lmb
+        cols = np.around(np.log10(args.lmb), decimals = 3)
         idx = np.round(args.eta, 5)
         data = pd.DataFrame(accuracy, index=idx, columns=cols)
-        xlabel = r"Hyper-parameter $\lambda$"
+        xlabel = r"Hyper-parameter $\log(\lambda)$"
         ylabel = r"Learning rate $\eta$"
         title = name + f" for Cancer data, using {args.batch_size} minibatches"
         xtick = cols
@@ -292,17 +292,18 @@ def plot_logistic_regression(data, args):
                          linewidths=0.1,
                          xticklabels=xtick,
                          yticklabels=ytick,
-                         fmt=".4")
+                         fmt=".3")
 
         from matplotlib.ticker import FormatStrFormatter
         ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
         ax.set_xticklabels(ax.get_xticklabels(), rotation=xrot, fontsize=12)
-        # ax.xaxis.set_major_formatter(FormatStrFormatter('%2e'))
+        # ax.xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
         ax.invert_yaxis()
         ax.set_ylabel(ylabel, fontsize=15)
         ax.set_xlabel(xlabel, fontsize=15)
         ax.set_title(title, fontsize=18)
         cbar = ax.collections[0].colorbar
+        fig.set_size_inches(9, 8)
         cbar.ax.tick_params(labelsize=13)
         show_push_save(fig, func, args)
 
