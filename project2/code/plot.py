@@ -291,10 +291,13 @@ def plot_logistic_regression(data, args):
                          cmap=cm.coolwarm,
                          linewidths=0.1,
                          xticklabels=xtick,
-                         yticklabels=ytick)
+                         yticklabels=ytick,
+                         fmt=".4")
 
+        from matplotlib.ticker import FormatStrFormatter
         ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
         ax.set_xticklabels(ax.get_xticklabels(), rotation=xrot, fontsize=12)
+        # ax.xaxis.set_major_formatter(FormatStrFormatter('%2e'))
         ax.invert_yaxis()
         ax.set_ylabel(ylabel, fontsize=15)
         ax.set_xlabel(xlabel, fontsize=15)
