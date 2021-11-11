@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
 # from regression impo/rt Ordinary_least_squaresSG, RidgeSG
 import utils
 # import plot
-from sklearn.linear_model import SGDRegressor
+from sklearn.linear_model import SGDRegressor, LogisticRegression
 from NeuralNetwork import FFNN
 import SGD
 from collections import defaultdict
@@ -237,6 +237,13 @@ def logistic_regression(args):
     X_test = np.c_[X_test, np.ones((n_test_patients, 1))]
     #initialize weights and bias
     W = np.random.randn(n_features + 1,1)
+    #We want to see the prediction and accuracy of ScikitLearn
+    print('-------------------------------')
+    print('|Prediction using Scikit Learn|')
+    SKLR = LogisticRegression(penalty='l2').fit(X_train, np.ravel(z_train))
+    SK_score = SKLR.score(X_test, np.ravel(z_test))
+    print(f'|Accuracy score: {SK_score:.11f}|')
+    print('-------------------------------')
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs), args.num_epochs), dtype=float))
     for i, eta in enumerate(etas):

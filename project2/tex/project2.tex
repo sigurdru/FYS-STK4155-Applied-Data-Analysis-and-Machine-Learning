@@ -329,6 +329,8 @@ Next we are ready to perform an grid search, to find the optimal learning rate $
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
 \subsubsection{Logistic Regression}
+
+In figure \ref{fig:logreg_eta_epoch} we plot the accuracy score as a function of epochs, for different learning rates $\eta$ and $L_2$ parameter set to $\lambda = 0$. The top plot is for the train data, and bottom for test data. We notice, as expected, that for a low enough $\eta$ we get under fitting. Especially for $\eta = 10^{-3}$
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__epochs_eta__Train_accuracy__705107.png}
 	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__epochs_eta__Test_accuracy__924831.png}
