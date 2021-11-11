@@ -11,6 +11,7 @@
 \usepackage{eurosym}
 \usepackage{footmisc}
 
+\graphicspath{{../output/}}
 
 \collaborationImg{\includegraphics[width=30mm]{../../pictures/UIO.png}}
 
@@ -78,7 +79,7 @@ Choosing a smaller $M$ gives a worse approximation of the full gradient, though 
 
 \subsubsection{Adding Momentum}
 These methods can still be optimized further by adding momentum. This is done by adding a term to the parameter $\mathbf{v}_t$ in equations \eqref{eq:GD_algo} and \eqref{eq:SGD_algo}. This so-called mass term, simulates the gradient having momentum, such that every update of $\bbeta$ is a running average.
-\begin{align}
+\begin{align} \label{eq:vt_mom}
 	\mathbf{v}_t = \eta \nabla_{\boldsymbol{\beta}_t} C(\boldsymbol{\beta}) \rightarrow \mathbf{v}_t = \gamma \mathbf{v}_{t-1} + \eta \nabla_{\boldsymbol{\beta}} C(\boldsymbol{\beta}_t).
 \end{align}
 Here $\gamma \in [0, 1]$ is what we could refer to as the mass, and is a free parameter. One of the benefits is for example that this lets us move faster in regions where the gradient is small.
@@ -143,25 +144,26 @@ For Leaky RELU, $\alpha$ is some parameter for which we set to $\alpha = 0.01$.
 	\caption{Some activation functions, Sigmoid, RELU and Leaky RELU, respectively.}\label{fig:activation_functions}
 \end{figure}
 
-All neurons in all hidden layers are activated by the same activation function. The input layer is just the input, so it is not activated. In the case of regression, then the output layer is not activated. Then the function value is just the weighted sum from the last hidden layer. In the case of classification, we want the values in the output nodes to indicate the probabilities. Thus, we use an activation function that considers the value in the other nodes in the other output nodes. The softmax function does this.
+All neurons in all hidden layers are activated by the same activation function. The input layer is just the input, so it is not activated. In the case of regression, then the output layer is not activated. Then the predicted function value is just the weighted sum from the last hidden layer. In the case of classification, we want the values in the output nodes to indicate probabilities. Thus, we use an activation function that considers the value in the other nodes in the other output nodes. The softmax function does this.
 
 \begin{equation*}
 	\sigma(z_i) = \frac{e^{z_i}}{\sum_{j=1}^Ke^{z_j}},
 \end{equation*}
-where $K$ is the number of classes, or output nodes.
+where $K$ is the number of classes, output nodes.
 
 \subsubsection{Cost Function and Regularization}\label{sec:cost_func_and_regul}
-Before one can start training the data, we must have a cost function. This will tell us how well or poorly our network is performing, and is what we want to minimize when we train the network. For continuous data it is common to use mean square error (MSE) as the cost function. Which is just the difference between desired output ($\hat{\mathbf{x}}$) and actual output ($\mathbf{x}$), squared, divided by the number of datapoints $n$ (see equation \eqref{eq:MSE})
+Before one can start training the data, we must have a cost function. This will quantify how well or poorly our network is performing, and is what we want to minimize when we train the network. For continuous data it is common to use mean square error (MSE) as the cost function. It is just the difference between desired output ($\hat{\mathbf{x}}$) and actual output ($\mathbf{x}$), squared, averaged over all datapoints $\bo x_i$, as such
 \begin{align}
 	C(\mathbf{x}) = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2.
 	\label{eq:MSE}
 \end{align}
-One can also implement regularization, which helps prevent overfitting in the network. Common ones are $L_1$ and $L_2$ which is done by adding a regularization term to the end of the cost function (see equations \eqref{eq:L1} and \eqref{eq:L2}).
+
+As was done with linear regrssion, \cite{project1} regularization can help prevent overfitting. Common regularization methods are $L_1$ and $L_2$ penalties, which add a regularization term to the cost function, as such
 \begin{align}
-	L_1: \ \ C(\mathbf{x}) & = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \abs{\mathbf{w}_j} \label{eq:L1} \\
-	L_2: \ \ C(\mathbf{x}) & = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \mathbf{w}^2_j \label{eq:L2}
+	L_1: \ \ C(\mathbf{x}) & = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \abs{\mathbf{W}_j}, \label{eq:L1} \\
+	L_2: \ \ C(\mathbf{x}) & = \frac{1}{n}\sum_{i=1}^{n}(\hat{\mathbf{x}}_i - \mathbf{x}_i)^2 + \lambda\sum_j \mathbf{W}^2_j, \label{eq:L2}
 \end{align}
-\sn{RIKTIG?}Here $\lambda$ is some regularization parameter and $\mathbf{w}$ are weights.
+where $\lambda$ is some regularization parameter and $\mathbf{W}$ are the weights and biases. We will in this paper study the effects of adding a $L_2$-regulizer term when updating the parameters, by adding the term $\eta \lambda \mathbf{W}_{t-1}$ to equation \eqref{eq:vt_mom}.
 
 We mentioned when talking about logistic regression (section \ref{sec:logistic_regression}), that for classification scenarios one will often use cross-entropy as the cost function. Continuing with the model defined by \eqref{eq:log_reg_model}, we want to find an appropriate cost function. We define the probability of an outcome $y_i$ given parameters $\bo X_i$ and $\bo W$ as
 \begin{align}
@@ -185,12 +187,12 @@ MLE entails finding the $\bo W$ that maximizes $l(\bo W)$, or more commonly, min
 	C(\bo W) = -l(\bo W) = \sum_{i = 1}^{n} -y_i \log\sigma(\bo X_i^T \bo W) - (1 - y_i)\log\left[1 - \sigma(\bo X^T_i \bo W)\right],
 	\label{eq:cross_entropy}
 \end{align}
-Which is exactly what we wrote down in equation \eqref{eq:cross_entropy2}.
+which is equation \eqref{eq:cross_entropy2}.
 
 \subsubsection{The Backpropagation Algorithm} \label{sec:back_prop}
 With a desired cost function we are ready to train the neural network. This is done by the backpropagation algorithm. The method entails finding the derivative of the cost function, with respect to all parameters. When we have a neural network, we have thousands of parameters which can be tuned (weights and biases), meaning that we have to approximate the derivative somehow. The backpropagation algorithm does just that, by exploiting the layered structure displayed in figure \ref{fig:neural_network}.
 
-Before we can embark on deriving the algorithm we will introduce some notation. We assume $L$ total layers while $l = 1, \dots , L$ indexes which one. Next we need to index the weights, nodes and biases. Let $w_{jk}^l$ be the weight connecting $k$-th neuron in layer $l-1$ and $j$-th neuron in layer $l$. The index order in $j$ and $k$ are such that we can do matrix multiplication with index notation later down the road. We also let $b_j^l$ be the $j$-th neuron bias in layer $l$. Thus the activation of the $j$-th neuron in layer $l$ ($a^l_j$) becomes
+Before we can embark on deriving the algorithm we will introduce some notation. We assume $L$ total layers, indexed as $l = 1, \dots , L$. Next we need to index the weights, nodes and biases. Let $w_{jk}^l$ be the weight connecting $k$-th neuron in layer $l-1$ and $j$-th neuron in layer $l$. The index order in $j$ and $k$ are such that we can do matrix multiplication with index notation later down the road. Further let $b_j^l$ be the bias for the $j$-th neuron in layer $l$. Thus the activation of the $j$-th neuron in layer $l$ ($a^l_j$) becomes
 \begin{align}
 	a_j^l = \sigma\left(\sum_{k} w_{jk}^l a_k^{l-1} + b_j^l\right) = \sigma(z_j^l), \ \ z_j^l \equiv \sum_{k} w_{jk}^l a_k^{l-1} + b_j^l.
 	\label{eq:activation_of_node_ajl}
@@ -202,7 +204,7 @@ Now the cost function will depend directly on the activation of the output layer
 	\Delta_j^L \equiv \del{C}{z_j^L}
 	\label{eq:backprop0}
 \end{align}
-We can similarly define the error of neuron $j$ in layer $l$ ($\Delta_j^l$), as the change in the cost function with respect to $z_j^l$,
+We can similarly define the error of neuron $j$ in layer $l$, as the change in the cost function with respect to $z_j^l$,
 \begin{align}
 	\Delta_j^l \equiv \del{C}{z_j^l} = \del{C}{a_j^l}\del{a_j^l}{z^l_j} = \del{C}{a_j^l}\der{\sigma(z^l_j)}{z^l_j}.
 	\label{eq:backprop1}
@@ -230,7 +232,7 @@ Now why have we done all this work, well because the equations \eqref{eq:backpro
 	\item[3 Error at layer $L$:] Calculate the error at the last layer using \eqref{eq:backprop1}.
 	\item[4 Backpropagate error:] With \eqref{eq:backprop3} we can the calculate the error, iterating backwards in the network.
 	\item[5 Calculate gradient:] Find the gradient by using equations \eqref{eq:backprop2} and \eqref{eq:backprop4}.
-	\item[6 Update parameters:] Update the parameters similarly to \eqref{eq:SGD_algo}, however $\boldsymbol{\beta}_t$ are our weights and biases in this case.\sn{RIKTIG?}
+	\item[6 Update parameters:] Update the parameters similarly to \eqref{eq:SGD_algo}, however $\boldsymbol{\beta}_t$ are our weights and biases in this case.
 \end{description}
 
 The expression for updating the weights and biases are
@@ -245,6 +247,7 @@ We mentioned earlier than then the network is created, it has weights and biases
 Before 2006, most neural networks were performing quite badly on most tasks, as they did not learn during training. One of the (several) reasons were due to bad initialization of weights. A common way of doing this was using the standard normal distribution $W_{i,j} \sim  \mathcal{N}(0, 1)$. The problem with this is that it does not consider the size of the layers. In 2010, it was shown that when using sigmoid as the activation function, Xavier-initialization give better results \cite{xavier}. This is given as $W_{i, j}\sim\mathcal{U} \left(-\frac{1}{\sqrt{n}}, \frac{1}{\sqrt{n}} \right)$, where $\mathcal{U}$ is the uniform distribution, and $n$ is the number of nodes in the preceding layer.
 
 In 2015, He-initialization was shown to work well with ReLU and Leaky ReLU \cite{He}. Here, the weights are initialized using the normal distribution, but with a variance given by $v = 2/(1 + \alpha^2)n$, where again $n$ is the number of nodes in the preceding layer, and $\alpha$ is the parameter of the Leaky ReLU-function. For ReLU, this is 0. These initializations only consideres the number of nodes in the preceding layer, though normalized initializations considering also the the number of nodes in the succeding layer could yeild better results. We use the initializations as given here, for the given activation-function, and will not study the particular effects of this in depth.
+
 
 
 \section{Methods}
@@ -274,7 +277,9 @@ where OLS regression is obtained by setting $\lambda=0$. There are multiple para
 
 We begin by studying the MSE for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $36$ for the $720$ training data.
 \sn{skal vi kommentere her at best eta påvirkes av batch size, eller skal det være i diskusjonen?}
-We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.5]$. This will simplify our analysis, as studying all the parameters at once are a tedious process. We then choose one of the favorable learning rates to study the MSE for $9$ different minibatch sizes between $720$ and $24$, as a function of epochs, using $N_e\in[0,\,150]$ once again. Using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ evenly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. Finally, we study the MSE over $100$ epochs for $20$ evenly spaced values of $\gamma\in[0,\,0.95]$
+We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.9]$. We expect higher learning rates to produce fluctuating MSE values for different epochs. Based on this we will make an additional plot with $21$ new $\eta$ values for which the MSE looks more stable.
+
+By making some initial parameter choices we simplify our analysis, as studying all the parameters at once are a tedious process. We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. Using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ evenly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. Finally, we study the MSE over $100$ epochs for $20$ evenly spaced values of $\gamma\in[0,\,0.95]$
 \sn{Burde man kanskje lagd tabell med parameterne?}.
 
 After these parameters are studied, we will test an implementation of scaling the learning rate by reducing it from an initial value after each epoch. One possible advantage of this is that convergence is fastinitially, when the errors are large, but as we approach a minima the learning rates are reduced, preventing us from overshooting. The algorithm we use for scaling the learning rate is given in equation \eqref{eq:learning_schedule}, where $t$ denotes the epoch
@@ -294,19 +299,23 @@ Instead of giving our network the design matrix $X$ for a certain polynomial deg
 
 Since we are dealing with a regression problem and we're fitting a continuous function, a natural choice of the cost function is the MSE. For the neural network we will not compute the total MSE of the output layer as we have previously done, but the individual MSE of each output node. This takes into account the error at each individual output neuron when we update the weights with backpropagation.
 
-The first thing we will do is to study the evolution of the output layers' MSE for different values of $\eta$ as we train the network. This will give an estimate of reasonable learning rates to use for training. We choose two hidden layers in the neural network with ten nodes each where we use the sigmoid activation function from equation \eqref{eq:sigmoid}. The first thing we must consider is how we initialize the weights and biases for the different layers. We initialize the weights randomly using a normal distribution of $\mathcal{N}(0,1)$. The biases are a single non-zero number for each node, and we choose $b_0=0.01$ for all nodes initially. For the output layer we don't use any activtion function, since the output of the Neural network should be the prediction of the Franke function\footnote{This is a reasonable choice considering that the maximum of equation \eqref{eq:FF} exceeds $1$, and the minimum is negative when noise is added}. For the initial analysis we will not include regularization or a momentum parameter.  
+The first thing we will do is to study the evolution of the output layers' MSE for different values of $\eta$ as we train the network. This will give an estimate of reasonable learning rates to use for training. We choose two hidden layers in the neural network with ten nodes each where we use the sigmoid activation function from equation \eqref{eq:sigmoid}. The first thing we must consider is how we initialize the weights and biases for the different layers. We initialize the weights randomly using a normal distribution of $\mathcal{N}(0,1)$. The biases are a single non-zero number for each node, and we choose $b_0=0.01$ for all nodes initially. For the output layer we don't use any activtion function, since the output of the Neural network should be the prediction of the Franke function\footnote{This is a reasonable choice considering that the maximum of equation \eqref{eq:FF} exceeds $1$, and the minimum is negative when noise is added}. For the initial analysis we will not include regularization or a momentum parameter.
 
-Having initialized the neural network we are now going to train it. Each training iteration begins by randomly shuffling the data and dividing them into minibatches, just as we did when we performed the SGD analysis. For each minibatch we begin by using the input data to update each layer of the network until we reach the output layer. Then we use the backpropagation algorithm to update the weights and biases at every node. \textbf{ER AVSNITTET OVER UNØDVENDIG?} With no activation function in the output layer, the error of this layer is given by equation \eqref{eq:backprop0} i.e. the derivative of the MSE. Iterating backwards we get the error in the previous layers by using equation \eqref{eq:backprop3}. The weights and biases at each layer are then updated with equations \eqref{eq:update_weights} and \eqref{eq:update_biases} respectively. Doing this for all minibatches we complete one epoch. 
+Having initialized the neural network we are now going to train it. Each training iteration begins by randomly shuffling the data and dividing them into minibatches, just as we did when we performed the SGD analysis. For each minibatch we begin by using the input data to update each layer of the network until we reach the output layer. Then we use the backpropagation algorithm to update the weights and biases at every node. \textbf{ER AVSNITTET OVER UNØDVENDIG?} With no activation function in the output layer, the error of this layer is given by equation \eqref{eq:backprop0} i.e. the derivative of the MSE. Iterating backwards we get the error in the previous layers by using equation \eqref{eq:backprop3}. The weights and biases at each layer are then updated with equations \eqref{eq:update_weights} and \eqref{eq:update_biases} respectively. Doing this for all minibatches we complete one epoch.
 
-For the first simulation we choose $21$ linearly distributed values of $\eta\in[10^{-3},\,0.9]$. We will then repeat this analysis using $21$ new $\eta$ values on an interval where the resulting MSE was low. 
+For the first simulation we choose $21$ linearly distributed values of $\eta\in[10^{-3},\,0.9]$. We will then repeat this analysis using $21$ new $\eta$ values on an interval where the resulting MSE was low.
 
-FUCK VI MANGLER R2. 
+In addition to the MSE, we also want to plot the $R^2$ score, given in equation \eqref{eq:R2_score}, where $\boldsymbol{z}$ and $\boldsymbol{\tilde{z}}$ is the target and prediction values, respectively.
+\begin{align} \label{eq:R2_score}
+	R^2(\boldsymbol{z}, \boldsymbol{\tilde{z}}) &= 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z})^2}, \hspace{3mm} \bar{z} = \frac{1}{n}\sum_{i=0}^{n-1}z_i
+\end{align}
+For the $R^2$ score, we will study different $\eta$ values as a function of epochs.
 
-We now study regularization parameters. HÅKON OLAV 
+We now study regularization parameters. HÅKON OLAV
 
-So far, we have only studied the statistical accuracy of our neural network. As a sanity check we will use the optimal parameters obtained in order to plot the resulting prediction of the neural network, using $\epsilon\sim\mathcal{N}(0,\,0.05)$ just as we did for SGD. Some of the parameters we use may not be ideal when the noise is reduced, but the purpose of this test is simply to see whether our model behaves in a desired way, so reducing the noise makes the comparison easier. 
+So far, we have only studied the statistical accuracy of our neural network. As a sanity check we will use the optimal parameters obtained in order to plot the resulting prediction of the neural network, using $\epsilon\sim\mathcal{N}(0,\,0.05)$ just as we did for SGD. Some of the parameters we use may not be ideal when the noise is reduced, but the purpose of this test is simply to see whether our model behaves in a desired way, so reducing the noise makes the comparison easier.
 
-Having only studied different learning rates and regularization parameters of the neural network, we are now ready to test different configurations of the network itself. The first modification we will make is testing the neural network using different activation functions for the hidden layers. Combined with this, we will apply different initialization methods of the weights and biases \sn{biases har vi vel ikke gjort}. 
+Having only studied different learning rates and regularization parameters of the neural network, we are now ready to test different configurations of the network itself. The first modification we will make is testing the neural network using different activation functions for the hidden layers. Combined with this, we will apply different initialization methods of the weights and biases \sn{biases har vi vel ikke gjort}.
 
 
 
@@ -324,7 +333,111 @@ Next we are ready to perform an grid search, to find the optimal learning rate $
 
 \subsection{Franke Function}
 \subsubsection{Stochastic Gradient Descent}
+
+We plot the MSE of the Franke function using SGD for our training data and test data for $\eta\in[0.01,\,0.9]$, shown on the left and right panel of figure \ref{fig:SGD_Franke_epochs_eta_overfit} respectively. The MSE was initially much higher than the maximum colorbar value of $0.07$, but we have chosen this as an upper limit, as it provided much more insight regarding nuances of the MSE. From our previous study of the Franke function with OLS regression \cite{project1}, we found that the MSE was below $0.07$ for polynomial degrees $P\in[1,\,8]$ for the test data with 90 bootstrap iterations. A maximum value of $\text{MSE=0.07}$ is thus a natural choice for the desired result.
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Train_MSE__overfit_489047.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__overfit_395885.pdf}
+	\endminipage
+	\caption{SGD}
+	\label{fig:SGD_Franke_epochs_eta_overfit}
+\end{figure}
+
+In figure \ref{fig:SGD_Franke_epochs_eta_overfit} we see that the test MSE converges faster for increased values of $\eta$ as expected. For $\eta=0.01$ we get an MSE barely below $0.07$ after $N_e=150$, as the gradient steps are too small. When $\eta$ exceeds $0.5$ we get abrubt increments of the test MSE after certain epochs. These learning rates are too high, as a gradient step goes beyond the actual minima. For $\eta=0.9$ this effect is apparent, with large fluctuations of the MSE over certain epochs. We emphasize that the bright red lines present could represent MSE values far above $0.07$.
+
+We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}, where we set the maximum MSE to $0.07$ once again.
+
+\begin{figure}[h!]
+	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__262224.pdf}
+	\caption{SGD}
+	\label{fig:SGD_Franke_epochs_eta}
+\end{figure}
+
+% KOMMENTER PLOTTET OVER
+
+The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. The figure shows the MSE for the train and test data in the left and right panel, respectively. We use $MSE_\mathrm{max}=0.07$ once again.
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Train_MSE__136234.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Test_MSE__440533.pdf}
+	\endminipage
+	\caption{SGD}
+	\label{fig:SGD_Franke_epochs_minibatches}
+\end{figure}
+
+
+We plot the MSE for train and test with different regularization parameters, shown in the left and right panel of figure \ref{fig:SGD_Franke_lambda_eta}
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Train_MSE__866968.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Test_MSE__764274.pdf}
+	\endminipage
+	\caption{SGD}
+	\label{fig:SGD_Franke_lambda_eta}
+\end{figure}
+
+
+Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE for train and test data for different momentum parameters as a function of epochs.
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Train_MSE__623867.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Test_MSE__597266.pdf}
+	\endminipage
+	\caption{SGD}
+	\label{fig:SGD_Franke_epochs_gamma}
+\end{figure}
+
+
 \subsubsection{Feed Forward Neural Network}
+We plot
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_MSE__569887.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__271070.pdf}
+	\endminipage
+	\caption{NN}
+	\label{fig:NN_Franke_epochs_eta_MSE}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__582234.pdf}
+	\caption{NN}
+	\label{fig:NN_Franke_epochs_eta_MSE_limited}
+\end{figure}
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_R2__738371.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__296747.pdf}
+	\endminipage
+	\caption{NN}
+	\label{fig:NN_Franke_epochs_eta_R2}
+\end{figure}
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__190748.pdf}
+	\caption{NN}
+	\label{fig:NN_Franke_epochs_eta_R2_limited}
+\end{figure}
 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
