@@ -100,7 +100,7 @@ def surface_fit(data_pred, data_target, x, y, args):
 
     fig.colorbar(surf, shrink=0.5, aspect=5)
     plt.show()
-    exit()
+    # exit()
 
 
 def parameter_based(data, args):
@@ -234,13 +234,13 @@ def momentum(data, args):
         data = pd.DataFrame(accuracy, index=idx, columns=cols)
         ylabel = r"Momentum parameter $\gamma$"
         xlabel = "Number of epochs"
-        title = name + r" for Franke function, using $\eta=0.25$\n" + "and 20 minibatches"
+        title = name + r" for Franke function, using $\eta=0.25$" + "\n" + "and 20 minibatches"
         xtick = len(cols)//10
         ytick = idx
         xrot = 0
 
         func["x"] = "epochs"
-        func["y"] = "gamma"
+        func["y"] = "eta"
         func["z"] = "MSE"
 
         ax = sns.heatmap(data,
@@ -370,6 +370,47 @@ def eta_lambda(data, args, NN=False):
         ax.set_ylabel(r"$\eta$")
         ax.set_xlabel(r"$\lambda$")
         show_push_save(fig, func, args)
+
+def eta_epochs(data, args, vmax=None, vmin=None):
+    for name, accuracy in data.items():
+        func = defaultdict(lambda: None)
+        func["train"] = name.split()[0]
+        fig, ax = plt.subplots()
+
+        cols = np.arange(args.num_epochs)
+        idx = np.round(args.eta,5)
+        data = pd.DataFrame(accuracy, index=idx, columns=cols)
+        ylabel = r"Learning rate $\eta$"
+        xlabel = "Number of epochs"
+        title = name + r" for Franke function, using NN with 20 minibatches"
+        xtick = len(cols)//10
+        ytick = idx
+        xrot = 0
+
+        func["x"] = "epochs"
+        func["y"] = "eta"
+        func["z"] = name.split()[1]
+
+        ax = sns.heatmap(data,
+                        ax=ax,
+                        annot=False,
+                        cmap=cm.coolwarm,
+                        vmax=vmax,
+                        vmin=vmin,
+                        linewidths=0,
+                        xticklabels=xtick,
+                        yticklabels=ytick)
+
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=xrot, fontsize=12)
+        ax.invert_yaxis()
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.set_xlabel(xlabel, fontsize=15)
+        ax.set_title(title, fontsize=18)
+        cbar = ax.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=13)
+        show_push_save(fig, func, args)
+
 
 def train_history(NN, args):
     for mode in ("accuracy", "loss"):

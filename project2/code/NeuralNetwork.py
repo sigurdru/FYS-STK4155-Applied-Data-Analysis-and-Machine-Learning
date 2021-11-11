@@ -37,6 +37,7 @@ class FFNN(Costs, Activations):
     def __init__(self,
                  design,
                  target,
+                 args,
                  hidden_nodes=[10,],
                  batch_size=None,
                  learning_rate=0.1,
@@ -52,6 +53,12 @@ class FFNN(Costs, Activations):
         self.X = design             # Training data
         self.N = self.X.shape[0]    # Number of input values
         self.static_target = target # Trainging outputs
+        self.args = args 
+
+        if self.args.convergence:
+            # Used for rescaling Franke data when calculating MSE in training history
+            self.z_Franke = utils.load_data(args)[-1]
+
 
         # Set mini batch size
         if batch_size in [0, None]:
@@ -209,16 +216,20 @@ class FFNN(Costs, Activations):
                 break
 
     def train_history(self, test):
-
+            
         for name, (x, t) in zip(("train", "test"), ((self.X, self.static_target), test)):
             if self.nodes[-1] > 1:
                 self.history[name + "_accuracy"].append(self.predict_accuracy(x, t))
                 loss = self.predict(x) - t
                 self.history[name + "_loss"].append(max(np.mean(loss, axis=0)))
+
             else:
-                self.t = t
-                pred = self.predict(x)
-                self.history[name + "_mse"].append(np.sum(self.cost(pred), axis=1))
+                # Franke function MSE 
+                pred = utils.rescale_data(self.predict(x), self.z_Franke)
+                target = utils.rescale_data(t, self.z_Franke)
+                self.history[name + "_mse"].append(utils.MSE(target, pred)[0])
+                self.history[name + "_R2"].append(utils.R2(target, pred)[0])
+
             if test is None:
                 break
 

@@ -47,18 +47,25 @@ def NN_regression(args):
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
 
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs)), dtype=float))
+    MSE  = defaultdict(lambda: np.zeros((len(etas), args.num_epochs), dtype=float))
+    R2   = defaultdict(lambda: np.zeros((len(etas), args.num_epochs), dtype=float))
+
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
             np.random.seed(args.seed)
             NN = FFNN(X_train,
                       z_train,
+                      args,
                       hidden_nodes=args.hidden_nodes,
                       batch_size=args.batch_size,
                       learning_rate=eta,
                       dynamic_eta=args.dynamic_eta,
                       lmb=lmb,
                       )
-            NN.train(args.num_epochs, train_history=args.pred, test=(X_test, z_test))
+
+            NN.train(args.num_epochs, train_history=args.history, test=(X_test, z_test))
+
+            
 
             # Rescale data to obtain correct values
             train_pred = utils.rescale_data(NN.predict(X_train), z)
@@ -79,6 +86,13 @@ def NN_regression(args):
             data["train MSE"][i][j] = tr_mse if tr_mse < 1 else np.nan
             data["test MSE"][i][j] = te_mse if te_mse < 1 else np.nan
 
+            if args.convergence:
+                # MSE at each epoch
+                MSE["train MSE"][i] = NN.history["train_mse"]
+                MSE["test MSE"][i]  = NN.history["test_mse"]
+                R2["train R2"][i]   = NN.history["train_R2"]
+                R2["test R2"][i]    = NN.history["test_R2"]
+
             if args.pred:
                 """
                 Plot fitted surface with original data
@@ -91,10 +105,17 @@ def NN_regression(args):
                 # Plot result of fit and exit
                 plot.surface_fit(z_pred, z, x, y, args)
 
-    print("\n"*3)
-    print(f"Best NN train prediction: {(train:=data['train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
-    print(f"Best NN test prediction: {(test:=data['test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
-    plot.eta_lambda(data, args)
+    if args.convergence:
+        # Plot MSE for different etas as a function of epochs 
+        # plot.eta_epochs(MSE, args)
+        # plot.eta_epochs(MSE, args, vmax=0.07)
+        plot.eta_epochs(R2, args, vmin=0.55)
+
+    else:
+        print("\n"*3)
+        print(f"Best NN train prediction: {(train:=data['train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+        print(f"Best NN test prediction: {(test:=data['test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+        plot.eta_lambda(data, args)
 
 
 def linear_regression(args):
@@ -269,6 +290,7 @@ def NN_classification(args):
 
             NN = FFNN(X_train,
                       z_train,
+                      args,
                       hidden_nodes=args.hidden_nodes,
                       batch_size=args.batch_size,
                       learning_rate=eta,
@@ -280,7 +302,7 @@ def NN_classification(args):
                       cost="cross_entropy",
                       output_activation="softmax",
                       )
-            NN.train(args.num_epochs, train_history=args.pred, test=(X_test, z_test))
+            NN.train(args.num_epochs, train_history=args.history, test=(X_test, z_test))
             data["train accuracy"][i][j] = NN.predict_accuracy(X_train, z_train)
             data["test accuracy"][i][j] = NN.predict_accuracy(X_test, z_test)
             print("Test accuracy: ", data["test accuracy"][i][j])
