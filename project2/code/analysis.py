@@ -1,21 +1,18 @@
 from collections import defaultdict
 import enum
 import numpy as np
-# import random
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
-# Our files
-# from regression impo/rt Ordinary_least_squaresSG, RidgeSG
-import utils
-# import plot
 from sklearn.linear_model import SGDRegressor
-from NeuralNetwork import FFNN
-import SGD
 from collections import defaultdict
 from sklearn.metrics import accuracy_score
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import pandas as pd
+# Our files
+import utils
+from NeuralNetwork import FFNN
+import SGD
 import plot
 
 

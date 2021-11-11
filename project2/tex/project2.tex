@@ -11,6 +11,7 @@
 \usepackage{eurosym}
 \usepackage{footmisc}
 
+\graphicspath{{../output/}}
 
 \collaborationImg{\includegraphics[width=30mm]{../../pictures/UIO.png}}
 
@@ -246,6 +247,7 @@ Before 2006, most neural networks were performing quite badly on most tasks, as 
 In 2015, He-initialization was shown to work well with ReLU and Leaky ReLU \cite{He}. Here, the weights are initialized using the normal distribution, but with a variance given by $v = 2/(1 + \alpha^2)n$, where again $n$ is the number of nodes in the preceding layer, and $\alpha$ is the parameter of the Leaky ReLU-function. For ReLU, this is 0. These initializations only consideres the number of nodes in the preceding layer, though normalized initializations considering also the the number of nodes in the succeding layer could yeild better results. We use the initializations as given here, for the given activation-function, and will not study the particular effects of this in depth.
 
 
+
 \section{Methods}
 As we mentioned in the introduction, we wish to study different ways of fitting two types of datasets. The first which we can classify as \textit{continuous} is the Franke Function \eqref{eq:FF},
 \begin{align}
@@ -273,7 +275,9 @@ where OLS regression is obtained by setting $\lambda=0$. There are multiple para
 
 We begin by studying the MSE for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $36$ for the $720$ training data.
 \sn{skal vi kommentere her at best eta påvirkes av batch size, eller skal det være i diskusjonen?}
-We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.5]$. This will simplify our analysis, as studying all the parameters at once are a tedious process. We then choose one of the favorable learning rates to study the MSE for $9$ different minibatch sizes between $720$ and $24$, as a function of epochs, using $N_e\in[0,\,150]$ once again. Using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ evenly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. Finally, we study the MSE over $100$ epochs for $20$ evenly spaced values of $\gamma\in[0,\,0.95]$
+We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.9]$. We expect higher learning rates to produce fluctuating MSE values for different epochs. Based on this we will make an additional plot with $21$ new $\eta$ values for which the MSE looks more stable.   
+
+By making some initial parameter choices we simplify our analysis, as studying all the parameters at once are a tedious process. We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. Using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ evenly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. Finally, we study the MSE over $100$ epochs for $20$ evenly spaced values of $\gamma\in[0,\,0.95]$
 \sn{Burde man kanskje lagd tabell med parameterne?}.
 
 After these parameters are studied, we will test an implementation of scaling the learning rate by reducing it from an initial value after each epoch. One possible advantage of this is that convergence is fastinitially, when the errors are large, but as we approach a minima the learning rates are reduced, preventing us from overshooting. The algorithm we use for scaling the learning rate is given in equation \eqref{eq:learning_schedule}, where $t$ denotes the epoch
@@ -316,10 +320,49 @@ Having only studied different learning rates and regularization parameters of th
 
 \section{Results}
 
-%Section ideas:
-%\subsection{Franke Function}
-%\subsubsection{Stochastic Gradient Descent}
-%\subsubsection{Feed Forward Neural Network}
+\subsection{Franke Function}
+\subsubsection{Stochastic Gradient Descent}
+
+We plot the MSE of the Franke function using SGD for our training data and test data for $\eta\in[0.01,\,0.9]$, shown on the left and right panel of figure \ref{fig:SGD_Franke_epochs_eta_overfit} respectively. The MSE was initially much higher than the maximum colorbar value of $0.07$, but we have chosen this as an upper limit, as it provided much more insight regarding nuances of the MSE. From our previous study of the Franke function with OLS regression \cite{project1}, we found that the MSE was below $0.07$ for polynomial degrees $P\in[1,\,8]$ for the test data with 90 bootstrap iterations. A maximum value of $\text{MSE=0.07}$ is thus a natural choice for the desired result.   
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Train_MSE__overfit_489047.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__overfit_395885.pdf}
+	\endminipage
+	\caption{SGD}
+	\label{fig:SGD_Franke_epochs_eta_overfit} 
+\end{figure}
+
+In figure \ref{fig:SGD_Franke_epochs_eta_overfit} we see that the test MSE converges faster for increased values of $\eta$ as expected. For $\eta=0.01$ we get an MSE barely below $0.07$ after $N_e=150$, as the gradient steps are too small. When $\eta$ exceeds $0.5$ we get abrubt increments of the test MSE after certain epochs. These learning rates are too high, as a gradient step goes beyond the actual minima. For $\eta=0.9$ this effect is apparent, with large fluctuations of the MSE over certain epochs. We emphasize that the bright red lines present could represent MSE values far above $0.07$. 
+
+We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}, where we set the maximum MSE to $0.07$ once again.
+
+\begin{figure}[h!]
+	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__262224.pdf}
+	\caption{SGD}
+	\label{fig:SGD_Franke_epochs_eta}
+\end{figure}
+
+% KOMMENTER PLOTTET OVER 
+
+The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. The figure shows the MSE for the train and test data in the left and right panel, respectively. We use $MSE_\mathrm{max}=0.07$ once again. 
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Train_MSE__136234.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Test_MSE__440533.pdf}
+	\endminipage
+	\caption{SGD}
+	\label{fig:SGD_Franke_epochs_minibatches}
+\end{figure}
+
+
+\subsubsection{Feed Forward Neural Network}
 %
 %\subsection{Wisconsin Breast Cancer Data}
 %\subsubsection{Feed Forward Neural Network}
