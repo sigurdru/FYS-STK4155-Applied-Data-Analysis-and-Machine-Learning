@@ -98,6 +98,7 @@ where $\bo x_i^T$ is our inputdata, $\bo w$ and $b_0$ are parameters in the mode
 where $n$ are the number of samples we want to classify, and $y_i$ the true classification. Now with a cost function and model in hand we are ready to minimize the cost function in order to find the optimal parameters for the model. We have a convex cost function, therefore a minimization leads to
 \begin{align}
 	\nabla_{\bo W} C(\bo W) = \sum_{i = 1}^n \left[\sigma(\bo X_i^T \bo W - y_i)\right]\bo X_i.
+	\label{eq:cross_entropy_grad}
 \end{align}
 Thus the only thing left to do is perform an algorithm similar to \ref{eq:SGD_algo}, where the parameters to update are $\bo W$.
 
@@ -136,14 +137,14 @@ The activation functions are where the non-linearity of the neural nets comes in
 		x,        & \text{otherwise}.
 	\end{cases} \label{eq:leaky_RELU}
 \end{align}
-For Leaky RELU, $\alpha$ is some parameter for which we use $\alpha = 0.01$.
+For Leaky RELU, $\alpha$ is some parameter for which we set to $\alpha = 0.01$.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{pictures/activation_functions.pdf}
 	\caption{Some activation functions, Sigmoid, RELU and Leaky RELU, respectively.}\label{fig:activation_functions}
 \end{figure}
 
-All neurons in all hidden layers are activated by the same activation function. The input layer is just the input, so it is not activated. In the case of regression, neither the outputl layer is activted. Then the function value is just the weighted sum from the last hidden layer. In the case of classifaction, we want the values in the output nodes to indicate the probabilities. Thus, we use an activation function that consideres the value in the other nodes in the other output nodes. The softmax function does this.
+All neurons in all hidden layers are activated by the same activation function. The input layer is just the input, so it is not activated. In the case of regression, then the output layer is not activated. Then the function value is just the weighted sum from the last hidden layer. In the case of classification, we want the values in the output nodes to indicate the probabilities. Thus, we use an activation function that considers the value in the other nodes in the other output nodes. The softmax function does this.
 
 \begin{equation*}
 	\sigma(z_i) = \frac{e^{z_i}}{\sum_{j=1}^Ke^{z_j}},
@@ -317,6 +318,11 @@ Having only studied different learning rates and regularization parameters of th
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
 \subsubsection{Logistic Regression}
+Lastly we want to study the breast cancer data using logistic regression. See theory section \ref{sec:logistic_regression} for an explanation of the method. We use the Sigmoid \eqref{eq:sigmoid} as our soft classifier in the output, and cross entropy \eqref{eq:cross_entropy2} (gradient given by \eqref{eq:cross_entropy_grad}) as our cost function. See theory section \ref{sec:cost_func_and_regul} for derivation of the cross entropy. To optimize the weight and biases we implement stochastic gradient decent algorithm \eqref{eq:SGD_algo}. We will also study the implementation of $L_2$-regularization \eqref{eq:L2}. Our aim is to compare the result with those obtained from out feed forward neural network and Scikit-Learn's logistic regression functionality.
+
+The main quantity we will study is the accuracy score, which is the number of correct classification divided by total cases. We initialize the weights and bias with random normal distribution with mean around zero and standard deviation of one. We want to look at what happens to the accuracy as epochs increases, for different learning rates. Therefore we first plot the accuracy score as a function of learning rate and number of epochs. Specifically we will use 200 epochs, and 10 different learning rates $\eta$ between $10^{-5}$ and $10^{-0.5}$ distributed evenly on a logarithm scale. We expect to see overfitting when $\eta$ is large, and under fitting when $\eta$ is small.
+
+Next we are ready to perform an grid search, to find the optimal learning rate $\eta$ and $L_2$ parameter $\lambda$, still using 200 epochs. Therefore we again plot the accuracy score, however this time as a function of $\lambda$ and $\eta$, picking out the accuracy score after the last epoch. Specific parameters we will test for are 10 different learning rates $\eta$ and regularization parameters $\lambda$, distributed evenly on a logarithm scale. Learning rate will be between $10^{-5}$ and $10^{-1}$, and $\lambda$ will be between $10^{-5}$ and $10^{-3}$.
 
 \section{Results}
 
@@ -363,16 +369,39 @@ The MSE as a function of epochs for different number of minibatches is shown in 
 
 
 \subsubsection{Feed Forward Neural Network}
-%
-%\subsection{Wisconsin Breast Cancer Data}
-%\subsubsection{Feed Forward Neural Network}
-%\subsubsection{Logistic Regression}
+
+\subsection{Wisconsin Breast Cancer Data}
+\subsubsection{Feed Forward Neural Network}
+\subsubsection{Logistic Regression}
+\begin{figure}[h]
+	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__epochs_eta__Train_accuracy__705107.png}
+	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__epochs_eta__Test_accuracy__924831.png}
+	\caption{These two figures illustrates how the accuracy score evolves as a function of epochs ($x$-axis) and learning rate $\eta$ ($y$-axis). An accuracy score of one corresponds to 100\% correct classifications.}\label{fig:logreg_eta_epoch}
+\end{figure}
+\begin{figure}[h]
+	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__lambda_eta__Test_accuracy__860729.pdf}
+	\caption{Here we have plotted the accuracy for the test data, as a function of both learning rate $\eta$ ($y$-axis) and logarithm of hyper parameter $\lambda$ ($x$-axis). An accuracy score of one corresponds to 100\% correct classification.}\label{fig:logreg_eta_lambda}
+\end{figure}
+
+
 
 \section{Discussion}
 
+
+LOGISTIC REGRESSION:
+
+momentum
+
+different output functions
+
+learning schedule
+
+correlation
+
+hvor sikkert er nettverket?
 \section{Conclusion}
-\appendix
-\section{Appendix}
+
+
 \bibliographystyle{plain}
 \bibliography{refs}
 \end{document}
