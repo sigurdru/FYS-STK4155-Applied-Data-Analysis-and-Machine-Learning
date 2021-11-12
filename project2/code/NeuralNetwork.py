@@ -207,7 +207,7 @@ class FFNN(Costs, Activations):
                     self.converged = None
                     break
 
-            pbar.set_description(f"eta: {self.eta:.6f}, lambda: {self.lmb:.6f}. Training")
+            pbar.set_description(f"eta: {self.eta:.3f}, lambda: {self.lmb:.3f}. Training")
             if self.converged:
                 print(f"Network converged after {epoch} epochs")
                 break
