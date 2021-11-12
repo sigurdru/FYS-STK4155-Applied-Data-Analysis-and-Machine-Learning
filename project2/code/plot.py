@@ -58,6 +58,8 @@ def set_fname(func, args):
     if func["train"]:
         fname += func["train"]
     fname += "_" + func["z"]  # varying parameter
+    if args.act_func != "sigmoid":
+        fname += "__" + args.act_func
     fname += "__" + str(int(np.random.uniform() * 1e6))  # random number to identify plot
     fname += ".pdf"
 
@@ -384,6 +386,11 @@ def eta_epochs(data, args, vmax=None, vmin=None):
         ylabel = r"Learning rate $\eta$"
         xlabel = "Number of epochs"
         title = name + r" for Franke function, using NN with 20 minibatches"
+        if args.act_func == "relu":
+            title += "\n" + r"Using the Relu activation function"
+        elif args.act_func == "leaky_relu":
+            title += "\n" + r"Using the Leaky Relu activation function"
+
         xtick = len(cols)//10
         ytick = idx
         xrot = 0
@@ -410,6 +417,7 @@ def eta_epochs(data, args, vmax=None, vmin=None):
         ax.set_title(title, fontsize=18)
         cbar = ax.collections[0].colorbar
         cbar.ax.tick_params(labelsize=13)
+        # plt.show()
         show_push_save(fig, func, args)
 
 
