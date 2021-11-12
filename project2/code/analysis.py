@@ -60,6 +60,8 @@ def NN_regression(args):
                       learning_rate=eta,
                       dynamic_eta=args.dynamic_eta,
                       lmb=lmb,
+                      activation=args.act_func,
+                      wi=args.weight_initialization
                       )
 
             NN.train(args.num_epochs, train_history=args.history, test=(X_test, z_test))
@@ -79,14 +81,11 @@ def NN_regression(args):
             print('mse train  : ', tr_mse)
             print('mse test   : ', te_mse)
 
-            # plt.plot(range(args.num_epochs), hist)
-            # plt.show()
-
             data["train MSE"][i][j] = tr_mse if tr_mse < 1 else np.nan
             data["test MSE"][i][j] = te_mse if te_mse < 1 else np.nan
 
-            if args.convergence:
-                # MSE at each epoch
+            if args.history:
+                # MSE and R2 at each epoch
                 MSE["train MSE"][i] = NN.history["train_mse"]
                 MSE["test MSE"][i]  = NN.history["test_mse"]
                 R2["train R2"][i]   = NN.history["train_R2"]
@@ -104,10 +103,10 @@ def NN_regression(args):
                 # Plot result of fit and exit
                 plot.surface_fit(z_pred, z, x, y, args)
 
-    if args.convergence:
+    if args.history:
         # Plot MSE for different etas as a function of epochs 
         # plot.eta_epochs(MSE, args)
-        # plot.eta_epochs(MSE, args, vmax=0.07)
+        plot.eta_epochs(MSE, args, vmax=0.07)
         plot.eta_epochs(R2, args, vmin=0.55)
 
     else:

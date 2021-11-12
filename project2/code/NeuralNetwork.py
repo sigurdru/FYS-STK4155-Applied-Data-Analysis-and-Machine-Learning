@@ -55,7 +55,7 @@ class FFNN(Costs, Activations):
         self.static_target = target # Trainging outputs
         self.args = args 
 
-        if self.args.convergence:
+        if self.args.dataset == "Franke" and self.args.history:
             # Used for rescaling Franke data when calculating MSE in training history
             self.z_Franke = utils.load_data(args)[-1]
 
