@@ -191,6 +191,8 @@ def linear_regression(args):
                         # Plot result of fit, and exit
                         plot.surface_fit(z_pred, z, x, y, args)
 
+        print(f"Best NN train prediction: {(train:=data['Train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+        print(f"Best NN test prediction: {(test:=data['Test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
         plot.parameter_based(data, args)
 
     else:
