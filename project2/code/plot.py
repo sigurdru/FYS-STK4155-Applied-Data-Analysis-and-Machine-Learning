@@ -253,14 +253,14 @@ def momentum(data, args):
         xrot = 0
 
         func["x"] = "epochs"
-        func["y"] = "eta"
+        func["y"] = "gamma"
         func["z"] = "MSE"
 
         ax = sns.heatmap(data,
                         ax=ax,
                         annot=False,
                         cmap=cm.coolwarm,
-                        vmax=0.06,
+                        vmax=0.07,
                         linewidths=0,
                         xticklabels=xtick,
                         yticklabels=ytick)
@@ -273,6 +273,7 @@ def momentum(data, args):
         ax.set_title(title, fontsize=18)
         cbar = ax.collections[0].colorbar
         cbar.ax.tick_params(labelsize=13)
+        # plt.show()
         show_push_save(fig, func, args)
 
 def plot_logistic_regression(data, args):
