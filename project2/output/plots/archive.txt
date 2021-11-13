@@ -556,3 +556,31 @@ Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta
        0.05315, 0.0606 , 0.06805, 0.0755 , 0.08295, 0.0904 , 0.09785,
        0.1053 , 0.11275, 0.1202 , 0.12765, 0.1351 , 0.14255, 0.15   ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Franke', pred=False, history=True, show=False, push=True, save=True, seed=2021)
 2021-11-12 19:48:59.692087
+
+
+NN_Franke__epochs_dynamic_eta__train_MSE__290964.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05  , 0.0725, 0.095 , 0.1175, 0.14  , 0.1625, 0.185 , 0.2075,
+       0.23  , 0.2525, 0.275 , 0.2975, 0.32  , 0.3425, 0.365 , 0.3875,
+       0.41  , 0.4325, 0.455 , 0.4775, 0.5   ]), dynamic_eta=True, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-13 11:58:31.480720
+
+
+NN_Franke__epochs_dynamic_eta__test_MSE__489375.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05  , 0.0725, 0.095 , 0.1175, 0.14  , 0.1625, 0.185 , 0.2075,
+       0.23  , 0.2525, 0.275 , 0.2975, 0.32  , 0.3425, 0.365 , 0.3875,
+       0.41  , 0.4325, 0.455 , 0.4775, 0.5   ]), dynamic_eta=True, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-13 11:58:38.521324
+
+
+NN_Franke__epochs_dynamic_eta__train_R2__808437.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05  , 0.0725, 0.095 , 0.1175, 0.14  , 0.1625, 0.185 , 0.2075,
+       0.23  , 0.2525, 0.275 , 0.2975, 0.32  , 0.3425, 0.365 , 0.3875,
+       0.41  , 0.4325, 0.455 , 0.4775, 0.5   ]), dynamic_eta=True, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-13 11:58:41.732896
+
+
+NN_Franke__epochs_dynamic_eta__test_R2__289368.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05  , 0.0725, 0.095 , 0.1175, 0.14  , 0.1625, 0.185 , 0.2075,
+       0.23  , 0.2525, 0.275 , 0.2975, 0.32  , 0.3425, 0.365 , 0.3875,
+       0.41  , 0.4325, 0.455 , 0.4775, 0.5   ]), dynamic_eta=True, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-13 11:58:45.109306
