@@ -378,7 +378,7 @@ def eta_lambda(data, args, NN=False):
         
         ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
         ax.set_xticklabels(ax.get_xticklabels(), rotation=0, fontsize=12)
-        ax.invert_xaxis()
+        ax.invert_yaxis()
         ax.set_ylabel(r"$\log_{10}(\eta)$", fontsize=15)
         ax.set_xlabel(r"$\log_{10}(\lambda)$", fontsize=15)
 
