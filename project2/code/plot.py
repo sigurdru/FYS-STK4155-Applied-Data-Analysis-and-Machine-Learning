@@ -357,7 +357,10 @@ def eta_lambda(data, args, NN=False):
         print(name)
         func = defaultdict(lambda:None)
         func["train"] = name.split()[0]
-        func["x"] = "eta"
+        if args.dynamic_eta:
+            func["x"] = "dynamic_eta"
+        else:
+            func["x"] = "eta"
         func["y"] = "lambda"
         func["z"] = name.split()[1]
 
@@ -379,7 +382,11 @@ def eta_lambda(data, args, NN=False):
         ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
         ax.set_xticklabels(ax.get_xticklabels(), rotation=0, fontsize=12)
         ax.invert_yaxis()
-        ax.set_ylabel(r"$\log_{10}(\eta)$", fontsize=15)
+        if args.dynamic_eta:
+            ax.set_ylabel(r"$\log_{10}(\eta_0)$", fontsize=15)
+        else:
+            ax.set_ylabel(r"$\log_{10}(\eta)$", fontsize=15)
+
         ax.set_xlabel(r"$\log_{10}(\lambda)$", fontsize=15)
 
         cbar = ax.collections[0].colorbar
@@ -396,9 +403,11 @@ def eta_epochs(data, args, vmax=None, vmin=None):
         cols = np.arange(args.num_epochs)
         idx = np.round(args.eta,5)
         data = pd.DataFrame(accuracy, index=idx, columns=cols)
-        ylabel = r"Learning rate $\eta$"
+        ylabel = r"Initial learning rate, $\eta_0$"
         xlabel = "Number of epochs"
         title = name + r" for Franke function, using NN with 20 minibatches"
+        if args.dynamic_eta:
+            title += "\n" + r"with dynamic learning rate, $\eta$"
         if args.act_func == "relu":
             title += "\n" + r"Using the Relu activation function"
         elif args.act_func == "leaky_relu":
@@ -409,7 +418,10 @@ def eta_epochs(data, args, vmax=None, vmin=None):
         xrot = 0
 
         func["x"] = "epochs"
-        func["y"] = "eta"
+        if args.dynamic_eta:
+            func["y"] = "dynamic_eta"
+        else:
+            func["y"] = "eta"
         func["z"] = name.split()[1]
 
         ax = sns.heatmap(data,
