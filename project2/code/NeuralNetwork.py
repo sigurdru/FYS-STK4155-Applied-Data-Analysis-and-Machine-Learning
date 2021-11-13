@@ -248,8 +248,11 @@ class FFNN(Costs, Activations):
     def predict_accuracy(self, x, y):
         probs = self.predict(x)
         msg = "\n\nThe probabilities do not sum to 1!\nWorry not, this probably just means there is a nan in there. Check for RuntimeWarnings in autograd.\nRerun, but with lower gamma or eta or something else\n"
-        if not (abs(np.sum(probs, axis=1) - 1) < 1e-10).all():  # make sure probabilities sum to 1
-            print(msg)
+        try:
+            if not (abs(np.sum(probs, axis=1) - 1) < 1e-10).all():  # make sure probabilities sum to 1
+                print(msg)
+                return np.nan
+        except:
             return np.nan
         pred = np.argmax(probs, axis=1).reshape(-1, 1)
         true = np.argmax(y, axis=1).reshape(-1, 1)

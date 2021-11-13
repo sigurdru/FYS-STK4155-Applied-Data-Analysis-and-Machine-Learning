@@ -60,13 +60,14 @@ def NN_regression(args):
                       learning_rate=eta,
                       dynamic_eta=args.dynamic_eta,
                       lmb=lmb,
+                      gamma=args.gamma,
+                      wi=args.weight_initialization,
                       activation=args.act_func,
-                      wi=args.weight_initialization
+                      cost="MSE",
+                      output_activation="none",
                       )
 
             NN.train(args.num_epochs, train_history=args.history, test=(X_test, z_test))
-
-            
 
             # Rescale data to obtain correct values
             train_pred = utils.rescale_data(NN.predict(X_train), z)
@@ -313,7 +314,7 @@ def NN_classification(args):
             print("Test accuracy: ", data["test accuracy"][i][j])
             print()
 
-            if args.pred:
+            if args.history:
                 plot.train_history(NN, args)
                 exit()
 

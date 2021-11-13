@@ -25,7 +25,7 @@ archive = path_plots + "archive.txt"
 def show_push_save(fig, func, args):
     """
     This function handles wether you want to show,
-    save and/or push the file.
+    save and/or push the file to git.
 
     Args:
         fig (matplotlib.figure): Figure you want to handle
@@ -231,6 +231,8 @@ def parameter_based(data, args):
 
 def momentum(data, args):
     """
+    Plots MSE as function of eta and epochs, for runs with different momentum factors
+
     Optimal simulation:
      - Ne  : 100
      - eta : 0.25
@@ -363,6 +365,9 @@ def plot_logistic_regression_epochs(data, args):
         show_push_save(fig, func, args)
 
 def eta_lambda(data, args, NN=False):
+    """
+    Plots MSE or accuracy as heatmap for different etas and lambdas
+    """
     for name, accuracy in data.items():
         print(name)
         func = defaultdict(lambda:None)
@@ -375,17 +380,18 @@ def eta_lambda(data, args, NN=False):
         func["z"] = name.split()[1]
 
         fig, ax = plt.subplots()
-        col = np.log10(args.lmb)
-        row = np.log10(args.eta)
+        col = np.round(np.log10(args.lmb), 3)
+        row = np.round(np.log10(args.eta), 3)
         data = pd.DataFrame(accuracy, index=row, columns=col)
         ax = sns.heatmap(data, 
                         ax=ax, 
+                        vmax=0.1,
                         annot=True, 
                         cmap=cm.coolwarm)
         if NN:
-            title = name + f" gridsearch, using {args.act_func.replace('_', ' ')} activation function on {args.dataset}-data"
+            title = name + f" gridsearch, using {args.act_func.replace('_', ' ')}" + "\n" + f" activation function on {args.dataset}-data"
         else:
-            title = name + " as function of " + r"$\eta$ and $\lambda$" + f"for {args.dataset}-data"
+            title = name + " as function of " + r"$\eta$ and $\lambda$" + f" for {args.dataset}-data"
         
         ax.set_title(title, fontsize=18)
         
@@ -405,6 +411,9 @@ def eta_lambda(data, args, NN=False):
         show_push_save(fig, func, args)
 
 def eta_epochs(data, args, vmax=None, vmin=None):
+    """
+    Plots MSE or accuracy as function of epochs, for different etas, as a heatmap
+    """
     for name, accuracy in data.items():
         func = defaultdict(lambda: None)
         func["train"] = name.split()[0]
@@ -457,6 +466,9 @@ def eta_epochs(data, args, vmax=None, vmin=None):
 
 
 def train_history(NN, args):
+    """
+    Plots mse or accuracy as function of epochs, calculated during training
+    """
     for mode in ("accuracy", "loss"):
         fig = plt.Figure()
         plt.plot(NN.history[f"train_{mode}"], 'o-', label="train")
