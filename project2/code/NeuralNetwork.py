@@ -55,7 +55,7 @@ class FFNN(Costs, Activations):
         self.static_target = target # Trainging outputs
         self.args = args 
 
-        if self.args.convergence:
+        if self.args.dataset == "Franke" and self.args.history:
             # Used for rescaling Franke data when calculating MSE in training history
             self.z_Franke = utils.load_data(args)[-1]
 
@@ -207,7 +207,7 @@ class FFNN(Costs, Activations):
                     self.converged = None
                     break
 
-            pbar.set_description(f"eta: {self.eta:.6f}, lambda: {self.lmb:.6f}. Training")
+            pbar.set_description(f"eta: {self.eta:.3f}, lambda: {self.lmb:.3f}. Training")
             if self.converged:
                 print(f"Network converged after {epoch} epochs")
                 break

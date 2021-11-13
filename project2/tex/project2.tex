@@ -315,7 +315,7 @@ We now study regularization parameters. HÅKON OLAV
 
 So far, we have only studied the statistical accuracy of our neural network. As a sanity check we will use the optimal parameters obtained in order to plot the resulting prediction of the neural network, using $\epsilon\sim\mathcal{N}(0,\,0.05)$ just as we did for SGD. Some of the parameters we use may not be ideal when the noise is reduced, but the purpose of this test is simply to see whether our model behaves in a desired way, so reducing the noise makes the comparison easier.
 
-Having only studied different learning rates and regularization parameters of the neural network, we are now ready to test different configurations of the network itself. The first modification we will make is testing the neural network using different activation functions for the hidden layers. Combined with this, we will apply different initialization methods of the weights and biases \sn{biases har vi vel ikke gjort}.
+Having only studied different learning rates and regularization parameters of the neural network, we are now ready to test different configurations of the network itself. The first modification we will make is testing the neural network using different activation functions for the hidden layers. 
 
 
 
@@ -437,6 +437,28 @@ We plot
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__190748.pdf}
 	\caption{NN}
 	\label{fig:NN_Franke_epochs_eta_R2_limited}
+\end{figure}
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__relu__733938.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__leaky_relu__501404.pdf}
+	\endminipage
+	\caption{MSE Relu and Leaky Relu}
+	\label{fig:NN_Franke_epochs_eta_MSE_relu_leaky}
+\end{figure}
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__relu__235205.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__leaky_relu__958829.pdf}
+	\endminipage
+	\caption{R2 Relu and Leaky Relu}
+	\label{fig:NN_Franke_epochs_eta_R2_relu_leaky}
 \end{figure}
 
 \subsection{Wisconsin Breast Cancer Data}

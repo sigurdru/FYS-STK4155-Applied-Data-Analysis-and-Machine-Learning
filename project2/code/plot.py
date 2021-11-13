@@ -58,6 +58,8 @@ def set_fname(func, args):
     if func["train"]:
         fname += func["train"]
     fname += "_" + func["z"]  # varying parameter
+    if args.act_func != "sigmoid":
+        fname += "__" + args.act_func
     fname += "__" + str(int(np.random.uniform() * 1e6))  # random number to identify plot
     fname += ".pdf"
 
@@ -138,16 +140,25 @@ def parameter_based(data, args):
             cols = np.arange(args.num_epochs)
             idx = np.round(args.eta, 3)
             data = pd.DataFrame(accuracy[:,0,0,:], index=idx, columns=cols[:])
-            ylabel = r"Learning rate $\eta$"
-            xlabel = "Number of epochs"
+            
             title = name + " for Franke function\n" + "using 20 minibatches"
+            xlabel = "Number of epochs"
+            
+            if args.dynamic_eta:
+                ylabel = r"Initial learning rate $\eta_0$"
+                title += r" and dynamic $\eta$"
+                func["y"] = "dynamic_eta"
+            
+            else:
+                ylabel = r"Learning rate $\eta$"
+                func["y"] = "eta"
+
             xtick = len(cols)//10
             xrot=0
 
             vmax = 0.07
 
             func["x"] = "epochs"
-            func["y"] = "eta"
             func["z"] = "MSE"
 
         if len(args.lmb) == 1 and len(args.eta) == 1:
@@ -355,21 +366,41 @@ def eta_lambda(data, args, NN=False):
         print(name)
         func = defaultdict(lambda:None)
         func["train"] = name.split()[0]
-        func["x"] = "eta"
+        if args.dynamic_eta:
+            func["x"] = "dynamic_eta"
+        else:
+            func["x"] = "eta"
         func["y"] = "lambda"
         func["z"] = name.split()[1]
 
         fig, ax = plt.subplots()
-        col = np.round(args.lmb, 4)
-        row = np.round(args.eta, 4)
+        col = np.log10(args.lmb)
+        row = np.log10(args.eta)
         data = pd.DataFrame(accuracy, index=row, columns=col)
-        sns.heatmap(data, ax=ax, annot=True, cmap=cm.coolwarm)
+        ax = sns.heatmap(data, 
+                        ax=ax, 
+                        annot=True, 
+                        cmap=cm.coolwarm)
         if NN:
-            ax.set_title(name + f" gridsearch, using {args.act_func.replace('_', ' ')} activation function on {args.dataset}-data")
+            title = name + f" gridsearch, using {args.act_func.replace('_', ' ')} activation function on {args.dataset}-data"
         else:
-            ax.set_title(name + f"as function of learning rate and lambda for {args.dataset}-data")
-        ax.set_ylabel(r"$\eta$")
-        ax.set_xlabel(r"$\lambda$")
+            title = name + " as function of " + r"$\eta$ and $\lambda$" + f"for {args.dataset}-data"
+        
+        ax.set_title(title, fontsize=18)
+        
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=0, fontsize=12)
+        ax.invert_yaxis()
+        if args.dynamic_eta:
+            ax.set_ylabel(r"$\log_{10}(\eta_0)$", fontsize=15)
+        else:
+            ax.set_ylabel(r"$\log_{10}(\eta)$", fontsize=15)
+
+        ax.set_xlabel(r"$\log_{10}(\lambda)$", fontsize=15)
+
+        cbar = ax.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=13)
+
         show_push_save(fig, func, args)
 
 def eta_epochs(data, args, vmax=None, vmin=None):
@@ -381,15 +412,25 @@ def eta_epochs(data, args, vmax=None, vmin=None):
         cols = np.arange(args.num_epochs)
         idx = np.round(args.eta,5)
         data = pd.DataFrame(accuracy, index=idx, columns=cols)
-        ylabel = r"Learning rate $\eta$"
+        ylabel = r"Initial learning rate, $\eta_0$"
         xlabel = "Number of epochs"
         title = name + r" for Franke function, using NN with 20 minibatches"
+        if args.dynamic_eta:
+            title += "\n" + r"with dynamic learning rate, $\eta$"
+        if args.act_func == "relu":
+            title += "\n" + r"Using the Relu activation function"
+        elif args.act_func == "leaky_relu":
+            title += "\n" + r"Using the Leaky Relu activation function"
+
         xtick = len(cols)//10
         ytick = idx
         xrot = 0
 
         func["x"] = "epochs"
-        func["y"] = "eta"
+        if args.dynamic_eta:
+            func["y"] = "dynamic_eta"
+        else:
+            func["y"] = "eta"
         func["z"] = name.split()[1]
 
         ax = sns.heatmap(data,
@@ -410,6 +451,7 @@ def eta_epochs(data, args, vmax=None, vmin=None):
         ax.set_title(title, fontsize=18)
         cbar = ax.collections[0].colorbar
         cbar.ax.tick_params(labelsize=13)
+        # plt.show()
         show_push_save(fig, func, args)
 
 
