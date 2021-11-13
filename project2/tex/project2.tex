@@ -273,19 +273,26 @@ As in \cite{project1}, we have to choose a model to fit the data to, when using 
 	\nabla_{\boldsymbol{\beta}}C^\mathrm{MB} (\boldsymbol{\beta})=2 X^T (X \boldsymbol{\beta} - \boldsymbol{z})/M + 2\lambda\boldsymbol{\beta}
 \end{align}
 
-where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rates, $\eta$, number of epochs, $N_e$, number of minibatches, $N_B$, regularization parameter, $\lambda$ and the momentum parameter $\gamma$.
+where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rates, $\eta$, number of epochs, $N_e$, number of minibatches, $N_B$, regularization parameter, $\lambda$ and the momentum parameter $\gamma$. 
 
-We begin by studying the MSE for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $36$ for the $720$ training data.
+We begin by studying the MSE of the Franke function. For the MSE values we will include the result from both the train and test data in our first simulation only, in order to confirm that overfitting takes place eventually, while focusing on the test MSE in the remining simulation, which is the actual quantity of interest.
+
+The first MSE values we calculate are for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $36$ for the $720$ training data. 
 \sn{skal vi kommentere her at best eta påvirkes av batch size, eller skal det være i diskusjonen?}
 We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.9]$. We expect higher learning rates to produce fluctuating MSE values for different epochs. Based on this we will make an additional plot with $21$ new $\eta$ values for which the MSE looks more stable.
 
-By making some initial parameter choices we simplify our analysis, as studying all the parameters at once are a tedious process. We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. Using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ evenly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. Finally, we study the MSE over $100$ epochs for $20$ evenly spaced values of $\gamma\in[0,\,0.95]$
+By making some initial parameter choices we simplify our analysis, as studying all the parameters at once are a tedious process. We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. Using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ evenly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. We only conisder small $\lambda$ values, since our previous study of the Franke function with linear regression indicated that higher $\lambda$ yielded poor results \cite{project1}. Finally, we study the MSE over $150$ epochs for $15$ evenly spaced values of $\gamma\in[0,\,0.7]$ with a fixed learning rate. 
 \sn{Burde man kanskje lagd tabell med parameterne?}.
 
-After these parameters are studied, we will test an implementation of scaling the learning rate by reducing it from an initial value after each epoch. One possible advantage of this is that convergence is fastinitially, when the errors are large, but as we approach a minima the learning rates are reduced, preventing us from overshooting. The algorithm we use for scaling the learning rate is given in equation \eqref{eq:learning_schedule}, where $t$ denotes the epoch
+After these parameters are studied, we will test an implementation of scaling the learning rate by lowering it for each epoch. One advantage of scaling the learning rate is that we can use a large learning rate initially when the MSE is high and we are far from the minima. As we approach minima the learning rates are diminished and the probability of surpassing minima of the cost function is greatly reduced. The algorithm we implement for scaling the learning rate is given in equation \eqref{eq:learning_schedule}, where $t\in[0,\,N_e]$ denotes the current epoch. 
+
+Our goal is the reach the actual global minima of the cost function, and by choosing a scaling algorithm 
+
 \begin{align} \label{eq:learning_schedule}
 	\eta_t = \eta_0 \cdot \closed{1 - \frac{t}{N_e}}
 \end{align}
+
+$\eta_t$ is thus a strictly decreasing linear function with a final value of $\eta_{N_e}=0$. If our model oscillates around a global minima towards the end of our simulation equation \eqref{eq:learning_schedule} ensures that these oscillations become smaller for each iteration, before dying out completely in the end. One drawback of this algorithm is that we're reliant on our model actually having reached regions near different minima towards the end, as the small learning rates would then prevent us from reaching minima.   
 
 Parameter for learning schedule \sn{TO BE DONE}.
 
@@ -303,7 +310,7 @@ The first thing we will do is to study the evolution of the output layers' MSE f
 
 Having initialized the neural network we are now going to train it. Each training iteration begins by randomly shuffling the data and dividing them into minibatches, just as we did when we performed the SGD analysis. For each minibatch we begin by using the input data to update each layer of the network until we reach the output layer. Then we use the backpropagation algorithm to update the weights and biases at every node. \textbf{ER AVSNITTET OVER UNØDVENDIG?} With no activation function in the output layer, the error of this layer is given by equation \eqref{eq:backprop0} i.e. the derivative of the MSE. Iterating backwards we get the error in the previous layers by using equation \eqref{eq:backprop3}. The weights and biases at each layer are then updated with equations \eqref{eq:update_weights} and \eqref{eq:update_biases} respectively. Doing this for all minibatches we complete one epoch.
 
-For the first simulation we choose $21$ linearly distributed values of $\eta\in[10^{-3},\,0.9]$. We will then repeat this analysis using $21$ new $\eta$ values on an interval where the resulting MSE was low.
+For the first simulation we choose $21$ linearly distributed values of $\eta\in[10^{-3},\,0.9]$, and plot the result MSE from the training data and testing data. We will then repeat this analysis using $21$ new $\eta$ values on an interval where the resulting MSE was low, plotting the test MSE only, as discussed in the previous section.
 
 In addition to the MSE, we also want to plot the $R^2$ score, given in equation \eqref{eq:R2_score}, where $\boldsymbol{z}$ and $\boldsymbol{\tilde{z}}$ is the target and prediction values, respectively.
 \begin{align} \label{eq:R2_score}
@@ -313,10 +320,11 @@ For the $R^2$ score, we will study different $\eta$ values as a function of epoc
 
 We now study regularization parameters. HÅKON OLAV
 
-So far, we have only studied the statistical accuracy of our neural network. As a sanity check we will use the optimal parameters obtained in order to plot the resulting prediction of the neural network, using $\epsilon\sim\mathcal{N}(0,\,0.05)$ just as we did for SGD. Some of the parameters we use may not be ideal when the noise is reduced, but the purpose of this test is simply to see whether our model behaves in a desired way, so reducing the noise makes the comparison easier.
+Without any regularization parameters, we will study the MSE and $R^2$ score of the network when we scale the learning rate by using equation \eqref{eq:learning_schedule}. 
 
 Having only studied different learning rates and regularization parameters of the neural network, we are now ready to test different configurations of the network itself. The first modification we will make is testing the neural network using different activation functions for the hidden layers. 
 
+So far, we have only studied the statistical accuracy of our neural network. As a sanity check we will use the optimal parameters obtained in order to plot the resulting prediction of the neural network, using $\epsilon\sim\mathcal{N}(0,\,0.05)$ just as we did for SGD. Some of the parameters we use may not be ideal when the noise is reduced, but the purpose of this test is simply to see whether our model behaves in a desired way, so reducing the noise makes the comparison easier.
 
 
 
@@ -349,55 +357,47 @@ We plot the MSE of the Franke function using SGD for our training data and test 
 
 In figure \ref{fig:SGD_Franke_epochs_eta_overfit} we see that the test MSE converges faster for increased values of $\eta$ as expected. For $\eta=0.01$ we get an MSE barely below $0.07$ after $N_e=150$, as the gradient steps are too small. When $\eta$ exceeds $0.5$ we get abrubt increments of the test MSE after certain epochs. These learning rates are too high, as a gradient step goes beyond the actual minima. For $\eta=0.9$ this effect is apparent, with large fluctuations of the MSE over certain epochs. We emphasize that the bright red lines present could represent MSE values far above $0.07$.
 
-We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}, where we set the maximum MSE to $0.07$ once again.
+We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}, where we set the maximum MSE to $0.07$ once again. We clearly see how the increased learning rate yields a faster converging result, but at the expense of the MSE stability, which we can see from clear fluctuations for $\eta=0.5$. When our prediction approaches the desired model, the gradients are relatively small, such that high learning rates overshoots potential minima that we're seeking. 
+
+For studying the MSE for different number of minibatches and different momentum parameters, $\gamma$, we will choose $\eta=0.25$. In figure \ref{fig:SGD_Franke_epochs_eta}, we see that $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. Learning rates higher than this appears to be too high, while the ones below it appears to be small enough that minima of the cost function are rarely overshot. $\eta=0.25$ appears therefore to be a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsule both cases at once.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__262224.pdf}
-	\caption{SGD}
+	\caption{SGD MSE eta}
 	\label{fig:SGD_Franke_epochs_eta}
 \end{figure}
 
-% KOMMENTER PLOTTET OVER
-
-The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. The figure shows the MSE for the train and test data in the left and right panel, respectively. We use $MSE_\mathrm{max}=0.07$ once again.
+The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. The figure shows the MSE for the train and test data in the left and right panel, respectively. We use $\mathrm{MSE}_\mathrm{max}=0.07$ once again. \sn{Burde vi fjerne train MSE?}
 
 \begin{figure}[h!]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Train_MSE__136234.pdf}
-	\endminipage
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Test_MSE__440533.pdf}
-	\endminipage
-	\caption{SGD}
+	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Test_MSE__440533.pdf}
+	\caption{SGD MSE minibatches}
 	\label{fig:SGD_Franke_epochs_minibatches}
 \end{figure}
 
+Figure \ref{fig:SGD_Franke_epochs_minibatches} shows an expected behaviour of the MSE. By not using enough minibatches we are unable to get an MSE below $0.06$ after $N_e=150$, which is most likely due to the fact that we're stuck in local minima and not the global ones. When we use $N_B=30$ we get a quickly converging MSE with a low minimum value, but there appears to some fluctuations \sn{hvorfor? Er usikker på dette}.  
 
-We plot the MSE for train and test with different regularization parameters, shown in the left and right panel of figure \ref{fig:SGD_Franke_lambda_eta}
+We plot the test MSE after $N_e=150$ with different regularization parameters, shown in the left and right panel of figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit, as we are interested in the general impact of the $\lambda$ values, and not seeking nuances of the lowest values as before. From figure \ref{fig:SGD_Franke_lambda_eta} we get a result coinciding with the ones obtained from previous linear regression study, where optimal fitting appears to be achieved as $\lambda\to0$, essentially telling us that it it redundant when fitting the Franke function.  
 
 \begin{figure}[h!]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Train_MSE__866968.pdf}
-	\endminipage
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Test_MSE__764274.pdf}
-	\endminipage
-	\caption{SGD}
+	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Test_MSE__764274.pdf}
+	\caption{SGD lambda}
 	\label{fig:SGD_Franke_lambda_eta}
 \end{figure}
 
 
-Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE for train and test data for different momentum parameters as a function of epochs.
+Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the test data with different momentum parameters as a function of $N_e\in[0,\,150]$. For this plot we have chosen an upper limit of $0.06$ for the MSE, 
 
 \begin{figure}[h!]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Train_MSE__623867.pdf}
-	\endminipage
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Test_MSE__597266.pdf}
-	\endminipage
+	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Test_MSE__239373.pdf}
 	\caption{SGD}
 	\label{fig:SGD_Franke_epochs_gamma}
+\end{figure}
+
+\begin{figure}[h!]
+	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_dynamic_eta__Test_MSE__676588.pdf}
+	\caption{SGD}
+	\label{fig:SGD_Franke_epochs_dynamic_eta}
 \end{figure}
 
 
@@ -437,6 +437,17 @@ We plot
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__190748.pdf}
 	\caption{NN}
 	\label{fig:NN_Franke_epochs_eta_R2_limited}
+\end{figure}
+
+\begin{figure}[h!]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_dynamic_eta__test_MSE__489375.pdf}
+	\endminipage
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_dynamic_eta__test_R2__289368.pdf}
+	\endminipage
+	\caption{NN}
+	\label{fig:NN_Franke_epochs_dynamic_eta}
 \end{figure}
 
 \begin{figure}[h!]
