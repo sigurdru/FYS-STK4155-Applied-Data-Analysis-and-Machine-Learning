@@ -279,8 +279,6 @@ The optimal value for a given parameter might not be the optimal using different
 
 We begin by studying the MSE of the Franke function. For the MSE values we will include the result from both the train and test data in our first simulation only, in order to confirm that overfitting takes place eventually, while focusing on the test MSE in all the remining simulation, which is the actual quantity of interest. The MSE is studied for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $M=36$ for the $720$ points in the training dataset. We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.9]$.
 
-% We expect higher learning rates to produce fluctuating MSE values for different epochs, because the update of the parameters will be quite large. Because of this we will make an additional plot with $21$ new, lower $\eta$ values for which the MSE fluctuates less.
-
 We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. The values of $M$ are chosen such that $N_B$ becomes integers. This does not have to be the case, but will make the results more consistent. Next, using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ linearly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. We only conisder small $\lambda$ values, since our previous study of the Franke function with linear regression indicated that higher $\lambda$ yielded poor results \cite{project1}. Finally, we study the MSE over $150$ epochs for $15$ evenly spaced values of $\gamma\in[0,\,0.7]$ with a fixed learning rate.
 \sn{Burde man kanskje lagd tabell med parameterne?}.
 
@@ -291,8 +289,6 @@ We expect the results to be very dependent on the choice of lerning rate $\eta$.
 It will decrease lineraly from $\eta_0$, to $\eta_{N_e}=0$ at the last epoch.  We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $\eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
 \sn{Dette burde kanskje stå i duskisjon}
 
-
-$\eta_t$ is thus a strictly decreasing linear function with a final value of $\eta_{N_e}=0$. If our model oscillates around a global minima towards the end of our simulation equation \eqref{eq:learning_schedule} ensures that these oscillations become smaller for each iteration, before dying out completely in the end. One drawback of this algorithm is that we're reliant on our model actually having reached regions near different minima towards the end, as the small learning rates would then prevent us from reaching minima.
 
 Parameter for learning schedule \sn{TO BE DONE}.
 
@@ -351,7 +347,7 @@ We plot the MSE of the Franke function using SGD for our training data and test 
 	\minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__overfit_395885.pdf}
 	\endminipage
-	\caption{SGD}
+	\caption{Initial MSE of the train and test data as a function of epochs for different learning rates $\eta$. A maximum MSE value of $0.07$ is set, so dark red regions may correspond to significantly higher MSE than it appears to.}
 	\label{fig:SGD_Franke_epochs_eta_overfit}
 \end{figure}
 
@@ -363,7 +359,7 @@ For studying the MSE for different number of minibatches and different momentum 
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__262224.pdf}
-	\caption{SGD MSE eta}
+	\caption{Test MSE for different $\eta$ values. $\eta<0.25$ gives a relatively slowly converging MSE, while $\eta>0.25$ gives fluctuating MSE values. Maximum MSE$=0.07$ is chosen.}
 	\label{fig:SGD_Franke_epochs_eta}
 \end{figure}
 
@@ -371,7 +367,7 @@ The MSE as a function of epochs for different number of minibatches is shown in 
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Test_MSE__440533.pdf}
-	\caption{SGD MSE minibatches}
+	\caption{Test MSE for different number of minibatches. The bottom line corresponds to no minibatches overall, and clearly gives the worst result. The heatmap is produced with $\mathrm{MSE}_\mathrm{max}=0.07$.}
 	\label{fig:SGD_Franke_epochs_minibatches}
 \end{figure}
 
@@ -381,24 +377,26 @@ We plot the test MSE after $N_e=150$ with different regularization parameters, s
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Test_MSE__764274.pdf}
-	\caption{SGD lambda}
+	\caption{MSE for different values $\lambda$, corresponding to Ridge regression, for different $\eta$ values.}
 	\label{fig:SGD_Franke_lambda_eta}
 \end{figure}
 
 
-Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the test data with different momentum parameters as a function of $N_e\in[0,\,150]$. For this plot we have chosen an upper limit of $0.06$ for the MSE,
+Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the test data with different momentum parameters as a function of $N_e\in[0,\,150]$. We see that increasing $\gamma$ values causes the MSE to drop faster, particularly in the beginning when the gradients are steep, which is expected. We also notice that $\gamma\gtrsim0.35$ results in fluctuations of the MSE, especially evident for $\gamma=0.7$, where it appears that step sizes taken following large gradient values are too big. It appears that $\gamma=0.2$ is the optimal value for this particular test, as it is small enough to avoid overshooting minima for high gradients, while still increasing the convergence rate. However, the overall impact is not very large. 
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Test_MSE__239373.pdf}
-	\caption{SGD}
+	\caption{MSE evolution for different momentum parameters, using $\mathrm{MSE}_\mathrm{max}=0.07$, as before. The bottom line corresponds to no momentum.}
 	\label{fig:SGD_Franke_epochs_gamma}
 \end{figure}
 
-\begin{figure}[h!]  % kommentert ut pga manglende fil. 
-	% \includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_dynamic_eta__Test_MSE__676588.pdf}
-	\includegraphics[width=0.9\linewidth]{404.png}
-	\caption{SGD}
-	\label{fig:SGD_Franke_epochs_dynamic_eta} 
+
+The MSE calculated with dynamic $\eta$ is shown in figure \ref{fig:SGD_Franke_epochs_dynamic_eta}, using $\eta_0\in[0.1,\,0.9]$. We include the $\eta$ values previously found to be too high, in order to see whether the scaling algorithm is suitbale for these initial values as well, while omitting values of $\eta<0.1$. The figure gives us the expected result that high initial values of $\eta$ no longer causes abrupt variations of the MSE towards the end of the simulation, as $\eta\to0$ as $N_e\to150$. Equation \eqref{eq:learning_schedule} appears to be a very good choice for scaling the learning rate when doing SGD, since all values of $\eta_0>0.5$ gives decent results after $150$ epochs. These solutions converge quickly in the beginning, and as the learning rate drops we get very stable evolutions of the MSE, with no apparent variations of the MSE takeing place. It appears however that the learning rates become so small towards the end that there is little evolution of the MSE after $120$ epochs, meaning that we might not actually have reached an optimal MSE score if the small learning rates near the end have effectively halted convergence. Another drawback of our method is that we seem to get more or less identical MSE values in the end for $\eta_0>0.5$. It appears therefore, that our model is less sensitive to our initial choice of learning rates. The advantage of this is that we're not dependent on very specific initial conditions for our model to perform well. If however, the final result is inadequate, adjusting the initial learning rate will no longer have a desired impact.        
+
+\begin{figure}[h!]
+	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_dynamic_eta__Test_MSE__792536.pdf}
+	\caption{Evolution of the MSE for different values of $\eta_0$, all of them decreasing linearly to a final value of $\eta=0$ after $150$ epochs.}
+	\label{fig:SGD_Franke_epochs_dynamic_eta}
 \end{figure}
 
 
