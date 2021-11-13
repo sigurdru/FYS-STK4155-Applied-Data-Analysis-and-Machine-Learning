@@ -193,7 +193,7 @@ def linear_regression(args):
         plot.parameter_based(data, args)
 
     else:
-        gammas = np.linspace(0, 0.95, 20)
+        gammas = np.linspace(0, 0.70, 15)
         args.gamma = gammas
         data = defaultdict(lambda: np.zeros((len(gammas), args.num_epochs)))
 
