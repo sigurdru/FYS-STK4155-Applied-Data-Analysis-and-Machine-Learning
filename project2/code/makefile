@@ -16,4 +16,4 @@ exercise_c:
 	python3 main.py -d Franke -p 1 -eta 'np.linspace(0.001,0.15,21)' -Ne 250 -act_func leaky_relu -history -push
 Logistic_regression:
 	py main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -0.5, 11)' -Ne 200
- 	py main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -1, 11)' -l 'np.logspace(-5, -3, 11)' -Ne 200
+	py main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -1, 11)' -l 'np.logspace(-5, -3, 11)' -Ne 200
