@@ -362,16 +362,29 @@ def eta_lambda(data, args, NN=False):
         func["z"] = name.split()[1]
 
         fig, ax = plt.subplots()
-        col = np.round(args.lmb, 4)
-        row = np.round(args.eta, 4)
+        col = np.log10(args.lmb)
+        row = np.log10(args.eta)
         data = pd.DataFrame(accuracy, index=row, columns=col)
-        sns.heatmap(data, ax=ax, annot=True, cmap=cm.coolwarm)
+        ax = sns.heatmap(data, 
+                        ax=ax, 
+                        annot=True, 
+                        cmap=cm.coolwarm)
         if NN:
-            ax.set_title(name + f" gridsearch, using {args.act_func.replace('_', ' ')} activation function on {args.dataset}-data")
+            title = name + f" gridsearch, using {args.act_func.replace('_', ' ')} activation function on {args.dataset}-data"
         else:
-            ax.set_title(name + f"as function of learning rate and lambda for {args.dataset}-data")
-        ax.set_ylabel(r"$\eta$")
-        ax.set_xlabel(r"$\lambda$")
+            title = name + " as function of " + r"$\eta$ and $\lambda$" + f"for {args.dataset}-data"
+        
+        ax.set_title(title, fontsize=18)
+        
+        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=12)
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=0, fontsize=12)
+        ax.invert_xaxis()
+        ax.set_ylabel(r"$\log_{10}(\eta)$", fontsize=15)
+        ax.set_xlabel(r"$\log_{10}(\lambda)$", fontsize=15)
+
+        cbar = ax.collections[0].colorbar
+        cbar.ax.tick_params(labelsize=13)
+
         show_push_save(fig, func, args)
 
 def eta_epochs(data, args, vmax=None, vmin=None):
