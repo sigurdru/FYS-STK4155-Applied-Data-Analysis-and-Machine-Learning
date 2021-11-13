@@ -140,16 +140,25 @@ def parameter_based(data, args):
             cols = np.arange(args.num_epochs)
             idx = np.round(args.eta, 3)
             data = pd.DataFrame(accuracy[:,0,0,:], index=idx, columns=cols[:])
-            ylabel = r"Learning rate $\eta$"
-            xlabel = "Number of epochs"
+            
             title = name + " for Franke function\n" + "using 20 minibatches"
+            xlabel = "Number of epochs"
+            
+            if args.dynamic_eta:
+                ylabel = r"Initial learning rate $\eta_0$"
+                title += r" and dynamic $\eta$"
+                func["y"] = "dynamic_eta"
+            
+            else:
+                ylabel = r"Learning rate $\eta$"
+                func["y"] = "eta"
+
             xtick = len(cols)//10
             xrot=0
 
             vmax = 0.07
 
             func["x"] = "epochs"
-            func["y"] = "eta"
             func["z"] = "MSE"
 
         if len(args.lmb) == 1 and len(args.eta) == 1:
