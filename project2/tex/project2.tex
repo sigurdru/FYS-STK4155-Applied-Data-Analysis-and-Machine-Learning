@@ -288,7 +288,7 @@ We expect the results to be very dependent on the choice of lerning rate $\eta$.
 \begin{align} \label{eq:learning_schedule}
 	\eta_t = \eta_0 \cdot \closed{1 - \frac{t}{N_e}}
 \end{align}
-It will decrease lineraly from $\eta_0$, to $\eta_{N_e}=0$ at the last epoch.  We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
+It will decrease lineraly from $\eta_0$, to $\eta_{N_e}=0$ at the last epoch.  We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $\eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
 \sn{Dette burde kanskje stå i duskisjon}
 
 
@@ -394,10 +394,11 @@ Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the 
 	\label{fig:SGD_Franke_epochs_gamma}
 \end{figure}
 
-\begin{figure}[h!]
-	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_dynamic_eta__Test_MSE__676588.pdf}
+\begin{figure}[h!]  % kommentert ut pga manglende fil. 
+	% \includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_dynamic_eta__Test_MSE__676588.pdf}
+	\includegraphics[width=0.9\linewidth]{404.png}
 	\caption{SGD}
-	\label{fig:SGD_Franke_epochs_dynamic_eta}
+	\label{fig:SGD_Franke_epochs_dynamic_eta} 
 \end{figure}
 
 
