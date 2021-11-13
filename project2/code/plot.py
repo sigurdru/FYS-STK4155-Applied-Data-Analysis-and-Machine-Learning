@@ -363,7 +363,7 @@ def plot_logistic_regression_epochs(data, args):
         cbar.ax.tick_params(labelsize=13)
         show_push_save(fig, func, args)
 
-def eta_lambda(data, args, NN=False):
+def eta_lambda(data, args, NN=False, vmax=None):
     """
     Plots MSE or accuracy as heatmap for different etas and lambdas
     """
@@ -384,7 +384,7 @@ def eta_lambda(data, args, NN=False):
         data = pd.DataFrame(accuracy, index=row, columns=col)
         ax = sns.heatmap(data, 
                         ax=ax, 
-                        vmax=0.1,
+                        vmax=vmax,
                         annot=True, 
                         cmap=cm.coolwarm)
         if NN:
