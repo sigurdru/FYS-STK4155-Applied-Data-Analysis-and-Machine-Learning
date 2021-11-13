@@ -25,6 +25,35 @@
 }
 \maketitle
 \pagestyle{myplain}
+
+% TODO!!
+
+% Rapport:
+% SGD: Franke
+% må bestemme beste parametere, regne ut mse for de og lage sufrace plot
+
+% NN: Franke
+% skrive metode
+% sjekke at plottene i resultat stemmer
+% beskrive plottene i resultat
+% Regne den beste MSE-verdien
+% Lage surface plot?
+
+% NN: Cancer
+% alt. Metode og resultat
+% (figurene er laget)
+
+% Logreg: Cancer
+% Faktisk alt. Metode og resultat
+
+% Annet:
+% Diskusjon
+% Andre, uavhengige analyser vi har gjort? (simple.py, MNIST)
+
+% Kode:
+% Rydde litt opp, og skrive README
+% Skal ellers være helt ok
+
 \section{Introduction}
 In the modern world, digital data has become one of the most valuable commodities there is. Not because of scarcity, like most other valuables, but rather the exact opposite; the vast abundance of data available makes being able to understand trends and patterns in it extremely valuable for companies looking for profit. However, data is complex, having many features, and understanding how one affect another is impossible with purely human analysis. Luckily, there exists statistical methods that let us find the deeper connections, make models and even predict outcomes. In this paper we wish to study some stochastic methods, and look at their limitations and strengths.
 
@@ -273,7 +302,7 @@ As in \cite{project1}, we have to choose a model to fit the data to, when using 
 	\nabla_{\boldsymbol{\beta}}C^\mathrm{MB} (\boldsymbol{\beta})=2 X^T (X \boldsymbol{\beta} - \boldsymbol{z})/M + 2\lambda\boldsymbol{\beta}
 \end{align}
 
-where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rate, $\eta$, number of epochs, $N_e$, number of minibatches, $N_B$, regularization parameter, $\lambda$ and the momentum parameter $\gamma$. This gives us a 5-dimensional hyperparameter space, and we would ideally optimize each parameter to get the lowest possible MSE. This could be done by gridsearch, where we test a range of values for every parameter. Testing 10 values for each will mean that we have to run the algorithm $10^5$ times, which is extremely slow. We will therefore simplify our search, only doing gridsearch over 1 or 2 of the parameters at a time, keeping the rest constant.
+where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rate, $\eta$, number of epochs, $N_e$, number of minibatches, $N_B$, regularization parameter, $\lambda$ and the momentum parameter $\gamma$. This gives us a 5-dimensional hyperparameter space, and we would ideally optimize each parameter to get the lowest possible MSE. This could be done by gridsearch, where we test a range of values for every parameter. Testing 10 values for each will mean that we have to run the algorithm $10^5$ times, which is extremely slow. We will therefore simplify our search, only doing gridsearch over 1 or 2 of the parameters at a time, keeping the rest constant. We then study how each parameter affects the results, independently of the other parameters.
 
 The optimal value for a given parameter might not be the optimal using different values of the other parameters. This method is then not guaranteed to optimize the entire parameter space. However, we can assume it will be a good approximation, and will save a great deal of time. Further, it is not too valuable to find the absolutely optimal parameters in our hyperparameter space, because there are many more parameters we will not controll for, like the noise in the data or polynomial degree of our model.
 
@@ -288,11 +317,10 @@ We expect the results to be very dependent on the choice of lerning rate $\eta$.
 \end{align}
 It will decrease lineraly from $\eta_0$, to $\eta_{N_e}=0$ at the last epoch.  We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $\eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
 \sn{Dette burde kanskje stå i duskisjon}
+Using \eqref{eq:learning_schedule}, we remake the first figure, to study the effects of changing $\eta$ during training.
 
-
-Parameter for learning schedule \sn{TO BE DONE}.
-
-After the SGD has been studied and appropriate parameters have been estimated, we will plot the resulting fit of the gradient descent and compare it to the Franke function as an indication of the result. Although the fit was performed on a data set with noise $\epsilon\sim\mathcal{N}(0,\,0.2)$ we will use $\epsilon\sim\mathcal{N}(0,\,0.05)$ when plotting the prediction in order to see the details of the surface more clearly.
+After the SGD has been studied and appropriate parameters have been estimated, we will plot the resulting fit of the gradient descent using the optimal parameters found, and compare it to the Franke function as an indication of the result. This is a sanity check to ensure that the model actually makes sense. Although the fit was performed on a data set with noise $\epsilon\sim\mathcal{N}(0,\,0.2)$ we will use $\epsilon\sim\mathcal{N}(0,\,0.05)$ when plotting the prediction in order to see the details of the surface more clearly.
+\sn{MÅ GJØRES!}
 
 
 \subsubsection{Feed Forward Neural Network}
@@ -353,9 +381,10 @@ We plot the MSE of the Franke function using SGD for our training data and test 
 
 In figure \ref{fig:SGD_Franke_epochs_eta_overfit} we see that the test MSE converges faster for increased values of $\eta$ as expected. For $\eta=0.01$ we get an MSE barely below $0.07$ after $N_e=150$, as the gradient steps are too small. When $\eta$ exceeds $0.5$ we get abrubt increments of the test MSE after certain epochs. These learning rates are too high, as a gradient step goes beyond the actual minima. For $\eta=0.9$ this effect is apparent, with large fluctuations of the MSE over certain epochs. We emphasize that the bright red lines present could represent MSE values far above $0.07$.
 
-We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}, where we set the maximum MSE to $0.07$ once again. We clearly see how the increased learning rate yields a faster converging result, but at the expense of the MSE stability, which we can see from clear fluctuations for $\eta=0.5$. When our prediction approaches the desired model, the gradients are relatively small, such that high learning rates overshoots potential minima that we're seeking.
+We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}, where we set the maximum MSE to $0.07$ once again. We clearly see how the increased learning rate yields a faster converging result, but at the expense of the MSE stability, which we can see from clear fluctuations for $\eta=0.5$. When our prediction approaches the desired model, the gradients are relatively small, such that high learning rates potentially overshoots minima.
 
 For studying the MSE for different number of minibatches and different momentum parameters, $\gamma$, we will choose $\eta=0.25$. In figure \ref{fig:SGD_Franke_epochs_eta}, we see that $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. Learning rates higher than this appears to be too high, while the ones below it appears to be small enough that minima of the cost function are rarely overshot. $\eta=0.25$ appears therefore to be a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsule both cases at once.
+\textit{Kanskje skrive at flere etaer gir gode resultat, og at vi velger 0.25 fordi vi er mer interessert i å se på hvordan andre parametere påvirker resultat uavhengig, og at 0.25 derfor er et ok valg? Jeg (HO) synes ikke det er serlig klart at høyere eta er for ustabile. Er kanskje en endre grense, men absolut ikke en øvre.}
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__262224.pdf}
@@ -363,7 +392,9 @@ For studying the MSE for different number of minibatches and different momentum 
 	\label{fig:SGD_Franke_epochs_eta}
 \end{figure}
 
-The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. The figure shows the MSE for the train and test data in the left and right panel, respectively. We use $\mathrm{MSE}_\mathrm{max}=0.07$ once again. \sn{Burde vi fjerne train MSE?}
+The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. We use $\mathrm{MSE}_\mathrm{max}=0.07$ once again.
+Figure \ref{fig:SGD_Franke_epochs_minibatches} shows an expected behaviour of the MSE. By not using enough minibatches we are unable to get an MSE below $0.06$ after $N_e=150$, which is most likely due to model being stuck in a local minimum substantially worse than the global one, unable to get out. When we use $N_B=30$ we get a quickly converging MSE with a low minimum value, but there appears to some fluctuations. Because of the small batch size, the batches are more prone to consist of points not giving a good approximation of the gradient of the whole dataset.
+\sn{igjen, variasjonene er ikke så store}
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Test_MSE__440533.pdf}
@@ -371,9 +402,10 @@ The MSE as a function of epochs for different number of minibatches is shown in 
 	\label{fig:SGD_Franke_epochs_minibatches}
 \end{figure}
 
-Figure \ref{fig:SGD_Franke_epochs_minibatches} shows an expected behaviour of the MSE. By not using enough minibatches we are unable to get an MSE below $0.06$ after $N_e=150$, which is most likely due to the fact that we're stuck in local minima and not the global ones. When we use $N_B=30$ we get a quickly converging MSE with a low minimum value, but there appears to some fluctuations \sn{hvorfor? Er usikker på dette}.
 
-We plot the test MSE after $N_e=150$ with different regularization parameters, shown in the left and right panel of figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit, as we are interested in the general impact of the $\lambda$ values, and not seeking nuances of the lowest values as before. From figure \ref{fig:SGD_Franke_lambda_eta} we get a result coinciding with the ones obtained from previous linear regression study, where optimal fitting appears to be achieved as $\lambda\to0$, essentially telling us that it it redundant when fitting the Franke function.
+We plot the test MSE after $N_e=150$ epochs with different regularization parameters, shown in figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit on the shown MSE, as we are interested in the general impact of the $\lambda$ values, and not seeking nuances of the lowest values as before.
+We see in the figure that the results are not very affected by the choice of $\eta$. This is because we only see the last MSE of the training. However, the MSE is lowest for small values of $\lambda$, increasing quickly for higher values. This is similar to what we saw in \cite{project1}, though then we observed a small dip in the MSE for $\log10(\lambda)=-2.07$ for certain polynomial degrees.
+
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Test_MSE__764274.pdf}
@@ -382,7 +414,7 @@ We plot the test MSE after $N_e=150$ with different regularization parameters, s
 \end{figure}
 
 
-Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the test data with different momentum parameters as a function of $N_e\in[0,\,150]$. We see that increasing $\gamma$ values causes the MSE to drop faster, particularly in the beginning when the gradients are steep, which is expected. We also notice that $\gamma\gtrsim0.35$ results in fluctuations of the MSE, especially evident for $\gamma=0.7$, where it appears that step sizes taken following large gradient values are too big. It appears that $\gamma=0.2$ is the optimal value for this particular test, as it is small enough to avoid overshooting minima for high gradients, while still increasing the convergence rate. However, the overall impact is not very large. 
+Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the test data with different momentum parameters as a function of $N_e\in[0,\,150]$. We see that increasing $\gamma$ values causes the MSE to drop faster, particularly in the beginning when the gradients are steep, which is expected. We also notice that $\gamma\gtrsim0.35$ results in fluctuations of the MSE, especially evident for $\gamma=0.7$, where it appears that step sizes taken following large gradient values are too big. It appears that $\gamma=0.2$ is the optimal value for this particular test, as it is small enough to avoid overshooting minima for high gradients, while still increasing the convergence rate. However, the overall impact is not very significant.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Test_MSE__239373.pdf}
@@ -391,7 +423,7 @@ Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the 
 \end{figure}
 
 
-The MSE calculated with dynamic $\eta$ is shown in figure \ref{fig:SGD_Franke_epochs_dynamic_eta}, using $\eta_0\in[0.1,\,0.9]$. We include the $\eta$ values previously found to be too high, in order to see whether the scaling algorithm is suitbale for these initial values as well, while omitting values of $\eta<0.1$. The figure gives us the expected result that high initial values of $\eta$ no longer causes abrupt variations of the MSE towards the end of the simulation, as $\eta\to0$ as $N_e\to150$. Equation \eqref{eq:learning_schedule} appears to be a very good choice for scaling the learning rate when doing SGD, since all values of $\eta_0>0.5$ gives decent results after $150$ epochs. These solutions converge quickly in the beginning, and as the learning rate drops we get very stable evolutions of the MSE, with no apparent variations of the MSE takeing place. It appears however that the learning rates become so small towards the end that there is little evolution of the MSE after $120$ epochs, meaning that we might not actually have reached an optimal MSE score if the small learning rates near the end have effectively halted convergence. Another drawback of our method is that we seem to get more or less identical MSE values in the end for $\eta_0>0.5$. It appears therefore, that our model is less sensitive to our initial choice of learning rates. The advantage of this is that we're not dependent on very specific initial conditions for our model to perform well. If however, the final result is inadequate, adjusting the initial learning rate will no longer have a desired impact.        
+The MSE calculated with dynamic $\eta$ is shown in figure \ref{fig:SGD_Franke_epochs_dynamic_eta}, using $\eta_0\in[0.1,\,0.9]$. We include the $\eta$ values previously found to be too high, in order to see whether the scheduled learning gives better results here, while omitting values of $\eta<0.1$. The figure gives us the expected result that high initial values of $\eta$ no longer causes abrupt variations of the MSE towards the end of the simulation, as $\eta\to0$ and $N_e\to150$. Equation \eqref{eq:learning_schedule} appears to be a very good choice for scaling the learning rate when doing SGD, since all values of $\eta_0>0.5$ gives decent results after $150$ epochs. These solutions converge quickly in the beginning, and as the learning rate drops we get very stable evolutions of the MSE, with no apparent instability in MSE. It appears however that the learning rates become so small towards the end that there is little evolution of the MSE after $120$ epochs, meaning that we might not actually have reached an optimal MSE score if the small learning rates near the end have effectively halted convergence. Further, the dynamic learning schedule gives more or less identical MSE values in the end for $\eta_0>0.5$. The advantage of this is that our model is less dependant on very specific parameter choices for $\eta$. If however, the final result is inadequate, adjusting the initial learning rate will no longer have a desired impact. More training epochs is then required to get optimal results.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_dynamic_eta__Test_MSE__792536.pdf}
