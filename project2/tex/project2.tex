@@ -130,8 +130,8 @@ where $x_i$ are the values of neuron $i$ in the input layer, $w_i$ are the weigh
 \subsubsection{Activation Functions}
 The activation functions are where the non-linearity of the neural nets comes in, because they are non-linear. Now there are many such functions, in our project we have implemented the 3 displayed in figure \ref{fig:activation_functions}. The exact functions are as follows
 \begin{align}
-	\text{Sigmoid: }\sigma(x)    & = \frac{1}{1 + e^{-x}},\label{eq:sigmoid}           \\
-	\text{RELU: }\sigma(x)       & = \max(0,x), \label{eq:RELU}                        \\
+	\text{Sigmoid: }\sigma(x)    & = \frac{1}{1 + e^{-x}},\label{eq:sigmoid}          \\
+	\text{RELU: }\sigma(x)       & = \max(0,x), \label{eq:RELU}                       \\
 	\text{Leaky RELU: }\sigma(x) & = \begin{cases}
 		\alpha x, & \text{if } x\leq 0 \\
 		x,        & \text{otherwise}.
@@ -264,7 +264,7 @@ We will use both stochastic gradient decent and feed forward neural network to t
 Next we will embark on an classification problem. Namely classifying if breast tissue is malignant or benign, by studying the data provided by Wisconsin breast cancer data\footnote{\href{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}}. We will again use a feed forward neural network, and logistic regression. The latter is covered in the theory section \ref{sec:logistic_regression}.
 
 \subsection{Franke Function}
-In \cite{project1}, we already studied the Franke function using linear regression, specifically OLS and OLS with an L2 and L1 parameter $\lambda$, so-called Ridge and Lasso regression. The results from these methods will form the basis for comparing our results using SGD and neural networks. The rapport, along with the code can be found at our GitHub\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}. In order to have comparable results, we will use the same parameters for the data. Only the methods will be different. In that project we initialized the data with $N=30\times30$ uniformly distributed datapoints in $x$- and $y$-direction. To simulate it being real data, we also added normally distributed noise with mean zero and standard deviation $0.2$: $\epsilon \sim \mathcal{N}(0,0.2)$. We also split the input and target data in the same way as before, using $80\,\%$ of the data for training and $20\,\%$ of the data for testing. The two splitted data sets are then scaled by subtracting the mean of the relevant training data.
+In \cite{project1}, we already studied the Franke function using linear regression, specifically OLS and OLS with an L2 and L1 parameter $\lambda$, so-called Ridge and Lasso regression. The results from these methods will form the basis for comparing our results using SGD and neural networks. The rapport, along with the code can be found at our GitHub\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}. In order to have comparable results, we will use the same parameters for the data. Only the methods will be different. In that project we generated the data using $N=30\times30$ uniformly distributed datapoints in $x$- and $y$-direction, respectively. To simulate it being real data, we also added normally distributed noise with mean zero and standard deviation $0.2$: $\epsilon \sim \mathcal{N}(0,0.2)$. We also split the input and target data in the same way as before, using $80\,\%$ of the data for training and $20\,\%$ of the data for testing. The two splitted data sets are then scaled by subtracting the mean of the relevant training data.
 
 \subsubsection{Stochastic Gradient Descent}
 As in \cite{project1}, we have to choose a model to fit the data to, when using SGD. The simplest is a bi-variate polynomial of degree $P$, such that our model will have $p$ features. This is the design matrix $X$ used in the previous project. Having obtained good results for OLS using $P = 6$, we use the same polynomial degree for SGD. Writing our own code for implementing SGD, we will analyze the results with the MSE (equation \eqref{eq:MSE}) as our cost function for various parameters. We include the $L_2$ regularization term, equation \eqref{eq:L2}, in the gradient of the cost function, which gives the gradient corresponding to Ridge regression. The expression for the stochastic gradient is given in equation \eqref{eq:SGD_gradient}
@@ -273,23 +273,27 @@ As in \cite{project1}, we have to choose a model to fit the data to, when using 
 	\nabla_{\boldsymbol{\beta}}C^\mathrm{MB} (\boldsymbol{\beta})=2 X^T (X \boldsymbol{\beta} - \boldsymbol{z})/M + 2\lambda\boldsymbol{\beta}
 \end{align}
 
-where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rates, $\eta$, number of epochs, $N_e$, number of minibatches, $N_B$, regularization parameter, $\lambda$ and the momentum parameter $\gamma$.
+where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rate, $\eta$, number of epochs, $N_e$, number of minibatches, $N_B$, regularization parameter, $\lambda$ and the momentum parameter $\gamma$. This gives us a 5-dimensional hyperparameter space, and we would ideally optimize each parameter to get the lowest possible MSE. This could be done by gridsearch, where we test a range of values for every parameter. Testing 10 values for each will mean that we have to run the algorithm $10^5$ times, which is extremely slow. We will therefore simplify our search, only doing gridsearch over 1 or 2 of the parameters at a time, keeping the rest constant.
 
-We begin by studying the MSE for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $36$ for the $720$ training data.
-\sn{skal vi kommentere her at best eta påvirkes av batch size, eller skal det være i diskusjonen?}
-We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.9]$. We expect higher learning rates to produce fluctuating MSE values for different epochs. Based on this we will make an additional plot with $21$ new $\eta$ values for which the MSE looks more stable.
+The optimal value for a given parameter might not be the optimal using different values of the other parameters. This method is then not guaranteed to optimize the entire parameter space. However, we can assume it will be a good approximation, and will save a great deal of time. Further, it is not too valuable to find the absolutely optimal parameters in our hyperparameter space, because there are many more parameters we will not controll for, like the noise in the data or polynomial degree of our model.
 
-By making some initial parameter choices we simplify our analysis, as studying all the parameters at once are a tedious process. We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. Using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ evenly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. Finally, we study the MSE over $100$ epochs for $20$ evenly spaced values of $\gamma\in[0,\,0.95]$
+We begin by studying the MSE for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $M=36$ for the $720$ points in the training dataset.
+We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.9]$. We expect higher learning rates to produce fluctuating MSE values for different epochs, because the update of the parameters will be quite large. Because of this we will make an additional plot with $21$ new, lower $\eta$ values for which the MSE fluctuates less.
+
+We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. Using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ linearly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ logarthimcally distributed values of $\lambda\in[10^{-5},\,1]$. Finally, we study the MSE over $100$ epochs for $20$ evenly spaced values of $\gamma\in[0,\,0.95]$
 \sn{Burde man kanskje lagd tabell med parameterne?}.
 
-After these parameters are studied, we will test an implementation of scaling the learning rate by reducing it from an initial value after each epoch. One possible advantage of this is that convergence is fastinitially, when the errors are large, but as we approach a minima the learning rates are reduced, preventing us from overshooting. The algorithm we use for scaling the learning rate is given in equation \eqref{eq:learning_schedule}, where $t$ denotes the epoch
+We expect the results to be very dependent on the choice of lerning rate $\eta$. It is important to not choose too low, such that we actually train, and not too high, such that we can not reach a minimum. A way of balancing this is using a dynamic learning rate, which starts high, such that the model gets better quick in the beginning, and then decreases as function of epoch, preventing the model from overshooting and circle around the minimum in $\bbeta$-space. We choose the following function for dynamic learning rate, where $t$ denotes the current epoch.
 \begin{align} \label{eq:learning_schedule}
 	\eta_t = \eta_0 \cdot \closed{1 - \frac{t}{N_e}}
 \end{align}
+It will decrease lineraly from $\eta_0$, to $\eta_{N_e}=0$ at the last epoch.  We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
+\sn{Dette burde kanskje stå i duskisjon}
+
 
 Parameter for learning schedule \sn{TO BE DONE}.
 
-After the SGD has been studied and appropriate parameters have been estimated, we will plot the resulting fit of the gradient descent and compare it to the Franke function as an indication of the result. Although the fit was performed on a data set with noise $\epsilon\sim\mathcal{N}(0,\,0.2)$ we will use $\epsilon\sim\mathcal{N}(0,\,0.05)$ when plotting the prediction in order to see the details of the plot more clearly.
+After the SGD has been studied and appropriate parameters have been estimated, we will plot the resulting fit of the gradient descent and compare it to the Franke function as an indication of the result. Although the fit was performed on a data set with noise $\epsilon\sim\mathcal{N}(0,\,0.2)$ we will use $\epsilon\sim\mathcal{N}(0,\,0.05)$ when plotting the prediction in order to see the details of the surface more clearly.
 
 
 \subsubsection{Feed Forward Neural Network}
@@ -307,7 +311,7 @@ For the first simulation we choose $21$ linearly distributed values of $\eta\in[
 
 In addition to the MSE, we also want to plot the $R^2$ score, given in equation \eqref{eq:R2_score}, where $\boldsymbol{z}$ and $\boldsymbol{\tilde{z}}$ is the target and prediction values, respectively.
 \begin{align} \label{eq:R2_score}
-	R^2(\boldsymbol{z}, \boldsymbol{\tilde{z}}) &= 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z})^2}, \hspace{3mm} \bar{z} = \frac{1}{n}\sum_{i=0}^{n-1}z_i
+	R^2(\boldsymbol{z}, \boldsymbol{\tilde{z}}) & = 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z})^2}, \hspace{3mm} \bar{z} = \frac{1}{n}\sum_{i=0}^{n-1}z_i
 \end{align}
 For the $R^2$ score, we will study different $\eta$ values as a function of epochs.
 
@@ -315,7 +319,7 @@ We now study regularization parameters. HÅKON OLAV
 
 So far, we have only studied the statistical accuracy of our neural network. As a sanity check we will use the optimal parameters obtained in order to plot the resulting prediction of the neural network, using $\epsilon\sim\mathcal{N}(0,\,0.05)$ just as we did for SGD. Some of the parameters we use may not be ideal when the noise is reduced, but the purpose of this test is simply to see whether our model behaves in a desired way, so reducing the noise makes the comparison easier.
 
-Having only studied different learning rates and regularization parameters of the neural network, we are now ready to test different configurations of the network itself. The first modification we will make is testing the neural network using different activation functions for the hidden layers. 
+Having only studied different learning rates and regularization parameters of the neural network, we are now ready to test different configurations of the network itself. The first modification we will make is testing the neural network using different activation functions for the hidden layers.
 
 
 
