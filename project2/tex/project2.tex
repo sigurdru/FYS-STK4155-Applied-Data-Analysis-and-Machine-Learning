@@ -354,9 +354,9 @@ So far, we have only studied the statistical accuracy of our neural network. As 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
 \subsubsection{Logistic Regression}
-Lastly we want to study the breast cancer data using logistic regression. See theory section \ref{sec:logistic_regression} for an explanation of the method. We use the Sigmoid \eqref{eq:sigmoid} as our soft classifier in the output, and cross entropy \eqref{eq:cross_entropy2} (gradient given by \eqref{eq:cross_entropy_grad}) as our cost function. See theory section \ref{sec:cost_func_and_regul} for derivation of the cross entropy. To optimize the weight and biases we implement stochastic gradient decent algorithm \eqref{eq:SGD_algo}. We will also study the implementation of $L_2$-regularization \eqref{eq:L2}. Our aim is to compare the result with those obtained from out feed forward neural network and Scikit-Learn's logistic regression functionality.
+Lastly we want to study the breast cancer data using logistic regression. See theory section \ref{sec:logistic_regression} for an explanation of the method. We use the Sigmoid \eqref{eq:sigmoid} as our soft classifier in the output, and cross entropy \eqref{eq:cross_entropy2} (gradient given by \eqref{eq:cross_entropy_grad}) as our cost function. See theory section \ref{sec:cost_func_and_regul} for derivation of the cross entropy. To optimize the weight and biases we implement stochastic gradient decent algorithm \eqref{eq:SGD_algo}, using five minibatches. We will also study the implementation of $L_2$-regularization \eqref{eq:L2}. Our aim is to compare the result with those obtained from out feed forward neural network and Scikit-Learn's logistic regression functionality.
 
-The main quantity we will study is the accuracy score, which is the number of correct classification divided by total cases. We initialize the weights and bias with random normal distribution with mean around zero and standard deviation of one. We want to look at what happens to the accuracy as epochs increases, for different learning rates. Therefore we first plot the accuracy score as a function of learning rate and number of epochs. Specifically we will use 200 epochs, and 10 different learning rates $\eta$ between $10^{-5}$ and $10^{-0.5}$ distributed evenly on a logarithm scale. We expect to see overfitting when $\eta$ is large, and under fitting when $\eta$ is small.
+The main quantity we will study is the accuracy score, which is the number of correct classification divided by total cases. We initialize the weights and bias with random normal distribution with mean around zero and standard deviation of one. We want to look at what happens to the accuracy as epochs increases, for different learning rates. Therefore we first plot the accuracy score as a function of learning rate and number of epochs. Specifically we will use 200 epochs, and 10 different learning rates $\eta$ between $10^{-5}$ and $10^{-0.5}$ distributed evenly on a logarithm scale. We expect to see overfitting when $\eta$ is large, and underfitting when $\eta$ is small.
 
 Next we are ready to perform an grid search, to find the optimal learning rate $\eta$ and $L_2$ parameter $\lambda$, still using 200 epochs. Therefore we again plot the accuracy score, however this time as a function of $\lambda$ and $\eta$, picking out the accuracy score after the last epoch. Specific parameters we will test for are 10 different learning rates $\eta$ and regularization parameters $\lambda$, distributed evenly on a logarithm scale. Learning rate will be between $10^{-5}$ and $10^{-1}$, and $\lambda$ will be between $10^{-5}$ and $10^{-3}$.
 
@@ -504,20 +504,25 @@ We plot
 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
+\clearpage
 \subsubsection{Logistic Regression}
 
-In figure \ref{fig:logreg_eta_epoch} we plot the accuracy score as a function of epochs, for different learning rates $\eta$ and $L_2$ parameter set to $\lambda = 0$. The top plot is for the train data, and bottom for test data. We notice, as expected, that for a low enough $\eta$ we get under fitting. Especially for $\eta = 10^{-3}$
+In figure \ref{fig:logreg_eta_epoch} we plot the accuracy score as a function of epochs, for different learning rates $\eta$ and $L_2$ parameter set to $\lambda = 0$. The top plot is for the train data, and bottom for test data. As mentioned we are not that interested in the precise accuracy score before we perform a grid search, rather we are want to see how the network learns. Namely when we get over- and underfitting. First, looking at the train accuracy, when $\eta \leq 3\cdot 10^{-5}$ we do not converge within the 200 epochs (underfitting). We also notice feint signs of overfitting for $\eta\geq 0.1122$. These effects is more apparent in the test accuracy, where we see clear overfitting at $\eta \geq 0.03981$, and underfitting at $\eta\leq 8\cdot 10^{-5}$. The optimal learning rate should therefore be within $8\cdot 10^{-5} \geq \eta \leq 0.1122$.
+
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__epochs_eta__Train_accuracy__705107.png}
 	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__epochs_eta__Test_accuracy__924831.png}
 	\caption{These two figures illustrates how the accuracy score evolves as a function of epochs ($x$-axis) and learning rate $\eta$ ($y$-axis). An accuracy score of one corresponds to 100\% correct classifications.}\label{fig:logreg_eta_epoch}
 \end{figure}
+
+In figure \ref{fig:logreg_eta_lambda} we have plotted the results from our grid search. There we have displayed the precise test accuracy score, as a function of learning rate $\eta$ and hyper parameter $\lambda$. Looking at the figure, we notice that our best accuracy score is 99.1\%, for $0.001 \geq \eta \leq 0.00631$ and all $\lambda$'s. We acquire the same accuracy score for $\eta = 0.01585$ and $\lambda\geq 10^{-3.6}$. This is the exact same accuracy as when using Scikit-Learn's logistic regression with $L_2$ regularization, and corresponds to one miss-categorization.
+
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__lambda_eta__Test_accuracy__860729.pdf}
 	\caption{Here we have plotted the accuracy for the test data, as a function of both learning rate $\eta$ ($y$-axis) and logarithm of hyper parameter $\lambda$ ($x$-axis). An accuracy score of one corresponds to 100\% correct classification.}\label{fig:logreg_eta_lambda}
 \end{figure}
 
-
+\clearpage
 
 \section{Discussion}
 
@@ -531,6 +536,8 @@ different output functions
 learning schedule
 
 correlation
+
+initialization
 
 hvor sikkert er nettverket?
 \section{Conclusion}
