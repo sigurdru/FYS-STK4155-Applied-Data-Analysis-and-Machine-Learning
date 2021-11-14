@@ -341,13 +341,15 @@ A good indicator for our neural network being implemented correctly is making su
 
 Having initialized the neural network we are now going to train it. Each training iteration begins by randomly shuffling the data and dividing them into minibatches, just as we did when we performed the SGD analysis. Now the feedforward and backpropagation are performed for each minibatch. 
 
-For the first simulation we choose $21$ linearly distributed values of $\eta\in[10^{-3},\,0.9]$, and plot the result MSE from the training data and testing data. We will then repeat this analysis using $21$ new $\eta$ values on an interval where the resulting MSE was low, plotting the test MSE only, like in the previous section. We also do this for the $R^2$ score, given in equation \eqref{eq:R2_score}, where $\boldsymbol{z}$ and $\boldsymbol{\tilde{z}}$ is the target and prediction values, respectively. This is because the $R^2$-score gives a relative performance, while MSE as an absolute measure. More discussion on these can be found in \cite{project1}.
+|For the first simulation we choose $21$ linearly distributed values of $\eta\in[10^{-3},\,0.9]$, and plot the result MSE from the training data and testing data. We will then repeat this analysis using $21$ new $\eta$ values on an interval where the resulting MSE was low, plotting the test MSE only, like in the previous section. We also do this for the $R^2$ score, given in equation \eqref{eq:R2_score}, where $\boldsymbol{z}$ and $\boldsymbol{\tilde{z}}$ is the target and prediction values, respectively. This is because the $R^2$-score gives a relative performance, while MSE as an absolute measure. More discussion on these can be found in \cite{project1}. 
 
 \begin{align} \label{eq:R2_score}
 	R^2(\boldsymbol{z}, \boldsymbol{\tilde{z}}) & = 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z})^2}, \hspace{3mm} \bar{z} = \frac{1}{n}\sum_{i=0}^{n-1}z_i
 \end{align}
 
-We now study regularization parameters. HÅKON OLAV
+
+
+We then study the dependence on the regularization parameter $\lambda$. Choosing
 
 Without any regularization parameters, we will study the MSE and $R^2$ score of the network when we scale the learning rate by using equation \eqref{eq:learning_schedule}.
 
