@@ -464,32 +464,21 @@ Figure \ref{fig:NN_Franke_epochs_eta_MSE_limited} shows how the MSE drops as we 
 \end{figure}
 
 
-We proceed by plotting the $R^2$ score. 
+We proceed by plotting the $R^2$ score, setting a minimum value of $R^2=0.55$ to highlight results in the same vicinity of what we got for the linear regression study, shown in figure \ref{fig:NN_Franke_epochs_eta_R2}.  
 
 \begin{figure}[h!]
-	% \minipage{0.49\textwidth}
-	% \includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_R2__738371.pdf}
-	% \endminipage
-	% \minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__296747.pdf}
-	% \endminipage
+	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__190748.pdf}
 	\caption{NN}
 	\label{fig:NN_Franke_epochs_eta_R2}
 \end{figure}
 
 \begin{figure}[h!]
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__190748.pdf}
-	\caption{NN}
-	\label{fig:NN_Franke_epochs_eta_R2_limited}
-\end{figure}
-
-\begin{figure}[h!]
-	\minipage{0.49\textwidth}
+	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_dynamic_eta__test_MSE__489375.pdf}
-	\endminipage
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_dynamic_eta__test_R2__289368.pdf}
-	\endminipage
+	% \endminipage
+	% \minipage{0.49\textwidth}
+	% \includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_dynamic_eta__test_R2__289368.pdf}
+	% \endminipage
 	\caption{NN}
 	\label{fig:NN_Franke_epochs_dynamic_eta}
 \end{figure}
@@ -505,16 +494,6 @@ We proceed by plotting the $R^2$ score.
 	\label{fig:NN_Franke_epochs_eta_MSE_relu_leaky}
 \end{figure}
 
-\begin{figure}[h!]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__relu__235205.pdf}
-	\endminipage
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__leaky_relu__958829.pdf}
-	\endminipage
-	\caption{R2 Relu and Leaky Relu}
-	\label{fig:NN_Franke_epochs_eta_R2_relu_leaky}
-\end{figure}
 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
