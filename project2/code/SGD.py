@@ -118,6 +118,11 @@ def SGDL(X, z, W, args, eta, batch_size, lmb=0, gamma=0):
             W = W - v
         train_pred = output_activation(X_train @ W)
         test_pred = output_activation(X_test @ W)
+        # PRINT NUMBER OF CASES WITHIN (0.1, 0.9)
+        # unsure = test_pred[np.where(test_pred > 0.1)]
+        # unsure = unsure[np.where(unsure < 0.9)]
+        # print(f'Usecure cases: {np.size(unsure)}')
+
         train_pred_bool = np.where(train_pred<0.5, 0, 1)
         test_pred_bool = np.where(test_pred<0.5, 0, 1)
         accuracy_train[epoch_i] = utils.accuracy_score(train_pred_bool, z_train)

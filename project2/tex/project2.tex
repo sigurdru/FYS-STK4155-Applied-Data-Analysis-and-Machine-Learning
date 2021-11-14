@@ -517,13 +517,15 @@ In figure \ref{fig:logreg_eta_lambda} we have plotted the results from our grid 
 	\caption{Here we have plotted the accuracy for the test data, as a function of both learning rate $\eta$ ($y$-axis) and logarithm of hyper parameter $\lambda$ ($x$-axis). An accuracy score of one corresponds to 100\% correct classification.}\label{fig:logreg_eta_lambda}
 \end{figure}
 
+There are many potential optimal parameters, however lets choose $\eta= 0.00251$ and $\lambda = 0$, and print the number of cases where our output is withing (0.1, 0.9). We remind that this is not a very complete analysis, and we talk more about this in the discussion-section. Nevertheless, after the first epoch we have 58 cases, and after 200 epochs we have eight cases where the output is within (0.1, 0.9).  
+
 \clearpage
 
 \section{Discussion}
 
 LOGISTIC REGRESSION:
 
-The fact that we obtain the same accuracy (99.2\%) as when using Scikit-Learn's logistic regression, gives us confidence in our results. The 99.2\% accuracy corresponds to one miss-classification. We do not believe it feasible to better this result, given that a professionally written library yields the same results. However we did have eight cases where the output was within (0.1, 0.9), which can be seen as inconclusive.  
+The fact that we obtain the same accuracy (99.2\%) as when using Scikit-Learn's logistic regression, gives us confidence in our results. The 99.2\% accuracy corresponds to one miss-classification. We do not believe it feasible to better this result, given that when using professionally written library yields the same. However we did have eight cases where the output was within (0.1, 0.9), which can be seen as inconclusive.  
 
 
  however as we mentioned\sn{TODO: confidence}, this gives us no information on how confident our algorithm is. 
