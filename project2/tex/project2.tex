@@ -31,19 +31,26 @@
 % Rapport:
 % SGD: Franke
 % må bestemme beste parametere, regne ut mse for de og lage sufrace plot
+% må plotte resultat av surface 
 
 % NN: Franke
 % sjekke at plottene i resultat stemmer
 % beskrive plottene i resultat
 % Regne den beste MSE-verdien
-% Lage surface plot?
+% Lage surface plot
+
+% Sammenligne SGD og NN med OLS?  
 
 % NN: Cancer
 % alt. Metode og resultat
 % (figurene er laget)
+% Implementere strengere klassifikasjon 
+% Plotte cost 
 
 % Logreg: Cancer
 % Faktisk alt. Metode og resultat
+% Implementere strengere klassifikasjon 
+% Plotte cost 
 
 % Annet:
 % Diskusjon
@@ -269,7 +276,7 @@ The expression for updating the weights and biases are
 	b_j^l \leftarrow    & b_j^l - \eta \Delta_j^l \label{eq:update_biases}
 \end{align}
 
-\subsubsection{Initialization of weights}
+\subsubsection{Initialization of weights} \label{sec:wi}
 We mentioned earlier than then the network is created, it has weights and biases between the layers. These needs to be initialized in some way. The biases are simple to initialize, as they are a single number for every node. These are initialized as a small, non-zero value $b_0$, which we choose as $b_0=0.01$.
 
 Before 2006, most neural networks were performing quite badly on most tasks, as they did not learn during training. One of the (several) reasons were due to bad initialization of weights. A common way of doing this was using the standard normal distribution $W_{i,j} \sim  \mathcal{N}(0, 1)$. The problem with this is that it does not consider the size of the layers. In 2010, it was shown that when using sigmoid as the activation function, Xavier-initialization give better results \cite{xavier}. This is given as $W_{i, j}\sim\mathcal{U} \left(-\frac{1}{\sqrt{n}}, \frac{1}{\sqrt{n}} \right)$, where $\mathcal{U}$ is the uniform distribution, and $n$ is the number of nodes in the preceding layer.
@@ -279,7 +286,11 @@ In 2015, He-initialization was shown to work well with ReLU and Leaky ReLU \cite
 
 
 \section{Methods}
-As we mentioned in the introduction, we wish to study different ways of fitting two types of datasets. The first which we can classify as \textit{continuous} is the Franke Function \eqref{eq:FF},
+As we mentioned in the introduction, we wish to study different ways of learning two types of datasets. The first is fitting the \textit{continuous} Franke Function \eqref{eq:FF}, i.e. regression. We will use both stochastic gradient decent and feed forward neural network to fit the data. Both methods are covered in the theory sections \ref{sec:GD} and \ref{sec:NeuralNetwork} respectively.
+
+Next we will embark on an classification problem. Namely predicting if breast tumors are malignant or benign, using the Breast Cancer Wisconsin data set\footnote{\href{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}}. We will again use our feed forward neural network, as well as logistic regression. The latter is covered in the theory section \ref{sec:logistic_regression}.
+
+\subsection{Franke Function}
 \begin{align}
 	\begin{split}\label{eq:FF}
 		f(x,y) = &\frac{3}{4}\exp(-\frac{(9x -2)^2}{4} - \frac{(9y-2)^2}{4}) + \frac{3}{4}\exp(-\frac{(9x + 1)^2}{49} - \frac{(9y + 1)}{10})
@@ -287,11 +298,6 @@ As we mentioned in the introduction, we wish to study different ways of fitting 
 		+ &\frac{1}{2}\exp(-\frac{(9x-7)^2}{4} - \frac{(9y -3)}{4}) - \frac{1}{5}\exp(-(9x-4)^2 - (9y-7)^2).
 	\end{split}
 \end{align}
-We will use both stochastic gradient decent and feed forward neural network to try and fit the data. Both methods are covered in the theory sections \ref{sec:GD} and \ref{sec:NeuralNetwork} respectively.
-
-Next we will embark on an classification problem. Namely classifying if breast tissue is malignant or benign, by studying the data provided by Wisconsin breast cancer data\footnote{\href{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}}. We will again use a feed forward neural network, and logistic regression. The latter is covered in the theory section \ref{sec:logistic_regression}.
-
-\subsection{Franke Function}
 In \cite{project1}, we already studied the Franke function using linear regression, specifically OLS and OLS with an L2 and L1 parameter $\lambda$, so-called Ridge and Lasso regression. The results from these methods will form the basis for comparing our results using SGD and neural networks. The rapport, along with the code can be found at our GitHub\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}{https://github.com/sigurdru/FYS-STK4155/tree/main/project1}}. In order to have comparable results, we will use the same parameters for the data. Only the methods will be different. In that project we generated the data using $N=30\times30$ uniformly distributed datapoints in $x$- and $y$-direction, respectively. To simulate it being real data, we also added normally distributed noise with mean zero and standard deviation $0.2$: $\epsilon \sim \mathcal{N}(0,0.2)$. We also split the input and target data in the same way as before, using $80\,\%$ of the data for training and $20\,\%$ of the data for testing. The two splitted data sets are then scaled by subtracting the mean of the relevant training data.
 
 \subsubsection{Stochastic Gradient Descent}
@@ -325,21 +331,21 @@ After the SGD has been studied and appropriate parameters have been estimated, w
 \subsubsection{Feed Forward Neural Network}
 When using the neural network to fit the Franke function, we use a lot of the same methods as for SGD. A key difference is that instead of iteratively updating a model $\bbeta$, we now train a network of several layers, each with many nodes. One of the results of this is that we do not have to choose the shape the model will take.
 
-Instead of giving our network the design matrix $X$ for a certain polynomial degree $P$, we can pass it only the collection of points $[(x_i, y_i)]$, and let the network adjust the weights and biases accordingly. Since the Franke function is an exponential function we know that it can be approximated as a higher order polynomial, so by using the design matrix as an input we exploit this property such that the network converges faster. Having already fitted the Franke function with a design matrix with linear regression and SGD, we now choose the $x_i$ and $y_i$ values only. Not providing the network with any initial information has the advantage that we get a more rigorous test of the network's performance, since we ensure that the result is not directly reliant on the information in question. Another important motivation for this is that if we were to fit some other data, e.g. terrain data, we may not have any a priori information regarding the input data. Omitting the design matrix when we train our neural network will thus yield a final model capable of fitting various types of data.
+Instead of giving our network the design matrix $X$ for a certain polynomial degree $P$, we can pass it only the collection of points $[(x_i, y_i)]$, and let the network adjust the weights and biases accordingly. Since the Franke function is an exponential function we know that it can be approximated as a higher order polynomial, so by using the design matrix as an input we exploit this property such that the network converges faster. Having already fitted the Franke function with a design matrix with linear regression and SGD, we now choose the $x_i$ and $y_i$ values only. Not providing the network with any initial information has the advantage that we get a more rigorous test of the network's performance, since we ensure that the result is not directly reliant on the information in question. Another important motivation for this is that if we were to fit some other data, e.g. terrain data, we may not have any a-priori information regarding the input data. Omitting the design matrix when we train our neural network will thus yield a final model capable of fitting various types of data.
 
 Since we are dealing with a regression problem and we're fitting a continuous function, a natural choice of the cost function is the MSE. For the neural network we will not compute the total MSE of the output layer as we have previously done, but the individual MSE of each output node. This takes into account the error at each individual output neuron when we update the weights with backpropagation.
 
-The first thing we will do is to study the evolution of the output layers' MSE for different values of $\eta$ as we train the network. This will give an estimate of reasonable learning rates to use for training. We choose two hidden layers in the neural network with ten nodes each where we use the sigmoid activation function from equation \eqref{eq:sigmoid}. The first thing we must consider is how we initialize the weights and biases for the different layers. We initialize the weights randomly using a normal distribution of $\mathcal{N}(0,1)$. The biases are a single non-zero number for each node, and we choose $b_0=0.01$ for all nodes initially. For the output layer we don't use any activtion function, since the output of the Neural network should be the prediction of the Franke function\footnote{This is a reasonable choice considering that the maximum of equation \eqref{eq:FF} exceeds $1$, and the minimum is negative when noise is added}. For the initial analysis we will not include regularization or a momentum parameter.
+As with SGD, neural networks have many parameters we have to tune. To reduce the dimensionality of the hyperparameter space, we choose some to study, namely the learning rate $\eta$, number of epochs $N_e$, regularization parameter $\lambda$, momentum parameter $\gamma$, and choice of activation function. We will also study the number of hidden layers and number of nodes in these. We then do not change the batch size, choosing one based on the results from SGD, nor the weight initialization, using the ones described in section \ref{sec:wi}, given the activation function. This is still a very big space, so again we are more interested in how the different paramters affect the result independently of the others.
 
-Having initialized the neural network we are now going to train it. Each training iteration begins by randomly shuffling the data and dividing them into minibatches, just as we did when we performed the SGD analysis. For each minibatch we begin by using the input data to update each layer of the network until we reach the output layer. Then we use the backpropagation algorithm to update the weights and biases at every node. \textbf{ER AVSNITTET OVER UNØDVENDIG?} With no activation function in the output layer, the error of this layer is given by equation \eqref{eq:backprop0} i.e. the derivative of the MSE. Iterating backwards we get the error in the previous layers by using equation \eqref{eq:backprop3}. The weights and biases at each layer are then updated with equations \eqref{eq:update_weights} and \eqref{eq:update_biases} respectively. Doing this for all minibatches we complete one epoch.
+A good indicator for our neural network being implemented correctly is making sure that it learns during training. This we check by plotting the MSE calculated after every epoch. We do this for different $\eta$s. We will then also find reasonable choices for the learning rate. We choose two hidden layers with ten nodes in each, and use the sigmoid activation function. As mentioned, as we are fitting a function, there is no activation function for the output layer. For the initial analysis we again choose $\lambda=\gamma=0$.
 
-For the first simulation we choose $21$ linearly distributed values of $\eta\in[10^{-3},\,0.9]$, and plot the result MSE from the training data and testing data. We will then repeat this analysis using $21$ new $\eta$ values on an interval where the resulting MSE was low, plotting the test MSE only, as discussed in the previous section.
+Having initialized the neural network we are now going to train it. Each training iteration begins by randomly shuffling the data and dividing them into minibatches, just as we did when we performed the SGD analysis. Now the feedforward and backpropagation are performed for each minibatch. 
 
-In addition to the MSE, we also want to plot the $R^2$ score, given in equation \eqref{eq:R2_score}, where $\boldsymbol{z}$ and $\boldsymbol{\tilde{z}}$ is the target and prediction values, respectively.
+For the first simulation we choose $21$ linearly distributed values of $\eta\in[10^{-3},\,0.9]$, and plot the result MSE from the training data and testing data. We will then repeat this analysis using $21$ new $\eta$ values on an interval where the resulting MSE was low, plotting the test MSE only, like in the previous section. We also do this for the $R^2$ score, given in equation \eqref{eq:R2_score}, where $\boldsymbol{z}$ and $\boldsymbol{\tilde{z}}$ is the target and prediction values, respectively. This is because the $R^2$-score gives a relative performance, while MSE as an absolute measure. More discussion on these can be found in \cite{project1}.
+
 \begin{align} \label{eq:R2_score}
 	R^2(\boldsymbol{z}, \boldsymbol{\tilde{z}}) & = 1 - \frac{\sum_{i=0}^{n-1}(z_i - \tilde{z}_i)^2}{\sum_{i=0}^{n-1}(z_i - \bar{z})^2}, \hspace{3mm} \bar{z} = \frac{1}{n}\sum_{i=0}^{n-1}z_i
 \end{align}
-For the $R^2$ score, we will study different $\eta$ values as a function of epochs.
 
 We now study regularization parameters. HÅKON OLAV
 
@@ -368,12 +374,12 @@ Next we are ready to perform an grid search, to find the optimal learning rate $
 We plot the MSE of the Franke function using SGD for our training data and test data for $\eta\in[0.01,\,0.9]$, shown on the left and right panel of figure \ref{fig:SGD_Franke_epochs_eta_overfit} respectively. The MSE was initially much higher than the maximum colorbar value of $0.07$, but we have chosen this as an upper limit, as it provided much more insight regarding nuances of the MSE. From our previous study of the Franke function with OLS regression \cite{project1}, we found that the MSE was below $0.07$ for polynomial degrees $P\in[1,\,8]$ for the test data with 90 bootstrap iterations. A maximum value of $\text{MSE=0.07}$ is thus a natural choice for the desired result.
 
 \begin{figure}[h!]
-	\minipage{0.49\textwidth}
+	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Train_MSE__overfit_489047.pdf}
-	\endminipage
-	\minipage{0.49\textwidth}
+	% \endminipage
+	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__overfit_395885.pdf}
-	\endminipage
+	% \endminipage
 	\caption{Initial MSE of the train and test data as a function of epochs for different learning rates $\eta$. A maximum MSE value of $0.07$ is set, so dark red regions may correspond to significantly higher MSE than it appears to.}
 	\label{fig:SGD_Franke_epochs_eta_overfit}
 \end{figure}
@@ -432,33 +438,39 @@ The MSE calculated with dynamic $\eta$ is shown in figure \ref{fig:SGD_Franke_ep
 
 
 \subsubsection{Feed Forward Neural Network}
-We plot
+
+We plot the train and test MSE of the Franke function for different learning rates as a function of epochs, shown in the upper and lower panel of figure \ref{fig:NN_Franke_epochs_eta_MSE} respectively. The upper limit of the MSE increases from $0.35$ for the train data to $0.40$ for the test data, which is a desired feature. We choose $\eta\in[0.05,\,0.5]$ and plot the test MSE as a function of $N_e=250$ epochs shown in figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}, where we use $\mathrm{MSE}_\mathrm{max}=0.07$. 
 
 \begin{figure}[h!]
-	\minipage{0.49\textwidth}
+	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_MSE__569887.pdf}
-	\endminipage
-	\minipage{0.49\textwidth}
+	% \endminipage
+	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__271070.pdf}
-	\endminipage
-	\caption{NN}
+	% \endminipage
+	\caption{MSE of the train and test data after $150$ epochs for different learning rates using a Neural network.}
 	\label{fig:NN_Franke_epochs_eta_MSE}
 \end{figure}
 
 
+Figure \ref{fig:NN_Franke_epochs_eta_MSE_limited} shows how the MSE drops as we continue to train the network, with little evidence of overfitting, as general increases of the MSE is absent towards the end of training. We see how $\eta>0.4$ yields abrupt increases in the MSE for certain epochs, indicating that these learning rates are too high. A peculiar feature of the MSE are the increases taking place at certain epochs for all learning rates. The magnitude of the MSE increase becomes smaller for lower learning rates, as desired. We do, however, see no apparent reason for why we should get MSE increases for identical epochs when the learning rates varies at most by an order of magnitude. It is thus not a consequence of overshooting certain minima, as these would have been overshot at different epochs.   
+
 \begin{figure}[h!]
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__582234.pdf}
-	\caption{NN}
+	\caption{Test MSE of the Franke function for different learning rates.}
 	\label{fig:NN_Franke_epochs_eta_MSE_limited}
 \end{figure}
 
+
+We proceed by plotting the $R^2$ score. 
+
 \begin{figure}[h!]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_R2__738371.pdf}
-	\endminipage
-	\minipage{0.49\textwidth}
+	% \minipage{0.49\textwidth}
+	% \includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_R2__738371.pdf}
+	% \endminipage
+	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__296747.pdf}
-	\endminipage
+	% \endminipage
 	\caption{NN}
 	\label{fig:NN_Franke_epochs_eta_R2}
 \end{figure}
