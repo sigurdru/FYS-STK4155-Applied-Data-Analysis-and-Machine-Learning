@@ -18,6 +18,7 @@ from datetime import datetime
 plt.style.use('seaborn')
 plt.rc('text', usetex=True)
 plt.rc('font', family='DejaVu Sans')
+here = os.path.abspath(".")
 path_plots = '../output/plots/'
 archive = path_plots + "archive.txt"
 
@@ -34,7 +35,8 @@ def show_push_save(fig, func, args):
     """
     file = path_plots + set_fname(func, args)
     if args.save:
-        print("Saving plot: ", file)
+        print(f'Saving plot: file://{here}/{file}')
+        # print("Saving plot: ", file)
         fig.savefig(file)
     if args.push:
         os.system(f"git add {file}")
@@ -45,6 +47,7 @@ def show_push_save(fig, func, args):
         plt.show()
     else:
         plt.clf()
+    print("\n\n")
 
 def set_fname(func, args):
     np.random.seed()  # resetting seed
@@ -379,7 +382,7 @@ def eta_lambda(data, args, NN=False, vmax=None):
         func["y"] = "lambda"
         func["z"] = name.split()[1]
 
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(10, 10))
         col = np.round(np.log10(args.lmb), 3)
         row = np.round(np.log10(args.eta), 3)
         data = pd.DataFrame(accuracy, index=row, columns=col)
