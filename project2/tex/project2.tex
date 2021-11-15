@@ -372,7 +372,7 @@ Next we are ready to perform a grid search, to find the optimal learning rate $\
 \subsection{Franke Function}
 \subsubsection{Stochastic Gradient Descent}
 
-We plot the MSE of the Franke function using SGD for our training data and test data for $\eta\in[0.01,\,0.9]$, shown on the left and right panel of figure \ref{fig:SGD_Franke_epochs_eta_overfit} respectively. The MSE was initially much higher than the maximum colorbar value of $0.07$, but we have chosen this as an upper limit, as it provided much more insight regarding nuances of the MSE. From our previous study of the Franke function with OLS regression \cite{project1}, we found that the MSE was below $0.07$ for polynomial degrees $P\in[1,\,8]$ for the test data with 90 bootstrap iterations. A maximum value of $\text{MSE=0.07}$ is thus a natural choice for the desired result.
+We plot the MSE of the Franke function using SGD for our training data and test data for $\eta\in[0.01,\,0.9]$, shown on the top and bottom panel of figure \ref{fig:SGD_Franke_epochs_eta_overfit} respectively. The MSE was initially much higher than the maximum colorbar value of $0.07$, but we have chosen this as an upper limit, as it provided much more insight regarding nuances of the MSE. From our previous study of the Franke function with OLS regression \cite{project1}, we found that the MSE was below $0.07$ for polynomial degrees $P\in[1,\,8]$ for the test data with 90 bootstrap iterations. A maximum value of $\text{MSE=0.07}$ is thus a natural choice for the desired result.
 
 \begin{figure}[h!]
 	% \minipage{0.49\textwidth}
@@ -525,9 +525,12 @@ Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ v
 \end{figure}
 
 
+\clearpage
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
-\clearpage
+
+
+
 \subsubsection{Logistic Regression}
 
 In figure \ref{fig:logreg_eta_epoch} we plot the accuracy score as a function of epochs, for different learning rates $\eta$ and $L_2$ parameter set to $\lambda = 0$. The top plot is for the train data, and bottom for test data. As mentioned we want to see how the network learns, meaning that we are not that interested in the precise accuracy score before we perform a grid search. First, looking at the train accuracy, when $\eta \leq 3\cdot 10^{-5}$ we do not converge within the 200 epochs (underfitting). We also notice feint signs of overfitting for $\eta\geq 0.1122$. These effects is more apparent in the test accuracy, where we see clear overfitting at $\eta \geq 0.03981$, and underfitting at $\eta\leq 8\cdot 10^{-5}$. The optimal learning rate should therefore be within $8\cdot 10^{-5} \geq \eta \leq 0.1122$.
