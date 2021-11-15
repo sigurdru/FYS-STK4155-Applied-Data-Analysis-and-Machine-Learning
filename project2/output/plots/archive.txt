@@ -1596,3 +1596,19 @@ NN_Franke__epochs_eta__test_MSE__relu__704482.pdf
 Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
        0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[5, 5, 5, 5], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
 2021-11-15 13:17:08.675104
+
+
+NN_Franke__eta_lambda__train_MSE__990552.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=True, push=False, save=True, seed=2021)
+2021-11-15 14:01:27.562467
+
+
+NN_Franke__eta_lambda__test_MSE__489556.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=True, push=False, save=True, seed=2021)
+2021-11-15 14:02:02.363351
