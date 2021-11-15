@@ -353,9 +353,9 @@ We split and scale the data in the same way we did for the Franke Function, usin
 \subsubsection{Logistic Regression}
 Lastly we want to study the breast cancer data using logistic regression. See theory section \ref{sec:logistic_regression} for an explanation of the method. We use the sigmoid \eqref{eq:sigmoid} as our soft classifier in the output, and cross entropy \eqref{eq:cross_entropy2} (gradient given by \eqref{eq:cross_entropy_grad}) as our cost function. See theory section \ref{sec:cost_func_and_regul} for derivation of the cross entropy. To optimize the weight and biases we implement stochastic gradient decent algorithm \eqref{eq:SGD_algo}, using five minibatches. We will also study the implementation of $L_2$-regularization \eqref{eq:L2}. Our aim is to compare the result with those obtained from out feed forward neural network and Scikit-Learn's logistic regression functionality.
 
-The main quantity we will study is the accuracy score, which is the number of correct classification divided by total cases. The sigmoid is not a hard classifier, i.e. it returns continuous values between zero and one. To calculate the accuracy we will therefore round the answer such that any output less than 0.5 will be set to zero, and above set to one. This means that we loose any interpretation of how \emph{sure} our algorithm is of the result. For example if our output is 0.51, then it will set the result to 1, even though that could be interpreted as inconclusive. Thus we will perform a small analysis in the end on how confident our algorithm is. More precisely we will, for what we interpret as the optimal parameters, look at how many cases are classified within the range $(0.1, 0.9)$. We discuss this a bit more in-depth in the discussion-section.
+The main quantity we will study is the accuracy score, which is the number of correct classification divided by total cases. The sigmoid is not a hard classifier, i.e. it returns continuous values between zero and one. To calculate the accuracy we will therefore round the answer such that any output less than 0.5 will be set to zero, and above set to one. This means that we loose any interpretation of how \emph{sure} our algorithm is of the result. For example if our output is 0.51, then it will set the result to 1, even though that could be interpreted as inconclusive. Therefore we will also perform a small analysis in the end on how confident our algorithm is. More precisely we will, for what we interpret as the optimal parameters, look at how many cases are classified within the range $(0.1, 0.9)$. We discuss this a bit more in-depth in the discussion-section.
 
-We initialize the weights and bias with random normal distribution with mean around zero and standard deviation of one. We want to look at what happens to the accuracy as epochs increases, for different learning rates. Therefore we first plot the accuracy score as a function of learning rate and number of epochs. Specifically we will use 200 epochs, and 10 different learning rates $\eta$ between $10^{-5}$ and $10^{-0.5}$ distributed evenly on a logarithm scale. We expect to see overfitting when $\eta$ is large, and underfitting when $\eta$ is small.
+We initialize the weights and bias with random normal distribution with mean around zero and standard deviation of one. We want to look at what happens to the accuracy as epochs increases, for different learning rates. Therefore we first plot the accuracy score as a function of learning rate and number of epochs. Specifically we will use 200 epochs, and 10 different learning rates $\eta$ between $10^{-5}$ and $10^{-0.5}$ distributed evenly on a logarithm scale. We expect the answer to diverge when $\eta$ is large, and not converge when $\eta$ is small.
 
 Next we are ready to perform an grid search, to find the optimal learning rate $\eta$ and $L_2$ parameter $\lambda$, still using 200 epochs. Therefore we again plot the accuracy score, however this time as a function of $\lambda$ and $\eta$, picking out the accuracy score after the last epoch. Specific parameters we will test for are 10 different learning rates $\eta$ and regularization parameters $\lambda$, distributed evenly on a logarithm scale. Learning rate will be between $10^{-5}$ and $10^{-1}$, and $\lambda$ will be between $10^{-5}$ and $10^{-3}$.
 
@@ -364,25 +364,18 @@ Next we are ready to perform an grid search, to find the optimal learning rate $
 \subsection{Franke Function}
 \subsubsection{Stochastic Gradient Descent}
 
-We plot the MSE of the Franke function using SGD for our training data and test data for $\eta\in[0.01,\,0.9]$, shown on the left and right panel of figure \ref{fig:SGD_Franke_epochs_eta_overfit} respectively. The MSE was initially much higher than the maximum colorbar value of $0.07$, but we have chosen this as an upper limit, as it provided much more insight regarding nuances of the MSE. From our previous study of the Franke function with OLS regression \cite{project1}, we found that the MSE was below $0.07$ for polynomial degrees $P\in[1,\,8]$ for the test data with 90 bootstrap iterations. A maximum value of $\text{MSE=0.07}$ is thus a natural choice for the desired result.
+We plot the MSE of the Franke function using SGD for our train and test data for $\eta\in[0.01,\,0.9]$, shown on the top and bottom panel of figure \ref{fig:SGD_Franke_epochs_eta_overfit} respectively. Note that the MSE can be larger than 0.07 displayed. We have set that as the maximum to better display the nuances. This is done in almost all plots, and is implicit unless specified otherwise.
 
 \begin{figure}[h!]
-	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Train_MSE__overfit_489047.pdf}
-	% \endminipage
-	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__overfit_395885.pdf}
-	% \endminipage
 	\caption{Initial MSE of the train and test data as a function of epochs for different learning rates $\eta$. A maximum MSE value of $0.07$ is set, so dark red regions may correspond to significantly higher MSE than it appears to.}
 	\label{fig:SGD_Franke_epochs_eta_overfit}
 \end{figure}
 
-In figure \ref{fig:SGD_Franke_epochs_eta_overfit} we see that the test MSE converges faster for increased values of $\eta$ as expected. For $\eta=0.01$ we get an MSE barely below $0.07$ after $N_e=150$, as the gradient steps are too small. When $\eta$ exceeds $0.5$ we get abrubt increments of the test MSE after certain epochs. These learning rates are too high, as a gradient step goes beyond the actual minima. For $\eta=0.9$ this effect is apparent, with large fluctuations of the MSE over certain epochs. We emphasize that the bright red lines present could represent MSE values far above $0.07$.
+In figure \ref{fig:SGD_Franke_epochs_eta_overfit} we see that the test MSE converges faster for increased values of $\eta$ as expected. For $\eta=0.01$ we get an MSE barely below $0.07$ after $N_e=150$, as the gradient steps are too small. When $\eta$ exceeds $0.5$ we get abrupt increases of the test MSE after certain epochs. These learning rates are too high, as a gradient step goes beyond the actual minima. For $\eta=0.9$ this effect is apparent, with large fluctuations of the MSE over certain epochs.
 
-We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}, where we set the maximum MSE to $0.07$ once again. We clearly see how the increased learning rate yields a faster converging result, but at the expense of the MSE stability, which we can see from clear fluctuations for $\eta=0.5$. When our prediction approaches the desired model, the gradients are relatively small, such that high learning rates potentially overshoots minima.
-
-For studying the MSE for different number of minibatches and different momentum parameters, $\gamma$, we will choose $\eta=0.25$. In figure \ref{fig:SGD_Franke_epochs_eta}, we see that $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. Learning rates higher than this appears to be too high, while the ones below it appears to be small enough that minima of the cost function are rarely overshot. $\eta=0.25$ appears therefore to be a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsule both cases at once.
-\textit{Kanskje skrive at flere etaer gir gode resultat, og at vi velger 0.25 fordi vi er mer interessert i å se på hvordan andre parametere påvirker resultat uavhengig, og at 0.25 derfor er et ok valg? Jeg (HO) synes ikke det er serlig klart at høyere eta er for ustabile. Er kanskje en endre grense, men absolut ikke en øvre.}
+We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}. We clearly see how the increased learning rate yields a faster converging result, but at the expense of MSE stability, which we can see from clear fluctuations at $\eta=0.5$. When our prediction approaches the desired model, the gradients are relatively small, such that high learning rates potentially overshoots minima.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__262224.pdf}
@@ -390,9 +383,9 @@ For studying the MSE for different number of minibatches and different momentum 
 	\label{fig:SGD_Franke_epochs_eta}
 \end{figure}
 
-The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. We use $\mathrm{MSE}_\mathrm{max}=0.07$ once again.
-Figure \ref{fig:SGD_Franke_epochs_minibatches} shows an expected behaviour of the MSE. By not using enough minibatches we are unable to get an MSE below $0.06$ after $N_e=150$, which is most likely due to model being stuck in a local minimum substantially worse than the global one, unable to get out. When we use $N_B=30$ we get a quickly converging MSE with a low minimum value, but there appears to some fluctuations. Because of the small batch size, the batches are more prone to consist of points not giving a good approximation of the gradient of the whole dataset.
-\sn{igjen, variasjonene er ikke så store}
+When studying different number of minibatches and momentum parameters $\gamma$, we will choose a specific $\eta$. Looking at figure \ref{fig:SGD_Franke_epochs_eta}, although there are many candidates, $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. This choice appears to be a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsulate both cases at once.
+
+The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. We notice that by using too few minibatches, we converge more slowly. When we use $N_B=30$ we get a quickly converging MSE with a low minimum value, but there appears to some fluctuations. Because of the small batch size, the batches are more prone to consist of points not giving a good approximation of the gradient.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_minibatches__Test_MSE__440533.pdf}
@@ -400,9 +393,7 @@ Figure \ref{fig:SGD_Franke_epochs_minibatches} shows an expected behaviour of th
 	\label{fig:SGD_Franke_epochs_minibatches}
 \end{figure}
 
-
-We plot the test MSE after $N_e=150$ epochs with different regularization parameters, shown in figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit on the shown MSE, as we are interested in the general impact of the $\lambda$ values, and not seeking nuances of the lowest values as before.
-We see in the figure that the results are not very affected by the choice of $\eta$. This is because we only see the last MSE of the training. However, the MSE is lowest for small values of $\lambda$, increasing quickly for higher values. This is similar to what we saw in \cite{project1}, though then we observed a small dip in the MSE for $\log10(\lambda)=-2.07$ for certain polynomial degrees.
+We plot the test MSE after $N_e=150$ epochs with different regularization parameters in figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit on the shown MSE, as we are interested in the general impact of the $\lambda$ values, and not nuances of the lowest values. We see in the figure that the results are not very affected by the choice of $\eta$. However, the MSE is lowest for small values of $\lambda$, increasing quickly for higher values. This is similar to what we saw in \cite{project1}, though then we observed a small dip in the MSE for $\log10(\lambda)=-2.07$ for certain polynomial degrees.
 
 
 \begin{figure}[h!]
@@ -412,7 +403,7 @@ We see in the figure that the results are not very affected by the choice of $\e
 \end{figure}
 
 
-Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the test data with different momentum parameters as a function of $N_e\in[0,\,150]$. We see that increasing $\gamma$ values causes the MSE to drop faster, particularly in the beginning when the gradients are steep, which is expected. We also notice that $\gamma\gtrsim0.35$ results in fluctuations of the MSE, especially evident for $\gamma=0.7$, where it appears that step sizes taken following large gradient values are too big. It appears that $\gamma=0.2$ is the optimal value for this particular test, as it is small enough to avoid overshooting minima for high gradients, while still increasing the convergence rate. However, the overall impact is not very significant.
+Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the test data with different momentum parameters as a function of $N_e\in[0,\,150]$. We see that increasing $\gamma$ values causes the MSE to drop faster, particularly in the beginning when the gradients are large, which is expected. We also notice that $\gamma\gtrsim0.35$ results in fluctuations of the MSE, especially evident for $\gamma=0.7$, where it appears that step sizes taken following large gradient values are too big. It appears that $\gamma=0.2$ is the optimal value for this particular test, as it is small enough to avoid overshooting minima for high gradients, while still increasing the convergence rate.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Test_MSE__239373.pdf}
@@ -522,19 +513,19 @@ Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ v
 \clearpage
 \subsubsection{Logistic Regression}
 
-In figure \ref{fig:logreg_eta_epoch} we plot the accuracy score as a function of epochs, for different learning rates $\eta$ and $L_2$ parameter set to $\lambda = 0$. The top plot is for the train data, and bottom for test data. As mentioned we want to see how the network learns, meaning that we are not that interested in the precise accuracy score before we perform a grid search. First, looking at the train accuracy, when $\eta \leq 3\cdot 10^{-5}$ we do not converge within the 200 epochs (underfitting). We also notice feint signs of overfitting for $\eta\geq 0.1122$. These effects is more apparent in the test accuracy, where we see clear overfitting at $\eta \geq 0.03981$, and underfitting at $\eta\leq 8\cdot 10^{-5}$. The optimal learning rate should therefore be within $8\cdot 10^{-5} \geq \eta \leq 0.1122$.
+In figure \ref{fig:logreg_eta_epoch} we plot the accuracy score as a function of epochs, for different learning rates $\eta$ and $L_2$ parameter set to $\lambda = 0$. The top plot is for the train data, and bottom for test data. As mentioned we want to see how the network learns, meaning that we are not that interested in the precise accuracy score before we perform a grid search. First, looking at the train accuracy, when $\eta \leq 3\cdot 10^{-5}$ we do not converge within the 200 epochs. We also notice unstable accuracy for $\eta\geq 0.1122$. These effects is more apparent in the test accuracy, where we see clear variations in accuracy at $\eta \geq 0.03981$, and non converging accuracy at $\eta\leq 8\cdot 10^{-5}$. The optimal learning rate should therefore be within $8\cdot 10^{-5} \geq \eta \leq 0.1122$.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__epochs_eta__Train_accuracy__705107.png}
 	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__epochs_eta__Test_accuracy__924831.png}
-	\caption{These two figures illustrates how the accuracy score evolves as a function of epochs ($x$-axis) and learning rate $\eta$ ($y$-axis). An accuracy score of one corresponds to 100\% correct classifications.}\label{fig:logreg_eta_epoch}
+	\caption{These two figures illustrates how the accuracy score evolves as a function of epochs ($x$-axis) and learning rate $\eta$ ($y$-axis) (for logistic regression). An accuracy score of one corresponds to 100\% correct classifications.}\label{fig:logreg_eta_epoch}
 \end{figure}
 
 In figure \ref{fig:logreg_eta_lambda} we have plotted the results from our grid search. There we have displayed the precise test accuracy score, as a function of learning rate $\eta$ and hyper parameter $\lambda$. Looking at the figure, we notice that our best accuracy score is 99.1\%, for $0.001 \geq \eta \leq 0.00631$ and all $\lambda$'s. We acquire the same accuracy score for $\eta = 0.01585$ and $\lambda\geq 10^{-3.6}$. This is the exact same accuracy as when using Scikit-Learn's logistic regression with $L_2$ regularization, and corresponds to one miss-categorization.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{../output/plots/reg_Cancer__lambda_eta__Test_accuracy__860729.pdf}
-	\caption{Here we have plotted the accuracy for the test data, as a function of both learning rate $\eta$ ($y$-axis) and logarithm of hyper parameter $\lambda$ ($x$-axis). An accuracy score of one corresponds to 100\% correct classification.}\label{fig:logreg_eta_lambda}
+	\caption{Here we have plotted the accuracy for the test data, as a function of both learning rate $\eta$ ($y$-axis) and logarithm of hyper parameter $\lambda$ ($x$-axis) (for logistic regression). An accuracy score of one corresponds to 100\% correct classification.}\label{fig:logreg_eta_lambda}
 \end{figure}
 
 There are many potential optimal parameters, however lets choose $\eta= 0.00251$ and $\lambda = 0$, and print the number of cases where our output is withing (0.1, 0.9). We remind that this is not a very comprehensive analysis, and we talk more about this in the discussion-section. Nevertheless, after the first epoch we have 58 cases, and after 200 epochs we have eight cases where the output is within (0.1, 0.9).
@@ -543,19 +534,13 @@ There are many potential optimal parameters, however lets choose $\eta= 0.00251$
 
 \section{Discussion}
 
-Stochastic regression FRANKE:
-
 We know that the optimal value for a given parameter might not be the same, when we change values of other parameters. Meaning that this method is then not guaranteed to optimize the entire parameter space. However, we can assume it will be a good approximation, and will save a great deal of time.
 
 We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $\eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
 
-FF NEURAL NETWORK FRANKE:
 
 
-
-LOGISTIC REGRESSION:
-
-The fact that we obtain the same accuracy (99.2\%) as when using Scikit-Learn's logistic regression, gives us confidence in our results. The 99.2\% accuracy corresponds to one miss-classification. We do not believe it feasible to better this result, given that a professionally written library yields the same. One area which we would have liked to analyze further is the confidence of our algorithm. After 200 epochs, for $\eta = 0.00251$ and $\lambda = 0$, we had eight cases where the output was within (0.1, 0.9). That threshold is arbitrary, however it illustrates potential further analysis. To find the optimal parameters we should not only analyze accuracy, but also minimize the number of cases which one deems to inconclusive. Further analysis one could try, is implementing different output functions, initialization of weights and bias and momentum parameter \eqref{eq:vt_mom}.
+The fact that we obtain the same accuracy (99.2\%) as when using Scikit-Learn's logistic regression, gives us confidence in our results. The 99.2\% accuracy corresponds to one miss-classification. We do not believe it feasible to better this result, given that a professionally written library yields the same. One area which we would have liked to analyze further is the confidence of our algorithm. After 200 epochs, for $\eta = 0.00251$ and $\lambda = 0$, we had eight cases where the output was within (0.1, 0.9). That threshold is arbitrary, however it illustrates potential further analysis. To find the optimal parameters we should not only analyze accuracy, but also minimize the number of cases which one deems to inconclusive. Methods of optimization one could try, is implementing different output functions, initialization of weights and bias and momentum parameter \eqref{eq:vt_mom}.
 
 \section{Conclusion}
 
