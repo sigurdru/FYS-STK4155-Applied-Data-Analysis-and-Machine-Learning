@@ -362,8 +362,6 @@ We now want to use the same neural network code as before to study and predict t
 The analysis done with the neural network on the classification data is very similar, as we will study the same hyperparameter dependencies as was done for regression. We can assume the optimal parameters are similar to those found earlier for the neural network.
 \sn{kan vi dette?}
 
-
-
 \subsubsection{Logistic Regression}
 Lastly we want to study the breast cancer data using logistic regression. See theory section \ref{sec:logistic_regression} for an explanation of the method. We use the sigmoid \eqref{eq:sigmoid} as our soft classifier in the output, and cross entropy \eqref{eq:cross_entropy2} (gradient given by \eqref{eq:cross_entropy_grad}) as our cost function. See theory section \ref{sec:cost_func_and_regul} for derivation of the cross entropy. To optimize the weight and biases we implement stochastic gradient descent algorithm \eqref{eq:SGD_algo}, using five minibatches. We will also study the implementation of $L_2$-regularization \eqref{eq:L2}. Our aim is to compare the result with those obtained from out feed forward neural network and Scikit-Learn's logistic regression functionality.
 
@@ -526,7 +524,7 @@ Again we first want to make sure our neural network actually learns, and study h
 	\caption{Test accuracy using sigmoid as the activation function, with 2 hidden layers with 10 nodes each. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_sigmoid}
 \end{figure}
 
-In Figure \ref{fig:NN_Cancer_sigmoid_dynam_eta}, we make the same plot, now using the learning schedule in equation \eqref{eq:learning_schedule}. This looks very similar to Figure \ref{fig:NN_Cancer_sigmoid}, though one obvious difference is that for $\eta=10^{-3}$ 100 epochs is not enough for it to converge. Using the static learning rate, this learning rate only gets good results after about 50 epochs, so this could be expected. The best result is $99.1\%$, corresponding to 1 mistake, again for $\eta=10^{-2.5}$. This is higher than when using the static learning rate.
+In Figure \ref{fig:NN_Cancer_sigmoid_dynam_eta}, we make the same plot, now using the learning schedule in equation \eqref{eq:learning_schedule}. This looks very similar to Figure \ref{fig:NN_Cancer_sigmoid}, though one obvious difference is that for $\eta=10^{-3}$, 100 epochs is not enough for it to converge. Using the static learning rate, this learning rate only gets good results after about 50 epochs, so this could be expected. The best result is $99.1\%$, corresponding to 1 mistake, again for $\eta=10^{-2.5}$. This is higher than when using the static learning rate.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__354289.pdf}
