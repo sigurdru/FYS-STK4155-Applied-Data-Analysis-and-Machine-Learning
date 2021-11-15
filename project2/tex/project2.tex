@@ -312,7 +312,6 @@ where OLS regression is obtained by setting $\lambda=0$. There are multiple para
 We begin by studying the MSE of the Franke function. For the MSE values we will include the result from both the train and test data in our first simulation only, in order to confirm that overfitting takes place eventually, while focusing on the test MSE in all the remaining simulation, which is the actual quantity of interest. The MSE is studied for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $M=36$ for the $720$ points in the training dataset. We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.9]$.
 
 We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. The values of $M$ are chosen such that $N_B$ becomes integers. This does not have to be the case, but will make the results more consistent. Next, using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ linearly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ uniformly distributed values of $\lambda\in[10^{-5},\,1]$, on a logarithmic scale. We only consider small $\lambda$ values, since our previous study of the Franke function with linear regression indicated that higher $\lambda$ yielded poor results \cite{project1}. Finally, we study the MSE over $150$ epochs for $15$ evenly spaced values of $\gamma\in[0,\,0.7]$ with a fixed learning rate.
-\sn{Burde man kanskje lagd tabell med parameterne?}.
 
 We expect the results to be very dependent on the choice of learning rate $\eta$. It is important that it is not too small, then we don't converge. Also if it is too large, we might never reach a minima. To combat these effects we use a dynamic learning rate, which starts high, such that the model gets better quick in the beginning, and then decreases as function of epoch, preventing the model from overshooting and circle around the minimum in $\bbeta$-space. We choose the following function for dynamic learning rate, where $t\in[0, \, N_e]$ denotes the current epoch.
 \begin{align} \label{eq:learning_schedule}
@@ -320,10 +319,6 @@ We expect the results to be very dependent on the choice of learning rate $\eta$
 \end{align}
 It will decrease lineraly from $\eta_0$, to $\eta_{N_e}=0$ at the last epoch.
 Using \eqref{eq:learning_schedule}, we rerun the first results, to study the effects of changing $\eta$ during training.
-
-After the SGD has been studied and appropriate parameters have been estimated, we will plot the resulting fit of the gradient descent using the optimal parameters found, and compare it to the Franke function as an indication of the result. This is a sanity check to ensure that the model actually makes sense. Although the fit was performed on a data set with noise $\epsilon\sim\mathcal{N}(0,\,0.2)$ we will use $\epsilon\sim\mathcal{N}(0,\,0.05)$ when plotting the prediction in order to see the details of the surface more clearly.
-\sn{MÅ GJØRES!}
-
 
 \subsubsection{Feed Forward Neural Network}
 When using the neural network to fit the Franke function, we use a lot of the same methods as for SGD. A key difference is that instead of iteratively updating a model $\bbeta$, we now train a network of several layers, each with many nodes. One of the results of this is that we do not have to choose the shape the model will take.
@@ -346,12 +341,6 @@ For the first simulation we choose $21$ linearly distributed values of $\eta\in[
 
 
 We then look at the MSE using dynamic learning rate, keeping the other parameters the same. Next the activation function for the hidden layers is tested using RELU and leaky RELU  instead of sigmoid. We also want to study the dependence of different numbers of layers and nodes. We could use any number of layers and nodes. To keep it simple, we keep the total number of nodes constant at 20, while using 1, 2, 3 and 4 layers, where the nodes are equally divided among the hidden layers. For 3 layers, the middle has 10 nodes, while the others have 5. Lastly, we study the dependence on the regularization parameter $\lambda$, choosing 11 good $\eta$-values, and 15 values for $\lambda$.
-
-
-
-So far, we have only studied the statistical accuracy of our neural network. As a sanity check we will use the optimal parameters obtained in order to plot the resulting prediction of the neural network, using $\epsilon\sim\mathcal{N}(0,\,0.05)$ just as we did for SGD. Some of the parameters we use may not be ideal when the noise is reduced, but the purpose of this test is simply to see whether our model behaves in a desired way, so reducing the noise makes the comparison easier.
-
-
 
 \subsection{Wisconsin Breast Cancer Data}
 We will now use the Wisconsin Breast Cancer dataset to predict wether a tumor is benign or malignant, based upon some features of it. This dataset is widely studied in the scientific litterature on machine learning, as it is easily availible, have relatively few datapoints and not too many features, and is a simple dataset to test binary classification algorithms on. The dataset contains measurments of 30 features of a tumor from 569 patients. Of these 30 features, some might be stronger predictors of wether a tumor is bad or good than others. Had the dataset been quite a bit larger, and more complex with many more features, our neural network would have taken a long time to train. It would therefore be important to study the correlation matrix. This is a symmetrix matrix saying how much 2 features correlates with eachother. If two features corrolate strongly, they are not linearly independent. It is then not nessisary to make the network train on both, and eliminating one can speed up the training without much loss in performance. Because of the small size if the dataset, our program runs quite quickly without doing this, so we do not spend much time studying the correlation matrix.
