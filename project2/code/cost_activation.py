@@ -1,5 +1,7 @@
+"""
+This file contains cost and activation functions used in the code
+"""
 import autograd.numpy as np
-
 
 class Costs:
     def MSE(self, t_):
