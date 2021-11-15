@@ -171,7 +171,7 @@ The activation functions are where the non-linearity of the neural nets comes in
 		x,        & \text{otherwise}.
 	\end{cases} \label{eq:leaky_RELU}
 \end{align}
-For Leaky RELU, $\alpha$ is some parameter for which we set to $\alpha = 0.01$. It can theoretically happen that all the input to the activation function is less than 0. As we will show in section \ref{sec:back_prop}, the network weight and biases are updated using the derivative of the activation function. Using RELU, all the derivatives would in this case be 0, and the neurons effectively become dead, never learning. This is the main benefit of using Leaky RELU, as this wont happen. However, using good weight initialization, this should not be a problem, so we do not expect the difference between the two activation functions to be very significant.
+For Leaky RELU, $\alpha$ is some parameter which we set to $\alpha = 0.01$. As we will show in section \ref{sec:back_prop}, the derivative of the activation function is used to update the weights and biases of the network. It can happen that inputs to the activation function of nodes are negative, making the derivative of the RELU function zero, such that the contribution from these neurons to the learning of the network vanishes. This is the main benefit of using Leaky RELU, as this won't happen. However, using good weight initialization, this should not be a problem, so we do not expect the difference between the two activation functions to be very significant.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{pictures/activation_functions.pdf}
@@ -180,7 +180,7 @@ For Leaky RELU, $\alpha$ is some parameter for which we set to $\alpha = 0.01$. 
 
 All neurons in all hidden layers are activated by the same activation function. The input layer is just the input, so it is not activated. In the case of regression, the output layer is not activated. Then the predicted function value is just the weighted sum from the last hidden layer. For classification, we want the values in the output nodes to indicate probabilities. Thus, we use an activation function that considers the value in the other nodes in the other output nodes. The softmax function does this
 
-\begin{equation}
+\begin{equation} \label{eq:softmax}
 	\sigma(z_i) = \frac{e^{z_i}}{\sum_{j=1}^Ke^{z_j}},
 \end{equation}
 where $K$ is the number of classes, output nodes.
@@ -250,7 +250,7 @@ In the next few lines we are going to derive several equations needed for the al
 \end{align}
 Because $\partial b_j^l/\partial z^l_j = 1$ from \eqref{eq:activation_of_node_ajl}. Again using the chain rule we can rewrite \eqref{eq:backprop1}
 \begin{align}
-	\Delta_j^l & = \del{C}{z_j^l} = \sum_{k} \del{E}{z_k^{l+1}}\del{z_k^{l+1}}{z^l_j} = \sum_{k} \Delta_k^{l+1}\del{z_k^{l+1}}{z^l_j} \nonumber \\
+	\Delta_j^l & = \del{C}{z_j^l} = \sum_{k} \del{C}{z_k^{l+1}}\del{z_k^{l+1}}{z^l_j} = \sum_{k} \Delta_k^{l+1}\del{z_k^{l+1}}{z^l_j} \nonumber \\
 	           & = \left(\sum_{k} \Delta_k^{l+1} w_{kj}^{l+1}\right)\der{\sigma(z^l_j)}{z^l_j}.
 	\label{eq:backprop3}
 \end{align}
@@ -275,12 +275,19 @@ The expression for updating the weights and biases are
 	b_j^l \leftarrow    & b_j^l - \eta \Delta_j^l \label{eq:update_biases}
 \end{align}
 
+\subsubsection{Numerical gradients} \label{sec:num_gradients}
+When computing the derivatives involved in the backpropagation algorithm numerically, we will mainly use the autograd module in python. The exception to this is when we deal with classification and use the cross-entropy cost function (equation \eqref{eq:cross_entropy}) combined with the softmax activation function (equation \eqref{eq:softmax}) for the output layer. It can be shown analytically, that the error, equation \eqref{eq:backprop1}, of the output layer in this case can be written as 
+\begin{align} \label{eq:softmax_crossentropy_derivative}
+	\Delta_j^L &= \del{C}{a_j^L}\der{\sigma(z_j^L)}{z_j^L} = a_j^L - y_j
+\end{align} 
+where $a_j^L$ is the $j$-th node of the output layer, and $y_j$ is the corresponding target value. 
+
 \subsubsection{Initialization of weights} \label{sec:wi}
-We mentioned earlier that the network has weights and biases between the layers. These needs to be initialized in some way. The biases are simple to initialize, as they are a single number for every node. These are initialized as a small, non-zero value $b_0$, which we choose as $b_0=0.01$.
+We mentioned earlier that the network has weights and biases between the layers. These needs to be initialized in some way. The biases are simple to initialize, as they are a single number for every node. These are initialized as a small, non-zero value $b_0$.
 
 Before 2006, most neural networks were performing quite badly on most tasks, as they did not learn during training. One of the (several) reasons were due to bad initialization of weights. A common way of doing this was using the standard normal distribution $W_{i,j} \sim  \mathcal{N}(0, 1)$. The problem with this is that it does not consider the size of the layers. In 2010, it was shown that when using sigmoid as the activation function, Xavier-initialization give better results \cite{xavier}. This is given as $W_{i, j}\sim\mathcal{U} \left(-\frac{1}{\sqrt{n}}, \frac{1}{\sqrt{n}} \right)$, where $\mathcal{U}$ is the uniform distribution, and $n$ is the number of nodes in the preceding layer.
 
-In 2015, He-initialization was shown to work well with ReLU and Leaky ReLU \cite{He}. Here, the weights are initialized using the normal distribution, but with a variance given by $v = 2/(1 + \alpha^2)n$, where again $n$ is the number of nodes in the preceding layer, and $\alpha$ is the parameter of the Leaky ReLU-function. For ReLU, this is 0. This initialization only considers the number of nodes in the preceding layer, though normalized initialization considering also the the number of nodes in the succeeding layer could yield better results. We use the initialization given here, for the appropriate activation-function, and will not study the particular effects of this in depth.
+In 2015, He-initialization was shown to work well with ReLU and Leaky ReLU \cite{He}. Here, the weights are initialized using the normal distribution, but with a variance given by $v = 2/(1 + \alpha^2)n$, where again $n$ is the number of nodes in the preceding layer, and $\alpha$ is the parameter of the Leaky ReLU-function. For ReLU, this is 0. This initialization only considers the number of nodes in the preceding layer, though normalized initialization where the number of nodes in the succeeding layer is considered as well could yield better results. We use the forementioned method to initialize the network for the appropriate activation-function, and will not study other methods of initialization.
 
 
 
@@ -306,16 +313,16 @@ As in \cite{project1}, we have to choose a model to fit the data to, when using 
 	\nabla_{\boldsymbol{\beta}}C^\mathrm{MB} (\boldsymbol{\beta})=2 X^T (X \boldsymbol{\beta} - \boldsymbol{z})/M + 2\lambda\boldsymbol{\beta}
 \end{align}
 
-where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rate $\eta$, number of epochs $N_e$, number of minibatches $N_B$, regularization parameter $\lambda$, and the momentum parameter $\gamma$. This gives us a 5-dimensional hyper-parameter space, and we would ideally optimize each parameter to get the lowest possible MSE. This could be done by grid search, where we test a range of values for every parameter. Testing 10 values for each will mean that we have to run the algorithm $10^5$ times, which is extremely slow. We will therefore simplify our search, only doing grid search over 1 or 2 of the parameters at a time, keeping the rest constant. We then study how each parameter affects the results, independently of the other parameters.
+where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rate $\eta$, number of epochs $N_e$, number of minibatches $N_B$, regularization parameter $\lambda$, and the momentum parameter $\gamma$. This gives us a 5-dimensional hyper-parameter space, and we would ideally optimize each parameter to get the lowest possible MSE. This could be done by grid search, where we test a range of values for every parameter. Testing, for instance, 10 values of each parameter at once means that we have to run the algorithm $10^5$ times, which makes the process extremely slow. We will therefore simplify our search, only doing grid search over 1 or 2 of the parameters at a time, keeping the rest constant. We then study how each parameter affects the results, independently of the other parameters.
 
 %TROR IKKE VI BURDE SI DETTE:
 %Further, it is not too valuable to find the absolutely optimal parameters in our hyperparameter space, because there are many more parameters we will not controll for, like the noise in the data or polynomial degree of our model.
 
-We begin by studying the MSE of the Franke function. For the MSE values we will include the result from both the train and test data in our first simulation only, in order to confirm that overfitting takes place eventually, while focusing on the test MSE in all the remaining simulation, which is the actual quantity of interest. The MSE is studied for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $M=36$ for the $720$ points in the training dataset. We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.9]$.
+We begin by studying the MSE of the Franke function. For the MSE values we will include the result from both the train and test data in our first simulation only, confirming that overfitting eventually takes place, while focusing on the test MSE in all the remaining simulation, which is the result of interest. The MSE is studied for different values of $\eta$ as a function of $N_e\in[0,\,150]$, setting $\lambda=\gamma=0$ and $N_B=20$, i.e. minibatches of size $M=36$ for the $720$ points in the training dataset. We choose $21$ evenly spaced values of $\eta\in[0.01,\,0.9]$.
 
-We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. The values of $M$ are chosen such that $N_B$ becomes integers. This does not have to be the case, but will make the results more consistent. Next, using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ linearly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ uniformly distributed values of $\lambda\in[10^{-5},\,1]$, on a logarithmic scale. We only consider small $\lambda$ values, since our previous study of the Franke function with linear regression indicated that higher $\lambda$ yielded poor results \cite{project1}. Finally, we study the MSE over $150$ epochs for $15$ evenly spaced values of $\gamma\in[0,\,0.7]$ with a fixed learning rate.
+We then choose one of the favorable learning rates to study the MSE for minibatch sizes of $M\in[720,\,360,\,240,\,144,\,72,\,48,\,36,\,30,\,24]$, as a function of epochs, using $N_e\in[0,\,150]$ once again. The values of $M$ are chosen such that $N_B$ becomes integers. This does not have to be the case, but will make the results more consistent. Next, using $N_B=20$ minibatches, we then study the MSE after $N_e=150$ epochs as a function of $\eta$ and $\lambda$ to study the effect of regularization. For this we use $11$ linearly distributed values of $\eta\in[0.1,\,0.5]$ and $11$ uniformly distributed values of $\lambda\in[10^{-5},\,1]$, on a logarithmic scale. We only consider small $\lambda$ values, since our previous study of the Franke function with linear regression indicated that higher $\lambda$ yielded poor results \cite{project1}. Finally, we use equation \eqref{eq:vt_mom} to study momentum, using $15$ evenly spaced values of $\gamma\in[0,\,0.7]$ with a fixed learning rate, and plot the MSE over $150$ epochs.
 
-We expect the results to be very dependent on the choice of learning rate $\eta$. It is important that it is not too small, then we don't converge. Also if it is too large, we might never reach a minima. To combat these effects we use a dynamic learning rate, which starts high, such that the model gets better quick in the beginning, and then decreases as function of epoch, preventing the model from overshooting and circle around the minimum in $\bbeta$-space. We choose the following function for dynamic learning rate, where $t\in[0, \, N_e]$ denotes the current epoch.
+We expect the results to be very dependent on the choice of learning rate $\eta$. It is important that it is not too small, then we don't converge. Also if it is too large, we might never reach a minima. To combat these effects we use a dynamic learning rate, which starts high, such that the model gets better quick in the beginning, and then decreases as function of epoch, preventing the model from overshooting and circle around the minima in $\bbeta$-space. We choose the following function for dynamic learning rate, where $t\in[0, \, N_e]$ denotes the current epoch.
 \begin{align} \label{eq:learning_schedule}
 	\eta_t = \eta_0 \cdot \closed{1 - \frac{t}{N_e}}
 \end{align}
@@ -391,7 +398,7 @@ We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \
 	\label{fig:SGD_Franke_epochs_eta}
 \end{figure}
 
-When studying different number of minibatches and momentum parameters $\gamma$, we will choose a specific $\eta$. Looking at figure \ref{fig:SGD_Franke_epochs_eta}, although there are many candidates, $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. This choice appears to be a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsulate both cases at once.
+When studying different number of minibatches and momentum parameters $\gamma$, we will choose a specific $\eta$. Looking at figure \ref{fig:SGD_Franke_epochs_eta}, although there are many candidates, $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. This choice appears to lie near a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsulate both cases at once.
 
 The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. We notice that by using too few minibatches, we converge more slowly. When we use $N_B=30$ we get a quickly converging MSE with a low minimum value, but there appears to some fluctuations. Because of the small batch size, the batches are more prone to consist of points not giving a good approximation of the gradient.
 
@@ -401,7 +408,7 @@ The MSE as a function of epochs for different number of minibatches is shown in 
 	\label{fig:SGD_Franke_epochs_minibatches}
 \end{figure}
 
-We plot the test MSE after $N_e=150$ epochs with different regularization parameters in figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit on the shown MSE, as we are interested in the general impact of the $\lambda$ values, and not nuances of the lowest values. We see in the figure that the results are not very affected by the choice of $\eta$. However, the MSE is lowest for small values of $\lambda$, increasing quickly for higher values. This is similar to what we saw in \cite{project1}, though then we observed a small dip in the MSE for $\log10(\lambda)=-2.07$ for certain polynomial degrees.
+We plot the test MSE after $N_e=150$ epochs with different regularization parameters in figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit on the shown MSE, as we are interested in the general impact of the $\lambda$ values, and not nuances of the lowest values. We see in the figure that the results are not very affected by the choice of $\eta$. However, the MSE is lowest for small values of $\lambda$, increasing quickly for higher $\lambda$ values. This is similar to what we saw with linear regression \cite{project1}, though we then observed a small dip in the MSE for $\log10(\lambda)=-2.07$ for certain polynomial degrees.
 
 
 \begin{figure}[h!]
