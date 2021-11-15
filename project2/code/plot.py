@@ -425,25 +425,29 @@ def eta_epochs(data, args, vmax=None, vmin=None):
         cols = np.arange(args.num_epochs)
         idx = np.round(args.eta,5)
         data = pd.DataFrame(accuracy, index=idx, columns=cols)
-        ylabel = r"Initial learning rate, $\eta_0$"
-        xlabel = "Number of epochs"
+
+        xtick = len(cols)//10
+        ytick = idx
+        xrot = 0
+        
         title = name + r" for Franke function, using NN with 20 minibatches"
-        if args.dynamic_eta:
-            title += "\n" + r"with dynamic learning rate, $\eta$"
+
         if args.act_func == "relu":
             title += "\n" + r"Using the Relu activation function"
         elif args.act_func == "leaky_relu":
             title += "\n" + r"Using the Leaky Relu activation function"
 
-        xtick = len(cols)//10
-        ytick = idx
-        xrot = 0
-
-        func["x"] = "epochs"
+        xlabel = "Number of epochs"
+        
         if args.dynamic_eta:
+            title += "\n" + r"with dynamic learning rate, $\eta$"
+            ylabel = r"Initial learning rate, $\eta_0$"
             func["y"] = "dynamic_eta"
         else:
             func["y"] = "eta"
+            ylabel = r"Learning rate, $\eta$"
+            
+        func["x"] = "epochs"
         func["z"] = name.split()[1]
 
         ax = sns.heatmap(data,
