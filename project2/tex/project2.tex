@@ -519,11 +519,11 @@ Since a very integral part of neural networks are the neurons, we also study the
 	\caption{Neural networks with different number of layers, but same number of total nodes. Top left has 1 hidden layer, top right has 2. Bottom left has 3, while bottom right has 4. All have a total of 20 nodes.}\label{fig:NN_layers}
 \end{figure}
 
-Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ values as in Figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}, and sigmoid as the activation function, we plot the test MSE after 100 epochs for 11 logarithmically distributed values of $\lambda$ between $10^{-5}$ and $1$. This is shown in Figure \ref{fig:NN_lambda}. We see that we get better result for lower $\lambda$, strictly.
+Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ values as in Figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}, and sigmoid as the activation function, we plot the test MSE after 100 epochs for 15 logarithmically distributed values of $\lambda$ between $10^{-7}$ and $1$. This is shown in Figure \ref{fig:NN_lambda}. We see that we get better result for lower $\lambda$, strictly. In \cite{project1} we saw that the $\lambda$ parameters was useful if the noise in the data was higher. We made a similar figure, with $\epsilon=0.5$ The resulting MSE was (naturally) higher, but the trend was the same as seen here. We see no benefit using other values than $\lambda=0$. Other parameters or datasets could change this.
 
 
 \begin{figure}[h]
-	\includegraphics[width=\linewidth]{plots/NN_Franke__eta_lambda__test_MSE__489556.pdf}
+	\includegraphics[width=\linewidth]{plots/NN_Franke__eta_lambda__test_MSE__228448.pdf}
 	\caption{Test MSE as function of learning rate $\eta$ and regularization parameter $\lambda$. The two blank squares in the top right corner correspond to MSE higher than 1, and thus not shown.}\label{fig:NN_lambda}
 \end{figure}
 
