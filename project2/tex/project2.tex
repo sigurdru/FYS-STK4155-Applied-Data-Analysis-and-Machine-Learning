@@ -12,7 +12,6 @@
 \usepackage{footmisc}
 
 \graphicspath{{../output/}}
-
 \collaborationImg{\includegraphics[width=30mm]{../../pictures/UIO.png}}
 
 \author{\Large Håkon Olav Torvik, Vetle Vikenes \& Sigurd Sørlie Rustad}
@@ -350,7 +349,7 @@ Having initialized the neural network we are now going to train it. Each trainin
 \end{align}
 
 
-We then look at the MSE using dynamic learning rate, keeping the other parameters the same. Next the activation function for the hidden layers is tested using RELU and leaky RELU instead of sigmoid. We also study the dependence on the regularization parameter $\lambda$. Choosing
+We then look at the MSE using dynamic learning rate, keeping the other parameters the same. Next the activation function for the hidden layers is tested using RELU and leaky RELU  instead of sigmoid. We also study the dependence on the regularization parameter $\lambda$. Choosing
 \sn{må lage plot for dette}
 
 Lastly, we study the dependence of different numbers of layers and nodes, using 1 layer with 10 nodes, 2 with 20 each and 3 with 20 nodes in first
@@ -486,7 +485,7 @@ Figure \ref{fig:NN_Franke_epochs_dynamic_eta} shows the evolution of the MSE whe
 \end{figure}
 
 
-Next we want to see the effects of different activation functions, we plot the test MSE over $250$ epochs using the Relu and Leaky Relu activation functions for the hidden layers, shown in the upper and lower panel of figure \ref{fig:NN_Franke_epochs_eta_MSE_relu_leaky} respectively. An upper value of $0.07$ have been used for the MSE once again. Values of $\eta>0.15$ yielded poor results for these activation functions, and caused the network to not converge for some of the higher learning rates. The behaviour of the MSE for these two activation functions differ very little, but it appears that Leaky Relu yields somewhat lower MSE values than Relu. We include the corresponding MSE evolution for the same $\eta$ values with sigmoid function as activation for the hidden layers, shown in figure \ref{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare}.
+Next we want to see the effects of different activation functions. We plot the test MSE over $250$ epochs using the RELU and Leaky RELU activation functions for the hidden layers, shown in the upper and lower panel of figure \ref{fig:NN_Franke_epochs_eta_MSE_relu_leaky} respectively. The dynamic $\eta$ is not used. An upper value of $0.07$ have been used for the MSE once again. Because the functions are linear for values above $0$, high activations can occur, leading to overflow. This happened for $\eta>0.15$, and thus not shown.  The difference between the two methods are not significant, as was expected, though Leaky RELU gave slightly better results. In Figure \ref{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare} we show the results from sigmoid, using the same $\eta$ values. It is apparent that RELU and Leaky RELU learn much more quickly then sigmoid. While the latter needs at least 25 epochs to get a good result, the former two need 1. However, for RELU and Leaky RELU, the MSE increases again for towards the end of training for high $\eta$-values, a sign of overfitting. This indicates it is better to train those two for fewer epochs, and lower $\eta$.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.8\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__relu__733938.pdf}
@@ -495,7 +494,6 @@ Next we want to see the effects of different activation functions, we plot the t
 	\label{fig:NN_Franke_epochs_eta_MSE_relu_leaky}
 \end{figure}
 
-Figure \ref{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare} emphasizes the vast difference of the neural network with different acitivation functions for the hidden layers. Both Relu and Leaky Relu converges a lot faster than sigmoid activation, and while there seems to be slight increase of MSE values towards the end for the former two, these are less present for the lower values of $\eta$, which might have been a more suitbale choice. Other than that, there are still fluctuations for all three activation functions, and the sigmoid function converges much slower than the other two. Figure \ref{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare} shows that the MSE irregularities in figure \ref{fig:NN_Franke_epochs_eta_MSE_limited} are still present, although barely visible the the learning rates where the MSE barely drops below $0.06$. The MSE irregularities near the end are much smaller for the other two activation functions, and doesn't seem to affect the lowest learning rates to a noticeable degree.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.7\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__compare__600255.pdf}
@@ -503,7 +501,23 @@ Figure \ref{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare} emphasizes the vast di
 	\label{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare}
 \end{figure}
 
-We now plot different network configurations. HÅKON OLAV
+Since a very integral part of neural networks are the neurons, we also study the way the network is structued. Until now, we have used a network with 2 hidden layers with 10 nodes in each. Without changing the total number of nodes, we train 4 networks for 100 epochs, using the activation function RELU. First, 1 (hidden) layer with 20 nodes is used. Then 2 layers with 10 each, for comparison. Then 3 layers, the middle with 10 nodes and the others with 5, and lastly 4 layers, with 5 nodes each. The same $\eta$ range as before is used. The four resulting plots are shown in Figure \ref{fig:NN_layers}. In the b
+
+\begin{figure}[h]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__375043.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__705262.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__45014.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__704482.pdf}
+	\endminipage
+	\caption{Neural networks with different number of layers, but same number of total nodes. Top left has 1 hidden layer, top right has 2. Bottom left has 3, while bottom right has 4. All have a total of 20 nodes.}\label{fig:NN_layers}
+\end{figure}
 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
