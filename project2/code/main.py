@@ -112,7 +112,9 @@ def parse_args(args=None):
     add_arg("-act_func",
             type=str,
             default="sigmoid",
-            help="activation function used in hidden layers") 
+            choices=["sigmoid", "tanh", "relu", "leaky_relu", "linear", "none"],
+            help="activation function used in hidden layers",
+            ) 
 
     add_arg("-d", "--dataset",
             type=str,

@@ -83,7 +83,7 @@ class FFNN(Costs, Activations):
         self.delta_l = self.Layers.copy()   # Activation layer input gradient
 
         # Initial zero for weights ensures that weights[n] corresponds to Layers[n]
-        if wi:
+        if wi and activation not in ("none", "linear"):
             if activation == "sigmoid":  # Xavier initialization
                 self.weights = [0] + [np.random.uniform(-1/np.sqrt(n), 1/np.sqrt(n), size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
             elif activation == "tanh":  # Normalized Xaviet initialization
@@ -95,7 +95,7 @@ class FFNN(Costs, Activations):
         else: # no fancy initialization
             self.weights = [0] + [np.random.normal(size=(n, m)) for n, m in zip(self.nodes[:-1], self.nodes[1:])]
         self.bias = [np.ones((1, n)) * bias0 for n in self.nodes]
-
+        
         # Calculate gradients with momentum (gamma=0 by default)
         self.optim_w = Optimizer(gamma, self.nodes)
         self.optim_b = Optimizer(gamma, self.nodes)
@@ -106,7 +106,9 @@ class FFNN(Costs, Activations):
                             'relu': self.relu,
                             'leaky_relu': self.leaky_relu,
                             'softmax': self.softmax,
-                            'none': self.none}
+                            'none': self.linear,
+                            'linear': self.linear,
+                            }
 
         # Cost functions avaible
         cost_funcs = {'MSE': self.MSE,
@@ -219,6 +221,7 @@ class FFNN(Costs, Activations):
             
         for name, (x, t) in zip(("train", "test"), ((self.X, self.static_target), test)):
             if self.nodes[-1] > 1:
+
                 self.history[name + "_accuracy"].append(self.predict_accuracy(x, t))
                 loss = self.predict(x) - t
                 self.history[name + "_loss"].append(max(np.mean(loss, axis=0)))
@@ -254,9 +257,10 @@ class FFNN(Costs, Activations):
                 return np.nan
         except:
             return np.nan
-        pred = np.argmax(probs, axis=1).reshape(-1, 1)
-        true = np.argmax(y, axis=1).reshape(-1, 1)
-        return np.sum(pred == true) / len(true)
+        pred = np.max(probs, axis=1).reshape(-1, 1)
+        # true = np.argmax(y, axis=1).reshape(-1, 1)
+        # return np.sum(pred == true) / len(true)
+        return np.mean(pred)
 
     def save(self, fname=None):
         """

@@ -1,5 +1,7 @@
+"""
+This file contains cost and activation functions used in the code
+"""
 import autograd.numpy as np
-
 
 class Costs:
     def MSE(self, t_):
@@ -29,6 +31,6 @@ class Activations:
         s = np.sum(exp, axis=1, keepdims=True)
         return exp/s
 
-    def none(self, x):
+    def linear(self, x):
         # No activation
         return x

@@ -1088,6 +1088,364 @@ Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta
 2021-11-13 18:24:42.165205
 
 
+NN_Cancer__dynamic_eta_lambda__train_accuracy__relu__994013.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.98107171e-06, 1.58489319e-05, 6.30957344e-05,
+       2.51188643e-04, 1.00000000e-03, 3.98107171e-03, 1.58489319e-02,
+       6.30957344e-02, 2.51188643e-01, 1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:05:10.251311
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__relu__353740.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.98107171e-06, 1.58489319e-05, 6.30957344e-05,
+       2.51188643e-04, 1.00000000e-03, 3.98107171e-03, 1.58489319e-02,
+       6.30957344e-02, 2.51188643e-01, 1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:05:13.034291
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__leaky_relu__770171.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.98107171e-06, 1.58489319e-05, 6.30957344e-05,
+       2.51188643e-04, 1.00000000e-03, 3.98107171e-03, 1.58489319e-02,
+       6.30957344e-02, 2.51188643e-01, 1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:05:22.109274
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__leaky_relu__2847.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.98107171e-06, 1.58489319e-05, 6.30957344e-05,
+       2.51188643e-04, 1.00000000e-03, 3.98107171e-03, 1.58489319e-02,
+       6.30957344e-02, 2.51188643e-01, 1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:05:23.854213
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__relu__320372.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-07, 3.83118685e-07, 1.46779927e-06, 5.62341325e-06,
+       2.15443469e-05, 8.25404185e-05, 3.16227766e-04, 1.21152766e-03,
+       4.64158883e-03, 1.77827941e-02, 6.81292069e-02, 2.61015722e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:07:04.687853
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__relu__144246.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-07, 3.83118685e-07, 1.46779927e-06, 5.62341325e-06,
+       2.15443469e-05, 8.25404185e-05, 3.16227766e-04, 1.21152766e-03,
+       4.64158883e-03, 1.77827941e-02, 6.81292069e-02, 2.61015722e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:07:08.696585
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__relu__450019.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), hidden_nodes=[20, 40, 40, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:12:05.541336
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__relu__905655.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.98107171e-05, 1.58489319e-04, 6.30957344e-04,
+       2.51188643e-03, 1.00000000e-02, 3.98107171e-02, 1.58489319e-01,
+       6.30957344e-01, 2.51188643e+00, 1.00000000e+01]), hidden_nodes=[20, 40, 40, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:12:08.617582
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__relu__25160.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 40, 40, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:31:39.085190
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__relu__725623.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 40, 40, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:31:43.105514
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__relu__158124.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:34:07.744532
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__relu__667583.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:34:09.807767
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__relu__885595.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00056234, 0.00316228, 0.01778279, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.e-05]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:37:01.238093
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__relu__548738.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00056234, 0.00316228, 0.01778279, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.e-05]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:37:05.751988
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__relu__615466.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:38:44.392417
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__relu__990553.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:38:46.354771
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__relu__862056.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:42:02.877819
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__relu__875562.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:42:04.742945
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__relu__770620.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 40, 40, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:44:40.946043
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__relu__156507.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00017783, 0.00031623, 0.00056234, 0.001     ,
+       0.00177828, 0.00316228, 0.00562341, 0.01      , 0.01778279,
+       0.03162278, 0.05623413, 0.1       ]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 2.68269580e-05, 7.19685673e-05, 1.93069773e-04,
+       5.17947468e-04, 1.38949549e-03, 3.72759372e-03, 1.00000000e-02,
+       2.68269580e-02, 7.19685673e-02, 1.93069773e-01, 5.17947468e-01,
+       1.38949549e+00, 3.72759372e+00, 1.00000000e+01]), hidden_nodes=[20, 40, 40, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-14 12:44:42.802838
+
+
+NN_Franke__epochs_eta__train_MSE__159528.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 2.51188643e-04, 6.30957344e-04, 1.58489319e-03,
+       3.98107171e-03, 1.00000000e-02, 2.51188643e-02, 6.30957344e-02,
+       1.58489319e-01, 3.98107171e-01, 1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=True, push=False, save=True, seed=2021)
+2021-11-14 12:55:45.158445
+
+
+NN_Franke__epochs_eta__test_MSE__153892.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 2.51188643e-04, 6.30957344e-04, 1.58489319e-03,
+       3.98107171e-03, 1.00000000e-02, 2.51188643e-02, 6.30957344e-02,
+       1.58489319e-01, 3.98107171e-01, 1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=True, push=False, save=True, seed=2021)
+2021-11-14 12:56:03.770892
+
+
+NN_Franke__epochs_eta__train_R2__206838.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 2.51188643e-04, 6.30957344e-04, 1.58489319e-03,
+       3.98107171e-03, 1.00000000e-02, 2.51188643e-02, 6.30957344e-02,
+       1.58489319e-01, 3.98107171e-01, 1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=True, push=False, save=True, seed=2021)
+2021-11-14 12:56:10.553926
+
+
+NN_Franke__epochs_eta__test_R2__918239.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 2.51188643e-04, 6.30957344e-04, 1.58489319e-03,
+       3.98107171e-03, 1.00000000e-02, 2.51188643e-02, 6.30957344e-02,
+       1.58489319e-01, 3.98107171e-01, 1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=True, push=False, save=True, seed=2021)
+2021-11-14 12:56:18.802597
+
+
+NN_Franke__epochs_eta__train_MSE__673087.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=150, eta=array([0.001     , 0.00199526, 0.00398107, 0.00794328, 0.01584893,
+       0.03162278, 0.06309573, 0.12589254, 0.25118864, 0.50118723,
+       1.        ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=True, push=False, save=True, seed=2021)
+2021-11-14 13:02:15.010541
+
+
+NN_Franke__epochs_eta__test_MSE__63753.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=150, eta=array([0.001     , 0.00199526, 0.00398107, 0.00794328, 0.01584893,
+       0.03162278, 0.06309573, 0.12589254, 0.25118864, 0.50118723,
+       1.        ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=True, push=False, save=True, seed=2021)
+2021-11-14 13:04:59.623631
+
+
+NN_Franke__epochs_eta__train_R2__326578.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=150, eta=array([0.001     , 0.00199526, 0.00398107, 0.00794328, 0.01584893,
+       0.03162278, 0.06309573, 0.12589254, 0.25118864, 0.50118723,
+       1.        ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=True, push=False, save=True, seed=2021)
+2021-11-14 13:05:01.029563
+
+
+NN_Franke__epochs_eta__test_R2__257720.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=150, eta=array([0.001     , 0.00199526, 0.00398107, 0.00794328, 0.01584893,
+       0.03162278, 0.06309573, 0.12589254, 0.25118864, 0.50118723,
+       1.        ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=True, push=False, save=True, seed=2021)
+2021-11-14 13:05:07.071525
+
+
+NN_Franke__epochs_eta__train_MSE__914262.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:06:08.678722
+
+
+NN_Franke__epochs_eta__test_MSE__551178.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:06:12.274084
+
+
+NN_Franke__epochs_eta__train_MSE__897244.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:06:47.660191
+
+
+NN_Franke__epochs_eta__test_MSE__3547.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:06:49.580482
+
+
+NN_Franke__epochs_eta__train_MSE__230826.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 20, 50, 20, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:07:47.087639
+
+
+NN_Franke__epochs_eta__test_MSE__641346.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 20, 50, 20, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:07:48.832329
+
+
+NN_Franke__epochs_eta__train_MSE__748036.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:12:57.265439
+
+
+NN_Franke__epochs_eta__test_MSE__691893.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:12:59.015012
+
+
+NN_Franke__epochs_eta__train_MSE__187223.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:13:37.649309
+
+
+NN_Franke__epochs_eta__test_MSE__365417.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:13:39.469994
+
+
+NN_Franke__epochs_eta__train_MSE__137483.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:17:07.768480
+
+
+NN_Franke__epochs_eta__test_MSE__534692.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:17:10.848827
+
+
+NN_Franke__epochs_eta__train_MSE__197518.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:17:46.670395
+
+
+NN_Franke__epochs_eta__test_MSE__345755.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:17:49.320178
+
+
+NN_Franke__epochs_eta__train_MSE__674270.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:19:12.750459
+
+
+NN_Franke__epochs_eta__test_MSE__498716.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:19:14.744821
+
+
+NN_Franke__epochs_eta__train_MSE__484286.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:20:45.144424
+
+
+NN_Franke__epochs_eta__test_MSE__742537.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 17:20:47.083155
+
+
+NN_Franke__epochs_eta__train_MSE__359716.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 40, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 18:53:49.421742
+
+
+NN_Franke__epochs_eta__test_MSE__505632.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 40, 20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-14 18:53:51.329861
 NN_Franke__epochs_eta__train_MSE__867262.pdf
 Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.001  , 0.00845, 0.0159 , 0.02335, 0.0308 , 0.03825, 0.0457 ,
        0.05315, 0.0606 , 0.06805, 0.0755 , 0.08295, 0.0904 , 0.09785,
@@ -1100,3 +1458,191 @@ Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta
        0.05315, 0.0606 , 0.06805, 0.0755 , 0.08295, 0.0904 , 0.09785,
        0.1053 , 0.11275, 0.1202 , 0.12765, 0.1351 , 0.14255, 0.15   ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=True, save=True, seed=2021)
 2021-11-15 10:09:36.427209
+
+
+NN_Franke__epochs_eta__train_MSE__987557.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 11:41:50.398449
+
+
+NN_Franke__epochs_eta__test_MSE__178487.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 11:41:52.504345
+
+
+NN_Franke__epochs_eta__train_MSE__144814.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 11:42:28.730142
+
+
+NN_Franke__epochs_eta__test_MSE__993059.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 11:42:30.626798
+
+
+NN_Franke__epochs_eta__train_MSE__808641.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[5, 10, 5], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 11:43:13.003650
+
+
+NN_Franke__epochs_eta__test_MSE__500205.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[5, 10, 5], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 11:43:14.887262
+
+
+NN_Franke__epochs_eta__train_MSE__747912.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[5, 5, 5, 5], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 11:44:04.840285
+
+
+NN_Franke__epochs_eta__test_MSE__318188.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[5, 5, 5, 5], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 11:44:06.745170
+
+
+NN_Franke__epochs_eta__train_MSE__relu__940471.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:10:50.008570
+
+
+NN_Franke__epochs_eta__test_MSE__relu__494787.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:10:52.097622
+
+
+NN_Franke__epochs_eta__train_MSE__relu__342120.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:11:10.595091
+
+
+NN_Franke__epochs_eta__test_MSE__relu__464249.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:11:12.662851
+
+
+NN_Franke__epochs_eta__train_MSE__relu__639458.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:15:09.946852
+
+
+NN_Franke__epochs_eta__test_MSE__relu__225993.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:15:13.642448
+
+
+NN_Franke__epochs_eta__train_MSE__relu__124766.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=250, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:15:45.776490
+
+
+NN_Franke__epochs_eta__train_MSE__relu__9236.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:16:24.179319
+
+
+NN_Franke__epochs_eta__test_MSE__relu__375043.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:16:25.944978
+
+
+NN_Franke__epochs_eta__train_MSE__relu__932928.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:16:39.483194
+
+
+NN_Franke__epochs_eta__test_MSE__relu__705262.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:16:41.196160
+
+
+NN_Franke__epochs_eta__train_MSE__relu__305342.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[5, 10, 5], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:16:57.364168
+
+
+NN_Franke__epochs_eta__test_MSE__relu__45014.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[5, 10, 5], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:16:59.072846
+
+
+NN_Franke__epochs_eta__train_MSE__relu__808681.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[5, 5, 5, 5], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:17:06.935682
+
+
+NN_Franke__epochs_eta__test_MSE__relu__704482.pdf
+Namespace(method='NN', tts=0.2, polynomial=1, num_points=30, num_epochs=100, eta=array([0.001 , 0.0159, 0.0308, 0.0457, 0.0606, 0.0755, 0.0904, 0.1053,
+       0.1202, 0.1351, 0.15  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[5, 5, 5, 5], weight_initialization=True, act_func='relu', dataset='Franke', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 13:17:08.675104
+
+
+NN_Franke__eta_lambda__train_MSE__990552.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=True, push=False, save=True, seed=2021)
+2021-11-15 14:01:27.562467
+
+
+NN_Franke__eta_lambda__test_MSE__489556.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=True, push=False, save=True, seed=2021)
+2021-11-15 14:02:02.363351
+
+
+NN_Franke__eta_lambda__train_MSE__512230.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 14:11:21.440644
+
+
+NN_Franke__eta_lambda__test_MSE__906165.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=array([1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 14:11:23.260722
+
+
+NN_Franke__eta_lambda__train_MSE__646026.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 14:16:23.562602
+
+
+NN_Franke__eta_lambda__test_MSE__228448.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.2, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 14:16:25.759035
