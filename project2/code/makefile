@@ -1,4 +1,10 @@
-
+SGD_regression:
+	python3 main.py -d Franke -m reg -Ne 150 -eta 'np.linspace(0.01,0.9,21)' 
+	python3 main.py -d Franke -m reg -Ne 150 -eta 'np.linspace(0.01,0.5,21)'
+	python3 main.py -d Franke -m reg -Ne 150 -eta 0.25 -bs 0 
+	python3 main.py -d Franke -m reg -Ne 150 -eta 'np.linspace(0.1,0.5,11)' -l 'np.logspace(-5,0,11)'
+	python3 main.py -d Franke -m reg -Ne 150 -eta 0.25 -ga -1
+	python3 main.py -d Franke -m reg -Ne 150 -eta 'np.linspace(0.1,0.9,21)' -de 
 NN_classification:
 	python3 main.py -d Cancer -hn 20,20 -eta 'np.logspace(-4, 0, 11)' -l 'np.logspace(-5, 1, 11)' -bs 35 -act_func sigmoid
 	python3 main.py -d Cancer -hn 20,20 -eta 'np.logspace(-4, 0, 11)' -l 'np.logspace(-5, 1, 11)' -bs 35 -de -act_func sigmoid
