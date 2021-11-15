@@ -118,7 +118,6 @@ def NN_regression(args):
 
 
 def linear_regression(args):
-    print("Doing linear regression")
     p = args.polynomial
     etas = args.eta
     lmbs = args.lmb
@@ -191,8 +190,8 @@ def linear_regression(args):
                         # Plot result of fit, and exit
                         plot.surface_fit(z_pred, z, x, y, args)
 
-        print(f"Best NN train prediction: {(train:=data['Train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
-        print(f"Best NN test prediction: {(test:=data['Test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+        print(f"Best SGD train prediction: {(train:=data['Train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+        print(f"Best SGD test prediction: {(test:=data['Test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
         plot.parameter_based(data, args)
 
     else:
@@ -213,7 +212,7 @@ def linear_regression(args):
 
             data["Train MSE"][i] = mom_MSE_train
             data["Test MSE"][i] = mom_MSE_test
-
+        print(f"Best SGD test prediction: {(test:=data['Test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for gamma = {gammas[mn[0]]}")
         plot.momentum(data, args)
 
 

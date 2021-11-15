@@ -389,7 +389,7 @@ We plot the MSE evolution of the Franke function using SGD for our train and tes
 
 In figure \ref{fig:SGD_Franke_epochs_eta_overfit} we see that the test MSE converges faster for increased values of $\eta$ as expected. For $\eta=0.01$ we get an MSE barely below $0.07$ after $N_e=150$, as the gradient steps are too small. When $\eta$ exceeds $0.5$ we get abrupt increases of the test MSE after certain epochs. These learning rates are too high, as a gradient step goes beyond the actual minima. For $\eta=0.9$ this effect is apparent, with large fluctuations of the MSE over certain epochs.
 
-We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}. We clearly see how the increased learning rate yields a faster converging result, but at the expense of MSE stability, which we can see from clear fluctuations at $\eta=0.5$. When our prediction approaches the desired model, the gradients are relatively small, such that high learning rates potentially overshoots minima.
+We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \ref{fig:SGD_Franke_epochs_eta}. We clearly see how the increased learning rate yields a faster converging result, but at the expense of MSE stability, which we can see from clear fluctuations at $\eta=0.5$. When our prediction approaches the desired model, the gradients are relatively small, such that high learning rates potentially overshoots minima. The lowest $MSE \approx 0.0476$ is achieved with $\eta\approx0.476$.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_eta__Test_MSE__262224.pdf}
@@ -397,7 +397,7 @@ We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \
 	\label{fig:SGD_Franke_epochs_eta}
 \end{figure}
 
-When studying different number of minibatches and momentum parameters $\gamma$, we will choose a specific $\eta$. Looking at figure \ref{fig:SGD_Franke_epochs_eta}, although there are many candidates, $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. This choice appears to lie near a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsulate both cases at once.
+When studying different number of minibatches and momentum parameters $\gamma$, we will choose a specific $\eta$. Although the lowest MSE is with $\eta\approx0.476$, we deem that the MSE fluctuates too much with that value. Looking at figure \ref{fig:SGD_Franke_epochs_eta}, although there are many candidates, $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. This choice appears to lie near a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsulate both cases at once.
 
 The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. We notice that by using too few minibatches, we converge more slowly. When we use $N_B=30$ we get a quickly converging MSE with a low minimum value, but there appears to some fluctuations. Because of the small batch size, the batches are more prone to consist of points not giving a good approximation of the gradient.
 
@@ -407,8 +407,7 @@ The MSE as a function of epochs for different number of minibatches is shown in 
 	\label{fig:SGD_Franke_epochs_minibatches}
 \end{figure}
 
-We plot the test MSE after $N_e=150$ epochs with different regularization parameters in figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit on the shown MSE, as we are interested in the general impact of the $\lambda$ values, and not nuances of the lowest values. We see in the figure that the results are not very affected by the choice of $\eta$. However, the MSE is lowest for small values of $\lambda$, increasing quickly for higher $\lambda$ values. This is similar to what we saw with linear regression \cite{project1}, though we then observed a small dip in the MSE for $\log10(\lambda)=-2.07$ for certain polynomial degrees.
-
+We plot the test MSE after $N_e=150$ epochs with different regularization parameters in figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit on the shown MSE, as we are interested in the general impact of the $\lambda$ values, and not nuances of the lowest values. We see in the figure that the results are not very affected by the choice of $\eta$. However, the MSE is lowest for small values of $\lambda$, increasing quickly for higher $\lambda$ values. This is similar to what we saw with linear regression \cite{project1}, though we then observed a small dip in the MSE for $\log10(\lambda)=-2.07$ for certain polynomial degrees. The actual lowest $MSE \approx 0.0482$ is with $\eta = 0.5$ and $\lambda = 10^{-5}$.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__lambda_eta__Test_MSE__764274.pdf}
@@ -416,8 +415,7 @@ We plot the test MSE after $N_e=150$ epochs with different regularization parame
 	\label{fig:SGD_Franke_lambda_eta}
 \end{figure}
 
-
-Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the test data with different momentum parameters as a function of $N_e\in[0,\,150]$. We see that increasing $\gamma$ values causes the MSE to drop faster, particularly in the beginning when the gradients are large, which is expected. We also notice that $\gamma\gtrsim0.35$ results in fluctuations of the MSE, especially evident for $\gamma=0.7$, where it appears that step sizes taken following large gradient values are too big. It appears that $\gamma=0.2$ is the optimal value for this particular test, as it is small enough to avoid overshooting minima for high gradients, while still increasing the convergence rate.
+Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the test data with different momentum parameters as a function of $N_e\in[0,\,150]$. We see that increasing $\gamma$ values causes the MSE to drop faster, particularly in the beginning when the gradients are large, which is expected. We also notice that $\gamma\gtrsim0.35$ results in fluctuations of the MSE, especially evident for $\gamma=0.7$, where it appears that step sizes taken following large gradient values are too big. It appears that $\gamma=0.2$ is the optimal value for this particular test, as it is small enough to avoid overshooting minima for high gradients, while still increasing the convergence rate. Here we actually manage to reproduce the $MSE \approx 0.0471$, with $\gamma = 0.7$. Which was the lowest MSE in the previous project \cite{project1}.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_gamma__Test_MSE__239373.pdf}
@@ -425,7 +423,7 @@ Figure \ref{fig:SGD_Franke_epochs_gamma} shows the resulting MSE values for the 
 	\label{fig:SGD_Franke_epochs_gamma}
 \end{figure}
 
-The MSE calculated with dynamic $\eta$ is shown in figure \ref{fig:SGD_Franke_epochs_dynamic_eta}, using $\eta_0\in[0.1,\,0.9]$. We include the $\eta$ values previously found to be too high, in order to see whether the scheduled learning gives better results here, while omitting values of $\eta<0.1$. The figure gives us the expected result that high initial values of $\eta$ no longer causes abrupt variations of the MSE towards the end of the simulation, as $\eta\to0$ for $N_e\to150$. Equation \eqref{eq:learning_schedule} appears to be a very good choice for scaling the learning rate when doing SGD, since all values of $\eta_0>0.5$ gives decent results after $150$ epochs. These solutions converge quickly in the beginning, and as the learning rate drops we get very stable evolutions of the MSE, with no apparent instability in MSE. It appears however that the learning rates become so small towards the end that there is little evolution of the MSE after $120$ epochs, meaning that we might not actually have reached an optimal MSE score if the small learning rates near the end have effectively halted convergence. Further, the dynamic learning schedule gives more or less identical MSE values in the end for $\eta_0>0.5$. The advantage of this is that our model is less dependent on very specific parameter choices for $\eta_0$. If however, the final result is inadequate, adjusting the initial learning rate will no longer have a desired impact. More training epochs is then required to get optimal results.
+The MSE calculated with dynamic $\eta$ is shown in figure \ref{fig:SGD_Franke_epochs_dynamic_eta}, using $\eta_0\in[0.1,\,0.9]$. We include the $\eta$ values previously found to be too high, in order to see whether the scheduled learning gives better results here, while omitting values of $\eta<0.1$. The figure gives us the expected result that high initial values of $\eta$ no longer causes abrupt variations of the MSE towards the end of the simulation, as $\eta\to0$ for $N_e\to150$. Equation \eqref{eq:learning_schedule} appears to be a very good choice for scaling the learning rate when doing SGD, since all values of $\eta_0>0.5$ gives decent results after $150$ epochs. These solutions converge quickly in the beginning, and as the learning rate drops we get very stable evolutions of the MSE, with no apparent instability in MSE. It appears however that the learning rates become so small towards the end that there is little evolution of the MSE after $120$ epochs, meaning that we might not actually have reached an optimal MSE score if the small learning rates near the end have effectively halted convergence. Further, the dynamic learning schedule gives more or less identical MSE values in the end for $\eta_0>0.5$. The advantage of this is that our model is less dependent on very specific parameter choices for $\eta$. If however, the final result is inadequate, adjusting the initial learning rate will no longer have a desired impact. More training epochs is then required to get optimal results. Here we also managed to get $MSE \approx 0.0471$ for $\eta = 0.9$.
 
 \begin{figure}[h!]
 	\includegraphics[width=0.9\linewidth]{SGD_Franke/reg_Franke__epochs_dynamic_eta__Test_MSE__792536.pdf}
@@ -520,19 +518,28 @@ Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ v
 \subsubsection{Feed Forward Neural Network}
 
 
-In Figure \ref{fig:NN_Cancer_sigmoid_dynam_eta}, we make the same plot, now using the learning schedule in equation \eqref{eq:learning_schedule}.
+Again we first want to make sure our neural network actually learns, and study how fast it does this. Using a network with 2 hidden layers with 10 nodes in each, and activating them with sigmoid, we plot the accuracy as function of epoch over 100 epochs for 9 uniformly distributed values of $\eta$ on a logarithmic scale. This is shown in Figure \ref{fig:NN_Cancer_sigmoid}. At the end of training, an accuracy of $98.2\%$ is acheved for several of the $\eta$-values. This corresponds to 2 mistakes. This level is first reached and maintained for $\eta=10^{-2.5}$. Before good results are reached, the accuracy is $63\%$ for a long while. This corresponds to where the network predicts all tumors to be benign, because the weights are not properly trained yet. For $\eta=0.1$, a high level of accuracy, $>90\%$, is reached already after 1 single epoch. This does not mean the network is certain in its predictions, but it certainly comes with good guesses. Over the following epochs, it becomes more certain.
+\sn{Burde lage et plot av dette}
+
+\begin{figure}[h]
+	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_eta__test_accuracy__892274.pdf}
+	\caption{Test accuracy using sigmoid as the activation function, with 2 hidden layers with 10 nodes each. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_sigmoid}
+\end{figure}
+
+In Figure \ref{fig:NN_Cancer_sigmoid_dynam_eta}, we make the same plot, now using the learning schedule in equation \eqref{eq:learning_schedule}. This looks very similar to Figure \ref{fig:NN_Cancer_sigmoid}, though one obvious difference is that for $\eta=10^{-3}$ 100 epochs is not enough for it to converge. Using the static learning rate, this learning rate only gets good results after about 50 epochs, so this could be expected. The best result is $99.1\%$, corresponding to 1 mistake, again for $\eta=10^{-2.5}$. This is higher than when using the static learning rate.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__354289.pdf}
 	\caption{Test accuracy using sigmoid as the activation function, with dynamic learning rate. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_sigmoid_dynam_eta}
 \end{figure}
 
-Now we use the other implemented activation functuions
+We now study how different activation functions affect the results. We keep using the dynamic learning rate. This time, we have to use lower learning rate, for both RELU and Leaky RELU, choosing 11 values between $10^{-6}$ and $10^{-1}$. Higher learning rates lead to overflow in the gradients. These activation functions are also able to converge to good results within 100 epochs for lower learning rates than sigmoid. This is what we saw in the regression case. However, at the end of training, the best result achieved for both functions were $97.3\%$, 3 mistakes.
+
 
 \begin{figure}[h]
-	\includegraphics[width=0.5\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__256821.pdf}
-	\includegraphics[width=0.5\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__leaky_relu__415455.pdf}
-	\caption{Test accuracy using sigmoid as the activation function, with 2 hidden layers with 10 nodes each. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_relu_leaky}
+	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__539592.pdf}
+	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__leaky_relu__144576.pdf}
+	\caption{Test accuracy using RELU (top) and Leaky RELU (bottom) as the activation functions. For $\eta=0.1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_relu_leaky}
 \end{figure}
 
 
@@ -543,18 +550,18 @@ Now we use the other implemented activation functuions
 
 \begin{figure}[h]
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__375043.pdf}
+	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__183872.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__705262.pdf}
+	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__605661.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__45014.pdf}
+	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__495223.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__704482.pdf}
+	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__274259.pdf}
 	\endminipage
-	\caption{Neural networks with different number of layers, but same number of total nodes. Top left has 1 hidden layer, top right has 2. Bottom left has 3, while bottom right has 4. All have a total of 20 nodes.}\label{fig:NN_class_layers}
+	\caption{Neural networks with different number of layers. Top left has 1 hidden layer with 20 nodes, top right has 2, each with 20 nodes. Bottom left has 3 hidden layers, each with 20 nodes, while bottom right has 4, each with 20 nodes.}\label{fig:NN_class_layers}
 \end{figure}
 
 
@@ -581,6 +588,8 @@ There are many potential optimal parameters, however lets choose $\eta= 0.00251$
 
 \section{Discussion}
 
+With SGD we managed to reproduce the lowest $MSE \approx 0.0471$ as in our previous report \cite{project1}. This was achieved with both the implementation of a momentum parameter $\gamma$ and dynamic learning rate $\eta$. In the previous project this was done with $L_2$ regularization, however here we had $\lambda = 0$. It makes sense that they should be in the same region, given that we have the same design matrix. However it surprises us that we get the exact same MSE. With this in mind however, the fact that we obtain the same results with different methods, gives us confidence that our application is correct.
+
 We know that the optimal value for a given parameter might not be the same, when we change values of other parameters. Meaning that this method is then not guaranteed to optimize the entire parameter space. However, we can assume it will be a good approximation, and will save a great deal of time.
 
 We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $\eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
@@ -595,6 +604,7 @@ FF NEURAL NETWORK FRANKE:
 The fact that we obtain the same accuracy (99.2\%) as when using Scikit-Learn's logistic regression, gives us confidence in our results. The 99.2\% accuracy corresponds to one miss-classification. We do not believe it feasible to better this result, given that a professionally written library yields the same. One area which we would have liked to analyze further is the confidence of our algorithm. After 200 epochs, for $\eta = 0.00251$ and $\lambda = 0$, we had eight cases where the output was within (0.1, 0.9). That threshold is arbitrary, however it illustrates potential further analysis. To find the optimal parameters we should not only analyze accuracy, but also minimize the number of cases which one deems to inconclusive. Methods of optimization one could try, is implementing different output functions, initialization of weights and bias and momentum parameter \eqref{eq:vt_mom}.
 
 \section{Conclusion}
+With SGD we managed to get the exact same $MSE \approx 0.071$ as our previous project \cite{project1}. This was done with learning rate $\eta = 0.25$ and with implementation of momentum parameter $\gamma$ and dynamic learning rate $\eta$ separately.
 
 
 \bibliographystyle{plain}
