@@ -516,8 +516,7 @@ Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ v
 \subsubsection{Feed Forward Neural Network}
 
 
-Again we first want to make sure our neural network actually learns, and study how fast it does this. Using a network with 2 hidden layers with 10 nodes in each, and activating them with sigmoid, we plot the accuracy as function of epoch over 100 epochs for 9 uniformly distributed values of $\eta$ on a logarithmic scale. This is shown in Figure \ref{fig:NN_Cancer_sigmoid}. At the end of training, an accuracy of $98.2\%$ is acheved for several of the $\eta$-values. This corresponds to 2 mistakes. This level is first reached and maintained for $\eta=10^{-2.5}$. Before good results are reached, the accuracy is $63\%$ for a long while. This corresponds to where the network predicts all tumors to be benign, because the weights are not properly trained yet. For $\eta=0.1$, a high level of accuracy, $>90\%$, is reached already after 1 single epoch. This does not mean the network is certain in its predictions, but it certainly comes with good guesses. Over the following epochs, it becomes more certain.
-\sn{Burde lage et plot av dette}
+Again we first want to make sure our neural network actually learns, and study how fast it does this. Using a network with 2 hidden layers with 10 nodes in each, and activating them with sigmoid, we plot the accuracy as function of epoch over 100 epochs for 9 uniformly distributed values of $\eta$ on a logarithmic scale. This is shown in Figure \ref{fig:NN_Cancer_sigmoid}. At the end of training, an accuracy of $98.2\%$ is acheved for several of the $\eta$-values. This corresponds to 2 mistakes. This level is first reached and maintained for $\eta=10^{-2.5}$. Before good results are reached, the accuracy is $63\%$ for a long while. This corresponds to where the network predicts all tumors to be benign, because the weights are not properly trained yet. For $\eta=0.1$, a high level of accuracy, $>90\%$, is reached already after 1 single epoch. This does not mean the network is certain in its predictions, but it certainly comes with good guesses.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_eta__test_accuracy__892274.pdf}
@@ -547,7 +546,7 @@ To study the $L_2$-regularization parameter $\lambda$, we use the activation fun
 	\caption{Test accuracy using sigmoid as the activation function, with 2 hidden layers with 10 nodes each. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_eta_lambda}
 \end{figure}
 
-Lastly, as for the Franke function, we test how different numbers of hidden layers affect the result. Figure \ref{fig:NN_class_layers} shows the results for 4 different structures. All the hidden layers in all the nets have 20 nodes. In the top left1
+Lastly, as for the Franke function, we test how different numbers of hidden layers affect the result. Figure \ref{fig:NN_class_layers} shows the results for 4 different structures. All the hidden layers in all the nets have 20 nodes. In the top left figure, 1 layer is used. In the top right, 2 layers. Bottom left has 3 layers, and bottom right 4. At the end of training, all networks had a best accuracy of $98.2\%$, except for the one with 3 layers, achieving $99.1\%$. The accuracy before the layers learn are different for each. This is because they have different initial weights, and not nessisarily because one is initially better in the sense that is has learned more. It can be noted that for $\eta=10^{-5}$, the net with 2 layers, in the top right, learns significantly slower than the others.
 
 \begin{figure}[h]
 	\minipage{0.49\textwidth}
