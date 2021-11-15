@@ -308,7 +308,7 @@ As in \cite{project1}, we have to choose a model to fit the data to, when using 
 	\nabla_{\boldsymbol{\beta}}C^\mathrm{MB} (\boldsymbol{\beta})=2 X^T (X \boldsymbol{\beta} - \boldsymbol{z})/M + 2\lambda\boldsymbol{\beta}
 \end{align}
 
-where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rate $\eta$, number of epochs $N_e$, number of minibatches $N_B$, regularization parameter $\lambda$, and the momentum parameter $\gamma$. This gives us a 5-dimensional hyper-parameter space, and we would ideally optimize each parameter to get the lowest possible MSE. This could be done by grid search, where we test a range of values for every parameter. Testing 10 values for each will mean that we have to run the algorithm $10^5$ times, which is extremely slow. We will therefore simplify our search, only doing grid search over 1 or 2 of the parameters at a time, keeping the rest constant. We then study how each parameter affects the results, independently of the other parameters. 
+where OLS regression is obtained by setting $\lambda=0$. There are multiple parameters to consider for stochastic gradient descent, and the ones we will study are the choice of learning rate $\eta$, number of epochs $N_e$, number of minibatches $N_B$, regularization parameter $\lambda$, and the momentum parameter $\gamma$. This gives us a 5-dimensional hyper-parameter space, and we would ideally optimize each parameter to get the lowest possible MSE. This could be done by grid search, where we test a range of values for every parameter. Testing 10 values for each will mean that we have to run the algorithm $10^5$ times, which is extremely slow. We will therefore simplify our search, only doing grid search over 1 or 2 of the parameters at a time, keeping the rest constant. We then study how each parameter affects the results, independently of the other parameters.
 
 %TROR IKKE VI BURDE SI DETTE:
 %Further, it is not too valuable to find the absolutely optimal parameters in our hyperparameter space, because there are many more parameters we will not controll for, like the noise in the data or polynomial degree of our model.
@@ -501,7 +501,7 @@ Next we want to see the effects of different activation functions. We plot the t
 	\label{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare}
 \end{figure}
 
-Since a very integral part of neural networks are the neurons, we also study the way the network is structued. Until now, we have used a network with 2 hidden layers with 10 nodes in each. Without changing the total number of nodes, we train 4 networks for 100 epochs, using the activation function RELU. First, 1 (hidden) layer with 20 nodes is used. Then 2 layers with 10 each, for comparison. Then 3 layers, the middle with 10 nodes and the others with 5, and lastly 4 layers, with 5 nodes each. The same $\eta$ range as before is used. The four resulting plots are shown in Figure \ref{fig:NN_layers}. In the b
+Since a very integral part of neural networks are the neurons, we also study the way the network is structued. Until now, we have used a network with 2 hidden layers with 10 nodes in each. Without changing the total number of nodes, we train 4 networks for 100 epochs, using the activation function RELU. First, 1 (hidden) layer with 20 nodes is used. Then 2 layers with 10 each, for comparison. Then 3 layers, the middle with 10 nodes and the others with 5, and lastly 4 layers, with 5 nodes each. The same $\eta$ range as before is used. The four resulting plots are shown in Figure \ref{fig:NN_layers}. The network with 4 layers is shown in the bottom rihgt. This only learns for a very narrow range of $\eta$s, and seems to be too deep, at least for the given value of the other parameters. The network with 3 layers, shown in the bottom left, learns slower but does reach good results. However, along with the network with 1 layer in the upper left, there is much variation. It seems the network with 2 layers perform the best, escpecially as it gives good results for a wide range of $\eta$, compared to the other networks.
 
 \begin{figure}[h]
 	\minipage{0.49\textwidth}
@@ -518,6 +518,15 @@ Since a very integral part of neural networks are the neurons, we also study the
 	\endminipage
 	\caption{Neural networks with different number of layers, but same number of total nodes. Top left has 1 hidden layer, top right has 2. Bottom left has 3, while bottom right has 4. All have a total of 20 nodes.}\label{fig:NN_layers}
 \end{figure}
+
+Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ values as in Figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}, and sigmoid as the activation function, we plot the test MSE after 100 epochs for 11 logarithmically distributed values of $\lambda$ between $10^{-5}$ and $1$. This is shown in Figure \ref{fig:NN_lambda}. We see that we get better result for lower $\lambda$, strictly.
+
+
+\begin{figure}[h]
+	\includegraphics[width=\linewidth]{plots/NN_Franke__eta_lambda__test_MSE__489556.pdf}
+	\caption{Test MSE as function of learning rate $\eta$ and regularization parameter $\lambda$. The two blank squares in the top right corner correspond to MSE higher than 1, and thus not shown.}\label{fig:NN_lambda}
+\end{figure}
+
 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
@@ -545,9 +554,9 @@ There are many potential optimal parameters, however lets choose $\eta= 0.00251$
 
 \section{Discussion}
 
-Stochastic regression FRANKE: 
+Stochastic regression FRANKE:
 
-We know that the optimal value for a given parameter might not be the same, when we change values of other parameters. Meaning that this method is then not guaranteed to optimize the entire parameter space. However, we can assume it will be a good approximation, and will save a great deal of time. 
+We know that the optimal value for a given parameter might not be the same, when we change values of other parameters. Meaning that this method is then not guaranteed to optimize the entire parameter space. However, we can assume it will be a good approximation, and will save a great deal of time.
 
 We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $\eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
 
