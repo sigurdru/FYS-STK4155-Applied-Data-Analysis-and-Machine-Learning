@@ -353,7 +353,8 @@ We split and scale the data in the same way we did for the Franke Function, usin
 We now want to use the same neural network code as before to study and predict the breast cancer data. No changes has to be made, but now we use cross entroy as the cost function, and an activation function for the output layer, namely softmax. We can then interpret the output as probabilities. Because the dataset has binary targets, either 0 or 1, we could have used a single output node. Then sigmoid would have done the same. However, we choose to use 2 output nodes, one for 0 and one for 1, because this generalises to other datasets, which might be multiclass. A test is implemented to make sure that the probabilities sum to 1. When we make the final prediction, the node with the higest probability is picked. More on this in the next section, about logistic regression.
 
 
-
+The analysis done with the neural network on the classification data is very similar, as we will study the same hyperparameter dependencies as was done for regression. We can assume the optimal parameters are similar to those found earlier for the neural network.
+\sn{kan vi dette?}
 
 
 
