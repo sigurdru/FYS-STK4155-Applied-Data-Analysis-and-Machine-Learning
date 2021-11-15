@@ -30,21 +30,21 @@
 % Rapport:
 % SGD: Franke
 %  - Bestemme beste parametere
-%  - Regne ut mse for de 
-%  - Bruke de til å plotte resultat av surface 
+%  - Regne ut mse for de
+%  - Bruke de til å plotte resultat av surface
 
 % NN: Franke
-%  - Plotte surface fit med passende parametre 
+%  - Plotte surface fit med passende parametre
 %  - Regne den beste MSE-verdien
 %  - Lage surface plot
 
-%  - Sammenligne SGD og NN med OLS  
+%  - Sammenligne SGD og NN med OLS
 
 % NN: Cancer
 % alt. Metode og resultat
 % (figurene er laget)
-% Implementere strengere klassifikasjon 
-% Plotte cost 
+% Implementere strengere klassifikasjon
+% Plotte cost
 
 % Logreg: Cancer
 % DONE
@@ -356,7 +356,7 @@ So far, we have only studied the statistical accuracy of our neural network. As 
 \subsection{Wisconsin Breast Cancer Data}
 We will now use the Wisconsin Breast Cancer dataset to predict wether a tumor is benign or malignant, based upon some features of it. This dataset is widely studied in the scientific litterature on machine learning, as it is easily availible, have relatively few datapoints and not too many features, and is a simple dataset to test binary classification algorithms on. The dataset contains measurments of 30 features of a tumor from 569 patients. Of these 30 features, some might be stronger predictors of wether a tumor is bad or good than others. Had the dataset been quite a bit larger, and more complex with many more features, our neural network would have taken a long time to train. It would therefore be important to study the correlation matrix. This is a symmetrix matrix saying how much 2 features correlates with eachother. If two features corrolate strongly, they are not linearly independent. It is then not nessisary to make the network train on both, and eliminating one can speed up the training without much loss in performance. Because of the small size if the dataset, our program runs quite quickly without doing this, so we do not spend much time studying the correlation matrix.
 
-We split and scale the data in the same way we did for the Franke Function, using $20\%$ as test data. Because the features can have widely different values, it is important to scale them so that the features exist in the same domain. We subtract the mean and divide by the standard deviation. The splitting gives us 455 data points in the train data, and 114 in the test data. Since we now classify data, we no longer use MSE as a performance measurement, rather the accuracy score. It is simply the percentage of correct predictions. Because we only have 114 test data points, the accuracy is quite quantized, taking values of $n\cdot 0.09\%$, where $n$ is the number of correct predictions. This will later explain the jumps in performance. It must further be noticed that of the 569 tumors, $63\%$ are benign, and $37\%$ malignent. During 
+We split and scale the data in the same way we did for the Franke Function, using $20\%$ as test data. Because the features can have widely different values, it is important to scale them so that the features exist in the same domain. We subtract the mean and divide by the standard deviation. The splitting gives us 455 data points in the train data, and 114 in the test data. Since we now classify data, we no longer use MSE as a performance measurement, rather the accuracy score. It is simply the percentage of correct predictions. Because we only have 114 test data points, the accuracy is quite quantized, taking values of $n\cdot 0.09\%$, where $n$ is the number of correct predictions. This will later explain the jumps in performance. It must further be noticed that of the 569 tumors, $63\%$ are benign, and $37\%$ malignent. During
 
 \subsubsection{Feed Forward Neural Network}
 \subsubsection{Logistic Regression}
@@ -517,7 +517,7 @@ Since a very integral part of neural networks are the neurons, we also study the
 	\caption{Neural networks with different number of layers, but same number of total nodes. Top left has 1 hidden layer, top right has 2. Bottom left has 3, while bottom right has 4. All have a total of 20 nodes.}\label{fig:NN_layers}
 \end{figure}
 
-Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ values as in Figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}, and sigmoid as the activation function, we plot the test MSE after 100 epochs for 15 logarithmically distributed values of $\lambda$ between $10^{-7}$ and $1$. This is shown in Figure \ref{fig:NN_lambda}. We see that we get better result for lower $\lambda$, strictly. In \cite{project1} we saw that the $\lambda$ parameters was useful if the noise in the data was higher. We made a similar figure, with $\epsilon=0.5$ The resulting MSE was (naturally) higher, but the trend was the same as seen here. We see no benefit using other values than $\lambda=0$. Other parameters or datasets could change this.
+Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ values as in Figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}, and sigmoid as the activation function, we plot the test MSE after 100 epochs for 15 logarithmically distributed values of $\lambda$ between $10^{-7}$ and $1$. This is shown in Figure \ref{fig:NN_lambda}. We see that we get better result for lower $\lambda$, strictly. In \cite{project1} we saw that the $\lambda$ parameters was useful if the noise in the data was higher. We made a similar figure, with $\epsilon=0.5$. The resulting MSE was (naturally) higher, but the trend was the same as seen here. We see no benefit using other values than $\lambda=0$. Other parameters or datasets could change this.
 
 
 \begin{figure}[h]
