@@ -59,8 +59,8 @@
 % Andre, uavhengige analyser vi har gjort? (simple.py, MNIST)
 
 % Kode:
-% Rydde litt opp, og skrive README
-% Skal ellers være helt ok
+% README for code directory, hvis ikke: opdater readme i project2 mappa.
+% Rydde code
 
 \section{Introduction}
 In the modern world, digital data has become one of the most valuable commodities there is. Not because of scarcity, like most other valuables, but rather the exact opposite; the vast abundance of data available makes being able to understand trends and patterns in it extremely valuable for companies looking for profit. However, data is complex, having many features, and understanding how one affect another can be impossible with human analysis alone. Luckily, there exists statistical methods that let us find the deeper connections, make models and even predict outcomes. In this paper we wish to study some stochastic methods, and look at their limitations and strengths.
@@ -535,7 +535,7 @@ There are many potential optimal parameters, however lets choose $\eta= 0.00251$
 
 LOGISTIC REGRESSION:
 
-The fact that we obtain the same accuracy (99.2\%) as when using Scikit-Learn's logistic regression, gives us confidence in our results. The 99.2\% accuracy corresponds to one miss-classification. We do not believe it feasible to better this result, given that a professionally written library yields the same. One area which we would have liked to analyze further is the confidence of our algorithm. After 200 epochs, for $\eta = 0.00251$ and $\lambda = 0$, we had eight cases where the output was within (0.1, 0.9). That threshold is arbitrary, however it illustrates potential further analysis. To find the optimal parameters we should not only analyze accuracy, but also minimize the number of cases which one deems to inconclusive. Further analysis one could try, is implementing different output functions, momentum parameter \eqref{eq:vt_mom} and initialization of weights and bias.
+The fact that we obtain the same accuracy (99.2\%) as when using Scikit-Learn's logistic regression, gives us confidence in our results. The 99.2\% accuracy corresponds to one miss-classification. We do not believe it feasible to better this result, given that a professionally written library yields the same. One area which we would have liked to analyze further is the confidence of our algorithm. After 200 epochs, for $\eta = 0.00251$ and $\lambda = 0$, we had eight cases where the output was within (0.1, 0.9). That threshold is arbitrary, however it illustrates potential further analysis. To find the optimal parameters we should not only analyze accuracy, but also minimize the number of cases which one deems to inconclusive. Further analysis one could try, is implementing different output functions, initialization of weights and bias and momentum parameter \eqref{eq:vt_mom}.
 
 
 \section{Conclusion}
