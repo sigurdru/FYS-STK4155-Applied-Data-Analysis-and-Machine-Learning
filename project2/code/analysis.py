@@ -104,17 +104,17 @@ def NN_regression(args):
                 # Plot result of fit and exit
                 plot.surface_fit(z_pred, z, x, y, args)
 
+    print("\n"*3)
+    print(f"Best NN train prediction: {(train:=data['train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+    print(f"Best NN test prediction: {(test:=data['test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     if args.history:
         # Plot MSE for different etas as a function of epochs 
         # plot.eta_epochs(MSE, args)
         plot.eta_epochs(MSE, args, vmax=0.07)
-        plot.eta_epochs(R2, args, vmin=0.55)
+        # plot.eta_epochs(R2, args, vmin=0.55)
 
     else:
-        print("\n"*3)
-        print(f"Best NN train prediction: {(train:=data['train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
-        print(f"Best NN test prediction: {(test:=data['test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
-        plot.eta_lambda(data, args, vmax=0.1)
+        plot.eta_lambda(data, args)
 
 
 def linear_regression(args):
@@ -277,21 +277,15 @@ def NN_classification(args):
 
     dataset = utils.load_data(args)
     z_ = dataset.target.reshape(-1, 1)
-    data = pd.DataFrame(dataset.data, columns=dataset.feature_names)
-    corrmat = data.corr()
-    if args.dataset == "Cancer":
-        feat = "mean concavity"
-        X = data.loc[:, lambda x: abs(corrmat[feat]) < 0.8]
-        X.insert(0, feat, data[feat])
-    else:
-        X = dataset.data
-    # print(X.shape)
+    X = dataset.data
     
     z = utils.categorical(z_)
     scaler = scale_conv[args.scaling]
     X_train, X_test, z_train, z_test = utils.split_scale(X, z, args.tts, scaler)
-
+    print(X_test.shape)
     data = defaultdict(lambda: np.zeros((len(etas), len(lmbs))))
+    train_data = defaultdict(lambda: np.zeros((len(etas), args.num_epochs)))
+
     for i, eta in enumerate(etas):
         for j, lmb in enumerate(lmbs):
             np.random.seed(args.seed)
@@ -313,13 +307,21 @@ def NN_classification(args):
             NN.train(args.num_epochs, train_history=args.history, test=(X_test, z_test))
             data["train accuracy"][i][j] = NN.predict_accuracy(X_train, z_train)
             data["test accuracy"][i][j] = NN.predict_accuracy(X_test, z_test)
+
+            train_data["train accuracy"][i] = NN.history["train_accuracy"]
+            train_data["test accuracy"][i] = NN.history["test_accuracy"]
             print("Test accuracy: ", data["test accuracy"][i][j])
             print()
 
             if args.history:
-                plot.train_history(NN, args)
-                exit()
+                if len(etas) == 1:
+                    plot.train_history(NN, args)
+                    exit()
 
     print(f"Best NN train prediction: {(train:=data['train accuracy'])[(mn:=np.unravel_index(np.nanargmax(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     print(f"Best NN test prediction: {(test:=data['test accuracy'])[(mn:=np.unravel_index(np.nanargmax(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
-    plot.eta_lambda(data, args, NN=True)
+    
+    if args.history:
+        plot.eta_epochs(train_data, args)
+    else:
+        plot.eta_lambda(data, args, NN=True)
