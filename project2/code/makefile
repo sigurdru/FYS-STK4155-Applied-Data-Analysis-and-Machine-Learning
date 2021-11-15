@@ -27,3 +27,8 @@ test:
 exercise_c:
 	python3 main.py -d Franke -p 1 -eta 'np.linspace(0.001,0.15,21)' -Ne 250 -act_func relu -history -push
 	python3 main.py -d Franke -p 1 -eta 'np.linspace(0.001,0.15,21)' -Ne 250 -act_func leaky_relu -history -push
+NN_reg_layers:
+	python3 main.py -d Franke -p 1 -eta 'np.linspace(0.001, 0.15, 11)' -act_func relu -history -l 0 -Ne 100 -hn 20
+	python3 main.py -d Franke -p 1 -eta 'np.linspace(0.001, 0.15, 11)' -act_func relu -history -l 0 -Ne 100 -hn 10,10
+	python3 main.py -d Franke -p 1 -eta 'np.linspace(0.001, 0.15, 11)' -act_func relu -history -l 0 -Ne 100 -hn 5,10,5
+	python3 main.py -d Franke -p 1 -eta 'np.linspace(0.001, 0.15, 11)' -act_func relu -history -l 0 -Ne 100 -hn 5,5,5,5
