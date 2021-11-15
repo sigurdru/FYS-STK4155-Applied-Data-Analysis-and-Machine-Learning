@@ -533,7 +533,7 @@ In Figure \ref{fig:NN_Cancer_sigmoid_dynam_eta}, we make the same plot, now usin
 	\caption{Test accuracy using sigmoid as the activation function, with dynamic learning rate. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_sigmoid_dynam_eta}
 \end{figure}
 
-We now study how different activation functions affect the results. We keep using the dynamic learning rate. This time, we have to use lower learning rate, for both RELU and Leaky RELU, choosing 11 values between $10^{-6}$ and $10^{-1}$. Higher learning rates lead to overflow in the gradients. These activation functions are also able to converge to good results within 100 epochs for lower learning rates than sigmoid. This is what we saw in the regression case. However, at the end of training, the best result achieved for both functions were $97.3\%$, 3 mistakes.
+We now study how different activation functions affect the results. We keep using the dynamic learning rate. For these activation functions, we have to use lower learning rate, choosing 11 values between $10^{-6}$ and $10^{-1}$. Higher learning rates lead to overflow in the gradients. This is shown in Figure \ref{fig:NN_Cancer_relu_leaky}, with RELU being the top plot, and Leaky RELU the bottom. These activation functions are able to converge to good results within 100 epochs for lower learning rates than sigmoid. This is what we saw in the regression case. However, at the end of training, the best result achieved for both functions were $97.3\%$, 3 mistakes. There are more $\eta$-values for which the accuracy is very high after the first epoch.
 
 
 \begin{figure}[h]
@@ -542,11 +542,14 @@ We now study how different activation functions affect the results. We keep usin
 	\caption{Test accuracy using RELU (top) and Leaky RELU (bottom) as the activation functions. For $\eta=0.1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_relu_leaky}
 \end{figure}
 
+To study the $L_2$-regularization parameter $\lambda$, we use the activation function Leaky RELU, for the same values of $\eta$ as before. Again 100 epochs are used, and the resulting accuracies are only calculated at the end of training. We use 17 linearly  distributed values of $\lambda$, between $10^{-7}$ and $10^1$. This is shown in Figure \ref{fig:NN_Cancer_eta_lambda}. For very small $\lambda$, and very small $\eta$, the parameter does not change the results. However, for $\lambda=0$ and $\lambda=10^{0.5}$, the network achieves better accuracy than before, making just 1 mistake, for several values of $\eta$. Further, it can be noted that $\lambda=10$ gives the network a value for $\eta=0.1$, without causing overflow.
 
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{plots/NN_Cancer__dynamic_eta_lambda__test_accuracy__leaky_relu__888173.pdf}
 	\caption{Test accuracy using sigmoid as the activation function, with 2 hidden layers with 10 nodes each. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_eta_lambda}
 \end{figure}
+
+Lastly, as for the Franke function, we test how different numbers of hidden layers affect the result. Figure \ref{fig:NN_class_layers} shows the results for 4 different structures. All the hidden layers in all the nets have 20 nodes. In the top left1
 
 \begin{figure}[h]
 	\minipage{0.49\textwidth}

@@ -321,6 +321,6 @@ def NN_classification(args):
     print(f"Best NN test prediction: {(test:=data['test accuracy'])[(mn:=np.unravel_index(np.nanargmax(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     
     if args.history:
-        plot.eta_epochs(train_data, args)
+        plot.eta_epochs(train_data, args, vmax=1, vmin=0)
     else:
         plot.eta_lambda(data, args, NN=True)
