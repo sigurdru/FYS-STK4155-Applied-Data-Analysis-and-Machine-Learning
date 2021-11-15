@@ -34,7 +34,6 @@
 %  - Bruke de til å plotte resultat av surface 
 
 % NN: Franke
-%  - Sjekke at plottene i resultat stemmer med metodebeskrivelse 
 %  - Plotte surface fit med passende parametre 
 %  - Metode for ulike Layers of nodes
 %  - Regne den beste MSE-verdien
@@ -347,10 +346,8 @@ For the first simulation we choose $21$ linearly distributed values of $\eta\in[
 \end{align}
 
 
-We then look at the MSE using dynamic learning rate, keeping the other parameters the same. Next the activation function for the hidden layers is tested using RELU and leaky RELU  instead of sigmoid. We also study the dependence on the regularization parameter $\lambda$. Choosing
-\sn{må lage plot for dette}
+We then look at the MSE using dynamic learning rate, keeping the other parameters the same. Next the activation function for the hidden layers is tested using RELU and leaky RELU  instead of sigmoid. We also want to study the dependence of different numbers of layers and nodes. We could use any number of layers and nodes. To keep it simple, we keep the total number of nodes constant at 20, while using 1, 2, 3 and 4 layers, where the nodes are equally divided among the hidden layers. For 3 layers, the middle has 10 nodes, while the others have 5. Lastly, we study the dependence on the regularization parameter $\lambda$, choosing 11 good $\eta$-values, and 15 values for $\lambda$.
 
-Lastly, we study the dependence of different numbers of layers and nodes, using 1 layer with 10 nodes, 2 with 20 each and 3 with 20 nodes in first
 
 
 So far, we have only studied the statistical accuracy of our neural network. As a sanity check we will use the optimal parameters obtained in order to plot the resulting prediction of the neural network, using $\epsilon\sim\mathcal{N}(0,\,0.05)$ just as we did for SGD. Some of the parameters we use may not be ideal when the noise is reduced, but the purpose of this test is simply to see whether our model behaves in a desired way, so reducing the noise makes the comparison easier.
