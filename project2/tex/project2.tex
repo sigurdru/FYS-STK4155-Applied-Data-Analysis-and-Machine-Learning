@@ -33,12 +33,12 @@
 
 % SGD: Franke
 %  - Bestemme beste parametere
-%  - Regne ut mse for de 
-%  - Få metode til å stemme med resultater 
+%  - Regne ut mse for de
+%  - Få metode til å stemme med resultater
 
 % NN: Franke
 %  - Regne den beste MSE-verdien
-%  - Få metode til å stemme med resultater 
+%  - Få metode til å stemme med resultater
 
 %  - Sammenligne SGD og NN med OLS
 
@@ -62,7 +62,7 @@
 \section{Introduction}
 In the modern world, digital data has become one of the most valuable commodities there is. Not because of scarcity, like most other valuables, but rather the exact opposite; the vast abundance of data available makes being able to understand trends and patterns in it extremely valuable for companies looking for profit. However, data is complex, having many features, and understanding how one affect another can be impossible with human analysis alone. Luckily, there exists statistical methods that let us find the deeper connections, make models and even predict outcomes. In this paper we wish to study some stochastic methods, and look at their limitations and strengths.
 
-First we will study a bi-variate continuous function known as the Franke function. We will use both stochastic gradient decent and a feed-forward deep neural network, with back propagation. Then we can also compare results with those obtained in a previous paper, using the deterministic methods ordinary least squares and ridge regression. Note that all methods used in this report is briefly covered in the theory section.
+First we will study a bi-variate continuous function known as the Franke function. We will use both stochastic gradient descent and a feed-forward deep neural network, with back propagation. Then we can also compare results with those obtained in a previous paper, using the deterministic methods ordinary least squares and ridge regression. Note that all methods used in this report is briefly covered in the theory section.
 
 Next we will embark on a classification problem, using measurments of tumors in breast tissue to predict wether they are benign or malignant. Here we will again use a feed-forward deep neural network, along with logistic regression.
 
@@ -71,12 +71,12 @@ We will in no way answer all questions linked to the aforementioned methods. So 
 \section{Theory}
 In the theory-section we aim to give a brief explanation of the main concepts and terminology used in this report. For a more in-depth explanation we recommend reading the appropriate sections in \cite{2019}, which has been of great inspiration and help for us throughout the project.
 
-In general, we have a dataset $\bo x$, where each point $\bo x_i$ takes a value $y_i$, for which we want to make a model $\bbeta$, such that for a new data point $\bo x_k \notin \bo x$ we can make a prediction for the value $y_k$.  The model $\bbeta$ is a vector/matrix, where each element is a parameter of our model, such that $\bbeta$ is sometimes called the parameters. For gradient decent, we have to chose what shape the model should be, as was done for linear regression in \cite{project1}, while the neural network makes its own model.
+In general, we have a dataset $\bo x$, where each point $\bo x_i$ takes a value $y_i$, for which we want to make a model $\bbeta$, such that for a new data point $\bo x_k \notin \bo x$ we can make a prediction for the value $y_k$.  The model $\bbeta$ is a vector/matrix, where each element is a parameter of our model, such that $\bbeta$ is sometimes called the parameters. For gradient descent, we have to choose what shape the model should be, as was done for linear regression in \cite{project1}, while the neural network makes its own model.
 
-\subsection{Gradient Decent}\label{sec:GD}
-In this section we cover gradient decent and different variations of it. More specifically we describe gradient decent (GD), stochastic gradient decent (SGD) and adding momentum to the aforementioned methods. All gradient decent methods start with an initial guess for what the model $\bbeta$ should be, and iteratively updates the guess by training on the dataset, either until it reaches a minimum, or a certain number of iterations have been performed.
-\subsubsection{Ordinary Gradient Decent}
-Gradient decent methods is often used to minimize the so-called cost/loss-function, which tells us how good our model at predicting the dataset is (more on this in section \ref{sec:cost_func_and_regul}). For now, we use a general cost function $C(\bbeta)$ for a given model $\bbeta$, which can be expressed as the sum over the cost function for each datapoint $\bo x_i$, as such:
+\subsection{Gradient Descent}\label{sec:GD}
+In this section we cover gradient descent and different variations of it. More specifically we describe gradient descent (GD), stochastic gradient descent (SGD) and adding momentum to the aforementioned methods. All gradient descent methods start with an initial guess for what the model $\bbeta$ should be, and iteratively updates the guess by training on the dataset, either until it reaches a minimum, or a certain number of iterations have been performed.
+\subsubsection{Ordinary Gradient Descent}
+Gradient descent methods is often used to minimize the so-called cost/loss-function, which tells us how good our model at predicting the dataset is (more on this in section \ref{sec:cost_func_and_regul}). For now, we use a general cost function $C(\bbeta)$ for a given model $\bbeta$, which can be expressed as the sum over the cost function for each datapoint $\bo x_i$, as such:
 \begin{equation}
 	C(\boldsymbol{\beta}) = \sum_{i = 1}^{n}c_i(\mathbf{x}_i, \boldsymbol{\beta}),
 \end{equation}
@@ -98,8 +98,8 @@ For a model with $p$ parameters, the cost-function is the surface of a $p$-dimen
 An additional problem is that the  hypersurface is not a smooth terrain with a single minimum. Our model can potentially move down into a local minimum, which can be close to the level of the global minimum, or far worse than it. When our model converges, we have no way of knowing if we have found the optimal, global minium, or are stuck in one of the many local minima, with no way of getting out.
 
 
-\subsubsection{Stochastic Gradient Decent}\label{sec:SGD}
-With large datasets, a large number of computations is needed when calculating the gradient. It takes a lot of time, and the model is only updated once per iteration, making improvement slow. Stochastic Gradient Decent. SGD, combats this by approximating the total gradient \eqref{eq:Total_gradient}. This is done by performing  gradient decent on a subset of the data, called a minibatch. With $n$ still denoting the total number of datapoints, we will have $N_B=n/M$ minibatches, where $M$ is the size of each minibatch. The minibatches are denoted by $B_k$. Thus our approximated gradient for a single minibatch $B_k$ is defined as
+\subsubsection{Stochastic Gradient Descent}\label{sec:SGD}
+With large datasets, a large number of computations is needed when calculating the gradient. It takes a lot of time, and the model is only updated once per iteration, making improvement slow. Stochastic Gradient Descent. SGD, combats this by approximating the total gradient \eqref{eq:Total_gradient}. This is done by performing  gradient descent on a subset of the data, called a minibatch. With $n$ still denoting the total number of datapoints, we will have $N_B=n/M$ minibatches, where $M$ is the size of each minibatch. The minibatches are denoted by $B_k$. Thus our approximated gradient for a single minibatch $B_k$ is defined as
 \begin{align}
 	\nabla_{\boldsymbol{\beta}} C^{MB}(\boldsymbol{\beta}) \equiv \sum_{i \in B_k}^M \nabla_{\boldsymbol{\beta}} c(\mathbf{x}_i, \boldsymbol{\beta}).
 \end{align}
@@ -285,7 +285,7 @@ In 2015, He-initialization was shown to work well with ReLU and Leaky ReLU \cite
 
 
 \section{Methods}
-As we mentioned in the introduction, we wish to study different ways of fitting two types of datasets. The first is fitting the \textit{continuous} Franke Function \eqref{eq:FF}, i.e. regression. We will use both stochastic gradient decent and feed forward neural network to fit the data. Both methods are covered in the theory sections \ref{sec:GD} and \ref{sec:NeuralNetwork} respectively.
+As we mentioned in the introduction, we wish to study different ways of fitting two types of datasets. The first is fitting the \textit{continuous} Franke Function \eqref{eq:FF}, i.e. regression. We will use both stochastic gradient descent and feed forward neural network to fit the data. Both methods are covered in the theory sections \ref{sec:GD} and \ref{sec:NeuralNetwork} respectively.
 
 Next we will embark on an classification problem. Namely predicting if breast tumors are malignant or benign, using the Breast Cancer Wisconsin data set\footnote{\href{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}{https://www.kaggle.com/uciml/breast-cancer-wisconsin-data}}. We will again use our feed forward neural network, as well as logistic regression. The latter is covered in the theory section \ref{sec:logistic_regression}.
 
@@ -347,17 +347,25 @@ We then look at the MSE using dynamic learning rate, keeping the other parameter
 \subsection{Wisconsin Breast Cancer Data}
 We will now use the Wisconsin Breast Cancer dataset to predict wether a tumor is benign or malignant, based upon some features of it. This dataset is widely studied in the scientific litterature on machine learning, as it is easily availible, have relatively few datapoints and not too many features, and is a simple dataset to test binary classification algorithms on. The dataset contains measurments of 30 features of a tumor from 569 patients. Of these 30 features, some might be stronger predictors of wether a tumor is bad or good than others. Had the dataset been quite a bit larger, and more complex with many more features, our neural network would have taken a long time to train. It would therefore be important to study the correlation matrix. This is a symmetrix matrix saying how much 2 features correlates with eachother. If two features corrolate strongly, they are not linearly independent. It is then not nessisary to make the network train on both, and eliminating one can speed up the training without much loss in performance. Because of the small size if the dataset, our program runs quite quickly without doing this, so we do not spend much time studying the correlation matrix.
 
-We split and scale the data in the same way we did for the Franke Function, using $20\%$ as test data. Because the features can have widely different values, it is important to scale them so that the features exist in the same domain. We subtract the mean and divide by the standard deviation. The splitting gives us 455 data points in the train data, and 114 in the test data. Since we now classify data, we no longer use MSE as a performance measurement, rather the accuracy score. It is simply the percentage of correct predictions. Because we only have 114 test data points, the accuracy is quite quantized, taking values of $n\cdot 0.09\%$, where $n$ is the number of correct predictions. This will later explain the jumps in performance. It must further be noticed that of the 569 tumors, $63\%$ are benign, and $37\%$ malignent. During
+We split and scale the data in the same way we did for the Franke Function, using $20\%$ as test data. Because the features can have widely different values, it is important to scale them so that the features exist in the same domain. We subtract the mean and divide by the standard deviation. The splitting gives us 455 data points in the train data, and 114 in the test data. Since we now classify data, we no longer use MSE as a performance measurement, rather the accuracy score. It is simply the percentage of correct predictions. Because we only have 114 test data points, the accuracy is quite quantized, taking values of $n\cdot 0.09\%$, where $n$ is the number of correct predictions. This will later explain the jumps in performance. It must further be noticed that of the 569 tumors, $63\%$ are benign, and $37\%$ malignent.
 
 \subsubsection{Feed Forward Neural Network}
+We now want to use the same neural network code as before to study and predict the breast cancer data. No changes has to be made, but now we use cross entroy as the cost function, and an activation function for the output layer, namely softmax. We can then interpret the output as probabilities. Because the dataset has binary targets, either 0 or 1, we could have used a single output node. Then sigmoid would have done the same. However, we choose to use 2 output nodes, one for 0 and one for 1, because this generalises to other datasets, which might be multiclass. A test is implemented to make sure that the probabilities sum to 1. When we make the final prediction, the node with the higest probability is picked. More on this in the next section, about logistic regression.
+
+
+The analysis done with the neural network on the classification data is very similar, as we will study the same hyperparameter dependencies as was done for regression. We can assume the optimal parameters are similar to those found earlier for the neural network.
+\sn{kan vi dette?}
+
+
+
 \subsubsection{Logistic Regression}
-Lastly we want to study the breast cancer data using logistic regression. See theory section \ref{sec:logistic_regression} for an explanation of the method. We use the sigmoid \eqref{eq:sigmoid} as our soft classifier in the output, and cross entropy \eqref{eq:cross_entropy2} (gradient given by \eqref{eq:cross_entropy_grad}) as our cost function. See theory section \ref{sec:cost_func_and_regul} for derivation of the cross entropy. To optimize the weight and biases we implement stochastic gradient decent algorithm \eqref{eq:SGD_algo}, using five minibatches. We will also study the implementation of $L_2$-regularization \eqref{eq:L2}. Our aim is to compare the result with those obtained from out feed forward neural network and Scikit-Learn's logistic regression functionality.
+Lastly we want to study the breast cancer data using logistic regression. See theory section \ref{sec:logistic_regression} for an explanation of the method. We use the sigmoid \eqref{eq:sigmoid} as our soft classifier in the output, and cross entropy \eqref{eq:cross_entropy2} (gradient given by \eqref{eq:cross_entropy_grad}) as our cost function. See theory section \ref{sec:cost_func_and_regul} for derivation of the cross entropy. To optimize the weight and biases we implement stochastic gradient descent algorithm \eqref{eq:SGD_algo}, using five minibatches. We will also study the implementation of $L_2$-regularization \eqref{eq:L2}. Our aim is to compare the result with those obtained from out feed forward neural network and Scikit-Learn's logistic regression functionality.
 
 The main quantity we will study is the accuracy score, which is the number of correct classification divided by total cases. The sigmoid is not a hard classifier, i.e. it returns continuous values between zero and one. To calculate the accuracy we will therefore round the answer such that any output less than 0.5 will be set to zero, and above set to one. This means that we loose any interpretation of how \emph{sure} our algorithm is of the result. For example if our output is 0.51, then it will set the result to 1, even though that could be interpreted as inconclusive. Therefore we will also perform a small analysis in the end on how confident our algorithm is. More precisely we will, for what we interpret as the optimal parameters, look at how many cases are classified within the range $(0.1, 0.9)$. We discuss this a bit more in-depth in the discussion-section.
 
 We initialize the weights and bias with random normal distribution with mean around zero and standard deviation of one. We want to look at what happens to the accuracy as epochs increases, for different learning rates. Therefore we first plot the accuracy score as a function of learning rate and number of epochs. Specifically we will use 200 epochs, and 10 different learning rates $\eta$ between $10^{-5}$ and $10^{-0.5}$ distributed evenly on a logarithm scale. We expect the answer to diverge when $\eta$ is large, and not converge when $\eta$ is small.
 
-Next we are ready to perform an grid search, to find the optimal learning rate $\eta$ and $L_2$ parameter $\lambda$, still using 200 epochs. Therefore we again plot the accuracy score, however this time as a function of $\lambda$ and $\eta$, picking out the accuracy score after the last epoch. Specific parameters we will test for are 10 different learning rates $\eta$ and regularization parameters $\lambda$, distributed evenly on a logarithm scale. Learning rate will be between $10^{-5}$ and $10^{-1}$, and $\lambda$ will be between $10^{-5}$ and $10^{-3}$.
+Next we are ready to perform a grid search, to find the optimal learning rate $\eta$ and $L_2$ parameter $\lambda$, still using 200 epochs. Therefore we again plot the accuracy score, however this time as a function of $\lambda$ and $\eta$, picking out the accuracy score after the last epoch. Specific parameters we will test for are 10 different learning rates $\eta$ and regularization parameters $\lambda$, distributed evenly on a logarithm scale. Learning rate will be between $10^{-5}$ and $10^{-1}$, and $\lambda$ will be between $10^{-5}$ and $10^{-3}$.
 
 \section{Results}
 
@@ -423,16 +431,16 @@ The MSE calculated with dynamic $\eta$ is shown in figure \ref{fig:SGD_Franke_ep
 
 \subsubsection{Feed Forward Neural Network}
 
-We plot the train and test MSE of the Franke function for different learning rates as a function of epochs, shown in the upper and lower panel of figure \ref{fig:NN_Franke_epochs_eta_MSE} respectively. We do not cap the upper limit of the MSE. Even though the two plots look similar, the value of the MSE is higher for the test data, which is as expected. We will in the following figures cap the MSE at $0.07$, like what was done for SGD.
+We plot the train MSE of the Franke function for different learning rates as a function of epochs, shown in figure \ref{fig:NN_Franke_epochs_eta_MSE}. We do not cap the upper limit of the MSE. We get a clear indication of good choices of $\eta$, as where it is too high or low our network does not converge. The corrosponding plot for test is not shown, but was very similar, with slightly higher MSE, as was expcted. We will in the following figures cap the MSE at $0.07$, like what was done for SGD.
 
 \begin{figure}[h!]
 	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_MSE__569887.pdf}
 	% \endminipage
 	% \minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__271070.pdf}
+	% \includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__271070.pdf}
 	% \endminipage
-	\caption{MSE of the train and test data after $150$ epochs for different learning rates using a Neural network.}
+	\caption{MSE of the train data during $150$ epochs for different learning rates using a Neural network.}
 	\label{fig:NN_Franke_epochs_eta_MSE}
 \end{figure}
 
@@ -508,9 +516,12 @@ Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ v
 \end{figure}
 
 
+\clearpage
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
-\clearpage
+
+
+
 \subsubsection{Logistic Regression}
 
 In figure \ref{fig:logreg_eta_epoch} we plot the accuracy score as a function of epochs, for different learning rates $\eta$ and $L_2$ parameter set to $\lambda = 0$. The top plot is for the train data, and bottom for test data. As mentioned we want to see how the network learns, meaning that we are not that interested in the precise accuracy score before we perform a grid search. First, looking at the train accuracy, when $\eta \leq 3\cdot 10^{-5}$ we do not converge within the 200 epochs. We also notice unstable accuracy for $\eta\geq 0.1122$. These effects is more apparent in the test accuracy, where we see clear variations in accuracy at $\eta \geq 0.03981$, and non converging accuracy at $\eta\leq 8\cdot 10^{-5}$. The optimal learning rate should therefore be within $8\cdot 10^{-5} \geq \eta \leq 0.1122$.
@@ -537,6 +548,11 @@ There are many potential optimal parameters, however lets choose $\eta= 0.00251$
 We know that the optimal value for a given parameter might not be the same, when we change values of other parameters. Meaning that this method is then not guaranteed to optimize the entire parameter space. However, we can assume it will be a good approximation, and will save a great deal of time.
 
 We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $\eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
+
+would have been nice to plot eta vs momentum, to see where they work well together. but momentum is used to get fast convergence, so we only did momentum epochs.
+
+FF NEURAL NETWORK FRANKE:
+
 
 
 
