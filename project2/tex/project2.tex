@@ -444,7 +444,7 @@ The MSE calculated with dynamic $\eta$ is shown in figure \ref{fig:SGD_Franke_ep
 
 \subsubsection{Feed Forward Neural Network}
 
-We plot the train and test MSE of the Franke function for different learning rates as a function of epochs, shown in the upper and lower panel of figure \ref{fig:NN_Franke_epochs_eta_MSE} respectively. The upper limit of the MSE increases from $0.35$ for the train data to $0.40$ for the test data, which is a desired feature. We choose $\eta\in[0.05,\,0.5]$ and plot the test MSE as a function of $N_e=250$ epochs shown in figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}, where we use $\mathrm{MSE}_\mathrm{max}=0.07$.
+We plot the train and test MSE of the Franke function for different learning rates as a function of epochs, shown in the upper and lower panel of figure \ref{fig:NN_Franke_epochs_eta_MSE} respectively. We do not cap the upper limit of the MSE. Even though the two plots look similar, the value of the MSE is higher for the test data, which is as expected. We will in the following figures cap the MSE at $0.07$, like what was done for SGD.
 
 \begin{figure}[h!]
 	% \minipage{0.49\textwidth}
@@ -458,7 +458,11 @@ We plot the train and test MSE of the Franke function for different learning rat
 \end{figure}
 
 
-Figure \ref{fig:NN_Franke_epochs_eta_MSE_limited} shows how the MSE drops as we continue to train the network, with little evidence of overfitting, as general increases of the MSE is absent towards the end of training. We see how $\eta>0.4$ yields abrupt increases in the MSE for certain epochs, indicating that these learning rates are too high. A peculiar feature of the MSE are the increases taking place at certain epochs for all learning rates. The magnitude of the MSE increase becomes smaller for lower learning rates, as desired. We do, however, see no apparent reason for why we should get MSE increases for identical epochs when the learning rates varies at most by an order of magnitude. It is thus not a consequence of overshooting certain minima, as these would have been overshot at different epochs.
+We choose $\eta\in[0.05,\,0.5]$ and plot the test MSE as a function of $N_e=250$ epochs shown in figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}. The figure shows how the MSE drops as we continue to train the network, with little evidence of overfitting, as general increases of the MSE is absent towards the end of training. We see how $\eta>0.4$ yields abrupt increases in the MSE for certain epochs, indicating that these learning rates are too high. A peculiar feature of the MSE are the increases taking place at certain epochs for all learning rates. The magnitude of the MSE increase becomes smaller for lower learning rates, as desired. We do, however, see no apparent reason for why we should get MSE increases for identical epochs when the learning rates varies at most by an order of magnitude. It is thus not a consequence of overshooting certain minima, as these would have been overshot at different epochs.
+
+We choose $\eta\in[0.05,\,0.5]$ and plot the test MSE as a function of $N_e=250$ epochs shown in figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}. The figure shows how the MSE drops as we continue to train the network, with little evidence of overfitting, which would be a general increases of the MSE towards the end of training. We do however see some clear vertical lines; abrupt increases of the MSE for all $\eta$. These were not expected, though can possibly be explained through the way the network is trained. In order to keep results comparable over many runs, the seed of the random distribution is set before each net is created. This was mainly to ensure that the weights are initialized the same for all. However, a side effect of this is that the dataset is split into the same batches for each net, at a given epoch. Sometimes these batches lead to a bad approximation of gradient for the enitre dataset, giving worse test results. Here that happens at the same epoch every time. 
+\sn{skrive noe om hvorfor vi ikke endrer det?}
+
 
 \begin{figure}[h!]
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__582234.pdf}
@@ -523,7 +527,7 @@ In figure \ref{fig:logreg_eta_lambda} we have plotted the results from our grid 
 	\caption{Here we have plotted the accuracy for the test data, as a function of both learning rate $\eta$ ($y$-axis) and logarithm of hyper parameter $\lambda$ ($x$-axis). An accuracy score of one corresponds to 100\% correct classification.}\label{fig:logreg_eta_lambda}
 \end{figure}
 
-There are many potential optimal parameters, however lets choose $\eta= 0.00251$ and $\lambda = 0$, and print the number of cases where our output is withing (0.1, 0.9). We remind that this is not a very comprehensive analysis, and we talk more about this in the discussion-section. Nevertheless, after the first epoch we have 58 cases, and after 200 epochs we have eight cases where the output is within (0.1, 0.9).  
+There are many potential optimal parameters, however lets choose $\eta= 0.00251$ and $\lambda = 0$, and print the number of cases where our output is withing (0.1, 0.9). We remind that this is not a very comprehensive analysis, and we talk more about this in the discussion-section. Nevertheless, after the first epoch we have 58 cases, and after 200 epochs we have eight cases where the output is within (0.1, 0.9).
 
 \clearpage
 
