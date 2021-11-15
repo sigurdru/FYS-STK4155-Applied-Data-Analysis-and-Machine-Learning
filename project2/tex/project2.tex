@@ -276,11 +276,11 @@ The expression for updating the weights and biases are
 \end{align}
 
 \subsubsection{Numerical gradients} \label{sec:num_gradients}
-When computing the derivatives involved in the backpropagation algorithm numerically, we will mainly use the autograd module in python. The exception to this is when we deal with classification and use the cross-entropy cost function (equation \eqref{eq:cross_entropy}) combined with the softmax activation function (equation \eqref{eq:softmax}) for the output layer. It can be shown analytically, that the error, equation \eqref{eq:backprop1}, of the output layer in this case can be written as 
+When computing the derivatives involved in the backpropagation algorithm numerically, we will mainly use the autograd module in python. The exception to this is when we deal with classification and use the cross-entropy cost function (equation \eqref{eq:cross_entropy}) combined with the softmax activation function (equation \eqref{eq:softmax}) for the output layer. It can be shown analytically, that the error, equation \eqref{eq:backprop1}, of the output layer in this case can be written as
 \begin{align} \label{eq:softmax_crossentropy_derivative}
-	\Delta_j^L &= \del{C}{a_j^L}\der{\sigma(z_j^L)}{z_j^L} = a_j^L - y_j
-\end{align} 
-where $a_j^L$ is the $j$-th node of the output layer, and $y_j$ is the corresponding target value. 
+	\Delta_j^L & = \del{C}{a_j^L}\der{\sigma(z_j^L)}{z_j^L} = a_j^L - y_j
+\end{align}
+where $a_j^L$ is the $j$-th node of the output layer, and $y_j$ is the corresponding target value.
 
 \subsubsection{Initialization of weights} \label{sec:wi}
 We mentioned earlier that the network has weights and biases between the layers. These needs to be initialized in some way. The biases are simple to initialize, as they are a single number for every node. These are initialized as a small, non-zero value $b_0$.
@@ -531,6 +531,43 @@ Again we first want to make sure our neural network actually learns, and study h
 \begin{figure}[h]
 	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_eta__test_accuracy__892274.pdf}
 	\caption{Test accuracy using sigmoid as the activation function, with 2 hidden layers with 10 nodes each. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_sigmoid}
+\end{figure}
+
+In Figure \ref{fig:NN_Cancer_sigmoid_dynam_eta}, we make the same plot, now using the learning schedule in equation \eqref{eq:learning_schedule}.
+
+\begin{figure}[h]
+	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__354289.pdf}
+	\caption{Test accuracy using sigmoid as the activation function, with dynamic learning rate. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_sigmoid_dynam_eta}
+\end{figure}
+
+Now we use the other implemented activation functuions
+
+\begin{figure}[h]
+	\includegraphics[width=0.5\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__256821.pdf}
+	\includegraphics[width=0.5\linewidth]{plots/NN_Cancer__epochs_dynamic_eta__test_accuracy__leaky_relu__415455.pdf}
+	\caption{Test accuracy using sigmoid as the activation function, with 2 hidden layers with 10 nodes each. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_relu_leaky}
+\end{figure}
+
+
+\begin{figure}[h]
+	\includegraphics[width=\linewidth]{plots/NN_Cancer__dynamic_eta_lambda__test_accuracy__leaky_relu__888173.pdf}
+	\caption{Test accuracy using sigmoid as the activation function, with 2 hidden layers with 10 nodes each. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_eta_lambda}
+\end{figure}
+
+\begin{figure}[h]
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__375043.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__705262.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__45014.pdf}
+	\endminipage\hfill
+	\minipage{0.49\textwidth}
+	\includegraphics[width=\linewidth]{../output/plots/NN_Franke__epochs_eta__test_MSE__relu__704482.pdf}
+	\endminipage
+	\caption{Neural networks with different number of layers, but same number of total nodes. Top left has 1 hidden layer, top right has 2. Bottom left has 3, while bottom right has 4. All have a total of 20 nodes.}\label{fig:NN_class_layers}
 \end{figure}
 
 
