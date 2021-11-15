@@ -1646,3 +1646,617 @@ Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta
        1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
        1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=False, push=False, save=True, seed=2021)
 2021-11-15 14:16:25.759035
+
+
+NN_Franke__eta_lambda__train_MSE__792327.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.5, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 14:28:40.367103
+
+
+NN_Franke__eta_lambda__test_MSE__660732.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=150, eta=array([0.05 , 0.095, 0.14 , 0.185, 0.23 , 0.275, 0.32 , 0.365, 0.41 ,
+       0.455, 0.5  ]), dynamic_eta=False, gamma=0, batch_size=36, scaling='S', epsilon=0.5, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Franke', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 14:28:43.162540
+
+
+NN_Cancer__epochs_eta__train_accuracy__287681.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:47:10.160898
+
+
+NN_Cancer__epochs_eta__test_accuracy__453008.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:47:12.503012
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__362828.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:47:19.765672
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__97639.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:47:21.665898
+
+
+NN_Cancer__epochs_eta__train_accuracy__611220.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:56:50.871863
+
+
+NN_Cancer__epochs_eta__test_accuracy__360896.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:56:52.488755
+
+
+NN_Cancer__epochs_eta__train_accuracy__503879.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:58:53.093240
+
+
+NN_Cancer__epochs_eta__test_accuracy__276240.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:58:54.712456
+
+
+NN_Cancer__epochs_eta__train_accuracy__704958.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:59:18.794530
+
+
+NN_Cancer__epochs_eta__test_accuracy__504257.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 18:59:20.416025
+
+
+NN_Cancer__epochs_eta__train_accuracy__relu__481195.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:00:24.420213
+
+
+NN_Cancer__epochs_eta__test_accuracy__relu__429244.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:00:26.039047
+
+
+NN_Cancer__epochs_eta__train_accuracy__362672.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00031623, 0.001     , 0.00316228, 0.01      ,
+       0.03162278, 0.1       ]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:00:56.669925
+
+
+NN_Cancer__epochs_eta__test_accuracy__58786.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00031623, 0.001     , 0.00316228, 0.01      ,
+       0.03162278, 0.1       ]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:00:58.271304
+
+
+NN_Cancer__epochs_eta__train_accuracy__984170.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00031623, 0.001     , 0.00316228, 0.01      ,
+       0.03162278, 0.1       ]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:02:21.419159
+
+
+NN_Cancer__epochs_eta__test_accuracy__286743.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([0.0001    , 0.00031623, 0.001     , 0.00316228, 0.01      ,
+       0.03162278, 0.1       ]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:02:24.380518
+
+
+NN_Cancer__epochs_eta__train_accuracy__186421.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:22:19.119598
+
+
+NN_Cancer__epochs_eta__test_accuracy__803017.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:22:22.746857
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__175412.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:22:31.397904
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__863658.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:22:33.233127
+
+
+NN_Cancer__epochs_eta__train_accuracy__732143.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:29:09.758040
+
+
+NN_Cancer__epochs_eta__test_accuracy__244349.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:29:11.386543
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__354483.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:29:18.356054
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__384275.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:29:20.089912
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__967982.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:29:27.166973
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__603538.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:29:29.071826
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__leaky_relu__816289.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:29:37.552083
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__leaky_relu__13124.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:29:39.401713
+
+
+NN_Cancer__epochs_eta__train_accuracy__439973.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:30:59.936610
+
+
+NN_Cancer__epochs_eta__test_accuracy__855020.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:31:01.698965
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__31392.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:31:08.606379
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__396189.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:31:10.288930
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__944699.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:31:17.007606
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__305941.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:31:18.729053
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__leaky_relu__47383.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:31:26.577505
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__leaky_relu__937576.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:31:28.236318
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__leaky_relu__218190.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:32:50.497463
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__leaky_relu__458208.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00]), hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:32:52.635364
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__470028.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:13.596090
+
+
+NN_Cancer__epochs_eta__train_accuracy__261949.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:14.700036
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__952708.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:15.574759
+
+
+NN_Cancer__epochs_eta__test_accuracy__487235.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:16.744486
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__527878.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:24.554732
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__457214.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:26.484468
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__99386.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:27.295968
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__678257.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:30.202279
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__970522.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:35.593499
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__166417.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:37.489426
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__589.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 5.01187234e-06, 2.51188643e-05, 1.25892541e-04,
+       6.30957344e-04, 3.16227766e-03, 1.58489319e-02, 7.94328235e-02,
+       3.98107171e-01, 1.99526231e+00, 1.00000000e+01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:39.226037
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__360351.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 5.01187234e-06, 2.51188643e-05, 1.25892541e-04,
+       6.30957344e-04, 3.16227766e-03, 1.58489319e-02, 7.94328235e-02,
+       3.98107171e-01, 1.99526231e+00, 1.00000000e+01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:44.191325
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__683041.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:49.343088
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__161717.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:51.225695
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__leaky_relu__334976.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 5.01187234e-06, 2.51188643e-05, 1.25892541e-04,
+       6.30957344e-04, 3.16227766e-03, 1.58489319e-02, 7.94328235e-02,
+       3.98107171e-01, 1.99526231e+00, 1.00000000e+01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:52.704412
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__leaky_relu__524312.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 5.01187234e-06, 2.51188643e-05, 1.25892541e-04,
+       6.30957344e-04, 3.16227766e-03, 1.58489319e-02, 7.94328235e-02,
+       3.98107171e-01, 1.99526231e+00, 1.00000000e+01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:38:54.441966
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__742600.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:39:48.161496
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__127178.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:39:50.076048
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__870909.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:39:58.503112
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__902743.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:40:00.410431
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__663215.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:40:09.884915
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__776977.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:40:11.822023
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__518844.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:40:24.195654
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__552243.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=50, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[20, 20, 20, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:40:26.120338
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__leaky_relu__590375.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00, 3.16227766e+00,
+       1.00000000e+01]), hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:40:40.163078
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__leaky_relu__968401.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00, 3.16227766e+00,
+       1.00000000e+01]), hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=False, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:40:42.072236
+
+
+NN_Cancer__epochs_eta__train_accuracy__765247.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:43:06.220675
+
+
+NN_Cancer__epochs_eta__test_accuracy__98436.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:43:09.025503
+
+
+NN_Cancer__epochs_eta__train_accuracy__297389.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:43:25.170194
+
+
+NN_Cancer__epochs_eta__test_accuracy__892274.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=False, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:43:28.567114
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__836628.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:43:37.126898
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__354289.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01, 3.16227766e-01,
+       1.00000000e+00]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='sigmoid', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:43:40.653296
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__46940.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 5.01187234e-06, 2.51188643e-05, 1.25892541e-04,
+       6.30957344e-04, 3.16227766e-03, 1.58489319e-02, 7.94328235e-02,
+       3.98107171e-01, 1.99526231e+00, 1.00000000e+01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:43:47.748521
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__534148.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 5.01187234e-06, 2.51188643e-05, 1.25892541e-04,
+       6.30957344e-04, 3.16227766e-03, 1.58489319e-02, 7.94328235e-02,
+       3.98107171e-01, 1.99526231e+00, 1.00000000e+01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:43:51.134220
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__leaky_relu__638048.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 5.01187234e-06, 2.51188643e-05, 1.25892541e-04,
+       6.30957344e-04, 3.16227766e-03, 1.58489319e-02, 7.94328235e-02,
+       3.98107171e-01, 1.99526231e+00, 1.00000000e+01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:43:59.023451
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__leaky_relu__331947.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 5.01187234e-06, 2.51188643e-05, 1.25892541e-04,
+       6.30957344e-04, 3.16227766e-03, 1.58489319e-02, 7.94328235e-02,
+       3.98107171e-01, 1.99526231e+00, 1.00000000e+01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:44:02.568403
+
+
+NN_Cancer__dynamic_eta_lambda__train_accuracy__leaky_relu__459176.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00, 3.16227766e+00,
+       1.00000000e+01]), hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=False, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:45:33.629647
+
+
+NN_Cancer__dynamic_eta_lambda__test_accuracy__leaky_relu__888173.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=array([1.00000000e-07, 3.16227766e-07, 1.00000000e-06, 3.16227766e-06,
+       1.00000000e-05, 3.16227766e-05, 1.00000000e-04, 3.16227766e-04,
+       1.00000000e-03, 3.16227766e-03, 1.00000000e-02, 3.16227766e-02,
+       1.00000000e-01, 3.16227766e-01, 1.00000000e+00, 3.16227766e+00,
+       1.00000000e+01]), hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=False, show=False, push=True, save=True, seed=2021)
+2021-11-15 19:45:37.213730
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__relu__68382.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:45:49.242959
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__relu__256821.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:45:50.951171
+
+
+NN_Cancer__epochs_dynamic_eta__train_accuracy__leaky_relu__426509.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:45:59.199864
+
+
+NN_Cancer__epochs_dynamic_eta__test_accuracy__leaky_relu__415455.pdf
+Namespace(method='NN', tts=0.2, polynomial=6, num_points=30, num_epochs=100, eta=array([1.00000000e-06, 3.16227766e-06, 1.00000000e-05, 3.16227766e-05,
+       1.00000000e-04, 3.16227766e-04, 1.00000000e-03, 3.16227766e-03,
+       1.00000000e-02, 3.16227766e-02, 1.00000000e-01]), dynamic_eta=True, gamma=0, batch_size=35, scaling='S', epsilon=0.2, lmb=[0], hidden_nodes=[10, 10], weight_initialization=True, act_func='leaky_relu', dataset='Cancer', pred=False, history=True, show=False, push=False, save=True, seed=2021)
+2021-11-15 19:46:00.892877
