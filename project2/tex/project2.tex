@@ -338,7 +338,7 @@ Since we are dealing with a regression problem and we're fitting a continuous fu
 
 As with SGD, neural networks have many parameters we have to tune. To reduce the dimensionality of the hyper-parameter space, we choose some to study, namely the learning rate $\eta$, number of epochs $N_e$, regularization parameter $\lambda$, momentum parameter $\gamma$, and choice of activation function. We will also study the number of hidden layers and number of nodes in these. We then do not change the batch size, choosing one based on the results from SGD, nor the weight initialization, using the ones described in section \ref{sec:wi}, given the activation function. This is still a very big space, so again we are more interested in how the different paramters affect the result independently of the others.
 
-A good indicator for our neural network being implemented correctly is making sure that it learns during training. This we check by plotting the MSE calculated after every epoch. We do this for different $\eta$s. We will then also find reasonable choices for the learning rate. We choose two hidden layers with ten nodes in each, and use the sigmoid activation function. As mentioned, as we are fitting a function, there is no activation function for the output layer. For the initial analysis we again choose $\lambda=\gamma=0$.
+A good indicator for our neural network being implemented correctly is making sure that it learns during training. This we check by plotting the MSE calculated after every epoch. We do this for different $\eta$'s. We will then also find reasonable choices for the learning rate. We choose two hidden layers with ten nodes in each, and use the sigmoid activation function. As mentioned, as we are fitting a function, there is no activation function for the output layer. For the initial analysis we again choose $\lambda=\gamma=0$.
 
 Having initialized the neural network we are now going to train it. Each training iteration begins by randomly shuffling the data and dividing them into minibatches, just as we did when we performed the SGD analysis. Now the feed-forward and backpropagation are performed for each minibatch.
 
@@ -398,7 +398,7 @@ We proceed by plotting the test MSE for $\eta\in[0.01,\,0.5]$, shown in figure \
 	\label{fig:SGD_Franke_epochs_eta}
 \end{figure}
 
-When studying different number of minibatches and momentum parameters $\gamma$, we will choose a specific $\eta$. Looking at figure \ref{fig:SGD_Franke_epochs_eta}, although there are many candidates, $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. This choice appears to be a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsulate both cases at once.
+When studying different number of minibatches and momentum parameters $\gamma$, we will choose a specific $\eta$. Looking at figure \ref{fig:SGD_Franke_epochs_eta}, although there are many candidates, $\eta=0.25$ yields fairly quick convergence of the MSE without significant variations. This choice appears to lie near a boundary between slow convergence and minima overshooting, and when testing other parameters we are more likely to encapsulate both cases at once.
 
 The MSE as a function of epochs for different number of minibatches is shown in figure \ref{fig:SGD_Franke_epochs_minibatches}. We notice that by using too few minibatches, we converge more slowly. When we use $N_B=30$ we get a quickly converging MSE with a low minimum value, but there appears to some fluctuations. Because of the small batch size, the batches are more prone to consist of points not giving a good approximation of the gradient.
 
@@ -408,7 +408,7 @@ The MSE as a function of epochs for different number of minibatches is shown in 
 	\label{fig:SGD_Franke_epochs_minibatches}
 \end{figure}
 
-We plot the test MSE after $N_e=150$ epochs with different regularization parameters in figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit on the shown MSE, as we are interested in the general impact of the $\lambda$ values, and not nuances of the lowest values. We see in the figure that the results are not very affected by the choice of $\eta$. However, the MSE is lowest for small values of $\lambda$, increasing quickly for higher values. This is similar to what we saw in \cite{project1}, though then we observed a small dip in the MSE for $\log10(\lambda)=-2.07$ for certain polynomial degrees.
+We plot the test MSE after $N_e=150$ epochs with different regularization parameters in figure \ref{fig:SGD_Franke_lambda_eta}. Using the same $\eta$ interval as before and $\lambda\leq1$ we do not set an upper limit on the shown MSE, as we are interested in the general impact of the $\lambda$ values, and not nuances of the lowest values. We see in the figure that the results are not very affected by the choice of $\eta$. However, the MSE is lowest for small values of $\lambda$, increasing quickly for higher $\lambda$ values. This is similar to what we saw with linear regression \cite{project1}, though we then observed a small dip in the MSE for $\log10(\lambda)=-2.07$ for certain polynomial degrees.
 
 
 \begin{figure}[h!]
@@ -452,7 +452,6 @@ We plot the train MSE of the Franke function for different learning rates as a f
 
 
 We choose $\eta\in[0.05,\,0.5]$ and plot the test MSE as a function of $N_e=250$ epochs shown in figure \ref{fig:NN_Franke_epochs_eta_MSE_limited}. The figure shows how the MSE drops as we continue to train the network, with little evidence of overfitting, which would be a general increases of the MSE towards the end of training. We do however see some clear vertical lines; abrupt increases of the MSE for all $\eta$. These were not expected, though can possibly be explained through the way the network is trained. In order to keep results comparable over many runs, the seed of the random distribution is set before each net is created. This was mainly to ensure that the weights are initialized the same for all. However, a side effect of this is that the dataset is split into the same batches for each net, at a given epoch. Sometimes these batches lead to a bad approximation of gradient for the enitre dataset, giving worse test results. Here that happens at the same epoch every time.
-\sn{skrive noe om hvorfor vi ikke endrer det?}
 
 
 \begin{figure}[h!]
@@ -495,7 +494,7 @@ Next we want to see the effects of different activation functions. We plot the t
 	\label{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare}
 \end{figure}
 
-Since a very integral part of neural networks are the neurons, we also study the way the network is structued. Until now, we have used a network with 2 hidden layers with 10 nodes in each. Without changing the total number of nodes, we train 4 networks for 100 epochs, using the activation function RELU. First, 1 (hidden) layer with 20 nodes is used. Then 2 layers with 10 each, for comparison. Then 3 layers, the middle with 10 nodes and the others with 5, and lastly 4 layers, with 5 nodes each. The same $\eta$ range as before is used. The four resulting plots are shown in Figure \ref{fig:NN_layers}. The network with 4 layers is shown in the bottom rihgt. This only learns for a very narrow range of $\eta$s, and seems to be too deep, at least for the given value of the other parameters. The network with 3 layers, shown in the bottom left, learns slower but does reach good results. However, along with the network with 1 layer in the upper left, there is much variation. It seems the network with 2 layers perform the best, escpecially as it gives good results for a wide range of $\eta$, compared to the other networks.
+Since a very integral part of neural networks are the neurons, we also study the way the network is structued. Until now, we have used a network with 2 hidden layers with 10 nodes in each. Without changing the total number of nodes, we train 4 networks for 100 epochs, using the activation function RELU. First, 1 (hidden) layer with 20 nodes is used. Then 2 layers with 10 each, for comparison. Then 3 layers, the middle with 10 nodes and the others with 5, and lastly 4 layers, with 5 nodes each. The same $\eta$ range as before is used. The four resulting plots are shown in Figure \ref{fig:NN_layers}. The network with 4 layers is shown in the bottom rihgt. This only learns for a very narrow range of $\eta$'s, and seems to be too deep, at least for the given value of the other parameters. The network with 3 layers, shown in the bottom left, learns slower but does reach good results. However, along with the network with 1 layer in the upper left, there is much variation. It seems the network with 2 layers perform the best, escpecially as it gives good results for a wide range of $\eta$, compared to the other networks.
 
 \begin{figure}[h]
 	\minipage{0.49\textwidth}
@@ -525,13 +524,7 @@ Lastly, we study the regularization parameter $\lambda$. Using the same $\eta$ v
 \clearpage
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
-Again we first want to make sure our neural network actually learns, and study how fat is does this. Using a network with 2 hidden layers with 10 nodes in each, and activating them with sigmoid, we plot the accuracy as function of epoch over 100 epochs for 9 uniformly distributed values of $\eta$ on a logarithmic scale. This is shown in Figure \ref{fig:NN_Cancer_sigmoid}. At the end of training, an accuracy of $98.2\%$ is acheved for several of the $\eta$-values. This corresponds to 2 mistakes. This level is first reached and maintained for $\eta=0.001$. Before good results are reached, the accuracy is $63\%$ for a long while. This corresponds to where the network predicts all tumors to be benign, because the weights are not properly trained yet. For $\eta=0.1$, a high level of accuracy, $>90\%$, is reached already after 1 single epoch. This does not mean the network is certain in its predictions, but it certainly comes with good guesses. Over the following epochs, it becomes more certain.
-\sn{Burde lage et plot av dette}
 
-\begin{figure}[h]
-	\includegraphics[width=\linewidth]{plots/NN_Cancer__epochs_eta__test_accuracy__892274.pdf}
-	\caption{Test accuracy using sigmoid as the activation function, with 2 hidden layers with 10 nodes each. For $\eta=1$, we get overflow, so no value is shown. }\label{fig:NN_Cancer_sigmoid}
-\end{figure}
 
 In Figure \ref{fig:NN_Cancer_sigmoid_dynam_eta}, we make the same plot, now using the learning schedule in equation \eqref{eq:learning_schedule}.
 
