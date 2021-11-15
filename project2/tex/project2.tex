@@ -440,16 +440,16 @@ The MSE calculated with dynamic $\eta$ is shown in figure \ref{fig:SGD_Franke_ep
 
 \subsubsection{Feed Forward Neural Network}
 
-We plot the train and test MSE of the Franke function for different learning rates as a function of epochs, shown in the upper and lower panel of figure \ref{fig:NN_Franke_epochs_eta_MSE} respectively. We do not cap the upper limit of the MSE. Even though the two plots look similar, the value of the MSE is higher for the test data, which is as expected. We will in the following figures cap the MSE at $0.07$, like what was done for SGD.
+We plot the train MSE of the Franke function for different learning rates as a function of epochs, shown in figure \ref{fig:NN_Franke_epochs_eta_MSE}. We do not cap the upper limit of the MSE. We get a clear indication of good choices of $\eta$, as where it is too high or low our network does not converge. The corrosponding plot for test is not shown, but was very similar, with slightly higher MSE, as was expcted. We will in the following figures cap the MSE at $0.07$, like what was done for SGD.
 
 \begin{figure}[h!]
 	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__train_MSE__569887.pdf}
 	% \endminipage
 	% \minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__271070.pdf}
+	% \includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__271070.pdf}
 	% \endminipage
-	\caption{MSE of the train and test data after $150$ epochs for different learning rates using a Neural network.}
+	\caption{MSE of the train data during $150$ epochs for different learning rates using a Neural network.}
 	\label{fig:NN_Franke_epochs_eta_MSE}
 \end{figure}
 
@@ -559,6 +559,8 @@ Stochastic regression FRANKE:
 We know that the optimal value for a given parameter might not be the same, when we change values of other parameters. Meaning that this method is then not guaranteed to optimize the entire parameter space. However, we can assume it will be a good approximation, and will save a great deal of time.
 
 We could have chosen other shapes for the dynamic learning rate, for instance exponential decreasing $\eta$, or an upside-down sigmoid. It can be useful to study the effects of different learning schedules, though this is outside the scope of this paper.
+
+would have been nice to plot eta vs momentum, to see where they work well together. but momentum is used to get fast convergence, so we only did momentum epochs.
 
 FF NEURAL NETWORK FRANKE:
 
