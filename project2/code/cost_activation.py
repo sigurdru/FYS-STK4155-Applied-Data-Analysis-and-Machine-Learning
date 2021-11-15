@@ -31,6 +31,6 @@ class Activations:
         s = np.sum(exp, axis=1, keepdims=True)
         return exp/s
 
-    def none(self, x):
+    def linear(self, x):
         # No activation
         return x
