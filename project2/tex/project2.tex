@@ -33,12 +33,12 @@
 
 % SGD: Franke
 %  - Bestemme beste parametere
-%  - Regne ut mse for de 
-%  - Få metode til å stemme med resultater 
+%  - Regne ut mse for de
+%  - Få metode til å stemme med resultater
 
 % NN: Franke
 %  - Regne den beste MSE-verdien
-%  - Få metode til å stemme med resultater 
+%  - Få metode til å stemme med resultater
 
 %  - Sammenligne SGD og NN med OLS
 
@@ -350,6 +350,13 @@ We will now use the Wisconsin Breast Cancer dataset to predict wether a tumor is
 We split and scale the data in the same way we did for the Franke Function, using $20\%$ as test data. Because the features can have widely different values, it is important to scale them so that the features exist in the same domain. We subtract the mean and divide by the standard deviation. The splitting gives us 455 data points in the train data, and 114 in the test data. Since we now classify data, we no longer use MSE as a performance measurement, rather the accuracy score. It is simply the percentage of correct predictions. Because we only have 114 test data points, the accuracy is quite quantized, taking values of $n\cdot 0.09\%$, where $n$ is the number of correct predictions. This will later explain the jumps in performance. It must further be noticed that of the 569 tumors, $63\%$ are benign, and $37\%$ malignent.
 
 \subsubsection{Feed Forward Neural Network}
+We now want to use the same neural network code as before to study and predict the breast cancer data. No changes has to be made, but now we use cross entroy as the cost function, and an activation function for the output layer, namely softmax. We can then interpret the output as probabilities. Because the dataset has binary targets, either 0 or 1, we could have used a single output node. Then sigmoid would have done the same. However, we choose to use 2 output nodes, one for 0 and one for 1, because this generalises to other datasets, which might be multiclass. A test is implemented to make sure that the probabilities sum to 1. When we make the final prediction, the node with the higest probability is picked. More on this in the next section, about logistic regression.
+
+
+
+
+
+
 \subsubsection{Logistic Regression}
 Lastly we want to study the breast cancer data using logistic regression. See theory section \ref{sec:logistic_regression} for an explanation of the method. We use the sigmoid \eqref{eq:sigmoid} as our soft classifier in the output, and cross entropy \eqref{eq:cross_entropy2} (gradient given by \eqref{eq:cross_entropy_grad}) as our cost function. See theory section \ref{sec:cost_func_and_regul} for derivation of the cross entropy. To optimize the weight and biases we implement stochastic gradient decent algorithm \eqref{eq:SGD_algo}, using five minibatches. We will also study the implementation of $L_2$-regularization \eqref{eq:L2}. Our aim is to compare the result with those obtained from out feed forward neural network and Scikit-Learn's logistic regression functionality.
 
@@ -357,7 +364,7 @@ The main quantity we will study is the accuracy score, which is the number of co
 
 We initialize the weights and bias with random normal distribution with mean around zero and standard deviation of one. We want to look at what happens to the accuracy as epochs increases, for different learning rates. Therefore we first plot the accuracy score as a function of learning rate and number of epochs. Specifically we will use 200 epochs, and 10 different learning rates $\eta$ between $10^{-5}$ and $10^{-0.5}$ distributed evenly on a logarithm scale. We expect to see overfitting when $\eta$ is large, and underfitting when $\eta$ is small.
 
-Next we are ready to perform an grid search, to find the optimal learning rate $\eta$ and $L_2$ parameter $\lambda$, still using 200 epochs. Therefore we again plot the accuracy score, however this time as a function of $\lambda$ and $\eta$, picking out the accuracy score after the last epoch. Specific parameters we will test for are 10 different learning rates $\eta$ and regularization parameters $\lambda$, distributed evenly on a logarithm scale. Learning rate will be between $10^{-5}$ and $10^{-1}$, and $\lambda$ will be between $10^{-5}$ and $10^{-3}$.
+Next we are ready to perform a grid search, to find the optimal learning rate $\eta$ and $L_2$ parameter $\lambda$, still using 200 epochs. Therefore we again plot the accuracy score, however this time as a function of $\lambda$ and $\eta$, picking out the accuracy score after the last epoch. Specific parameters we will test for are 10 different learning rates $\eta$ and regularization parameters $\lambda$, distributed evenly on a logarithm scale. Learning rate will be between $10^{-5}$ and $10^{-1}$, and $\lambda$ will be between $10^{-5}$ and $10^{-3}$.
 
 \section{Results}
 
