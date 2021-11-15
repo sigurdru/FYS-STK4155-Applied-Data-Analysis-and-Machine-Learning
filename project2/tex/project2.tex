@@ -37,9 +37,6 @@
 % NN: Franke
 %  - Sjekke at plottene i resultat stemmer med metodebeskrivelse 
 %  - Plotte lambda-resultater 
-%  - Beskrive R2-plots 
-%  - Beskrive dynamisk eta plot 
-%  - beskrive plot for relu & leaky relu 
 %  - Plotte surface fit med passende parametre 
 %  - Metode for ulike Layers of nodes
 %  - Plotte resultat for ulike Layers og Nodes
@@ -472,36 +469,41 @@ Figure \ref{fig:NN_Franke_epochs_eta_MSE_limited} shows how the MSE drops as we 
 \end{figure}
 
 
-We proceed by plotting the $R^2$ score, setting a minimum value of $R^2=0.55$ to highlight results in the same vicinity of what we got for the linear regression study, shown in figure \ref{fig:NN_Franke_epochs_eta_R2}.
+We proceed by plotting the $R^2$ score, setting a minimum value of $R^2=0.55$ to highlight results in the same vicinity of what we got for the linear regression study, shown in figure \ref{fig:NN_Franke_epochs_eta_R2}. The figure shows that we obtain $R^2$ scores exceeding the ones we obtained with linear regression, where the test $R^2_\mathrm{test}<0.6$ was obtained without resampling, while we exceed this value for multiple configurations of the neural network. Other than numerical results, the $R^2$ score does not appear to provide any new information, as its development essentially displays inverse properties of the MSE, where high values correspond to low MSE values and vice versa. The MSE increments at certain epochs is now present in the form of drops in the $R^2$ scores. 
 
 \begin{figure}[h!]
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_R2__190748.pdf}
-	\caption{NN}
+	\caption{The $R^2$ score of the Neural network, using a minimum value of the heatmap of $R^2_\mathrm{min}=0.55$.}
 	\label{fig:NN_Franke_epochs_eta_R2}
 \end{figure}
 
+Figure \ref{fig:NN_Franke_epochs_dynamic_eta} shows the evolution of the MSE when we use dynamic learning rates, calculated with equation \eqref{eq:learning_schedule} as before. The result is similar to what we obtained with SGD, with suppressed fluctuations of the MSE for higher epochs. This has a fairly large effect on the Neural network, as the fluctuations of the MSE for $N_e>200$ in figure \ref{fig:NN_Franke_epochs_eta_MSE_limited} are barely visible. Once again, our scaling algorithm have provided MSE values towards the end of the simulation that varies little for different learning rates.   
+
 \begin{figure}[h!]
-	% \minipage{0.49\textwidth}
 	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_dynamic_eta__test_MSE__489375.pdf}
-	% \endminipage
-	% \minipage{0.49\textwidth}
-	% \includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_dynamic_eta__test_R2__289368.pdf}
-	% \endminipage
-	\caption{NN}
+	\caption{MSE of the Franke function from the Neural network, using a linearly decreasing learning rate, where the initial learning rates are shown on the $y$-axis.}
 	\label{fig:NN_Franke_epochs_dynamic_eta}
 \end{figure}
 
+
+As a final test of our neural network, we plot the test MSE over $250$ epochs using the Relu and Leaky Relu activation functions for the hidden layers, shown in the upper and lower panel of figure \ref{fig:NN_Franke_epochs_eta_MSE_relu_leaky} respectively. An upper value of $0.07$ have been used for the MSE once again. Values of $\eta>0.15$ yielded poor results for these activation functions, and caused the network to not converge for some of the higher learning rates. The behaviour of the MSE for these two activation functions differ very little, but it appears that Leaky Relu yields somewhat lower MSE values than Relu. We include the corresponding MSE evolution for the same $\eta$ values with sigmoid function as activation for the hidden layers, shown in figure \ref{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare}. 
+
 \begin{figure}[h!]
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__relu__733938.pdf}
-	\endminipage
-	\minipage{0.49\textwidth}
-	\includegraphics[width=\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__leaky_relu__501404.pdf}
-	\endminipage
+	\includegraphics[width=0.8\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__relu__733938.pdf}
+	\includegraphics[width=0.8\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__leaky_relu__501404.pdf}
 	\caption{MSE Relu and Leaky Relu}
 	\label{fig:NN_Franke_epochs_eta_MSE_relu_leaky}
 \end{figure}
 
+Figure \ref{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare} emphasizes the vast difference of the neural network with different acitivation functions for the hidden layers. Both Relu and Leaky Relu converges a lot faster than sigmoid activation, and while there seems to be slight increase of MSE values towards the end for the former two, these are less present for the lower values of $\eta$, which might have been a more suitbale choice. Other than that, there are still fluctuations for all three activation functions, and the sigmoid function converges much slower than the other two. Figure \ref{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare} shows that the MSE irregularities in figure \ref{fig:NN_Franke_epochs_eta_MSE_limited} are still present, although barely visible the the learning rates where the MSE barely drops below $0.06$. The MSE irregularities near the end are much smaller for the other two activation functions, and doesn't seem to affect the lowest learning rates to a noticeable degree.    
+
+\begin{figure}[h!]
+	\includegraphics[width=0.7\linewidth]{NN_Franke/NN_Franke__epochs_eta__test_MSE__compare__600255.pdf}
+	\caption{MSE of the Neural network with the sigmoid activation function for the hidden layers. The learning rates and epochs are identical to that of figure \ref{fig:NN_Franke_epochs_eta_MSE_relu_leaky}, allowing us to compare the effect of the different activation functions.}
+	\label{fig:NN_Franke_epochs_eta_MSE_sigmoid_compare}
+\end{figure}
+
+We now plot different network configurations. HÅKON OLAV 
 
 \subsection{Wisconsin Breast Cancer Data}
 \subsubsection{Feed Forward Neural Network}
