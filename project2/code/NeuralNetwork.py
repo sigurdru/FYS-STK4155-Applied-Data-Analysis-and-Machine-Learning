@@ -160,8 +160,8 @@ class FFNN(Costs, Activations):
             self.bias[n] -= bias_change
 
         # If weight and bias to output layer doesnt change, end training
-        if max(np.max(abs(weight_change)), np.max(abs(bias_change))) < 1e-8:
-            self.converged = True
+        # if max(np.max(abs(weight_change)), np.max(abs(bias_change))) < 1e-8:
+        #     self.converged = True
 
     def feed_forward(self):
         # Update the hidden layers
@@ -258,9 +258,8 @@ class FFNN(Costs, Activations):
         except:
             return np.nan
         pred = np.max(probs, axis=1).reshape(-1, 1)
-        # true = np.argmax(y, axis=1).reshape(-1, 1)
-        # return np.sum(pred == true) / len(true)
-        return np.mean(pred)
+        true = np.argmax(y, axis=1).reshape(-1, 1)
+        return np.sum(pred == true) / len(true)
 
     def save(self, fname=None):
         """
