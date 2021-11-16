@@ -592,9 +592,7 @@ We remind the reader that when studying the Franke function using linear regress
 
 The neural network was able to score better than linear regression and SGD, getting a lowest MSE of $0.0425$. A lower MSE than $0.0471$ was generally seen for most configurations of the network, so this seems like the superiour method for minimizing the error. While both linear regression and SGD fits a bivariate polynomial of degree $p$, having $P$ terms, the neural network has no constraint in the model it makes. This is one of the reasons machine learning is often called a black-box, as we can not study how the network represents the Franke function. If the only goal is getting a good result, this is not a problem. However, we can gain no deeper understanding of the problem at hand.
 
-Our main justification for omitting a design matrix with polynomial data points for the neural network training was to obtain a model that could reproduce data different from the Franke function.
-\sn{dette gir ikke mening}
-This would have been a sensible thing to do. However, throughout the report we have seen how sensitive neural networks can be to initial parameters, and fitting e.g. terrain data would require a fair amount of analysis once again in order to tune parameters appropriately. For this reason we have chosen not to do it, but throughout the report we have developed a fairly decent insight of how the different parameters affects the network, and how to adjust parameters depending on a result we have, compared to one we wish to obtain. Achieving this insight is among the most important results of this report.
+Our main justification for omitting a design matrix with polynomial data points for the neural network training was to test how well the network could reproduce the Franke function without any restrictions. This could simulate giving it other data, for instance terrain data. This we would have liked to do. However, throughout the report we have seen how sensitive neural networks can be to initial parameters, and fitting e.g. terrain data would require a fair amount of analysis once again in order to tune parameters appropriately. For this reason we have chosen not to do it, but throughout the report we have developed a fairly decent insight of how the different parameters affects the network, and how to adjust parameters depending on a result we have, compared to one we wish to obtain. Achieving this insight is among the most important results of this report.
 
 We did not appempt to use grid search on the entire parameter space for any method, as this would have been too time consuming. We know that the optimal choice of a given parameter are affected by changes to the other parameters. This implies that our method is not guaranteed to optimize the entire parameter space. However, we have assumed that it gives a good approximation, supported by the fact that our results are consistent with those obtained from linear regression.
 
@@ -611,7 +609,7 @@ The fact that we obtain the same accuracy using our logistic regression, as when
 As mentioned before, the dataset is not very large nor complex, so a netural further point of study is testing it on another dataset, for example the hand drawn digits in MNIST, or credit card data from Taiwan\footnote{https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients}.
 
 \section{Conclusion}
-With SGD we managed to get the exact same $MSE = 0.071$ as our previous project \cite{project1}. This was done with learning rate $\eta = 0.25$ and with implementation of momentum parameter $\gamma$ and dynamic learning rate $\eta$ separately.
+With SGD we managed to get the exact same $MSE = 0.0471$ as our previous project \cite{project1}. This was done with learning rate $\eta = 0.25$ and with implementation of momentum parameter $\gamma$ and dynamic learning rate $\eta$ separately.
 
 
 \bibliographystyle{plain}
