@@ -160,8 +160,8 @@ class FFNN(Costs, Activations):
             self.bias[n] -= bias_change
 
         # If weight and bias to output layer doesnt change, end training
-        # if max(np.max(abs(weight_change)), np.max(abs(bias_change))) < 1e-8:
-        #     self.converged = True
+        if max(np.max(abs(weight_change)), np.max(abs(bias_change))) < 1e-8:
+            self.converged = True
 
     def feed_forward(self):
         # Update the hidden layers
@@ -179,7 +179,7 @@ class FFNN(Costs, Activations):
          3) Updates weights and biases with backpropagation
         """
 
-        self.history = defaultdict(lambda: [])
+        self.history = defaultdict(lambda: np.zeros(epochs) * np.nan)
         self.converged = False
         indicies = np.arange(self.N)
         pbar = tqdm(range(epochs), desc=f"eta: {self.eta0}, lambda: {self.lmb}. Training")
@@ -191,7 +191,7 @@ class FFNN(Costs, Activations):
 
             # save training performance
             if train_history:
-                self.train_history(test)
+                self.train_history(epoch, test)
 
             np.random.shuffle(indicies)  # Shuffle indices
             self.X_s = self.X[indicies]  # Shuffled input
@@ -217,21 +217,20 @@ class FFNN(Costs, Activations):
                 print("RuntimeWarning. Overflow or underflow encoutered")
                 break
 
-    def train_history(self, test):
+    def train_history(self, i, test):
             
         for name, (x, t) in zip(("train", "test"), ((self.X, self.static_target), test)):
             if self.nodes[-1] > 1:
-
-                self.history[name + "_accuracy"].append(self.predict_accuracy(x, t))
+                self.history[name + "_accuracy"][i] = self.predict_accuracy(x, t)
                 loss = self.predict(x) - t
-                self.history[name + "_loss"].append(max(np.mean(loss, axis=0)))
+                self.history[name + "_loss"][i] = max(np.mean(loss, axis=0))
 
             else:
                 # Franke function MSE 
                 pred = utils.rescale_data(self.predict(x), self.z_Franke)
                 target = utils.rescale_data(t, self.z_Franke)
-                self.history[name + "_mse"].append(utils.MSE(target, pred)[0])
-                self.history[name + "_R2"].append(utils.R2(target, pred)[0])
+                self.history[name + "_mse"][i] = utils.MSE(target, pred)[0]
+                self.history[name + "_R2"][i] = utils.R2(target, pred)[0]
 
             if test is None:
                 break
@@ -257,7 +256,7 @@ class FFNN(Costs, Activations):
                 return np.nan
         except:
             return np.nan
-        pred = np.max(probs, axis=1).reshape(-1, 1)
+        pred = np.argmax(probs, axis=1).reshape(-1, 1)
         true = np.argmax(y, axis=1).reshape(-1, 1)
         return np.sum(pred == true) / len(true)
 
