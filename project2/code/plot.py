@@ -423,20 +423,21 @@ def eta_epochs(data, args, vmax=None, vmin=None):
         fig, ax = plt.subplots()
 
         cols = np.arange(args.num_epochs)
-        idx = np.round(args.eta,5)
+        idx = np.round(np.log10(args.eta),5)
         data = pd.DataFrame(accuracy, index=idx, columns=cols)
 
         xtick = len(cols)//10
         ytick = idx
         xrot = 0
         
-        title = name + r" for Franke function, using NN with 20 minibatches"
+        title = name + r" for Cancer data, using NN with 20 minibatches"
 
         if args.act_func == "relu":
             title += "\n" + r"Using the Relu activation function"
         elif args.act_func == "leaky_relu":
             title += "\n" + r"Using the Leaky Relu activation function"
-
+        
+        title = "NN test accuracy for Cancer data, with dynamic learning rate "
         xlabel = "Number of epochs"
         
         if args.dynamic_eta:
