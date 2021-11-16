@@ -28,10 +28,12 @@ python3 main.py -h
 ```
 
 To reproduce all the results in our rapport, a makefile is configured to produce every plot.
-Can either be done for all (this takes a lot of time), or individual parts. For example
+Can either be done for all, or individual parts. For example
 ```
 #Run all exercises
 make all       
 #Run results for neural network on Cancer data
 make NN_classification
 ```
+
+Runnig all is expected to take between 10 and 30minutes, depending on the computer. A total time of 15.5 minutes has been achieved.
