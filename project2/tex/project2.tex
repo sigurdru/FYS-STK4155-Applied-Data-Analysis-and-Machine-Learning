@@ -590,7 +590,7 @@ There are many potential optimal parameters, however lets choose $\eta= 0.00251$
 
 \section{Discussion}
 
-With SGD we managed to reproduce the lowest $MSE \approx 0.0471$ as in our previous report \cite{project1}. This was achieved with both the implementation of a momentum parameter $\gamma$ and dynamic learning rate $\eta$. In the previous project this was done with $L_2$ regularization, however here we had $\lambda = 0$. It makes sense that they should be in the same region, given that we have the same design matrix. However it surprises us that we get the exact same MSE. With this in mind however, the fact that we obtain the same results with different methods, gives us confidence that our application is correct.
+We remind the reader that when studying the Franke Function using linear regression methods, the best MSE we achieved  With SGD we managed to reproduce the lowest $MSE \approx 0.0471$ as in our previous report \cite{project1}. This was achieved with both the implementation of a momentum parameter $\gamma$ and dynamic learning rate $\eta$. In the previous project this was done with $L_2$ regularization, however here we had $\lambda = 0$. It makes sense that they should be in the same region, given that we have the same design matrix. However it surprises us that we get the exact same MSE. With this in mind however, the fact that we obtain the same results with different methods, gives us confidence that our application is correct.
 
 We know that the optimal value for a given parameter might not be the same, when we change values of other parameters. Meaning that this method is then not guaranteed to optimize the entire parameter space. However, we can assume it will be a good approximation, and will save a great deal of time.
 
