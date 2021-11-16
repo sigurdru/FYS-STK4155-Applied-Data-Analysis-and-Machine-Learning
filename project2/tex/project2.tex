@@ -360,8 +360,6 @@ We now want to use the same neural network code as before to study and predict t
 
 The analysis done with the neural network on the classification data is very similar, as we will study the same hyperparameter dependencies as was done for regression. We will assume the optimal parameters are similar to those found earlier for the neural network.
 
-
-
 \subsubsection{Logistic Regression}
 Lastly we want to study the breast cancer data using logistic regression. See theory section \ref{sec:logistic_regression} for an explanation of the method. We use the sigmoid \eqref{eq:sigmoid} as our soft classifier in the output, and cross entropy \eqref{eq:cross_entropy2} (gradient given by \eqref{eq:cross_entropy_grad}) as our cost function. See theory section \ref{sec:cost_func_and_regul} for derivation of the cross entropy. To optimize the weights and biases we implement stochastic gradient descent algorithm \eqref{eq:SGD_algo}, using five minibatches. We will also study the implementation of $L_2$-regularization \eqref{eq:L2}. Our aim is to compare the result with those obtained from out feed forward neural network and Scikit-Learn's logistic regression functionality.
 
