@@ -25,13 +25,13 @@ NN_classification:
 	python3 main.py -d Cancer -Ne 100 -hn 10,10 -eta 'np.logspace(-6, -1, 11)' -l 0 -history -bs 35 -de -act_func leaky_relu
 	python3 main.py -d Cancer -Ne 100 -hn 10,10 -eta 'np.logspace(-6, -1, 11)' -l 'np.logspace(-7,1,17)' -bs 35 -de -act_func leaky_relu
 NN_class_layers:
-	python3 main.py -push -d Cancer -Ne 50 -hn 20 -eta 'np.logspace(-6, -1, 11)' -l 0 -history -bs 35 -de -act_func relu
-	python3 main.py -push -d Cancer -Ne 50 -hn 20,20 -eta 'np.logspace(-6, -1, 11)' -l 0 -history -bs 35 -de -act_func relu
-	python3 main.py -push -d Cancer -Ne 50 -hn 20,20,20 -eta 'np.logspace(-6, -1, 11)' -l 0 -history -bs 35 -de -act_func relu
-	python3 main.py -push -d Cancer -Ne 50 -hn 20,20,20,10 -eta 'np.logspace(-6, -1, 11)' -l 0 -history -bs 35 -de -act_func relu
+	python3 main.py -d Cancer -Ne 50 -hn 20 -eta 'np.logspace(-6, -1, 11)' -l 0 -history -bs 35 -de -act_func relu
+	python3 main.py -d Cancer -Ne 50 -hn 20,20 -eta 'np.logspace(-6, -1, 11)' -l 0 -history -bs 35 -de -act_func relu
+	python3 main.py -d Cancer -Ne 50 -hn 20,20,20 -eta 'np.logspace(-6, -1, 11)' -l 0 -history -bs 35 -de -act_func relu
+	python3 main.py -d Cancer -Ne 50 -hn 20,20,20,10 -eta 'np.logspace(-6, -1, 11)' -l 0 -history -bs 35 -de -act_func relu
 Logistic_regression:
-	py main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -0.5, 11)' -Ne 200
-	py main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -1, 11)' -l 'np.logspace(-5, -3, 11)' -Ne 200
+	python3 main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -0.5, 11)' -Ne 200
+	python3 main.py -d Cancer -m reg -bs 5 -eta 'np.logspace(-5, -1, 11)' -l 'np.logspace(-5, -3, 11)' -Ne 200
 
 all: SGD_regression NN_regression NN_reg_layers NN_classification NN_class_layers Logistic_regression
 
