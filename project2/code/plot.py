@@ -10,9 +10,6 @@ import seaborn as sns
 import pandas as pd
 from datetime import datetime
 
-# to suppress warnings from fig.tight_layout() in some plotsFalse
-# import warnings
-# warnings.filterwarnings("ignore")
 
 #The style we want
 plt.style.use('seaborn')
@@ -383,8 +380,14 @@ def eta_lambda(data, args, NN=False, vmax=None):
         func["z"] = name.split()[1]
 
         fig, ax = plt.subplots(figsize=(10, 10))
-        col = np.round(np.log10(args.lmb), 3)
-        row = np.round(np.log10(args.eta), 3)
+        try:
+            col = np.round(np.log10(args.lmb), 3)
+        except:
+            col = np.round(args.lmb, 3)
+        try:
+            row = np.round(np.log10(args.eta), 3)
+        except:
+            row = np.round(args.eta, 3)
         data = pd.DataFrame(accuracy, index=row, columns=col)
         ax = sns.heatmap(data, 
                         ax=ax, 
