@@ -1,8 +1,6 @@
 import numpy as np
-import imageio
 from sklearn.model_selection import train_test_split as tts
 from sklearn.datasets import load_breast_cancer, load_digits
-# from torchvision.datasets import MNIST
 
 
 def get_features(i):
@@ -100,6 +98,18 @@ def create_X(x, y, n, intercept=True):
 
 
 def categorical(y):
+    """
+    convert a 1d array to nd selfindexing matrix, where n is largest element
+    y-in: [0, 3, 2, 0, 3]
+    y-out: [[1,0,0,0], [0,0,0,1], [0,0,1,0], [1,0,0,0], [0,0,0,1]]
+
+    Arguments:
+        y: 1darray
+            array to convert
+    Returns:
+        Y: ndarray
+            converted array
+    """
     N = len(y)
     M = np.max(y) + 1
     Y = np.zeros((N, M))
