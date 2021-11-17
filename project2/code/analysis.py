@@ -1,21 +1,13 @@
 from collections import defaultdict
-import enum
 import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, Normalizer
-# Our files
-# from regression impo/rt Ordinary_least_squaresSG, RidgeSG
-import utils
-# import plot
-from sklearn.linear_model import SGDRegressor, LogisticRegression
-from sklearn.metrics import accuracy_score
-import seaborn as sns
-import matplotlib.pyplot as plt
-from matplotlib import cm
-import pandas as pd
+from sklearn.linear_model import LogisticRegression
+
 # Our files
 from NeuralNetwork import FFNN
 import SGD
 import plot
+import utils
 
 
 class NoneScaler(StandardScaler):
@@ -108,7 +100,8 @@ def NN_regression(args):
     print(f"Best NN train prediction: {(train:=data['train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     print(f"Best NN test prediction: {(test:=data['test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
     if args.history:
-        # Plot MSE for different etas as a function of epochs 
+        # Plot MSE for different etas as a function of epochs  
+        # Turn following on and off as desired
         # plot.eta_epochs(MSE, args)
         plot.eta_epochs(MSE, args, vmax=0.07)
         # plot.eta_epochs(R2, args, vmin=0.55)
@@ -118,6 +111,8 @@ def NN_regression(args):
 
 
 def linear_regression(args):
+    """ SGD """
+    print("Doing linear regression")
     p = args.polynomial
     etas = args.eta
     lmbs = args.lmb
@@ -190,8 +185,8 @@ def linear_regression(args):
                         # Plot result of fit, and exit
                         plot.surface_fit(z_pred, z, x, y, args)
 
-        print(f"Best SGD train prediction: {(train:=data['Train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
-        print(f"Best SGD test prediction: {(test:=data['Test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+        print(f"Best NN train prediction: {(train:=data['Train MSE'])[(mn:=np.unravel_index(np.nanargmin(train), train.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
+        print(f"Best NN test prediction: {(test:=data['Test MSE'])[(mn:=np.unravel_index(np.nanargmin(test), test.shape))]} for eta = {etas[mn[0]]}, lambda = {lmbs[mn[1]]}")
         plot.parameter_based(data, args)
 
     else:
