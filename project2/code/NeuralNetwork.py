@@ -1,3 +1,6 @@
+"""
+Contains code for neural network, as well as optimizer (momentum sgd)
+"""
 from collections import defaultdict
 import autograd.numpy as np
 from tqdm import tqdm
@@ -177,8 +180,15 @@ class FFNN(Costs, Activations):
          1) Initializing shuffled minibatches
          2) Update each layers with their weights and biases
          3) Updates weights and biases with backpropagation
-        """
 
+        Arguments:
+            epochs: int
+                total number of epochs to train
+            train_history: bool
+                if true, calculate mse/accuracy during training, on train data
+            test: 2tuple with X_test and z_test
+                is not None, also calculate mse/accuracy during training on test data
+        """
         self.history = defaultdict(lambda: np.zeros(epochs) * np.nan)
         self.converged = False
         indicies = np.arange(self.N)
@@ -218,7 +228,11 @@ class FFNN(Costs, Activations):
                 break
 
     def train_history(self, i, test):
-            
+        """
+        Calculate mse/accuracy/loss/r2 during training. 
+        Network never learns from this
+        Slows down code a lot
+        """
         for name, (x, t) in zip(("train", "test"), ((self.X, self.static_target), test)):
             if self.nodes[-1] > 1:
                 self.history[name + "_accuracy"][i] = self.predict_accuracy(x, t)
@@ -248,6 +262,9 @@ class FFNN(Costs, Activations):
         return self.Layers[-1]
 
     def predict_accuracy(self, x, y):
+        """
+        Convert probabilities to accuracy score
+        """
         probs = self.predict(x)
         msg = "\n\nThe probabilities do not sum to 1!\nWorry not, this probably just means there is a nan in there. Check for RuntimeWarnings in autograd.\nRerun, but with lower gamma or eta or something else\n"
         try:
@@ -302,6 +319,7 @@ if __name__ == "__main__":
 
     MM = FFNN(X_,
               z_train,
+              args=args,
               hidden_nodes=[16],
               batch_size=args.bs,
               learning_rate=0.1,
