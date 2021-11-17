@@ -608,9 +608,9 @@ The fact that we obtain the same accuracy using our logistic regression, as when
 As mentioned before, the dataset is not very large nor complex, so a netural further point of study is testing it on another dataset, for example the hand drawn digits in MNIST, or credit card data from Taiwan\footnote{https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients}.
 
 \section{Conclusion}
-With SGD we managed to get the exact same $MSE = 0.0471$ as our previous project \cite{project1}. This was done with learning rate $\eta = 0.25$ and with implementation of momentum parameter $\gamma$ and dynamic learning rate $\eta$ separately.
+With SGD we managed to get the exact same $MSE = 0.0471$ as our previous project \cite{project1}. This was done with learning rate $\eta = 0.25$ and with implementation of momentum parameter $\gamma$ and dynamic learning rate $\eta$ separately. We expected the result to be in the same region, because we used the same design matrix in both cases. It surprised us however that the results ended up being exactly the same. Using neural network we managed to beat this with a MSE lower than 0.0471. This was achieved with several different configurations. Therefore, when strictly looking at mean square error, the neural network seems to be worth the added complexity. 
 
-When analyzing the cancer data with logistic regression and neural network, we got an maximum accuracy score of 99.1\%. This corresponds to one miss-classification and is consistent with implementation Scikit-Learn's logistic regression. 
+When analyzing the cancer data with logistic regression and neural network, we got an maximum accuracy score of 99.1\%. This corresponds to one miss-classification and is consistent with implementation Scikit-Learn's logistic regression. Although this result is good, we would have liked to study how confident our algorithms are. For example, when using $\eta = 0.00251$ and $\lambda = 0$, we had eight cases where the output was between (0.1, 0.9). We believe that this could be bettered by optimizing the algorithm.
 
 
 \bibliographystyle{plain}
