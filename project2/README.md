@@ -1,7 +1,7 @@
 # FYS-STK4155 Project2 - Using Regression and Neural Networks to Fit Continuous Functions and Classify Data
 The work of Håkon Olav Torvik, Vetle Viknes and Sigurd Sørlie Rustad in FYS-STK4155 - Applied Data Analysis and Machine Learning, fall 2021.
 
-The report project2.pdf is found in the tex directory.
+The report [project2.pdf](https://github.com/sigurdru/FYS-STK4155/blob/main/project2/tex/project2.pdf) is found in the tex directory.
 
 Code dependencies:
 - Python 3.8.10
