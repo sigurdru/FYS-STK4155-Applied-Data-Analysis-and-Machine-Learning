@@ -1,3 +1,6 @@
+"""
+Here we do stochastic gradient descent for regression and logistic regression
+"""
 import numpy as np
 import utils 
 from tqdm import tqdm
