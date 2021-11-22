@@ -59,6 +59,23 @@ u(0,t) &= 0 \ \ t\geq 0 \text{ and} \\
 u(L,t) &= 0 \ \ t\geq 0.
 \end{align}
 
+\subsection*{Analytical solution}
+An analytical solution of the 1D diffusion equation can be dervied using the method of separation of variables.
+\[ u(x,t) = X(x)T(t) \]
+The solution is separated into a function $X$ only depending on the independent variable $x$, and a function $T$ only depending on the independent variable $t$. Equation \ref{eq:diffusion_equation_1D} can then be rewritten as
+
+\begin{align*}
+	\frac{\partial^2 X(x)T(t)}{\partial x^2} &= \frac{\partial X(x)T(t)}{\partial t} \\
+	T(t)\frac{\partial^2 X(x)}{\partial x^2} &= X(x)\frac{\partial T(t)}{\partial t} \\
+	\frac{1}{X}\frac{\partial^2 X(x)}{\partial x^2} &= \frac{1}{T}\frac{\partial T(t)}{\partial t}
+\end{align*}
+
+The core of the method now becomes clear. The independent variables are separated and put on either side of the equation. Because $x$ and $t$ are independent we may fix one of them, say $x$, while letting the other ($t$) vary. The left side of the equation is thus constant, and since we have equality the expression on the right side must equal the same constant, for arbitrary $t$. Therefore, we can set the left side and right side equal to a constant $-k^2$. The reason for defining a negative constant is to prevent a growing solution, which will be clear on the derivation.
+
+\[ \frac{1}{X}\frac{\partial^2 X(x)}{\partial x^2} = \frac{1}{T}\frac{\partial T(t)}{\partial t} = -k^2\]
+
+This is solved for the functions $X$ and $T$ separately. ...
+
 \subsection*{Explicit forward Euler}
 In this section we want to cover the explicit forward Euler. By explicit we mean that the value at the next grid point is determined entirely by known or previously calculated values.
 
@@ -87,9 +104,8 @@ where
 \begin{equation*}
 \alpha = \frac{\Delta t}{\Delta x^2}.
 \end{equation*}
-This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. 
-\section{Method}
-\subsection{Forward Euler scheme}
+This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. \\
+
 We are to use the forward Euler method to discretize the diffusion equation to be solved numerically. The forward Euler is an explicit scheme, meaning that the derivative in time is approximated at the current time level.
 That is, the derivative is discretized only by known values. As a consequence, the discretized diffusion equation can be explicitly be solved for the next time step without the need of any matrix inversion to arrive at a coupled
 set of discretized equations. The drawback of explicit methods is that it is less stable than implicit schemes, which approximate the derivative at the next time step.
@@ -97,6 +113,7 @@ If the derivative is calculated at the current time level, we miss any informati
 Hence, if the gradient of the next time level is significantly different than of the current time level, the numerical solution may deviate considerably from the true solution. 
 If the deviation is large enough, further iterations could potentially cause instable solutions in the sense that it diverges.
 
+\section{Method}
 \section{Results}
 \section{Discussion}
 \section{Conclusion}
