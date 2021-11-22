@@ -1,7 +1,7 @@
 # FYS-STK4155 Project3 - Fancy Title
 The work of Vetle Nevland, Vetle Viknes and Sigurd Sørlie Rustad in FYS-STK4155 - Applied Data Analysis and Machine Learning, fall 2021.
 
-The report [project3.pdf](https://github.com/sigurdru/FYS-STK4155/blob/main/project2/tex/project3.pdf) is found in the tex directory.
+The report [project3.pdf](https://github.com/sigurdru/FYS-STK4155/blob/main/project3/tex/project3.pdf) is found in the tex directory.
 
 Code dependencies:
 - Python 3.8.10

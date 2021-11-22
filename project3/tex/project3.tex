@@ -32,6 +32,57 @@ We will in no way answer all questions linked to the aforementioned methods. So 
 In the theory-section we aim to give a brief explanation of the main concepts and terminology used in this report. For a more in-depth explanation we recommend reading the appropriate sections in \cite{2019}, which has been of great inspiration and help for us throughout the project.
 
 
+\subsection*{The diffusion equation}
+
+The full diffusion equation reads
+\begin{equation}
+\frac{\partial u(\mathbf{r}, t)}{\partial t} = \nabla \cdot \left[D(u, \mathbf{r})\nabla u(\mathbf{r}, t)\right],
+\end{equation}
+where $\mathbf{r}$ is a positional vector and $D(u,r)$ the collective diffusion coefficient. If $D(u,\mathbf{r}) = 1$ the equation simplifies to a linear differential equation
+\begin{equation}
+\frac{\partial u}{\partial t} = \nabla^2u(\mathbf{r}, t),
+\end{equation}
+or
+\begin{equation}
+\label{eq:diffusion_equation}
+\left(\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}\right) u(x,y,z,t) = \frac{\partial u(x,y,z,t)}{\partial t}
+\end{equation}
+in cartesian coordinates. In this report we are mainly going to work with the diffusion equation in one dimension, i.e.
+\begin{align}
+\label{eq:diffusion_equation_1D}
+\frac{\partial^2 u(x,t)}{\partial x^2} &= \frac{\partial u(x,t)}{\partial t}.
+\end{align}
+
+\subsection*{Explicit forward Euler}
+In this section we want to cover the explicit forward Euler. By explicit we mean that the value at the next grid point is determined entirely by known or previously calculated values.
+
+The one-dimensional diffusion equation \eqref{eq:diffusion_equation_1D} reads 
+\begin{equation}
+\frac{\partial^2u(x, t)}{\partial x^2} = \frac{\partial u(x,t)}{\partial t} \ \ \text{or} \ \ u_{xx} = u_t.
+\end{equation}
+In this report we are going to study a one dimensional rod of length $L=1$, with boundary conditions
+\begin{align}
+	u(x,0) &= \sin(\pi x) \ \ 0\leq x\leq L,\\
+	u(0,t) &= 0 \ \ t\geq 0 \text{ and} \\
+	u(L,t) &= 0 \ \ t\geq 0.
+\end{align}
+
+To approximate the solution, we have to discretize the position and time coordinates. We can choose  $\Delta x = L/N$ and $\Delta t$ as small steps in $x$-direction and time, where $N$ are the number of discretized points in $x$-direction. Then we can define the value domain of $t$ and $x$,
+\begin{equation*}
+t_j = j\Delta t, \ \ j\in \mathbb{N}_0 \ \ \wedge \ \ x_i = i\Delta x, \ \ \{i \in \mathbb{N}_0 | i \leq N\}.
+\end{equation*}
+
+The algorithm for explicit forward Euler in one dimension (from \cite{lectures2015} chapter 10.2.1) reads
+\begin{equation}
+\label{eq:forward_euler}
+u_{i, j+1} = \alpha u_{i-1, j} + (1 - 2\alpha) u_{i,j} + \alpha u_{i+1, j}
+\end{equation}
+where
+\begin{equation*}
+\alpha = \frac{\Delta t}{\Delta x^2}.
+\end{equation*}
+This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. The discretization is explained in the appropriate section. Note that the expression on the right hand side, used to calculate the value at a time $t_j + \Delta t$, only contains the state of the system at time $t_j$. This can be written as a matrix equation (see \cite{lectures2015} chapter 10.2.1)
+
 \section{Method}
 \section{Results}
 \section{Discussion}
