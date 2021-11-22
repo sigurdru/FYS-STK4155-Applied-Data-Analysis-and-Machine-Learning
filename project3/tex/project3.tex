@@ -84,6 +84,14 @@ where
 This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. The discretization is explained in the appropriate section. Note that the expression on the right hand side, used to calculate the value at a time $t_j + \Delta t$, only contains the state of the system at time $t_j$. This can be written as a matrix equation (see \cite{lectures2015} chapter 10.2.1)
 
 \section{Method}
+\subsection{Forward Euler scheme}
+We are to use the forward Euler method to discretize the diffusion equation to be solved numerically. The forward Euler is an explicit scheme, meaning that the derivative in time is approximated at the current time level.
+That is, the derivative is discretized only by known values. As a consequence, the discretized diffusion equation can be explicitly be solved for the next time step without the need of any matrix inversion to arrive at a coupled
+set of discretized equations. The drawback of explicit methods is that it is less stable than implicit schemes, which approximate the derivative at the next time step.
+If the derivative is calculated at the current time level, we miss any information about how the solution changes at the next time level. 
+Hence, if the gradient of the next time level is significantly different than of the current time level, the numerical solution may deviate considerably from the true solution. 
+If the deviation is large enough, further iterations could potentially cause instable solutions in the sense that it diverges.
+
 \section{Results}
 \section{Discussion}
 \section{Conclusion}
