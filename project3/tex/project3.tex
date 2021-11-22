@@ -114,6 +114,54 @@ Hence, if the gradient of the next time level is significantly different than of
 If the deviation is large enough, further iterations could potentially cause instable solutions in the sense that it diverges.
 
 \section{Method}
+\subsection*{Unit testing}
+Before the numerical explicit scheme is applied to a particular problem, it is important to test that the discretized equations return expected results. Unit tests are constructed to test the implementation . This is done by manually calculating the solution of the first two time steps given the initial condition, and comparing the result with that obtained by the numerical scheme. Since the same recursive formula is used for all time steps, it is sufficient to test the two first time steps. To avoid too much computations we choose five equally sized intervals between $x=0$ and $x=L=1$, that is $\Delta x = 0.2$. The time step is set to $\Delta t = 0.01$, ensuring stability.
+For the first time step $j=1$, that is $t=\Delta t$, we have the following two boundary values and four interior points
+
+\begin{align*}
+	u_0^1 &= u_5^1 = 0 \\
+	u_i^1 &= \frac{\Delta t}{\Delta x^2}u_{i+1}^0 + (1 - 2\frac{\Delta t}{\Delta x^2})u_i^0 + \frac{\Delta t}{\Delta x^2}u_{i-1}^0 \\
+	&= 0.05u_{i+1}^0 + 0.9u_i^0 + 0.05u_{i-1}^0
+\end{align*}
+
+Using the initial condition $u_*^0 = \big(\sin(0),\:\sin(0.2\pi),\:\sin(0.4\pi),\:\sin(0.6\pi), \:\sin(0.8\pi),\:\sin(\pi)\big)$, we get
+
+\begin{align*}
+	u_0^1 &= 0 \\
+	u_1^1 &= 0.531656755 \\
+	u_2^1 &= 0.8602387 \\
+	u_3^1 &= 0.8602387 \\
+	u_4^1 &= 0.531656755 \\
+	u_5^1 &= 0
+\end{align*}
+
+The forward euler scheme prints out the following values for the first time step
+\[ (0.,\:         0.53165676,\: 0.8602387,\:  0.8602387,\:  0.53165676,\: 0.        ) \]
+Hence, the result from forward euler is equal to the manual calulations up to machine precision.
+
+\par Using the values from the first time step, we can calculate the solution at second time step. The recursive formula makes the manual calculations straightforward.
+
+\begin{align*}
+	u_0^2 &= 0 \\
+	u_1^2 &= 0.480888053 \\
+	u_2^2 &= 0.778093215 \\
+	u_3^2 &= 0.778093215 \\
+	u_4^2 &= 0.480888053 \\
+	u_5^2 &= 0
+\end{align*}
+
+The forward euler scheme gives the following for the second time step
+\[ (0.,\:         0.48088805,\: 0.77809321,\: 0.77809321,\: 0.48088805,\: 0.        ) \]
+Once again, the two approaches provide the same result up to machine precision. Thus, the internal functionality of forward euler is validated. It remains to verify the accuracy of the scheme by comparing it with the analytical solution of the diffusion equation \ref{eq:diffusion_equation_1D} with provided initial and boundary conditions.
+
+\subsection*{Accuracy assessment}
+The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution? If  To assess this we compare the numerical solution to the analytical solution by the total integrated error \cite{Linge2017}
+\[ E = ||e_i^j||_{L_2}^2 = \sqrt{\sum_{j=1}^{N_t} \sum_{i=1}^{N_x} (e_i^j)^2 \: \Delta x \Delta t}, \]
+where $e_i^j = u_i^j - u_e(x_i,\:t_j)$ and $u_e(x_i,\:t_j)$ is the analytical solution at step $i$ in space and step $j$ in time. If $E \rightarrow 0$ as $\Delta t \rightarrow 0$ the numerical scheme converges to the analytical solution.
+
+
+
+
 \section{Results}
 \section{Discussion}
 \section{Conclusion}
