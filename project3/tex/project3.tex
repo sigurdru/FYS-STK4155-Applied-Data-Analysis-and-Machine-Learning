@@ -47,10 +47,16 @@ or
 \label{eq:diffusion_equation}
 \left(\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}\right) u(x,y,z,t) = \frac{\partial u(x,y,z,t)}{\partial t}
 \end{equation}
-in cartesian coordinates. In this report we are mainly going to work with the diffusion equation in one dimension, i.e.
+in cartesian coordinates. In this report we are going to study a one dimensional rod of length $L=1$. I.e. we need the one dimensional diffusion equation
 \begin{align}
 \label{eq:diffusion_equation_1D}
-\frac{\partial^2 u(x,t)}{\partial x^2} &= \frac{\partial u(x,t)}{\partial t}.
+\frac{\partial^2 u(x,t)}{\partial x^2} &= \frac{\partial u(x,t)}{\partial t},
+\end{align}
+with boundary conditions
+\begin{align}
+u(x,0) &= \sin(\pi x) \ \ 0\leq x\leq L,\\
+u(0,t) &= 0 \ \ t\geq 0 \text{ and} \\
+u(L,t) &= 0 \ \ t\geq 0.
 \end{align}
 
 \subsection*{Explicit forward Euler}
@@ -81,8 +87,7 @@ where
 \begin{equation*}
 \alpha = \frac{\Delta t}{\Delta x^2}.
 \end{equation*}
-This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. The discretization is explained in the appropriate section. Note that the expression on the right hand side, used to calculate the value at a time $t_j + \Delta t$, only contains the state of the system at time $t_j$. This can be written as a matrix equation (see \cite{lectures2015} chapter 10.2.1)
-
+This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. 
 \section{Method}
 \subsection{Forward Euler scheme}
 We are to use the forward Euler method to discretize the diffusion equation to be solved numerically. The forward Euler is an explicit scheme, meaning that the derivative in time is approximated at the current time level.
