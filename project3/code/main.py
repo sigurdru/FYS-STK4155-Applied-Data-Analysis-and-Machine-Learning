@@ -23,13 +23,13 @@ def parse_args(args=None):
 
     add_arg('-dx', '--num_x_points',
             type=float,
-            default=0.2,
+            default=0.005,
             help='Steplength in x-direction',
             )
 
     add_arg('-dt', '--num_t_points',
             type=float,
-            default=0.2,
+            default=0.0001,
             help='Steplength in time',
             )
 
@@ -50,6 +50,11 @@ def parse_args(args=None):
             default=0,
             help='right boundary condition',
             )
+    add_arg('-Np', '--num_plots',
+            type=int,
+            default=5,
+            help='Number of times one wants to plot the evolution',
+           )
 
     add_arg("-show",
             action="store_true",
