@@ -12,8 +12,7 @@ plt.rc('text', usetex=True)
 plt.rc('font', family='DejaVu Sans')
 here = os.path.abspath(".")
 path_plots = '../output/plots/'
-
-
+#archive = path_plots + "archive.txt"
 def u_exact(x, t): return np.exp(-np.pi**2*t)*np.sin(np.pi*x)
 
 
@@ -36,8 +35,6 @@ def show_save(fig, fname, args):
     else:
         plt.clf()
     print("\n\n")
-
-
 def set_ax_info(ax, xlabel, ylabel, title=None):
     """Write title and labels on an axis with the correct fontsizes.
 
@@ -53,23 +50,52 @@ def set_ax_info(ax, xlabel, ylabel, title=None):
     ax.tick_params(axis='both', which='major', labelsize=15)
     ax.ticklabel_format(style='plain')
     ax.legend(fontsize=15)
-
 def set_fname(args):
     """
     Sets fname
     """
     pass
 
-def Euler_solution(x, u, t, args):
+def Euler_solution(x, t, u, args):
     fig, ax = plt.subplots()
-    for i in range(np.shape(u)[1]):
-        ax.plot(x, u[:,i], label=f'{i}')
+    for n in u.keys():
+        ax.plot(x, u[n], label=f'num_{n}')
     title = 'Numerical Solution of Euler-forward'
     xlabel = 'x'
     ylabel = 'y'
-    fname = 'some_fname'
+    fname = 'num_sol_FE'
     set_ax_info(ax, xlabel, ylabel, title=title)
     fig.set_tight_layout(True)
     show_save(fig, fname, args)
 
+def max_error_tot(x, t, u, args):
+    """Plot max absolute error for given time steps, and
+    return the accumulated max absolute error.
+
+    Args:
+        x (array): x-coordinate
+        t (array): time dimension
+        u (dict): dictionary of solutions at given time step
+        args: argparse arguments
+
+    Returns:
+        (int): accumulated max absolute error
+    """
+    tot_error = 0
+    fig, ax = plt.subplots()
+
+    for n in u.keys():
+        error_n = np.abs(u[n] - u_exact(x, t[n])).max()
+        ax.plot(n, error_n, label=f't={n}')
+        tot_error += error_n 
+
+    title = 'Absolute error between numerical and analytical solution'
+    xlabel = 'time'
+    ylabel = 'error'
+    fname = 'error_FE'
+    set_ax_info(ax, xlabel, ylabel, title=title)
+    fig.set_tight_layout(True)
+    show_save(fig, fname, args)
+
+    return tot_error
 

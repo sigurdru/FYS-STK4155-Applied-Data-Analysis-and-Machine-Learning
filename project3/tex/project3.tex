@@ -112,6 +112,7 @@ set of discretized equations. The drawback of explicit methods is that it is les
 If the derivative is calculated at the current time level, we miss any information about how the solution changes at the next time level. 
 Hence, if the gradient of the next time level is significantly different than of the current time level, the numerical solution may deviate considerably from the true solution. 
 If the deviation is large enough, further iterations could potentially cause instable solutions in the sense that it diverges.
+\par The forward Euler scheme in general requires a quite low time step $\Delta t$ to produce stable solutions. Small time steps are convenient at the start of the diffusion process when the solutions changes quickly. However, when approaching the stationary limit the solution changes very slow and so does the update when using small $\Delta t$. This limitation is resolved by implicit methods \cite{Linge2017}.
 
 \section{Method}
 \subsection*{Unit testing}
@@ -150,19 +151,41 @@ Hence, the result from forward euler is equal to the manual calulations up to ma
 	u_5^2 &= 0
 \end{align*}
 
-The forward euler scheme gives the following for the second time step
+The forward euler scheme gives the following result for the second time step
 \[ (0.,\:         0.48088805,\: 0.77809321,\: 0.77809321,\: 0.48088805,\: 0.        ) \]
 Once again, the two approaches provide the same result up to machine precision. Thus, the internal functionality of forward euler is validated. It remains to verify the accuracy of the scheme by comparing it with the analytical solution of the diffusion equation \ref{eq:diffusion_equation_1D} with provided initial and boundary conditions.
 
 \subsection*{Accuracy assessment}
-The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution? If  To assess this we compare the numerical solution to the analytical solution by the total integrated error \cite{Linge2017}
-\[ E = ||e_i^j||_{L_2}^2 = \sqrt{\sum_{j=1}^{N_t} \sum_{i=1}^{N_x} (e_i^j)^2 \: \Delta x \Delta t}, \]
-where $e_i^j = u_i^j - u_e(x_i,\:t_j)$ and $u_e(x_i,\:t_j)$ is the analytical solution at step $i$ in space and step $j$ in time. If $E \rightarrow 0$ as $\Delta t \rightarrow 0$ the numerical scheme converges to the analytical solution.
+The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution? To address this we compute the deviation of the numerical solution to the analytical solution for two different mesh resolutions in space, $\Delta x=0.1$ and $\Delta x = 0.01$. For comparison purposes the time step is adjusted in each case to ensure stability, and is defined as $\Delta t = 0.3\cdot \Delta x^2$. The error is computed and accumulated for a fixed number of time steps $N$ in both cases. The applied error measure at a given time step is simply the maximum absolute difference between the numerical solution $u$ and the analytical solution $u_e$ across the entire spatial domain.
+\[ e^n = \argmax_{i \in [0,N_x]} |u_i^n - u_{e,i}^n| \]
 
+The total accumulated error is then
+\[ E = \sum_{n=1}^N e^n, \]
+which is the error measure to be used when testing how well the numerical solution approximates the analytical solution.
 
 
 
 \section{Results}
+
+\subsection*{Error of Forward Euler scheme}
+
+To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the accumulated maximum absolute error, as described in Methods.
+
+\begin{table}[]
+	\centering
+	\begin{tabular}{|l|l|l|l|}
+		\hline
+		\textbf{n}      & \textbf{5} & \textbf{10} & \textbf{50} \\ \hline
+		$\Delta x=0.1$  & 1.164      & 1.602       & 6.135       \\ \hline
+		$\Delta x=0.01$ & 1.161      & 1.593       & 5.584       \\ \hline
+	\end{tabular}
+\caption{Accumulated maximum absolute error between numerical solution and analytical solution of the 1D diffusion equation. The test is performed for two different spatial resolutions and for three number of time steps.}
+\label{tab:errors}
+\end{table}
+
+The test of accumulated error for $\Delta x=0.1$ and $\Delta x=0.01$ for different number of time steps $n$ is shown in Table \ref{tab:errors}. The accumulated error obviously increases when evaluating the error for more time steps because more individual errors are accumulated to the total error. Interestingly, the relative difference in error for the two spatial resolutions become greater when evaluating for more time steps. In addition, the error is consistently lower for $\Delta x=0.01$ than $\Delta x=0.1$. Thus, the finer the spatial mesh, the better is the performance of the forward euler scheme. This verifies that the performance of the forward euler scheme, assuming the stability criteria is met, is significantly improved if we are able to refine the spatial mesh.  
+
+
 \section{Discussion}
 \section{Conclusion}
 

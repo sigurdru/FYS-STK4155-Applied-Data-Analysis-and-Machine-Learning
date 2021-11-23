@@ -89,7 +89,8 @@ def total_integrated_error(u, x, t):
     E = 0
     for n in range(len(t)):
         u_e = u_exact(x, t[n])
-        e2 = np.sum((u[n] - u_e)**2)
+        #e2 = np.sum((u[n] - u_e)**2)
+        e2 = np.abs(u[n] - u_e).max()
         E += e2
     
     E *= dt 
@@ -100,11 +101,11 @@ def test_space_steps():
     and dx=1/100 and compares with analytical solution."""
     L = 1
     T = 0.5
-    for dx in 0.1, 0.01:
+    for dx in 0.2, 0.1, 0.01, 0.005:
         dt = 0.5*dx**2 # Satisfies stability criteria
-        #u, x, t = forward_euler(L, T, IC, 0, 0, dx, dt, user_action=plot_sols)
+        u, x, t = forward_euler(L, T, IC, 0, 0, dx, dt, user_action=plot_sols)
         u, x, t = forward_euler(L, T, IC, 0, 0, dx, dt, user_action=store_solution)
-
+        #print(u_store)
         E = total_integrated_error(u_store, x, t)
         print(f'Total integrated error for dx={dx}:', E)
 
@@ -113,7 +114,7 @@ if __name__ == '__main__':
     BC_l = 0
     BC_r = 0
 
-    u, x, t = forward_euler(L, T, IC, BC_l, BC_r, dx, dt, user_action=plot_sols)
+    #u, x, t = forward_euler(L, T, IC, BC_l, BC_r, dx, dt, user_action=plot_sols)
     #u, x, t = forward_euler(L, T, IC, BC_l, BC_r, dx, dt, user_action=store_solution)
     test_space_steps()
 
