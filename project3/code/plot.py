@@ -35,7 +35,7 @@ def show_save(fig, fname, args):
     else:
         plt.clf()
     print("\n\n")
-def set_ax_info(ax, xlabel, ylabel, title=None):
+def set_ax_info(ax, xlabel, ylabel, style='plain', title=None):
     """Write title and labels on an axis with the correct fontsizes.
 
     Args:
@@ -48,7 +48,8 @@ def set_ax_info(ax, xlabel, ylabel, title=None):
     ax.set_ylabel(ylabel, fontsize=20)
     ax.set_title(title, fontsize=20)
     ax.tick_params(axis='both', which='major', labelsize=15)
-    ax.ticklabel_format(style='plain')
+    ax.yaxis.get_offset_text().set_fontsize(15)
+    ax.ticklabel_format(style=style)
     ax.legend(fontsize=15)
 def set_fname(args):
     """
@@ -84,17 +85,21 @@ def max_error_tot(x, t, u, args):
     tot_error = 0
     fig, ax = plt.subplots()
 
-    for n in u.keys():
-        error_n = np.abs(u[n] - u_exact(x, t[n])).max()
-        ax.plot(n, error_n, label=f't={n}')
-        tot_error += error_n 
+    t_n = [t[n] for n in u.keys()]
+    error_n = [np.abs(u[n] - u_exact(x, t[n])).max() for n in u.keys()]
+    tot_error = np.sum(error_n)
 
-    title = 'Absolute error between numerical and analytical solution'
-    xlabel = 'time'
-    ylabel = 'error'
+    ax.plot(t_n, error_n, 'o--')
+    
+    title = 'Error between numerical and analytical solution' + '\n' 
+    title += 'at different times, using $\Delta x={}$'.format(args.x_step)
+    xlabel = 'Time [s]'
+    ylabel = 'Max absolute error'
     fname = 'error_FE'
-    set_ax_info(ax, xlabel, ylabel, title=title)
+    set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
     fig.set_tight_layout(True)
+    plt.show()
+    exit()
     show_save(fig, fname, args)
 
     return tot_error

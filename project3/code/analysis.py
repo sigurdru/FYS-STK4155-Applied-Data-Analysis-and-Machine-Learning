@@ -48,21 +48,23 @@ def forward_euler(args):
     When_to_plot = np.arange(0, Nt, When_to_plot)
     
     for n in range(Nt):
+        if n in When_to_plot:
+            # Store values for plotting 
+            u_m_final[n] = u_m.copy()
+        
         # Interior points
         u[1:-1] = u_m[1:-1] + C * (u_m[2:] - 2*u_m[1:-1] + u_m[:-2])
+        
         #Boundary points
         u[0] = BC_l
         u[Nx] = BC_r
 
         u_m[:] = u
 
-        if n in When_to_plot:
-            u_m_final[n] = u_m.copy()
-
-    # max_error = plot.max_error_tot(x, t, u_m_final, args)
+    max_error = plot.max_error_tot(x, t, u_m_final, args)
     plot.Euler_solution(x, t, u_m_final, args)
 
-    # return u_m, max_error
+    return u_m, max_error
 
 def neural_network(args):
     """
