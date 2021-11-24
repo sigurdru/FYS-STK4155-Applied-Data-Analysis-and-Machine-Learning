@@ -186,7 +186,10 @@ To assess the accuracy of our implemented numerical scheme, we need to test the 
 The test of accumulated error for $\Delta x=0.1$ and $\Delta x=0.01$ for different number of time steps $n$ is shown in Table \ref{tab:errors}. The accumulated error obviously increases when evaluating the error for more time steps because more individual errors are accumulated to the total error. Another feature is that reducing the spatial step $\Delta x$ significantly reduces the accumulated error. For instance, from Table \ref{tab:errors} we have that $0.838/8.302\cdot 10^{-4}=100.94$. Approximately the same factor is reproduced by the other time steps $n$ as well. This shows that reducing $\Delta x$ by a factor of 10 will reduce the accumulated error by a factor of 100. Hence, refining the spatial resolution will significantly improve the performance of the forward euler scheme. The results strongly indicate that the numerical solution converges to the analytical solution as $\Delta x \rightarrow 0$. 
 
 \begin{figure}[h]
-	\includegraphics[scale=0.4]{}
+	\centering
+	\includegraphics[scale=0.4]{../output/plots/error_FE}
+	\caption{Maximum absolute error calculated for 50 uniform time steps from start to end, using $\Delta x=0.01$.}
+	\label{fig:error_dx001_n50}
 \end{figure}
 
 \par A plot of the accumulated error for $\Delta x=0.01$ is shown in Figure \ref{fig:error_dx001_n50}. Notice that the error for time step $n=0$ is zero. This is because the numerical solution for the first time step is simply the initial condition, yielding a perfect correspondance between the numerical and analytical solution. As time proceeds, the error quickly increases and reaches a maximum at around time $t=0.1$. At this timestep, the solution includes significant gradients. The Forward euler discretization of the derivative is susceptible to large gradients, so one expects the numerical scheme to contain larger errors, as evidenced in Figure \ref{fig:error_dx001_n50}. At later stages though, the solution becomes more linear and the gradients mitigate. Thus, forward euler is capable of reproducing the analytical solution to a much better approximation. As time goes to infinity the error converges to zero.
