@@ -98,8 +98,6 @@ def max_error_tot(x, t, u, args):
     fname = 'error_FE'
     set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
     fig.set_tight_layout(True)
-    plt.show()
-    exit()
     show_save(fig, fname, args)
 
     return tot_error
