@@ -115,7 +115,7 @@ def error_x(x, t, u, args):
     title += 'at two time levels, using $\Delta x={}$'.format(args.x_step)
     xlabel = 'x'
     ylabel = 'Absolute error'
-    fname = 'error_FE_x'
+    fname = r'error_FE_x_dx_{}'.format(args.x_step)
 
     set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
     fig.set_tight_layout(True)
