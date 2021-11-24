@@ -69,8 +69,8 @@ def parse_args(args=None):
            )
 
     add_arg('-TE', '--test_error',
-            type=bool,
-            default=False,
+            action='store_true',
+            dest='test_error',
             help='Deviation of numerical solution to analytical solution, tested for two mesh resolutions',
             )
 
@@ -105,7 +105,7 @@ def main():
         np.random.seed(args.seed)
 
     if args.method == 'Euler':
-        u, error = analysis.forward_euler(args)
+        u = analysis.forward_euler(args)
 
     if args.method == 'NN':
         analysis.neural_network(args)

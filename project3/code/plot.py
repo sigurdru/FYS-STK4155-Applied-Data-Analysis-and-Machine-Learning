@@ -102,3 +102,21 @@ def max_error_tot(x, t, u, args):
 
     return tot_error
 
+def error_x(x, t, u, args):
+    fig, ax = plt.subplots()
+
+    t_n = [t[n] for n in u.keys()]
+    error_x = [u[n] - u_exact(x, t[n]) for n in u.keys()]
+
+    for i, e in enumerate(error_x):
+        ax.plot(x, e, '--', label=r't={}'.format(t_n[i]))
+    
+    title = 'Error between numerical and analytical solution' + '\n' 
+    title += 'at two time levels, using $\Delta x={}$'.format(args.x_step)
+    xlabel = 'x'
+    ylabel = 'Absolute error'
+    fname = 'error_FE_x'
+
+    set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
+    fig.set_tight_layout(True)
+    show_save(fig, fname, args)

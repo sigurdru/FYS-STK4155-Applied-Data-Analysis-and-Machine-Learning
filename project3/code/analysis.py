@@ -70,9 +70,12 @@ def forward_euler(args):
         max_error = plot.max_error_tot(x, t, u_m_final, args)
         print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', max_error)
 
+    if args.study_times:
+        plot.error_x(x, t, u_m_final, args)
+
     plot.Euler_solution(x, t, u_m_final, args)
 
-    return u_m, max_error
+    return u_m
 
 def neural_network(args):
     """
