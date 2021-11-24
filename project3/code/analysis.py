@@ -14,11 +14,20 @@ def forward_euler(args):
     #Importing stuff from argparse
     T = args.tot_time
     dx = args.x_step
-    dt = args.t_step
+
+    if args.t_step == 0:
+        C = args.stability_criterion 
+        dt = C * dx**2 
+    else:
+        dt = args.t_step
+        C = dt/dx**2 
+
     BC_l = args.left_boundary_condition
     BC_r = args.right_boundary_condition
+
     Np = args.num_plots
     test_error = args.test_error
+
     #defining stuff
     L = 1
     Nx = int(round(L/dx))
@@ -30,9 +39,8 @@ def forward_euler(args):
     #u_m_final = np.zeros((len(x), Np))
     u_m_final = {}
     u_m = IC(x)
-    #dt = 0.4*dx**2 # Ensure stability
-    C = dt/dx**2
-    # print('Stability factor:', C)
+    print('Stability factor:', C)
+
     u_exact = lambda x, t: np.exp(-np.pi**2*t)*np.sin(np.pi*x)
 
     When_to_plot = Nt//Np
@@ -40,16 +48,17 @@ def forward_euler(args):
     
     for n in range(Nt):
         # Interior points
-        u[1:-1] = u_m[1:-1] + C*(u_m[2:] - 2*u_m[1:-1] + u_m[:-2])
+        u[1:-1] = u_m[1:-1] + C * (u_m[2:] - 2*u_m[1:-1] + u_m[:-2])
         #Boundary points
         u[0] = BC_l
         u[Nx] = BC_r
 
         u_m[:] = u
-        if n in When_to_plot:
-            u_m_final[n] = u_m
 
-    max_error = plot.max_error_tot(x, t, u_m_final, args)
+        if n in When_to_plot:
+            u_m_final[n] = u_m.copy()
+
+    max_error = plot.max_error_tot(x, t, u_m_final, dt, args)
     plot.Euler_solution(x, t, u_m_final, args)
 
     return u_m, max_error
@@ -92,6 +101,6 @@ if __name__ == '__main__':
 
     u, x, t = forward_euler(L, T, IC, BC_l, BC_r, dx, dt, user_action=plot_sols)
     #u, x, t = forward_euler(L, T, IC, BC_l, BC_r, dx, dt, user_action=store_solution)
-    test_space_steps()
+    # test_space_steps()
 
 

@@ -23,13 +23,19 @@ def parse_args(args=None):
 
     add_arg('-dx', '--x_step',
             type=float,
-            default=0.005,
+            default=0.01,
             help='Steplength in x-direction',
             )
 
     add_arg('-dt', '--t_step',
             type=float,
-            default=0.0001,
+            default=0,
+            help='Steplength in time',
+            )
+
+    add_arg('-sc', '--stability_criterion',
+            type=float,
+            default=0.5,
             help='Steplength in time',
             )
 
