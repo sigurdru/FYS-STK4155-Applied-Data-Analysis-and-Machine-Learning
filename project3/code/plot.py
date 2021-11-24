@@ -59,7 +59,7 @@ def set_fname(args):
 def Euler_solution(x, t, u, args):
     fig, ax = plt.subplots()
     for n in u.keys():
-        ax.plot(x, u[n], label=f'num_{n}')
+        ax.plot(x, u[n], label=f'num\_{n}')
     title = 'Numerical Solution of Euler-forward'
     xlabel = 'x'
     ylabel = 'y'
