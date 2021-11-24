@@ -89,5 +89,8 @@ def main():
     if args.method == 'Euler':
         analysis.forward_euler(args)
 
+    if args.method == 'NN':
+        analysis.neural_network(args)
+
 if __name__ == "__main__":
     main()

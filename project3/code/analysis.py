@@ -1,6 +1,7 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import plot
+
+import matplotlib.pyplot as plt
 
 def IC(x):
     """
@@ -48,6 +49,31 @@ def forward_euler(args):
             u_m_final[:,i] = u_m
             i += 1
     plot.Euler_solution(x, u_m_final, t, args)
+
+def neural_network(args):
+    """
+    Solves the diffusion equation using neural natwork
+    args:
+        args (argparse): Information handled by the argparser 
+    """
+    #Importing stuff from argparse
+    T = args.tot_time
+    dx = args.num_x_points
+    dt = args.num_t_points
+    BC_l = args.left_boundary_condition
+    BC_r = args.right_boundary_condition
+    Np = args.num_plots
+    #defining stuff
+    L = 1
+    Nx = int(round(L/dx))
+    Nt = int(round(T/dt))
+    x = np.linspace(0, L, Nx+1)
+    t = np.linspace(0, T, Nt+1)
+    u = np.zeros(len(x))  # Solution at new time step (unknown)
+    u_m = np.zeros(len(x))  # Solution at current time step (known)
+    u_m_final = np.zeros((len(x), Np))
+    u_m = IC(x)
+
 
 # def assert_local_error(u, x, t, t_idx):
 #     u_e = u_exact(x, t[t_idx])
