@@ -112,5 +112,8 @@ def main():
         u_fine, error_fine = analysis.forward_euler(args)
         print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', error_fine)
 
+    if args.method == 'NN':
+        analysis.neural_network(args)
+
 if __name__ == "__main__":
     main()
