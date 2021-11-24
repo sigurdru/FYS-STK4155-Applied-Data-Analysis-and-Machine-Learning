@@ -44,9 +44,14 @@ def forward_euler(args):
 
     u_exact = lambda x, t: np.exp(-np.pi**2*t)*np.sin(np.pi*x)
 
-    When_to_plot = Nt//Np
-    When_to_plot = np.arange(0, Nt, When_to_plot)
-    
+    if args.study_times:
+        # Study solution at two specific times 
+        When_to_plot = np.array([Nt//10,Nt//2])
+    else:
+        # Plot Np solutions for even time periods.    
+        When_to_plot = Nt//Np
+        When_to_plot = np.arange(0, Nt, When_to_plot)
+
     for n in range(Nt):
         if n in When_to_plot:
             # Store values for plotting 

@@ -30,13 +30,13 @@ def parse_args(args=None):
     add_arg('-dt', '--t_step',
             type=float,
             default=0,
-            help='Steplength in time',
+            help='Steplength in time. Calculated from stability criterion if set to zero',
             )
 
     add_arg('-sc', '--stability_criterion',
             type=float,
             default=0.5,
-            help='Steplength in time',
+            help='Stability criterion of solver. Determines dt if dt=0',
             )
 
     add_arg('-T', '--tot_time',
@@ -60,6 +60,12 @@ def parse_args(args=None):
             type=int,
             default=5,
             help='Number of times one wants to plot the evolution',
+           )
+
+    add_arg('-study_times',
+            action="store_true",
+            dest="study_times",
+            help='Study two specific times of solver',
            )
 
     add_arg('-TE', '--test_error',
