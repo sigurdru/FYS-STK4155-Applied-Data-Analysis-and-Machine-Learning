@@ -11,15 +11,15 @@ def IC(x):
     """
     return np.sin(np.pi*x)
 
-
 def forward_euler(args):
     #Importing stuff from argparse
     T = args.tot_time
-    dx = args.num_x_points
-    dt = args.num_t_points
+    dx = args.x_step
+    dt = args.t_step
     BC_l = args.left_boundary_condition
     BC_r = args.right_boundary_condition
     Np = args.num_plots
+    test_error = args.test_error
     #defining stuff
     L = 1
     Nx = int(round(L/dx))
@@ -28,15 +28,17 @@ def forward_euler(args):
     t = np.linspace(0, T, Nt+1)
     u = np.zeros(len(x)) # Solution at new time step (unknown)
     u_m = np.zeros(len(x)) # Solution at current time step (known)
-    u_m_final = np.zeros((len(x), Np))
+    #u_m_final = np.zeros((len(x), Np))
+    u_m_final = {}
     u_m = IC(x)
     #dt = 0.4*dx**2 # Ensure stability
     C = dt/dx**2
-    # print('Stability factor:', C)    
+    # print('Stability factor:', C)
+    u_exact = lambda x, t: np.exp(-np.pi**2*t)*np.sin(np.pi*x)
 
     When_to_plot = Nt//Np
     When_to_plot = np.arange(0, Nt, When_to_plot)
-    i = 0
+    
     for n in range(Nt):
         # Interior points
         u[1:-1] = u_m[1:-1] + C*(u_m[2:] - 2*u_m[1:-1] + u_m[:-2])
@@ -46,9 +48,12 @@ def forward_euler(args):
 
         u_m[:] = u
         if n in When_to_plot:
-            u_m_final[:,i] = u_m
-            i += 1
-    plot.Euler_solution(x, u_m_final, t, args)
+            u_m_final[n] = u_m
+
+    max_error = plot.max_error_tot(x, t, u_m_final, args)
+    plot.Euler_solution(x, t, u_m_final, args)
+
+    return u_m, max_error
 
 def neural_network(args):
     """
