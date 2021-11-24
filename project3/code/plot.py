@@ -60,10 +60,10 @@ def set_fname(args):
 def Euler_solution(x, t, u, args):
     fig, ax = plt.subplots()
     for n in u.keys():
-        ax.plot(x, u[n], label=r'$\chi_{n}$')
-    title = 'Numerical Solution of Euler-forward'
-    xlabel = 'x'
-    ylabel = 'y'
+        ax.plot(x, u[n], label=r'$t={}$'.format(t[n]))
+    title = 'Forward-Euler Solution of 1D diffusion equation'
+    xlabel = '$x$'
+    ylabel = '$u(x,t)$'
     fname = 'num_sol_FE'
     set_ax_info(ax, xlabel, ylabel, title=title)
     fig.set_tight_layout(True)
@@ -95,7 +95,7 @@ def max_error_tot(x, t, u, args):
     xlabel = 'Time [s]'
     ylabel = 'Max absolute error'
     fname = 'error_FE'
-    
+
     set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
     fig.set_tight_layout(True)
     show_save(fig, fname, args)
