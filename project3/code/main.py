@@ -107,17 +107,6 @@ def main():
     if args.method == 'Euler':
         u, error = analysis.forward_euler(args)
 
-    if args.test_error:
-        args.x_step = 0.1 # coarse mesh
-        args.t_step = 0.3*args.x_step**2 # ensure stability
-        u_coarse, error_coarse = analysis.forward_euler(args)
-        print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', error_coarse)
-
-        args.x_step = 0.01 # fine mesh
-        args.t_step = 0.3*args.x_step**2 # ensure stability
-        u_fine, error_fine = analysis.forward_euler(args)
-        print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', error_fine)
-
     if args.method == 'NN':
         analysis.neural_network(args)
 

@@ -18,10 +18,10 @@ def forward_euler(args):
 
     if args.t_step == 0:
         C = args.stability_criterion 
-        dt = C * dx**2 
+        args.t_step = C * dx**2 
     else:
-        dt = args.t_step
         C = dt/dx**2 
+    dt = args.t_step
 
     BC_l = args.left_boundary_condition
     BC_r = args.right_boundary_condition
@@ -66,7 +66,10 @@ def forward_euler(args):
 
         u_m[:] = u
 
-    max_error = plot.max_error_tot(x, t, u_m_final, args)
+    if args.test_error:
+        max_error = plot.max_error_tot(x, t, u_m_final, args)
+        print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', max_error)
+
     plot.Euler_solution(x, t, u_m_final, args)
 
     return u_m, max_error
@@ -79,8 +82,8 @@ def neural_network(args):
     """
     #Importing stuff from argparse
     T = args.tot_time
-    dx = args.num_x_points
-    dt = args.num_t_points
+    dx = args.x_step
+    dt = args.t_step
     BC_l = args.left_boundary_condition
     BC_r = args.right_boundary_condition
     Np = args.num_plots
