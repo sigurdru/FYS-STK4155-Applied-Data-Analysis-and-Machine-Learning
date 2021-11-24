@@ -82,7 +82,6 @@ def max_error_tot(x, t, u, args):
     Returns:
         (int): accumulated max absolute error
     """
-    tot_error = 0
     fig, ax = plt.subplots()
 
     t_n = [t[n] for n in u.keys()]
@@ -96,6 +95,7 @@ def max_error_tot(x, t, u, args):
     xlabel = 'Time [s]'
     ylabel = 'Max absolute error'
     fname = 'error_FE'
+    
     set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
     fig.set_tight_layout(True)
     show_save(fig, fname, args)
