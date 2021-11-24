@@ -104,7 +104,13 @@ where
 \begin{equation*}
 \alpha = \frac{\Delta t}{\Delta x^2}.
 \end{equation*}
-This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. \\
+This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. Experiments show that the following bound on $\alpha$ ensures stability.
+\begin{equation}
+	\label{eq:stability}
+	\alpha = \frac{\Delta t}{\Delta x^2} \le \frac{1}{2}.
+\end{equation} 
+
+Even though $\alpha = 0.5$ is at the transition between stable and unstable solutions, experiments show that it is a safe choice for the diffusion equation that produces stable solutions \cite{Linge2017}. Thus, the stability factor $\alpha=0.5$ is used as default in this project. \\ 
 
 We are to use the forward Euler method to discretize the diffusion equation to be solved numerically. The forward Euler is an explicit scheme, meaning that the derivative in time is approximated at the current time level.
 That is, the derivative is discretized only by known values. As a consequence, the discretized diffusion equation can be explicitly be solved for the next time step without the need of any matrix inversion to arrive at a coupled
@@ -156,10 +162,14 @@ The forward euler scheme gives the following result for the second time step
 Once again, the two approaches provide the same result up to machine precision. Thus, the internal functionality of forward euler is validated. It remains to verify the accuracy of the scheme by comparing it with the analytical solution of the diffusion equation \ref{eq:diffusion_equation_1D} with provided initial and boundary conditions.
 
 \subsection*{Accuracy assessment}
-The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution? To address this we compute the deviation of the numerical solution to the analytical solution for two different mesh resolutions in space, $\Delta x=0.1$ and $\Delta x = 0.01$. For comparison purposes the time step is adjusted in each case to ensure stability, and is defined as $\Delta t = 0.3\cdot \Delta x^2$. The error is computed and accumulated for a fixed number of time steps $N$ in both cases. The applied error measure at a given time step is simply the maximum absolute difference between the numerical solution $u$ and the analytical solution $u_e$ across the entire spatial domain.
+The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution? To address this we compute the deviation of the numerical solution to the analytical solution for two different mesh resolutions in space, $\Delta x=0.1$ and $\Delta x = 0.01$. For comparison purposes the time step is adjusted in each case to ensure stability, and is defined as $\Delta t = 0.5\cdot \Delta x^2$. The error is computed and accumulated for a fixed number of time steps $N$ in both cases. The applied error measure at a given time step is simply the maximum absolute difference between the numerical solution $u$ and the analytical solution $u_e$ across the entire spatial domain.
 \[ e^n = \argmax_{i \in [0,N_x]} |u_i^n - u_{e,i}^n| \]
 
-The total accumulated error is then
+Accounting for the order of accuracy of the forward euler scheme, the error can be expressed as a linear combination of the mesh resolutions $\Delta t$ and $\Delta x$ \cite{Linge2017}
+
+\[ e^n = C_t\Delta t + C_x\Delta x^2 \]
+
+The total accumulated error is given by
 \[ E = \sum_{n=1}^N e^n, \]
 which is the error measure to be used when testing how well the numerical solution approximates the analytical solution.
 
@@ -187,12 +197,12 @@ The test of accumulated error for $\Delta x=0.1$ and $\Delta x=0.01$ for differe
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.4]{../output/plots/error_FE}
-	\caption{Maximum absolute error calculated for 50 uniform time steps from start to end, using $\Delta x=0.01$.}
+	\includegraphics[scale=0.5]{../output/plots/error_FE}
+	\caption{Maximum absolute error calculated for 50 uniform time steps from start to end, using $\Delta x=0.01$ and time step $\Delta t$ dictated by the stability criterion \ref{eq:stability}.}
 	\label{fig:error_dx001_n50}
 \end{figure}
 
-\par A plot of the accumulated error for $\Delta x=0.01$ is shown in Figure \ref{fig:error_dx001_n50}. Notice that the error for time step $n=0$ is zero. This is because the numerical solution for the first time step is simply the initial condition, yielding a perfect correspondance between the numerical and analytical solution. As time proceeds, the error quickly increases and reaches a maximum at around time $t=0.1$. At this timestep, the solution includes significant gradients. The Forward euler discretization of the derivative is susceptible to large gradients, so one expects the numerical scheme to contain larger errors, as evidenced in Figure \ref{fig:error_dx001_n50}. At later stages though, the solution becomes more linear and the gradients mitigate. Thus, forward euler is capable of reproducing the analytical solution to a much better approximation. As time goes to infinity the error converges to zero.
+\par A plot of the accumulated error for $\Delta x=0.01$ is shown in Figure \ref{fig:error_dx001_n50}. The time step is chosen to give a stability factor $\alpha=0.5$. Notice that the error for time step $n=0$ is zero. This is because the numerical solution for the first time step is simply the initial condition, yielding a perfect correspondance with the analytical solution. As time proceeds, the error quickly increases and reaches a maximum at around time $t=0.1$. This time step is early in the diffusion process, where the solution changes rather quickly. The forward euler scheme is first order accurate in time, $O(\Delta t)$, and second order accurate in space, $O(\Delta x^2)$, implying that the numerical solution is more sensitive to the temporal evolution than the spatial evolution. Hence, the forward euler scheme will produce larger errors for the initial time levels due to the rapid change in solution. At later time stages, after the maximum around $\Delta t=0.1$, the absolute error seems to decrease logarithmically. As the time approaches the end of the simulation, there is hardly any remaining diffusion as the solution is approximately linear. Despite being first order accurate in time, the forward euler scheme is able to reprocude this slowly changing solution with a high accuracy. Figure \ref{fig:error_dx001_n50} verifies this behaviour, illustrating the error converging to zero sufficiently deep into the diffusion process.
 
 
 \section{Discussion}
