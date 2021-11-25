@@ -3,6 +3,8 @@ from tqdm import tqdm
 import plot
 from PINN import PINN
 import matplotlib.pyplot as plt
+import tensorflow as tf
+
 
 def IC(x):
     """
@@ -84,40 +86,47 @@ def neural_network(args):
     args:
         args (argparse): Information handled by the argparser 
     """
-    #set default values
-    tmin = 0.
-    xmin = 0.
-    xmax = 1.
-
-    # Import stuff from argparse
-    tmax = args.tot_time
-    DTYPE = args.datatype
-    N_0 = args.num_initial_points
-    N_b = args.num_boundary_points
-    N_r = args.num_train_points
-    num_hidden_layers = args.num_hidden_layers
-    num_neurons_per_layer = args.num_neurons_per_layer
-    activation = args.activation_function
-    N = args.num_train_iter
-
     # Setup of Neural Network
-    NN = PINN(args = args, DTYPE=DTYPE,
-            N_0 = N_0, N_b = N_b, N_r = N_r,
-            tmin = tmin, tmax = tmax, xmin = xmin, xmax = xmax,
-            num_hidden_layers = num_hidden_layers, num_neurons_per_layer = num_neurons_per_layer,
-            activation = activation)
-    
-    # Training
-    loss_hist = []
-    loss = 0
-    pbar = tqdm(range(N + 1), desc = 'Training progressions')#, desc=f"eta: {loss:.6f}, lambda: {lmb:.6f}. Training")
-    for _ in pbar:
-        loss = NN.train_step()
+    if args.existing_model == 'None':
+        #set default values
+        tmin = 0.
+        xmin = 0.
+        xmax = 1.
 
-        loss_hist.append(loss.numpy())
+        # Import stuff from argparse
+        tmax = args.tot_time
+        DTYPE = args.datatype
+        N_0 = args.num_initial_points
+        N_b = args.num_boundary_points
+        N_r = args.num_train_points
+        num_hidden_layers = args.num_hidden_layers
+        num_neurons_per_layer = args.num_neurons_per_layer
+        activation = args.activation_function
+        N = args.num_train_iter
+    
+        NN = PINN(args = args, DTYPE=DTYPE,
+                N_0 = N_0, N_b = N_b, N_r = N_r,
+                tmin = tmin, tmax = tmax, xmin = xmin, xmax = xmax,
+                num_hidden_layers = num_hidden_layers, num_neurons_per_layer = num_neurons_per_layer,
+                activation = activation)
+        NN.model.summary()
+        # Training
+        loss_hist = []
+        loss = 0
+        pbar = tqdm(range(N + 1), desc = 'Training progressions')#, desc=f"eta: {loss:.6f}, lambda: {lmb:.6f}. Training")
+        for _ in pbar:
+            loss = NN.train_step()
+
+            loss_hist.append(loss.numpy())
+        #save model
+        NN.model.save('NNmodels/model1')
+    else:
+        NN = tf.keras.models.load_model('NNmodels/' + args.existing_model)
+        NN.model.summary()
 
     # Plotting
-    
+    plot.testing_data(NN, args)
+    plot.NN_diffusion_solution(NN, args)
 
 # def assert_local_error(u, x, t, t_idx):
 #     u_e = u_exact(x, t[t_idx])

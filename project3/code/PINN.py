@@ -6,7 +6,10 @@ import time
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
-from tensorflow.python.ops.candidate_sampling_ops import compute_accidental_hits
+import os
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+# from tensorflow.python.ops.candidate_sampling_ops import compute_accidental_hits
 
 class PINN:
     def __init__(self, args = None, DTYPE = 'float32',
@@ -37,27 +40,27 @@ class PINN:
 
         # Initial and boundary data
         # Iitial:
-        t_0 = tf.ones((N_0, 1), dtype=self.DTYPE)*self.lb[0]
-        x_0 = tf.random.uniform((N_0, 1), self.lb[1], self.ub[1], dtype=self.DTYPE)
-        X_0 = tf.concat([t_0,x_0], axis=1)
+        self.t_0 = tf.ones((N_0, 1), dtype=self.DTYPE)*self.lb[0]
+        self.x_0 = tf.random.uniform((N_0, 1), self.lb[1], self.ub[1], dtype=self.DTYPE)
+        X_0 = tf.concat([self.t_0, self.x_0], axis=1)
 
-        u_0 = self.fun_u_0(t_0, x_0)
+        self.u_0 = self.fun_u_0(self.t_0, self.x_0)
         
         # Boundary:
-        t_b = tf.random.uniform((N_b, 1), self.lb[0], self.ub[0], dtype=self.DTYPE)
-        x_b = self.lb[1] + (self.ub[1] - self.lb[1]) * \
+        self.t_b = tf.random.uniform((N_b, 1), self.lb[0], self.ub[0], dtype=self.DTYPE)
+        self.x_b = self.lb[1] + (self.ub[1] - self.lb[1]) * \
             tf.keras.backend.random_bernoulli((N_b, 1), 0.5, dtype=self.DTYPE)
-        # x_b = tf.random.uniform((N_b, 1), self.lb[1], self.ub[1], dtype=self.DTYPE)
-        X_b = tf.concat([t_b, x_b], axis=1)
+        # self.x_b = tf.random.uniform((N_b, 1), self.lb[1], self.ub[1], dtype=self.DTYPE)
+        X_b = tf.concat([self.t_b, self.x_b], axis=1)
 
-        u_b = self.fun_u_b(t_b, x_b)
+        self.u_b = self.fun_u_b(self.t_b, self.x_b)
 
         # Data:
-        t_r = tf.random.uniform((N_r, 1), self.lb[0], self.ub[0], dtype=self.DTYPE)
-        x_r = tf.random.uniform((N_r, 1), self.lb[1], self.ub[1], dtype=self.DTYPE)
-        self.X_r = tf.concat([t_r, x_r], axis=1)
+        self.t_r = tf.random.uniform((N_r, 1), self.lb[0], self.ub[0], dtype=self.DTYPE)
+        self.x_r = tf.random.uniform((N_r, 1), self.lb[1], self.ub[1], dtype=self.DTYPE)
+        self.X_r = tf.concat([self.t_r, self.x_r], axis=1)
         self.X_data = [X_0, X_b]
-        self.u_data = [u_0, u_b]
+        self.u_data = [self.u_0, self.u_b]
 
         # INITIALIZE MODEL:
         # The model:

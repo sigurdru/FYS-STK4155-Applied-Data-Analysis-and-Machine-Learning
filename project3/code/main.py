@@ -98,6 +98,12 @@ def parse_args(args=None):
             help='Number of iterations for training'
             )
 
+    add_arg('-model', '--existing_model',
+            type=str,
+            default='None',
+            help='If you want to use existing model, it should be placed in the folder /NNmodels'
+            )
+
     add_arg('-act', '--activation_function',
             type=str,
             default='tanh',
