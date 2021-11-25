@@ -1,6 +1,7 @@
 import numpy as np
+from tqdm import tqdm
 import plot
-import cost_activation
+from PINN import PINN
 import matplotlib.pyplot as plt
 
 def IC(x):
@@ -83,23 +84,40 @@ def neural_network(args):
     args:
         args (argparse): Information handled by the argparser 
     """
-    #Importing stuff from argparse
-    #Total time, x-step, t-step, left bc, right bc
-    T = args.tot_time
-    dx = args.x_step
-    dt = args.t_step
-    BC_l = args.left_boundary_condition
-    BC_r = args.right_boundary_condition
-    Np = args.num_plots
-    #defining stuff
-    #leanth of rod, num x points, num t points, x-array, y-array, initial conditions
-    L = 1
-    Nx = round(L/dx)
-    Nt = round(T/dt)
-    x = np.linspace(0, L, Nx+1)
-    t = np.linspace(0, T, Nt+1)
-    u_m = IC(x)
+    #set default values
+    tmin = 0.
+    xmin = 0.
+    xmax = 1.
 
+    # Import stuff from argparse
+    tmax = args.tot_time
+    DTYPE = args.datatype
+    N_0 = args.num_initial_points
+    N_b = args.num_boundary_points
+    N_r = args.num_train_points
+    num_hidden_layers = args.num_hidden_layers
+    num_neurons_per_layer = args.num_neurons_per_layer
+    activation = args.activation_function
+    N = args.num_train_iter
+
+    # Setup of Neural Network
+    NN = PINN(args = args, DTYPE=DTYPE,
+            N_0 = N_0, N_b = N_b, N_r = N_r,
+            tmin = tmin, tmax = tmax, xmin = xmin, xmax = xmax,
+            num_hidden_layers = num_hidden_layers, num_neurons_per_layer = num_neurons_per_layer,
+            activation = activation)
+    
+    # Training
+    loss_hist = []
+    loss = 0
+    pbar = tqdm(range(N + 1), desc = 'Training progressions')#, desc=f"eta: {loss:.6f}, lambda: {lmb:.6f}. Training")
+    for _ in pbar:
+        loss = NN.train_step()
+
+        loss_hist.append(loss.numpy())
+
+    # Plotting
+    
 
 # def assert_local_error(u, x, t, t_idx):
 #     u_e = u_exact(x, t[t_idx])

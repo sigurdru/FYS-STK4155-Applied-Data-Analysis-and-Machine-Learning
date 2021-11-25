@@ -7,14 +7,18 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 from tensorflow.python.ops.candidate_sampling_ops import compute_accidental_hits
-# Set random seed for reproducible results
-tf.random.set_seed(0)
 
 class PINN:
-    def __init__(self, DTYPE = 'float32',
-                args = 0, N_0=50, N_b=50, N_r=10000,
+    def __init__(self, args = None, DTYPE = 'float32',
+                N_0=50, N_b=50, N_r=10000,
                 tmin = 0., tmax = 1., xmin = 0., xmax = 1.,
                 num_hidden_layers=8, num_neurons_per_layer=20, activation='tanh'):
+
+        # Set random seed for reproducible results
+        if args:
+            tf.random.set_seed(args.seed)
+        else:
+            tf.random.set_seed(0)
         # Set dtype
         self.DTYPE = DTYPE
         tf.keras.backend.set_floatx(self.DTYPE)
