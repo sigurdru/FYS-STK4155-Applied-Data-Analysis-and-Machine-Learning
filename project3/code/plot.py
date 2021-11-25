@@ -35,7 +35,7 @@ def show_save(fig, fname, args):
     else:
         plt.clf()
     print("\n\n")
-def set_ax_info(ax, xlabel, ylabel, title=None):
+def set_ax_info(ax, xlabel, ylabel, style='plain', title=None):
     """Write title and labels on an axis with the correct fontsizes.
 
     Args:
@@ -48,7 +48,8 @@ def set_ax_info(ax, xlabel, ylabel, title=None):
     ax.set_ylabel(ylabel, fontsize=20)
     ax.set_title(title, fontsize=20)
     ax.tick_params(axis='both', which='major', labelsize=15)
-    ax.ticklabel_format(style='plain')
+    ax.yaxis.get_offset_text().set_fontsize(15)
+    ax.ticklabel_format(style=style)
     ax.legend(fontsize=15)
 def set_fname(args):
     """
@@ -59,10 +60,10 @@ def set_fname(args):
 def Euler_solution(x, t, u, args):
     fig, ax = plt.subplots()
     for n in u.keys():
-        ax.plot(x, u[n], label=r'$\chi_{n}$')
-    title = 'Numerical Solution of Euler-forward'
-    xlabel = 'x'
-    ylabel = 'y'
+        ax.plot(x, u[n], label=r'$t={}$'.format(t[n]))
+    title = 'Forward-Euler Solution of 1D diffusion equation'
+    xlabel = '$x$'
+    ylabel = '$u(x,t)$'
     fname = 'num_sol_FE'
     set_ax_info(ax, xlabel, ylabel, title=title)
     fig.set_tight_layout(True)
@@ -81,21 +82,41 @@ def max_error_tot(x, t, u, args):
     Returns:
         (int): accumulated max absolute error
     """
-    tot_error = 0
     fig, ax = plt.subplots()
 
-    for n in u.keys():
-        error_n = np.abs(u[n] - u_exact(x, t[n])).max()
-        ax.plot(n, error_n, label=f't={n}')
-        tot_error += error_n 
+    t_n = [t[n] for n in u.keys()]
+    error_n = [np.abs(u[n] - u_exact(x, t[n])).max() for n in u.keys()]
+    tot_error = np.sum(error_n)
 
-    title = 'Absolute error between numerical and analytical solution'
-    xlabel = 'time'
-    ylabel = 'error'
+    ax.plot(t_n, error_n, 'o--')
+    
+    title = 'Error between numerical and analytical solution' + '\n' 
+    title += 'at different times, using $\Delta x={}$'.format(args.x_step)
+    xlabel = 'Time [s]'
+    ylabel = 'Max absolute error'
     fname = 'error_FE'
-    set_ax_info(ax, xlabel, ylabel, title=title)
+
+    set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
     fig.set_tight_layout(True)
     show_save(fig, fname, args)
 
     return tot_error
 
+def error_x(x, t, u, args):
+    fig, ax = plt.subplots()
+
+    t_n = [t[n] for n in u.keys()]
+    error_x = [u[n] - u_exact(x, t[n]) for n in u.keys()]
+
+    for i, e in enumerate(error_x):
+        ax.plot(x, e, '--', label=r't={}'.format(t_n[i]))
+    
+    title = 'Error between numerical and analytical solution' + '\n' 
+    title += 'at two time levels, using $\Delta x={}$'.format(args.x_step)
+    xlabel = 'x'
+    ylabel = 'Absolute error'
+    fname = r'error_FE_x_dx_{}'.format(args.x_step)
+
+    set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
+    fig.set_tight_layout(True)
+    show_save(fig, fname, args)

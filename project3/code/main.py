@@ -23,14 +23,20 @@ def parse_args(args=None):
 
     add_arg('-dx', '--x_step',
             type=float,
-            default=0.005,
+            default=0.01,
             help='Steplength in x-direction',
             )
 
     add_arg('-dt', '--t_step',
             type=float,
-            default=0.0001,
-            help='Steplength in time',
+            default=0,
+            help='Steplength in time. Calculated from stability criterion if set to zero',
+            )
+
+    add_arg('-sc', '--stability_criterion',
+            type=float,
+            default=0.5,
+            help='Stability criterion of solver. Determines dt if dt=0',
             )
 
     add_arg('-T', '--tot_time',
@@ -56,9 +62,15 @@ def parse_args(args=None):
             help='Number of times one wants to plot the evolution',
            )
 
+    add_arg('-study_times',
+            action="store_true",
+            dest="study_times",
+            help='Study two specific times of solver',
+           )
+
     add_arg('-TE', '--test_error',
-            type=bool,
-            default=False,
+            action='store_true',
+            dest='test_error',
             help='Deviation of numerical solution to analytical solution, tested for two mesh resolutions',
             )
 
@@ -93,18 +105,7 @@ def main():
         np.random.seed(args.seed)
 
     if args.method == 'Euler':
-        u, error = analysis.forward_euler(args)
-
-    if args.test_error:
-        args.x_step = 0.1 # coarse mesh
-        args.t_step = 0.3*args.x_step**2 # ensure stability
-        u_coarse, error_coarse = analysis.forward_euler(args)
-        print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', error_coarse)
-
-        args.x_step = 0.01 # fine mesh
-        args.t_step = 0.3*args.x_step**2 # ensure stability
-        u_fine, error_fine = analysis.forward_euler(args)
-        print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', error_fine)
+        u = analysis.forward_euler(args)
 
     if args.method == 'NN':
         analysis.neural_network(args)

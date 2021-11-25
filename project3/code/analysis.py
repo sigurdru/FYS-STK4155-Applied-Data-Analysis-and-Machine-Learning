@@ -15,11 +15,20 @@ def forward_euler(args):
     #Importing stuff from argparse
     T = args.tot_time
     dx = args.x_step
+
+    if args.t_step == 0:
+        C = args.stability_criterion 
+        args.t_step = C * dx**2 
+    else:
+        C = dt/dx**2 
     dt = args.t_step
+
     BC_l = args.left_boundary_condition
     BC_r = args.right_boundary_condition
+
     Np = args.num_plots
     test_error = args.test_error
+
     #defining stuff
     L = 1
     Nx = int(round(L/dx))
@@ -31,29 +40,42 @@ def forward_euler(args):
     #u_m_final = np.zeros((len(x), Np))
     u_m_final = {}
     u_m = IC(x)
-    #dt = 0.4*dx**2 # Ensure stability
-    C = dt/dx**2
-    # print('Stability factor:', C)
+    print('Stability factor:', C)
+
     u_exact = lambda x, t: np.exp(-np.pi**2*t)*np.sin(np.pi*x)
 
-    When_to_plot = Nt//Np
-    When_to_plot = np.arange(0, Nt, When_to_plot)
-    
+    if args.study_times:
+        # Study solution at two specific times 
+        When_to_plot = np.array([Nt//10,Nt//2])
+    else:
+        # Plot Np solutions for even time periods.    
+        When_to_plot = Nt//Np
+        When_to_plot = np.arange(0, Nt, When_to_plot)
+
     for n in range(Nt):
+        if n in When_to_plot:
+            # Store values for plotting 
+            u_m_final[n] = u_m.copy()
+        
         # Interior points
-        u[1:-1] = u_m[1:-1] + C*(u_m[2:] - 2*u_m[1:-1] + u_m[:-2])
+        u[1:-1] = u_m[1:-1] + C * (u_m[2:] - 2*u_m[1:-1] + u_m[:-2])
+        
         #Boundary points
         u[0] = BC_l
         u[Nx] = BC_r
 
         u_m[:] = u
-        if n in When_to_plot:
-            u_m_final[n] = u_m
 
-    # max_error = plot.max_error_tot(x, t, u_m_final, args)
+    if args.test_error:
+        max_error = plot.max_error_tot(x, t, u_m_final, args)
+        print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', max_error)
+
+    if args.study_times:
+        plot.error_x(x, t, u_m_final, args)
+
     plot.Euler_solution(x, t, u_m_final, args)
 
-    # return u_m, max_error
+    return u_m
 
 def neural_network(args):
     """
@@ -64,10 +86,11 @@ def neural_network(args):
     #Importing stuff from argparse
     #Total time, x-step, t-step, left bc, right bc
     T = args.tot_time
-    dx = args.num_x_points
-    dt = args.num_t_points
-    bl = args.left_boundary_condition
-    br = args.right_boundary_condition
+    dx = args.x_step
+    dt = args.t_step
+    BC_l = args.left_boundary_condition
+    BC_r = args.right_boundary_condition
+    Np = args.num_plots
     #defining stuff
     #leanth of rod, num x points, num t points, x-array, y-array, initial conditions
     L = 1
@@ -116,6 +139,6 @@ if __name__ == '__main__':
 
     u, x, t = forward_euler(L, T, IC, BC_l, BC_r, dx, dt, user_action=plot_sols)
     #u, x, t = forward_euler(L, T, IC, BC_l, BC_r, dx, dt, user_action=store_solution)
-    test_space_steps()
+    # test_space_steps()
 
 
