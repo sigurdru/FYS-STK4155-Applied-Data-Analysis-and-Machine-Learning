@@ -114,6 +114,9 @@ Hence, if the gradient of the next time level is significantly different than of
 If the deviation is large enough, further iterations could potentially cause instable solutions in the sense that it diverges.
 \par The forward Euler scheme in general requires a quite low time step $\Delta t$ to produce stable solutions. Small time steps are convenient at the start of the diffusion process when the solutions changes quickly. However, when approaching the stationary limit the solution changes very slow and so does the update when using small $\Delta t$. This limitation is resolved by implicit methods \cite{Linge2017}.
 
+\section{Solving Differential equations with deep learning}
+Many of the concepts we use in this section is covered in a previous report \cite{project2}. There, in the theory section, we cover deep neural networks, cost functions, gradient decent, etc. 
+
 \section{Method}
 \subsection*{Unit testing}
 Before the numerical explicit scheme is applied to a particular problem, it is important to test that the discretized equations return expected results. Unit tests are constructed to test the implementation . This is done by manually calculating the solution of the first two time steps given the initial condition, and comparing the result with that obtained by the numerical scheme. Since the same recursive formula is used for all time steps, it is sufficient to test the two first time steps. To avoid too much computations we choose five equally sized intervals between $x=0$ and $x=L=1$, that is $\Delta x = 0.2$. The time step is set to $\Delta t = 0.01$, ensuring stability.

@@ -1,6 +1,6 @@
 import numpy as np
 import plot
-
+import cost_activation
 import matplotlib.pyplot as plt
 
 def IC(x):
@@ -62,21 +62,19 @@ def neural_network(args):
         args (argparse): Information handled by the argparser 
     """
     #Importing stuff from argparse
+    #Total time, x-step, t-step, left bc, right bc
     T = args.tot_time
     dx = args.num_x_points
     dt = args.num_t_points
-    BC_l = args.left_boundary_condition
-    BC_r = args.right_boundary_condition
-    Np = args.num_plots
+    bl = args.left_boundary_condition
+    br = args.right_boundary_condition
     #defining stuff
+    #leanth of rod, num x points, num t points, x-array, y-array, initial conditions
     L = 1
-    Nx = int(round(L/dx))
-    Nt = int(round(T/dt))
+    Nx = round(L/dx)
+    Nt = round(T/dt)
     x = np.linspace(0, L, Nx+1)
     t = np.linspace(0, T, Nt+1)
-    u = np.zeros(len(x))  # Solution at new time step (unknown)
-    u_m = np.zeros(len(x))  # Solution at current time step (known)
-    u_m_final = np.zeros((len(x), Np))
     u_m = IC(x)
 
 
