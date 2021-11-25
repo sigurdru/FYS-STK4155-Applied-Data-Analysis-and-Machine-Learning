@@ -192,7 +192,7 @@ if __name__ == '__main__':
     ax.set_xlabel('$t$')
     ax.set_ylabel('$x$')
     ax.set_zlabel('$u_\\theta(t,x)$')
-    ax.set_title('Solution of Burgers equation')
+    ax.set_title('Solution of diffusion equation')
     #plt.savefig('Burgers_Solution.pdf', bbox_inches='tight', dpi=300);
     plt.show()
 
