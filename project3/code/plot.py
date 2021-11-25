@@ -151,6 +151,11 @@ def NN_diffusion_solution(model, args):
     
     upred = model.model(Xgrid) 
     U = upred.numpy().reshape(N+1, N+1)
-    fig, ax = plt.subplots()
-    ax.contourf(T, X, U, cmap = 'hot')
+    # fig, ax = plt.subplots()
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+
+    # ax.contourf(T, X, U, cmap = 'hot')
+    # plt.show()
+    ax.plot_surface(X, T, U)
     plt.show()
+

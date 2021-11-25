@@ -121,7 +121,19 @@ If the deviation is large enough, further iterations could potentially cause ins
 \par The forward Euler scheme in general requires a quite low time step $\Delta t$ to produce stable solutions. Small time steps are convenient at the start of the diffusion process when the solutions changes quickly. However, when approaching the stationary limit the solution changes very slow and so does the update when using small $\Delta t$. This limitation is resolved by implicit methods \cite{Linge2017}.
 
 \section{Solving Differential equations with deep learning}
-Many of the concepts we use in this section is covered in a previous report \cite{project2}. There, in the theory section, we cover deep neural networks, cost functions, gradient decent, etc. 
+Many of the concepts we use in this section is covered in a previous report \cite{project2}. There, in the theory section, we cover central concepts like deep neural networks, cost functions, gradient decent, etc. In this report we will follow closely the work by Maziar Raissi et.al. \cite{raissi2017physics} and this Jupiter-Notebook\footnote{\texttt{https://colab.research.google.com/github/janblechschmidt/PDEsByNNs/blob/main/PINN \_Solver.ipynb\#scrollTo=1PlqQM9aZEkd}}. This method works with any partial differential equation (PDE), however for simplicity we will look at the diffusion equation in one dimension \eqref{eq:diffusion_equation_1D}. 
+
+The idea is that we have some neural network with parameters $\theta$, which takes $x-$ and $t-$values, and returns $u_\theta(x,t)$, where the neural net approximates the actual solution ($u(x,t)$) of the PDE
+\begin{align*}
+	u_\theta(x, t) \approx u(x, t).
+\end{align*}
+We then define the residual $r_\theta(t, x)$, which is the neural network inserted back into the PDE \eqref{eq:diffusion_equation_1D}
+\begin{align}
+	r_\theta(x, t) \equiv \frac{\partial u_\theta}{\partial t} - \frac{\partial^2 u_\theta}{\partial x^2}.
+	\label{eq:residual}
+\end{align}
+Now we are after a loss-function, which we want to minimize. Well we know that the expression \eqref{eq:residual} is equal to zero for the optimal parameters.
+
 
 \section{Method}
 \subsection*{Unit testing}
