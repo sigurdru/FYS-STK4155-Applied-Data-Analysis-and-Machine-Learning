@@ -3,6 +3,7 @@ In this file we perform all plotting in this project.
 """
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -158,4 +159,27 @@ def NN_diffusion_solution(model, args):
     # plt.show()
     ax.plot_surface(X, T, U)
     plt.show()
+
+def NN_diffusion_error(model, args):
+    N = args.num_train_iter
+    # Training
+    loss_hist = []
+    loss = 0
+    pbar = tqdm(range(N + 1), desc = 'Training progressions')#, desc=f"eta: {loss:.6f}, lambda: {lmb:.6f}. Training")
+    for _ in pbar:
+        loss = model.train_step()
+
+        loss_hist.append(loss.numpy())
+
+    # Plotting
+    fig, ax = plt.subplots()
+    ax.plot(loss_hist)
+
+    title = 'Error of neural network during training'
+    xlabel = 'iterations'
+    ylabel = 'error'
+    set_ax_info(ax, xlabel, ylabel, title=title)
+
+    fname = 'NN_diffusion_error'
+    show_save(fig, fname, args)
 

@@ -205,7 +205,8 @@ if __name__ == '__main__':
 
     fig = plt.figure(figsize=(9, 6))
     ax = fig.add_subplot(111)
-    ax.semilogy(range(len(hist)), hist, 'k-')
+    #ax.semilogy(range(len(hist)), hist, 'k-')
+    ax.plot(range(len(hist)), hist, 'k-')
     ax.set_xlabel('$n_{epoch}$')
     ax.set_ylabel('$\\phi_{n_{epoch}}$')
     plt.show()
