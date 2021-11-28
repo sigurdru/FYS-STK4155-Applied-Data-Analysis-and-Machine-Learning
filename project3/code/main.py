@@ -48,7 +48,7 @@ def parse_args(args=None):
     add_arg('-BC_l', '--left_boundary_condition',
             type=float,
             default=0,
-            help='left boundary condition',
+            help='left boundary condition', 
             )
 
     add_arg('-BC_r', '--right_boundary_condition',

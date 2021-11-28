@@ -144,14 +144,15 @@ def testing_data(model, args):
     show_save(fig, fname, args)
 
 def NN_diffusion_solution(model, args):
-    N = 600
-    tspace = np.linspace(model.lb[0], model.ub[0], N + 1)
-    xspace = np.linspace(model.lb[1], model.ub[1], N + 1)
+    Nx = 20
+    Nt = 2000
+    tspace = np.linspace(model.lb[0], model.ub[0], Nx + 1)
+    xspace = np.linspace(model.lb[1], model.ub[1], Nt + 1)
     T, X = np.meshgrid(tspace, xspace)
     Xgrid = np.vstack([T.flatten(), X.flatten()]).T
     
     upred = model.model(Xgrid) 
-    U = upred.numpy().reshape(N+1, N+1)
+    U = upred.numpy().reshape(Nx+1, Nt+1)
     # fig, ax = plt.subplots()
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
@@ -180,6 +181,6 @@ def NN_diffusion_error(model, args):
     ylabel = 'error'
     set_ax_info(ax, xlabel, ylabel, title=title)
 
-    fname = 'NN_diffusion_error'
+    fname = 'NN_diffusion_error_10000'
     show_save(fig, fname, args)
 

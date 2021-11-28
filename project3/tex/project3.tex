@@ -130,9 +130,10 @@ The idea is that we have some neural network $N$ with parameters $\theta$, inclu
 
 The process starts by defining a trial function $u_{\theta}(x,t)$ which is an initial guess of the actual solution $u(x,y)$, defined as
 
-\begin{align*}
+\begin{align}
 	u_{\theta}(x,t) = u_0(x, t) + f\big(x, N(x,\theta)\big),
-\end{align*}
+	\label{eq:NN_model}
+\end{align}
 where $u_0$ is a function specifically designed to satisfy the initial and boundary conditions of the PDE. The function $f$ is the part that is to be optimized by the algorithm. It depends on $x$ and the parameters $\theta$ through the neural network $N$, and should return 0 for the initial and boundary conditions. Constructing the function $f$ should beneficially incorporate prior knowledge about how the solution behaves, because this will accelerate the learning process.
 
 \par We then define the residual $r_\theta(t, x)$, which is the output of the neural network inserted back into the PDE \eqref{eq:diffusion_equation_1D}
@@ -210,6 +211,8 @@ The total accumulated error is given by
 \[ E = \sum_{n=1}^N e^n, \]
 which is the error measure to be used when testing how well the numerical solution approximates the analytical solution.
 
+\par For the neural network, the total error is given by the sum of squared residuals \ref{eq:residual}. This accumulates the error in the approximated solution for each time step, just as is done for the error in forward euler. As a result, one can make a feasible comparison of the errors.
+
 
 
 \section{Results}
@@ -242,16 +245,44 @@ The test of accumulated error for $\Delta x=0.1$ and $\Delta x=0.01$ for differe
 \par A plot of the maximum absolute difference between the numerical and analytical solution for $\Delta x=0.01$ is shown in Figure \ref{fig:error_dx001_n50}. The time step is chosen to give a stability factor $\alpha=0.5$. Notice that the error for time step $n=0$ is zero. This is because the numerical solution for the first time step is simply the initial condition, yielding a perfect correspondance with the analytical solution. As time proceeds, the error quickly increases and reaches a maximum at around time $t=0.1$. This time step is early in the diffusion process, where the solution changes rather quickly. The forward euler scheme is first order accurate in time, $O(\Delta t)$, and second order accurate in space, $O(\Delta x^2)$, implying that the numerical solution is more sensitive to the temporal evolution than the spatial evolution. Hence, the forward euler scheme will produce larger errors for the initial time levels due to the rapid change in solution. At later time stages, after the maximum around $\Delta t=0.1$, the absolute error seems to decrease logarithmically. As the time approaches the end of the simulation, there is hardly any remaining diffusion as the solution is approximately linear. Despite being first order accurate in time, the forward euler scheme is able to reprocude this slowly changing solution with a high accuracy. Figure \ref{fig:error_dx001_n50} verifies this behaviour, illustrating the error converging to zero sufficiently deep into the diffusion process.
 
 \subsection*{Error of Neural Network}
-The performance of the neural network is evaluated in a different way than the forward euler discretization scheme. With finite differencing the error is calculated as an absolute difference between the numerical and analytical solution for each time step. For the neural network though, the error during training is calculated by inserting the predicted solution into the abstract form of the differential equation, $F(u)=0$, obtaining a residual $r_{\theta}$. The resulting loss is given by Equation \ref{eq:residual}. Hence, the error of the neural network does not depend on any analytical solution. Figure \ref{fig:NN_error_500iter} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases extremely fast - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes agains. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
-\par \textcolor{red}{PUT THIS IN DISUSSION?:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:NN_error_500iter} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{../output/plots/NN_diffusion_error_10000}
+	\caption{Residual of approximated solutions to the 1D diffusion equation as function of iterations. The neural network performing 500 iterations, training on 10000 points.}
+	\label{fig:error_NN_10000}
+\end{figure}
+
+The performance of the neural network is evaluated in a different way than the forward euler discretization scheme. With finite differencing the error is calculated as an absolute difference between the numerical and analytical solution for each time step. For the neural network though, the error during training is calculated by inserting the predicted solution into the abstract form of the differential equation, $F(u)=0$, obtaining a residual $r_{\theta}$. The resulting loss is given by Equation \ref{eq:residual}. Hence, the error of the neural network does not depend on any analytical solution. Figure \ref{fig:error_NN_10000} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases extremely fast - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes agains. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
+\par \textcolor{red}{PUT THIS IN DISUSSION?:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer [\textcolor{red}{https://arxiv.org/abs/1412.6980}]. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
 \subsection*{Comparison of error}
-Despite the forward euler scheme and the neural network both predict solutions whose error approximate zero, there is an important distinction. One iteration of the neural network takes significantly more time than one iteration of the forward euler scheme. Training the network for 500 rounds takes about 40 seconds, whereas the same number of iterations with the forward euler scheme takes only a few milliseconds.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{../output/plots/NN_diffusion_error_40000}
+	\caption{Residual of approximated solutions to the 1D diffusion equation. The neural network runs for 500 iterations, training on 40000 points.}
+	\label{fig:error_NN_40000}
+\end{figure}
+
+The error of the neural network and the forward euler scheme are evaluated slightly different. In order to make a proper comparison, it is essential to accumulate the same amount of individual temporal errors to obtain an ultimate scalar measure for each method. This will represent the error of the approximated solution over the entire spatial and temporal domain. At each time level, the individual error is evaluated as the maximum absolute error between the approximated solution and the exact solution over the spatial domain. Hence, one must ensure that the same mesh resolutions are set.
+\par A comparison of the total (accumulated) error is conducted using 20 points in space and 2000 points in time. This choice of resolution ensures stability for the forward euler scheme, and gives 40 000 training points for the neural network. Running these parameter settings for the neural network gives the total errors shown in Figure \ref{fig:error_NN_40000} for each iteration, while for the forward euler scheme it yields a total error of 0.083. The first run through the neural network gives an approximated solution with a total error of around 4, significantly worse than the solution proposed by forward euler. For later iterations, on the other hand, the error decreases tremendously and eventually converges towards zero.
+
 \textcolor{red}{IS THIS THE RIGHT WAY TO COMPARE ERROR ??}
  
 
-
 \section{Discussion}
+\subsection*{Potential for solving differential equations}
+The forward euler method and neural networks are two quite different methods for solving differential equations. The former relies on discretization of the derivative to arrive at an explicit recursive set of equations to solve for each time step. The latter uses the residual error from the approximation as a basis for backpropagation to update weights and biases to improve the approximation to the actual solution. Figure \ref{fig:error_NN_40000} visualizes how bad the approximated solution of the initial run of the neural network is. Just after a few iterations though, the error decreases tremendously and goes below 0.083 (which is the total error obtained from forward euler) after around 100 iterations. After this, the total error fluctuates mildly but eventually converges towards zero.
+ 
+\par The forward euler method clearly has an advantage in its simple recursive formula and fast computation time. The proposed solution is calculated within a few milliseconds, with a total error of only 0.083. On the other hand, it is limited by a stability requirement in order to produce realistic results. This effectively puts a restriction on applicable mesh resolutions.
+
+\par A notable drawback of the neural network is the demanding training process. To compute an approximated solution of \ref{eq:diffusion_equation_1D} requires calculating gradients and accumulating chained derivatives backwards through the hidden layers. This is a significantly larger computational effort than calculating the simple recursive formula of the forward euler scheme. As a result, the neural network suffers from a large computational runtime. Particularly, simulating for 40 000 training points takes about 3 minutes. Still, if training sufficiently long, the neural network will produce a better solution than forward euler and eventually yield a near perfect approximation to the exact solution. 
+
+\par The forward euler scheme has proven to obtain good accuracy on the numerical solution. However, forward euler has an inherent disadvantage in that it is conditionally unstable with stability criteria given by \ref{eq:stability}. In general it means that the forward euler scheme is not a stable method for solving differential equations as it requires that we carefully assign the mesh discretization steps. Neural networks are not limited to any kind of discretization. From the \textcolor{red}{universal approximation theorem} it follows that a neural network with at least one hidden layer is able to approximate a non-linear function to arbitrary accuracy. Neural networks benefit from good convergence properties. That is, given enough time to train it is able to approximate the actual solution of a differential equation with an error of approximately zero. Moreover, the neural network model \ref{eq:NN_model} has the additional flexibility in that the function $f$ can be tweaked to give a better initial guess of the solution. 
+\par Overall, the method of choice for solving differential equations is a tradeoff between the accuracy of the approximated solution and the computational runtime. Forward euler is definitely the desired method if we want a quick representation of the solution. If the importance is how precise the representation is, a neural network is a better choice.
+
+
 \section{Conclusion}
 
 \bibliographystyle{plain}
