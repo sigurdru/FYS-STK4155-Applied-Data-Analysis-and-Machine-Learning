@@ -210,6 +210,7 @@ The total accumulated error is given by
 \[ E = \sum_{n=1}^N e^n, \]
 which is the error measure to be used when testing how well the numerical solution approximates the analytical solution.
 
+As a final test, we would like to study the difference between the analytical and numerical solution at two specific time periods. We choose the times $t_1=0.1$ and $t_2=0.5$, where $t_1$ corresponds to $u(x,t_1)$ behaving relatively smooth while still being significantly curved. For $t_2$ we get $u(x,t_2)<0.01$, i.e. a solution that is almost linear. These two time periods will serve as the basis for comparing our explicit numerical scheme to a neural network. During this initial analysis, we will plot $u_i^n - u_{e,i}^n$ at $t_1$ and $t_2$ using both $\Delta x=0.1$ and $\Delta x=0.01$, where $\Delta t$ is calculated in the same way as before. This allows us to check whether the relative difference for the two mesh resolutions are identical, which we expect due to the fixed value of $\alpha$. We expect the two plots to be negative, due to finite time steps advancing the solution beyond the true value.           
 \par For the neural network, the total error is given by the sum of squared residuals \ref{eq:residual}. This accumulates the error in the approximated solution for each time step, just as is done for the error in forward euler. As a result, one can make a feasible comparison of the errors.
 
 
