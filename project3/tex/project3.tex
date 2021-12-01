@@ -74,6 +74,7 @@ The core of the method now becomes clear. The independent variables are separate
 \[ \frac{1}{X}\frac{\partial^2 X(x)}{\partial x^2} = \frac{1}{T}\frac{\partial T(t)}{\partial t} = -k^2\]
 
 This is solved for the functions $X$ and $T$ separately. ...
+\textcolor{red}{Nevland: Fullfør utledning}
 
 \subsection*{Explicit forward Euler}
 In this section we want to cover the explicit forward Euler. By explicit we mean that the value at the next grid point is determined entirely by known or previously calculated values.
@@ -89,7 +90,7 @@ In this report we are going to study a one dimensional rod of length $L=1$, with
 	u(L,t) &= 0 \ \ t\geq 0.
 \end{align}
 
-To approximate the solution, we have to discretize the position and time coordinates. We can choose  $\Delta x = L/N$ and $\Delta t$ as small steps in $x$-direction and time, where $N$ are the number of discretized points in $x$-direction. Then we can define the value domain of $t$ and $x$,
+To approximate the solution, we have to discretize the position and time coordinates. We can choose  $\Delta x = L/N$ and $\Delta t$ as small steps in $x$-direction and time, respectively, where $N$ are the number of discretized points in $x$-direction. Then we can define the value domain of $t$ and $x$,
 \begin{equation*}
 t_j = j\Delta t, \ \ j\in \mathbb{N}_0 \ \ \wedge \ \ x_i = i\Delta x, \ \ \{i \in \mathbb{N}_0 | i \leq N\}.
 \end{equation*}
@@ -109,20 +110,12 @@ This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. Experi
 	\alpha = \frac{\Delta t}{\Delta x^2} \le \frac{1}{2}.
 \end{equation} 
 
-Even though $\alpha = 0.5$ is at the transition between stable and unstable solutions, experiments show that it is a safe choice for the diffusion equation that produces stable solutions \cite{Linge2017}. Thus, the stability factor $\alpha=0.5$ is used as default in this project. \\ 
-
-We are to use the forward Euler method to discretize the diffusion equation to be solved numerically. The forward Euler is an explicit scheme, meaning that the derivative in time is approximated at the current time level.
-That is, the derivative is discretized only by known values. As a consequence, the discretized diffusion equation can be explicitly be solved for the next time step without the need of any matrix inversion to arrive at a coupled
-set of discretized equations. The drawback of explicit methods is that it is less stable than implicit schemes, which approximate the derivative at the next time step.
-If the derivative is calculated at the current time level, we miss any information about how the solution changes at the next time level. 
-Hence, if the gradient of the next time level is significantly different than of the current time level, the numerical solution may deviate considerably from the true solution. 
-If the deviation is large enough, further iterations could potentially cause instable solutions in the sense that it diverges.
-\par The forward Euler scheme in general requires a quite low time step $\Delta t$ to produce stable solutions. Small time steps are convenient at the start of the diffusion process when the solutions changes quickly. However, when approaching the stationary limit the solution changes very slow and so does the update when using small $\Delta t$. This limitation is resolved by implicit methods \cite{Linge2017}.
+Even though $\alpha = 0.5$ is at the transition between stable and unstable solutions, experiments show that it is a safe choice for the diffusion equation that produces stable solutions \cite{Linge2017}. Thus, the stability factor $\alpha=0.5$ is used as default in this project. 
 
 \section{Solving Differential equations with deep learning}
-Many of the concepts we use in this section is covered in a previous report \cite{project2}. There, in the theory section, we cover central concepts like deep neural networks, cost functions, gradient descent, etc. In this report we will follow closely the work by Maziar Raissi et.al. \cite{raissi2017physics} and this Jupiter-Notebook\footnote{\texttt{https://colab.research.google.com/github/janblechschmidt/PDEsByNNs/blob/main/PINN \_Solver.ipynb\#scrollTo=1PlqQM9aZEkd}}. This method works with any partial differential equation (PDE), however for simplicity we will look at the diffusion equation in one dimension \eqref{eq:diffusion_equation_1D}. 
+Many of the concepts we use in this section are covered in a previous report \cite{project2}. There, in the theory section, we cover central concepts like deep neural networks, cost functions, gradient descent, etc. In this report we will follow closely the work by Maziar Raissi et.al. \cite{raissi2017physics} and this Jupyter-Notebook\footnote{\texttt{https://colab.research.google.com/github/janblechschmidt/PDEsByNNs/blob/main/PINN \_Solver.ipynb\#scrollTo=1PlqQM9aZEkd}}. This method works with any partial differential equation (PDE), however for simplicity we will look at the diffusion equation in one dimension \eqref{eq:diffusion_equation_1D}. 
 
-The idea is that we have some neural network $N$ with parameters $\theta$, including $x$ and $t$ as inputs, and returns $u_{\theta}(x,t)$. After training the neural network, it has found the parameters $\hat{\theta}$ that best approximates its output with the actual solution $u(x,t)$ of the PDE
+The idea is that we have some neural network $N$ with parameters $\theta$, including $x$ and $t$ as inputs, which returns $u_{\theta}(x,t)$. After training the neural network, one obtains the parameters $\hat{\theta}$ that best approximates its output with the actual solution, $u(x,t)$, of the PDE
 \begin{align*}
 	u_{\hat{\theta}} (x, t) \approx u(x, t).
 \end{align*}
@@ -141,12 +134,12 @@ where $u_0$ is a function specifically designed to satisfy the initial and bound
 	\label{eq:residual}
 \end{align}
 
-Ideally this should be zero, impying a perfect reproduction of the actual solution. The residual becomes our main object for training, as it gives a measure of how good the neural network approximates the actual solution. For the neural network to improve its predictions a loss function is required, which is to minimized. The sum of squared residuals (across all data samples $n$) serves as an appropriate loss.
+Ideally this should be zero, impying a perfect reproduction of the actual solution. The residual becomes our main object for training, as it gives a measure of how good the neural network approximates the actual solution. For the neural network to improve its predictions a loss function is required, which is to minimized. For this we use the mean sum of squared residuals, including the initial and boundary points, across all data samples $n$. 
 
 \begin{align*}
-	L(x, t, \theta) = \sum_{i=1}^n [r_\theta(x_i,t_i)]^2
+	L(x, t, \theta) = \frac{1}{n} \sum_{i=1}^n [r_\theta(x_i,t_i)]^2 + \frac{1}{n_B}\sum_{i=1}^{n_B} (u_{\theta}(x_b,t_i) - u_i)^2 + \frac{1}{n_I} \sum_{i=1}^{n_I} (u_{\theta}(x_i,0) - u_i)^2,
 \end{align*}
-
+where $n_B$ and $n_I$ is the number of training points on the boundary and the initial time step, respectively. Boundary points are given by $x_b$.
 Optimization is then done through gradient descent, minimizing the loss with respect to the parameters $\theta$
 
 \begin{align*}
@@ -258,12 +251,12 @@ The performance of the neural network is evaluated in a different way than the f
 
 \subsection*{Comparison of error}
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.5]{../output/plots/NN_diffusion_error_40000}
-	\caption{Residual of approximated solutions to the 1D diffusion equation. The neural network runs for 500 iterations, training on 40000 points.}
-	\label{fig:error_NN_40000}
-\end{figure}
+% \begin{figure}[h]
+	% \centering
+	% \includegraphics[scale=0.5]{../output/plots/NN_diffusion_error_40000}
+	% \caption{Residual of approximated solutions to the 1D diffusion equation. The neural network runs for 500 iterations, training on 40000 points.}
+	% \label{fig:error_NN_40000}
+% \end{figure}
 
 The error of the neural network and the forward euler scheme are evaluated slightly different. In order to make a proper comparison, it is essential to accumulate the same amount of individual temporal errors to obtain an ultimate scalar measure for each method. This will represent the error of the approximated solution over the entire spatial and temporal domain. At each time level, the individual error is evaluated as the maximum absolute error between the approximated solution and the exact solution over the spatial domain. Hence, one must ensure that the same mesh resolutions are set.
 \par A comparison of the total (accumulated) error is conducted using 20 points in space and 2000 points in time. This choice of resolution ensures stability for the forward euler scheme, and gives 40 000 training points for the neural network. Running these parameter settings for the neural network gives the total errors shown in Figure \ref{fig:error_NN_40000} for each iteration, while for the forward euler scheme it yields a total error of 0.083. The first run through the neural network gives an approximated solution with a total error of around 4, significantly worse than the solution proposed by forward euler. For later iterations, on the other hand, the error decreases tremendously and eventually converges towards zero.
@@ -279,7 +272,7 @@ The forward euler method and neural networks are two quite different methods for
 
 \par A notable drawback of the neural network is the demanding training process. To compute an approximated solution of \ref{eq:diffusion_equation_1D} requires calculating gradients and accumulating chained derivatives backwards through the hidden layers. This is a significantly larger computational effort than calculating the simple recursive formula of the forward euler scheme. As a result, the neural network suffers from a large computational runtime. Particularly, simulating for 40 000 training points takes about 3 minutes. Still, if training sufficiently long, the neural network will produce a better solution than forward euler and eventually yield a near perfect approximation to the exact solution. 
 
-\par The forward euler scheme has proven to obtain good accuracy on the numerical solution. However, forward euler has an inherent disadvantage in that it is conditionally unstable with stability criteria given by \ref{eq:stability}. In general it means that the forward euler scheme is not a stable method for solving differential equations as it requires that we carefully assign the mesh discretization steps. Neural networks are not limited to any kind of discretization. From the \textcolor{red}{universal approximation theorem} it follows that a neural network with at least one hidden layer is able to approximate a non-linear function to arbitrary accuracy. Neural networks benefit from good convergence properties. That is, given enough time to train it is able to approximate the actual solution of a differential equation with an error of approximately zero. Moreover, the neural network model \ref{eq:NN_model} has the additional flexibility in that the function $f$ can be tweaked to give a better initial guess of the solution. 
+\par The forward euler scheme has proven to obtain good accuracy on the numerical solution. However, forward euler has an inherent disadvantage in that it is conditionally unstable with stability criteria given by \ref{eq:stability}. In general it means that the forward euler scheme is not a stable method for solving differential equations as it requires that we carefully assign the mesh discretization steps. Neural networks are not limited to any kind of discretization. Neural networks benefit from good convergence properties. That is, given enough time to train it is able to approximate the actual solution of a differential equation with an error of approximately zero. Moreover, the neural network model \ref{eq:NN_model} has the additional flexibility in that the function $f$ can be tweaked to give a better initial guess of the solution. 
 \par Overall, the method of choice for solving differential equations is a tradeoff between the accuracy of the approximated solution and the computational runtime. Forward euler is definitely the desired method if we want a quick representation of the solution. If the importance is how precise the representation is, a neural network is a better choice.
 
 
