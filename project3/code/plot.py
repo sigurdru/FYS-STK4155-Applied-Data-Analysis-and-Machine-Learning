@@ -53,11 +53,6 @@ def set_ax_info(ax, xlabel, ylabel, style='plain', title=None):
     ax.yaxis.get_offset_text().set_fontsize(15)
     ax.ticklabel_format(style=style)
     ax.legend(fontsize=15)
-def set_fname(args):
-    """
-    Sets fname
-    """
-    pass
 
 def Euler_solution(x, t, u, args):
     fig, ax = plt.subplots()
@@ -152,26 +147,59 @@ def NN_diffusion_solution(model, args):
     Xgrid = np.vstack([T.flatten(), X.flatten()]).T
     
     upred = model.model(Xgrid) 
-    U = upred.numpy().reshape(Nx+1, Nt+1)
-    # fig, ax = plt.subplots()
+    U = upred.numpy().reshape(Nt+1, Nx+1)
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-
-    # ax.contourf(T, X, U, cmap = 'hot')
-    # plt.show()
-    ax.plot_surface(X, T, U)
-    plt.show()
+    ax.set_xlabel('x', fontsize=20)
+    ax.set_ylabel('t', fontsize=20)
+    ax.set_zlabel('u', fontsize=20)
+    ax.set_title('Output of PINN', fontsize=20)
+    ax.tick_params(axis='both', which='major', labelsize=15)
+    ax.plot_surface(X, T, U, cmap='rainbow')
+    ax.view_init(azim=120)
+    fname = 'NN_diffusion_solution'
+    fname += '_Nn' + str(args.num_neurons_per_layer) + '_Nh' + str(args.num_hidden_layers)
+    show_save(fig, fname, args)
 
 def NN_diffusion_error(loss_hist, args):
     # Plotting
     fig, ax = plt.subplots()
     ax.plot(loss_hist)
 
-    title = 'Error of neural network during training'
+    title = r'Error of neural N$_{layers} = %i$ N$_{nodes} = %i$' % (args.num_hidden_layers, args.num_neurons_per_layer)
     xlabel = 'iterations'
     ylabel = 'error'
     set_ax_info(ax, xlabel, ylabel, title=title)
 
-    fname = 'NN_diffusion_error_10000'
+    fname = 'NN_diffusion_error'
+    fname += '_Nn' + str(args.num_neurons_per_layer) + '_Nh' + str(args.num_hidden_layers)
     print(f'Error after last iteration: {loss_hist[-1]}')
     show_save(fig, fname, args)
 
+def NN_diffusion_error_timesteps(model, args):
+    Nx = 100
+    Nt = Nx
+    t1 = 0.1
+    t2 = 0.5
+    t1a = np.ones(Nt)*t1
+    t2a = np.ones(Nt)*t2
+    xa = np.linspace(0, 1, Nx)
+    X1 = np.vstack([t1a, xa]).T
+    X2 = np.vstack([t2a, xa]).T
+    
+    upred1 = model.model(X1)
+    upred2 = model.model(X2)
+    uexact1 = u_exact(xa, t1).reshape(-1, 1)
+    uexact2 = u_exact(xa, t2).reshape(-1, 1)
+
+    plt.plot(upred1, label='tpred = %f' % (t1))
+    plt.plot(upred2, label='tpred = %f' % (t2))
+    plt.plot(uexact1, label='texa = %f' % (t1))
+    plt.plot(uexact2, label='texa = %f' % (t2))
+    plt.legend()
+    plt.show()
+    plt.plot(upred1 - uexact1, label='t = %f' %(t1))
+    plt.plot(upred2 - uexact2, label='t = %f' %(t2))
+    plt.legend()
+    plt.show()
+    print(np.mean(np.sum((upred1-uexact1)**2)))
+    print(np.mean(np.sum((upred2-uexact2)**2)))
