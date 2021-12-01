@@ -99,6 +99,25 @@ def max_error_tot(x, t, u, args):
 
     return tot_error
 
+def MSE_FE(x, t, u, args):
+    fig, ax = plt.subplots()
+
+    mse = [np.sum( (u[n, :] - u_exact(x, t[n]))**2 )/len(x) for n in range(len(t))]
+
+    ax.plot(t, mse)
+
+    title = 'MSE of forward euler for each time step,' + '\n' 
+    title += f'with stability criteria ${round(args.t_step/args.x_step**2, 2)}$'
+    xlabel = 't'
+    ylabel = 'Error'
+    fname = 'MSE_FE'
+
+    set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
+    fig.set_tight_layout(True)
+    show_save(fig, fname, args)
+
+    return np.array(mse)
+
 def error_x(x, t, u, args):
     fig, ax = plt.subplots()
 
