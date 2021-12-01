@@ -137,7 +137,7 @@ where $u_0$ is a function specifically designed to satisfy the initial and bound
 Ideally this should be zero, impying a perfect reproduction of the actual solution. The residual becomes our main object for training, as it gives a measure of how good the neural network approximates the actual solution. For the neural network to improve its predictions a loss function is required, which is to minimized. For this we use the mean sum of squared residuals, including the initial and boundary points, across all data samples $n$. 
 
 \begin{align*}
-	L(x, t, \theta) = \frac{1}{n} \sum_{i=1}^n [r_\theta(x_i,t_i)]^2 + \frac{1}{n_B}\sum_{i=1}^{n_B} (u_{\theta}(x_b,t_i) - u_i)^2 + \frac{1}{n_I} \sum_{i=1}^{n_I} (u_{\theta}(x_i,0) - u_i)^2,
+	L(x, t, \theta) = \frac{1}{n} \sum_{i=1}^n [r_\theta(x_i,t_i)]^2 + \frac{1}{n_B}\sum_{i=1}^{n_B} (u_{\theta}(x_b,t_i) - u(x_b,t_i))^2 + \frac{1}{n_I} \sum_{i=1}^{n_I} (u_{\theta}(x_i,0) - u(x_i,0))^2,
 \end{align*}
 where $n_B$ and $n_I$ is the number of training points on the boundary and the initial time step, respectively. Boundary points are given by $x_b$.
 Optimization is then done through gradient descent, minimizing the loss with respect to the parameters $\theta$
@@ -197,20 +197,20 @@ Once again, the two approaches provide the same result up to machine precision. 
 \textcolor{red}{Sigurd: Skriv hvordan du setter opp neural network her. Skriv også hva du plotter (MSE) og hvilke ting ved NN du skal teste, og hvilke du ikke skal teste. Da kan vi bruke seksjonen under til å forklare hvordan vi studerer resultater for både Euler og NN, og hvordan vi skal sammenlikne}
 
 \subsection*{Accuracy assessment}
-The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution? To address this we compute the deviation of the numerical solution to the analytical solution for two different mesh resolutions in space, $\Delta x=0.1$ and $\Delta x = 0.01$. For comparison purposes the time step is adjusted in each case to ensure stability, and is defined as $\Delta t = 0.5\cdot \Delta x^2$. The error is computed and accumulated for a fixed number of time steps $N$ in both cases. The applied error measure at a given time step is simply the maximum absolute difference between the numerical solution $u$ and the analytical solution $u_e$ across the entire spatial domain. \textcolor{red}{Skal det ikke være max i ligningen under?}
+The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution? To address this we compute the deviation of the numerical solution to the analytical solution for two different mesh resolutions in space, $\Delta x=0.1$ and $\Delta x = 0.01$. For comparison purposes the time step is adjusted in each case to ensure stability, and is defined as $\Delta t = 0.5\cdot \Delta x^2$. The applied error measure at a given time step is simply the maximum absolute difference between the numerical solution $u$ and the analytical solution $u_e$ across the entire spatial domain. \textcolor{red}{Skal det ikke være max i ligningen under?}
 \[ e^n = \argmax_{i \in [0,N_x]} |u_i^n - u_{e,i}^n| \]
-
-Accounting for the order of accuracy of the forward euler scheme, the error can be expressed as a linear combination of the mesh resolutions $\Delta t$ and $\Delta x$ \cite{Linge2017} \textcolor{red}{Er likningen under egentlig relevant for oss?}
-
-\[ e^n = C_t\Delta t + C_x\Delta x^2 \]
 
 The total accumulated error is given by
 \[ E = \sum_{n=1}^N e^n, \]
-which is the error measure to be used when testing how well the numerical solution approximates the analytical solution. \textcolor{red}{Er det likningen over som er brukt for resultatene i tabell 1?}
+which is the error measure to be used when testing how well the numerical solution approximates the analytical solution. \textcolor{red}{Er det likningen over som er brukt for resultatene i tabell 1? - Ja, men mulig vi fjerner den siden tabell 1 maa skrives om (verdiene skal heller vere MSE)}
 
-We will also study how the error evolves over time. To do this we plot the largest absolute value of the error at $50$ different times \textcolor{red}{Burde vi ikke heller bruke summen av feilen fremfor max her?}. We expect the error to be zero at $t=0$, which decreases up to a certain point. Since the diffusion equation approaches $u(x,t)=0$ as $t$ increases, we expect the error to decrease towards the end. We choose $\Delta x=0.01$ for this analysis, with $\Delta t$ calculated with the stability criterion.  
+We will also study how the error evolves over time. To do this we plot the largest absolute value of the error at $50$ different times \textcolor{red}{Burde vi ikke heller bruke summen av feilen fremfor max her? - Jo det burde vi. Vi holder oss konsistent til MSE.}. We expect the error to be zero at $t=0$, which decreases up to a certain point. Since the diffusion equation approaches $u(x,t)=0$ as $t$ increases, we expect the error to decrease towards the end. We choose $\Delta x=0.01$ for this analysis, with $\Delta t$ calculated with the stability criterion.  
 
-As a final test, we would like to study the difference between the analytical and numerical solution at two specific times. We choose the times $t_1=0.1$ and $t_2=0.5$, where $t_1$ corresponds to $u(x,t_1)$ behaving relatively smooth while still being significantly curved. For $t_2$ we get $u(x,t_2)<0.01$, i.e. a solution that is almost linear. These two time periods will serve as the foundation for comparing the performance of our explicit numerical scheme to that of a neural network. During this initial analysis, we will plot $u_i^n - u_{e,i}^n$ at $t_1$ and $t_2$ using both $\Delta x=0.1$ and $\Delta x=0.01$, where $\Delta t$ is calculated in the same way as before. This allows us to check whether the relative difference for the two mesh resolutions are identical, which we expect due to the fixed value of $\alpha$. We expect the difference between the numerical and analytical solutions at the two times to be negative for the explicit numerical scheme, due to discrete time steps advancing our model too much at each iteration. We repeat this analysis for the neural network as well and compare the two models. 
+As a final test, we would like to study the difference between the analytical and numerical solution at two specific times. We choose the times $t_1=0.1$ and $t_2=0.5$, where the solution $u(x,t_1)$ behaves relatively smooth while still being significantly curved. For $t_2$ we get $u(x,t_2)<0.01$, i.e. a solution that is almost linear. These two time periods will serve as the foundation for comparing the performance of our explicit numerical scheme to that of a neural network. During this initial analysis, we will plot the mean squared error 
+
+$$ \frac{1}{N} \sum_{i=0}^{N-1} (u_i^n - u_{e,i}^n)^2 $$
+
+at $t_1$ and $t_2$ \textcolor{red}{using both $\Delta x=0.1$ and $\Delta x=0.01$}, where $\Delta t$ is calculated in the same way as before. This allows us to check whether the relative difference for the two mesh resolutions are identical, which we expect due to the fixed value of $\alpha$. We expect the difference between the numerical and analytical solutions at the two times to be negative for the explicit numerical scheme, due to discrete time steps advancing our model too much at each iteration. We repeat this analysis for the neural network as well and compare the two models. 
 
 \par For the neural network, the total error is given by the sum of squared residuals \eqref{eq:residual}. This accumulates the error in the approximated solution for each time step, just as is done for the error in forward euler. As a result, one can make a feasible comparison of the errors.
 
@@ -223,7 +223,7 @@ TBD
 
 \subsection*{Error of Forward Euler scheme}
 
-To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the accumulated maximum absolute error, as described in Methods. \textcolor{red}{Er det lurere å kanskje ta summen istedenfor maxverdi? Er kanskje bedre for å sammenligne euler med NN?}
+To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the accumulated maximum absolute error, as described in Methods. \textcolor{red}{Er det lurere å kanskje ta summen istedenfor maxverdi? Er kanskje bedre for å sammenligne euler med NN? - Ja, vi maa endre til MSE.}
 
 \begin{table}[h]
 	\centering
@@ -237,7 +237,7 @@ To assess the accuracy of our implemented numerical scheme, we need to test the 
 \label{tab:errors}
 \end{table}
 
-The test of accumulated error for $\Delta x=0.1$ and $\Delta x=0.01$ for different number of time steps $n$ is shown in Table \ref{tab:errors}. The accumulated error obviously increases when evaluating the error for more time steps because more individual errors are accumulated to the total error. Another feature is that reducing the spatial step $\Delta x$ significantly reduces the accumulated error. For instance, from Table \ref{tab:errors} we have, for $n=50$, a ratio of $0.838/8.302\cdot 10^{-4}=100.94$ for the two step sizes. Approximately the same factor is reproduced by the other time steps $n$ as well. This shows that reducing $\Delta x$ by a factor of 10 will reduce the accumulated error by a factor of 100. Hence, refining the spatial resolution will significantly improve the performance of the forward euler scheme. The results strongly indicate that the numerical solution converges to the analytical solution as $\Delta x \rightarrow 0$. \textcolor{red}{Skyldes ikke dette stability=0.5, siden $\Delta t\propto \Delta x^2$? Burde vi kommentere det?}
+The test of accumulated error for $\Delta x=0.1$ and $\Delta x=0.01$ for different number of time steps $n$ is shown in Table \ref{tab:errors}. The accumulated error obviously increases when evaluating the error for more time steps because more individual errors are accumulated to the total error. Another feature is that reducing the spatial step $\Delta x$ significantly reduces the accumulated error. For instance, from Table \ref{tab:errors} we have, for $n=50$, a ratio of $0.838/8.302\cdot 10^{-4}=100.94$ for the two step sizes. Approximately the same factor is reproduced by the other time steps $n$ as well. This shows that reducing $\Delta x$ by a factor of 10 will reduce the accumulated error by a factor of 100. Hence, refining the spatial resolution will significantly improve the performance of the forward euler scheme. The results strongly indicate that the numerical solution converges to the analytical solution as $\Delta x \rightarrow 0$. \textcolor{red}{Skyldes ikke dette stability=0.5, siden $\Delta t\propto \Delta x^2$? Burde vi kommentere det? - Vi kan nevne at stability holdes fixed paa 0.5, slik at $\Delta t$ automatisk tilpasses. Men det gjelder uansett at naar $\Delta x \rightarrow 0$ saa vil feilen gaa mot null, fordi beregningen av gradienten blir mer presis.}
 
 \begin{figure}[h]
 	\centering
@@ -250,30 +250,11 @@ The test of accumulated error for $\Delta x=0.1$ and $\Delta x=0.01$ for differe
 
 \subsection*{Error of Neural Network}
 
-% \begin{figure}[h]
-	% \centering
-	% \includegraphics[scale=0.5]{../output/plots/NN_diffusion_error_10000}
-	% \caption{Residual of approximated solutions to the 1D diffusion equation as function of iterations. The neural network performing 500 iterations, training on 10000 points.}
-	% \label{fig:error_NN_10000}
-% \end{figure}
-
-The performance of the neural network is evaluated in a different way than the forward euler discretization scheme. With finite differencing the error is calculated as an absolute difference between the numerical and analytical solution for each time step. For the neural network though, the error during training is calculated by inserting the predicted solution into the abstract form of the differential equation, $F(u)=0$, obtaining a residual $r_{\theta}$. The resulting loss is given by Equation \ref{eq:residual}. Hence, the error of the neural network does not depend on any analytical solution. \textcolor{red}{Sigurd: Burde dette skrives i metode?}
-
 Figure \ref{fig:error_NN_10000} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases extremely fast - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes agains. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
 
 \par \textcolor{red}{PUT THIS IN DISUSSION?:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer [\textcolor{red}{https://arxiv.org/abs/1412.6980}]. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
 \subsection*{Comparison of error}
-
-% \begin{figure}[h]
-	% \centering
-	% \includegraphics[scale=0.5]{../output/plots/NN_diffusion_error_40000}
-	% \caption{Residual of approximated solutions to the 1D diffusion equation. The neural network runs for 500 iterations, training on 40000 points.}
-	% \label{fig:error_NN_40000}
-% \end{figure}
-
-The error of the neural network and the forward euler scheme are evaluated slightly different. In order to make a proper comparison, it is essential to accumulate the same amount of individual temporal errors to obtain an ultimate scalar measure for each method. This will represent the error of the approximated solution over the entire spatial and temporal domain. At each time level, the individual error is evaluated as the maximum absolute error between the approximated solution and the exact solution over the spatial domain. Hence, one must ensure that the same mesh resolutions are set.
-\par A comparison of the total (accumulated) error is conducted using 20 points in space and 2000 points in time. This choice of resolution ensures stability for the forward euler scheme, and gives 40 000 training points for the neural network. Running these parameter settings for the neural network gives the total errors shown in Figure \ref{fig:error_NN_40000} for each iteration, while for the forward euler scheme it yields a total error of 0.083. The first run through the neural network gives an approximated solution with a total error of around 4, significantly worse than the solution proposed by forward euler. For later iterations, on the other hand, the error decreases tremendously and eventually converges towards zero.
 
 \textcolor{red}{IS THIS THE RIGHT WAY TO COMPARE ERROR ??}
  
@@ -284,10 +265,12 @@ The forward euler method and neural networks are two quite different methods for
  
 \par The forward euler method clearly has an advantage in its simple recursive formula and fast computation time. The proposed solution is calculated within a few milliseconds, with a total error of only 0.083. On the other hand, it is limited by a stability requirement in order to produce realistic results. This effectively puts a restriction on applicable mesh resolutions.
 
-\par A notable drawback of the neural network is the demanding training process. To compute an approximated solution of \ref{eq:diffusion_equation_1D} requires calculating gradients and accumulating chained derivatives backwards through the hidden layers. This is a significantly larger computational effort than calculating the simple recursive formula of the forward euler scheme. As a result, the neural network suffers from a large computational runtime. Particularly, simulating for 40 000 training points takes about 3 minutes. Still, if training sufficiently long, the neural network will produce a better solution than forward euler and eventually yield a near perfect approximation to the exact solution. 
+\par A notable drawback of the neural network is the demanding training process. To compute an approximated solution of \ref{eq:diffusion_equation_1D} requires calculating gradients and accumulating chained derivatives backwards through the hidden layers. This is a significantly larger computational effort than calculating the simple recursive formula of the forward euler scheme. As a result, the neural network suffers from a large computational runtime. Still, if training sufficiently long, the neural network will produce a better solution than forward euler and eventually yield a near perfect approximation to the exact solution. 
 
 \par The forward euler scheme has proven to obtain good accuracy on the numerical solution. However, forward euler has an inherent disadvantage in that it is conditionally unstable with stability criteria given by \ref{eq:stability}. In general it means that the forward euler scheme is not a stable method for solving differential equations as it requires that we carefully assign the mesh discretization steps. Neural networks are not limited to any kind of discretization. Neural networks benefit from good convergence properties. That is, given enough time to train it is able to approximate the actual solution of a differential equation with an error of approximately zero. Moreover, the neural network model \ref{eq:NN_model} has the additional flexibility in that the function $f$ can be tweaked to give a better initial guess of the solution. 
 \par Overall, the method of choice for solving differential equations is a tradeoff between the accuracy of the approximated solution and the computational runtime. Forward euler is definitely the desired method if we want a quick representation of the solution. If the importance is how precise the representation is, a neural network is a better choice.
+
+\textcolor{red}{Det meste av diskusjonen over kan beholdes da det gjelder generelt, men de faktiske tallene nevnt maa oppdateres med resultatene fra MSE.}
 
 
 \section{Conclusion}
