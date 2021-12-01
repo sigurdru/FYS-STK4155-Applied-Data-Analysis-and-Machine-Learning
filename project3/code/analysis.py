@@ -30,7 +30,6 @@ def forward_euler(args):
     BC_r = args.right_boundary_condition
 
     Np = args.num_plots
-    test_error = args.test_error
 
     #defining stuff
     L = 1
@@ -38,11 +37,10 @@ def forward_euler(args):
     Nt = int(round(T/dt))
     x = np.linspace(0, L, Nx+1)
     t = np.linspace(0, T, Nt+1)
-    u = np.zeros(len(x)) # Solution at new time step (unknown)
-    u_m = np.zeros(len(x)) # Solution at current time step (known)
-    #u_m_final = np.zeros((len(x), Np))
+    u = np.zeros((len(t), len(x)))
     u_m_final = {}
-    u_m = IC(x)
+    
+    u[0,:] = IC(x)
     print('Stability factor:', C)
 
     u_exact = lambda x, t: np.exp(-np.pi**2*t)*np.sin(np.pi*x)
@@ -56,31 +54,33 @@ def forward_euler(args):
         When_to_plot = np.arange(0, Nt, When_to_plot)
 
     pbar = tqdm(range(Nt), desc = 'Training progressions')
-    print(Nt)
+    
     for n in pbar:
         if n in When_to_plot:
             # Store values for plotting 
-            u_m_final[n] = u_m.copy()
+            u_m_final[n] = u[n,:].copy()
         
         # Interior points
-        u[1:-1] = u_m[1:-1] + C * (u_m[2:] - 2*u_m[1:-1] + u_m[:-2])
+        u[n+1, 1:-1] = u[n, 1:-1] + C * (u[n, 2:] - 2*u[n, 1:-1] + u[n, :-2])
         
         #Boundary points
-        u[0] = BC_l
-        u[Nx] = BC_r
-
-        u_m[:] = u
+        u[n+1, 0] = BC_l
+        u[n+1, Nx] = BC_r
 
     if args.test_error:
         max_error = plot.max_error_tot(x, t, u_m_final, args)
         print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', max_error)
+
+        all_mse = plot.MSE_FE(x, t, u, args)
+        print('MSE forward euler t=0.1:', all_mse[t == 0.1])
+        print('MSE forward euler t=0.5:', all_mse[t == 0.5])
 
     if args.study_times:
         plot.error_x(x, t, u_m_final, args)
 
     plot.Euler_solution(x, t, u_m_final, args)
 
-    return u_m
+    return u
 
 def neural_network(args):
     """
