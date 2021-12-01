@@ -41,14 +41,14 @@ def parse_args(args=None):
 
     add_arg('-T', '--tot_time',
             type=float,
-            default=1,
+            default=1.,
             help='End time, start time = 0',
             )
 
     add_arg('-BC_l', '--left_boundary_condition',
             type=float,
             default=0,
-            help='left boundary condition',
+            help='left boundary condition', 
             )
 
     add_arg('-BC_r', '--right_boundary_condition',
@@ -61,6 +61,62 @@ def parse_args(args=None):
             default=5,
             help='Number of times one wants to plot the evolution',
            )
+
+    add_arg('-N0', '--num_initial_points',
+            type=int,
+            default=50,
+            help='Number of points used for initial values' 
+           )
+
+    add_arg('-Nb', '--num_boundary_points',
+            type=int,
+            default=50,
+            help='Number of points used for boundary values'
+            )
+
+    add_arg('-Nr', '--num_train_points',
+            type=int,
+            default=10000,
+            help='Number of points used for training each step'
+            )
+
+    add_arg('-Nh', '--num_hidden_layers',
+            type=int,
+            default=8,
+            help='Number of hidden layers'
+            )
+
+    add_arg('-Nn', '--num_neurons_per_layer',
+            type=int,
+            default=20,
+            help='Number of neurons in hidden layers'
+            )
+
+    add_arg('-Nt', '--num_train_iter',
+            type=int,
+            default=500,
+            help='Number of iterations for training'
+            )
+
+    add_arg('-model', '--existing_model',
+            type=str,
+            default='None',
+            help='If you want to use existing model, it should be placed in the folder /NNmodels'
+            )
+
+    add_arg('-act', '--activation_function',
+            type=str,
+            default='tanh',
+            choices=['tanh'],
+            help='Activation function in hidden layers',
+            )
+
+    add_arg('-dtype', '--datatype',
+            type=str,
+            default='float32',
+            choices=['float32'],
+            help='Activation function in hidden layers',
+            )
 
     add_arg('-study_times',
             action="store_true",

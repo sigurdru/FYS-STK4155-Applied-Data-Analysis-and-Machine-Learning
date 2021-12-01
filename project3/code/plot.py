@@ -3,8 +3,10 @@ In this file we perform all plotting in this project.
 """
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 import os
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 #The style we want
 plt.style.use('seaborn')
@@ -120,3 +122,65 @@ def error_x(x, t, u, args):
     set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
     fig.set_tight_layout(True)
     show_save(fig, fname, args)
+
+def testing_data(model, args):
+    """
+    
+    """
+    t_0, x_0, u_0 = model.t_0, model.x_0, model.u_0
+    t_b, x_b, u_b = model.t_b, model.x_b, model.u_b
+    t_r, x_r = model.t_r, model.x_r
+    fig, ax = plt.subplots()
+    ax.scatter(t_0, x_0, cmap='rainbow', c=u_0, marker='X')
+    ax.scatter(t_b, x_b, cmap='rainbow', c=u_b, marker='X')
+    ax.scatter(t_r, x_r, c='b', marker='.', alpha=0.1)
+    
+    title = 'Points where we will train the network'
+    xlabel = 'x'
+    ylabel = 't'
+    set_ax_info(ax, xlabel, ylabel, title=title)
+    
+    fname = 'training_points'
+    show_save(fig, fname, args)
+
+def NN_diffusion_solution(model, args):
+    Nx = 20
+    Nt = 2000
+    tspace = np.linspace(model.lb[0], model.ub[0], Nx + 1)
+    xspace = np.linspace(model.lb[1], model.ub[1], Nt + 1)
+    T, X = np.meshgrid(tspace, xspace)
+    Xgrid = np.vstack([T.flatten(), X.flatten()]).T
+    
+    upred = model.model(Xgrid) 
+    U = upred.numpy().reshape(Nx+1, Nt+1)
+    # fig, ax = plt.subplots()
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+
+    # ax.contourf(T, X, U, cmap = 'hot')
+    # plt.show()
+    ax.plot_surface(X, T, U)
+    plt.show()
+
+def NN_diffusion_error(model, args):
+    N = args.num_train_iter
+    # Training
+    loss_hist = []
+    loss = 0
+    pbar = tqdm(range(N + 1), desc = 'Training progressions')#, desc=f"eta: {loss:.6f}, lambda: {lmb:.6f}. Training")
+    for _ in pbar:
+        loss = model.train_step()
+
+        loss_hist.append(loss.numpy())
+
+    # Plotting
+    fig, ax = plt.subplots()
+    ax.plot(loss_hist)
+
+    title = 'Error of neural network during training'
+    xlabel = 'iterations'
+    ylabel = 'error'
+    set_ax_info(ax, xlabel, ylabel, title=title)
+
+    fname = 'NN_diffusion_error_10000'
+    show_save(fig, fname, args)
+

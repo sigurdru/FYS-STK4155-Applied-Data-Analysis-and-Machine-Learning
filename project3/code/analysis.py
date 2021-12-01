@@ -1,7 +1,10 @@
 import numpy as np
+from tqdm import tqdm
 import plot
-
+from PINN import PINN
 import matplotlib.pyplot as plt
+import tensorflow as tf
+
 
 def IC(x):
     """
@@ -20,7 +23,7 @@ def forward_euler(args):
         C = args.stability_criterion 
         args.t_step = C * dx**2 
     else:
-        C = dt/dx**2 
+        C = args.t_step/dx**2 
     dt = args.t_step
 
     BC_l = args.left_boundary_condition
@@ -52,7 +55,9 @@ def forward_euler(args):
         When_to_plot = Nt//Np
         When_to_plot = np.arange(0, Nt, When_to_plot)
 
-    for n in range(Nt):
+    pbar = tqdm(range(Nt), desc = 'Training progressions')
+    print(Nt)
+    for n in pbar:
         if n in When_to_plot:
             # Store values for plotting 
             u_m_final[n] = u_m.copy()
@@ -83,55 +88,32 @@ def neural_network(args):
     args:
         args (argparse): Information handled by the argparser 
     """
-    #Importing stuff from argparse
-    T = args.tot_time
-    dx = args.x_step
-    dt = args.t_step
-    BC_l = args.left_boundary_condition
-    BC_r = args.right_boundary_condition
-    Np = args.num_plots
-    #defining stuff
-    L = 1
-    Nx = int(round(L/dx))
-    Nt = int(round(T/dt))
-    x = np.linspace(0, L, Nx+1)
-    t = np.linspace(0, T, Nt+1)
-    u = np.zeros(len(x))  # Solution at new time step (unknown)
-    u_m = np.zeros(len(x))  # Solution at current time step (known)
-    u_m_final = np.zeros((len(x), Np))
-    u_m = IC(x)
+    # Setup of Neural Network
+    #set default values
+    tmin = 0.
+    xmin = 0.
+    xmax = 1.
 
+    # Import stuff from argparse
+    tmax = args.tot_time
+    DTYPE = args.datatype
+    N_0 = args.num_initial_points
+    N_b = args.num_boundary_points
+    N_r = args.num_train_points
+    num_hidden_layers = args.num_hidden_layers
+    num_neurons_per_layer = args.num_neurons_per_layer
+    activation = args.activation_function
 
-# def assert_local_error(u, x, t, t_idx):
-#     u_e = u_exact(x, t[t_idx])
-#     error = np.abs(u - u_e).max()
-#     tol = 1e-8
-#     assert error < tol, f'Error {error} not less than tolerance {tol}.'
-
-# def total_integrated_error(u, x, t):
-#     dt = t[1] - t[0]
-
-#     E = 0
-#     for n in range(len(t)):
-#         u_e = u_exact(x, t[n])
-#         e2 = np.sum((u[n] - u_e)**2)
-#         E += e2
+    NN = PINN(args = args, DTYPE=DTYPE,
+            N_0 = N_0, N_b = N_b, N_r = N_r,
+            tmin = tmin, tmax = tmax, xmin = xmin, xmax = xmax,
+            num_hidden_layers = num_hidden_layers, num_neurons_per_layer = num_neurons_per_layer,
+            activation = activation)
+    NN.model.summary()
     
-#     E *= dt 
-#     return np.round(np.sqrt(E), 3)
-
-# def test_space_steps():
-#     """Tests numerical scheme for time step dx=1/10
-#     and dx=1/100 and compares with analytical solution."""
-#     L = 1
-#     T = 0.5
-#     for dx in 0.1, 0.01:
-#         dt = 0.5*dx**2 # Satisfies stability criteria
-#         #u, x, t = forward_euler(L, T, IC, 0, 0, dx, dt, user_action=plot_sols)
-#         u, x, t = forward_euler(L, T, IC, 0, 0, dx, dt, user_action=store_solution)
-
-#         E = total_integrated_error(u_store, x, t)
-#         print(f'Total integrated error for dx={dx}:', E)
+    # plot.testing_data(NN, args)
+    # plot.NN_diffusion_solution(NN, args)
+    plot.NN_diffusion_error(NN, args)
 
 
 if __name__ == '__main__':
