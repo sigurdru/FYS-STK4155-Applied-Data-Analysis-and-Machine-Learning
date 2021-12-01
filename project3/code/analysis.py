@@ -111,9 +111,18 @@ def neural_network(args):
             activation = activation)
     NN.model.summary()
     
-    # plot.testing_data(NN, args)
+    N = args.num_train_iter
+    # Training
+    loss_hist = []
+    loss = 0
+    pbar = tqdm(range(N + 1), desc = 'Training progressions')#, desc=f"eta: {loss:.6f}, lambda: {lmb:.6f}. Training")
+    for _ in pbar:
+        loss = NN.train_step()
+        loss_hist.append(loss.numpy())
+
+    plot.testing_data(NN, args)
+    plot.NN_diffusion_error(loss_hist, args)
     # plot.NN_diffusion_solution(NN, args)
-    plot.NN_diffusion_error(NN, args)
 
 
 if __name__ == '__main__':

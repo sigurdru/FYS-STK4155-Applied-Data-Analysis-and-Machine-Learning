@@ -136,8 +136,8 @@ def testing_data(model, args):
     ax.scatter(t_r, x_r, c='b', marker='.', alpha=0.1)
     
     title = 'Points where we will train the network'
-    xlabel = 'x'
-    ylabel = 't'
+    xlabel = 't'
+    ylabel = 'x'
     set_ax_info(ax, xlabel, ylabel, title=title)
     
     fname = 'training_points'
@@ -161,17 +161,7 @@ def NN_diffusion_solution(model, args):
     ax.plot_surface(X, T, U)
     plt.show()
 
-def NN_diffusion_error(model, args):
-    N = args.num_train_iter
-    # Training
-    loss_hist = []
-    loss = 0
-    pbar = tqdm(range(N + 1), desc = 'Training progressions')#, desc=f"eta: {loss:.6f}, lambda: {lmb:.6f}. Training")
-    for _ in pbar:
-        loss = model.train_step()
-
-        loss_hist.append(loss.numpy())
-
+def NN_diffusion_error(loss_hist, args):
     # Plotting
     fig, ax = plt.subplots()
     ax.plot(loss_hist)
@@ -182,5 +172,6 @@ def NN_diffusion_error(model, args):
     set_ax_info(ax, xlabel, ylabel, title=title)
 
     fname = 'NN_diffusion_error_10000'
+    print(f'Error after last iteration: {loss_hist[-1]}')
     show_save(fig, fname, args)
 
