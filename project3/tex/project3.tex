@@ -152,6 +152,8 @@ The loss function converges towards zero for the optimal parameters $\theta$, in
 
 \section{Method}
 \subsection*{Unit testing}
+\textcolor{red}{Burde vi flytte resultatene fra unit testen i appendix?}
+
 Before the numerical explicit scheme is applied to a particular problem, it is important to test that the discretized equations return expected results. Unit tests are constructed to test the implementation. This is done by manually calculating the solution of the first two time steps given the initial condition, and comparing the result with that obtained by the numerical scheme. Since the same recursive formula is used for all time steps, it is sufficient to test the two first time steps. To avoid too much computations we choose five equally sized intervals between $x=0$ and $x=L=1$, that is $\Delta x = 0.2$. The time step is set to $\Delta t = 0.01$, ensuring stability.
 For the first time step $j=1$, that is $t=\Delta t$, we have the following two boundary values and four interior points
 
@@ -191,35 +193,42 @@ The forward euler scheme gives the following result for the second time step
 \[ (0.,\:         0.48088805,\: 0.77809321,\: 0.77809321,\: 0.48088805,\: 0.        ) \]
 Once again, the two approaches provide the same result up to machine precision. Thus, the internal functionality of forward euler is validated. It remains to verify the accuracy of the scheme by comparing it with the analytical solution of the diffusion equation \ref{eq:diffusion_equation_1D} with provided initial and boundary conditions.
 
-\textcolor{red}{Burde man heller skrive en mer kompakt metode for oppdatering, og deretter ha resultatene i tabell? Man kan ha én rad for manuell og én for numerisk, med i-verdier på kolonnene. Da blir det mye mer kompakt. Burde det forresten være i resultater?}
+\textcolor{red}{Metoden kan skrives mer kompakt og tallene kan legges inn i én tabell.}
 
 \subsection*{Neural network setup}
-\textcolor{red}{Sigurd: Skriv hvordan du setter opp neural network her. Skriv også hva du plotter (MSE) og hvilke ting ved NN du skal teste, og hvilke du ikke skal teste. Da kan vi bruke seksjonen under til å forklare hvordan vi studerer resultater for både Euler og NN, og hvordan vi skal sammenlikne}
+\textcolor{red}{Sigurd: Skriv hvordan du setter opp neural network her. Skriv også hva du kommer til å teste (dybde) og hva du ikke skal teste.}
+
+\textcolor{red}{Vetle og Vetle tenker at det er fint å bruke loss for å finne beste NN, og når det er funnet så regner vi ut MSE o.l. med metoden under for sammenlikning.}
 
 \subsection*{Accuracy assessment}
-The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution? To address this we compute the deviation of the numerical solution to the analytical solution for two different mesh resolutions in space, $\Delta x=0.1$ and $\Delta x = 0.01$. For comparison purposes the time step is adjusted in each case to ensure stability, and is defined as $\Delta t = 0.5\cdot \Delta x^2$. The applied error measure at a given time step is simply the maximum absolute difference between the numerical solution $u$ and the analytical solution $u_e$ across the entire spatial domain. \textcolor{red}{Skal det ikke være max i ligningen under?}
-\[ e^n = \argmax_{i \in [0,N_x]} |u_i^n - u_{e,i}^n| \]
+The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution and how does it compare to the neural network? To address these questions we will present some concrete methods for studying the solvers.
 
-The total accumulated error is given by
-\[ E = \sum_{n=1}^N e^n, \]
-which is the error measure to be used when testing how well the numerical solution approximates the analytical solution. \textcolor{red}{Er det likningen over som er brukt for resultatene i tabell 1? - Ja, men mulig vi fjerner den siden tabell 1 maa skrives om (verdiene skal heller vere MSE)}
+As discussed in the theory section, following equation \eqref{eq:stability}, $\alpha=0.5$ produce stable solutions for the diffusion equation. Throughout this report we will therefore use a time step of $\Delta t = \alpha \Delta x^2 = 0.5\cdot \Delta x^2$ for different choices of spatial resolution, and not consider other stability factors. We will limit our study to two spatial resolutions, namely $\Delta x = 0.1$ and $\Delta x = 0.01$.  
 
-We will also study how the error evolves over time. To do this we plot the largest absolute value of the error at $50$ different times \textcolor{red}{Burde vi ikke heller bruke summen av feilen fremfor max her? - Jo det burde vi. Vi holder oss konsistent til MSE.}. We expect the error to be zero at $t=0$, which decreases up to a certain point. Since the diffusion equation approaches $u(x,t)=0$ as $t$ increases, we expect the error to decrease towards the end. We choose $\Delta x=0.01$ for this analysis, with $\Delta t$ calculated with the stability criterion.  
+The first analysis we perform is the time evolution of the mean squared error (MSE) of the forward Euler solution. The MSE at a given time step, $j$, is given as 
+\begin{align} \label{eq:MSE}
+	\mathrm{MSE_j} = \frac{1}{N}\sum_{i=0}^N (u_i^j - u_{e,i}^j)^2 
+\end{align}
+where $u_e$ denotes the analytical solution. We expect the MSE to be zero initially, as numerical solution for the first time step is simply the initial condition. Proceeding, we expect an increasing MSE up to a certain point. Our boundary conditions results in the diffusion equation approaching $u(x,t)=0$ as $t$ increases, causing the MSE to eventually decline after a certain time. Combined with the unit tests, this serves as a simple method of validating our result.  
+\textcolor{red}{Skal vi plotte dette for NN også?}
 
-As a final test, we would like to study the difference between the analytical and numerical solution at two specific times. We choose the times $t_1=0.1$ and $t_2=0.5$, where the solution $u(x,t_1)$ behaves relatively smooth while still being significantly curved. For $t_2$ we get $u(x,t_2)<0.01$, i.e. a solution that is almost linear. These two time periods will serve as the foundation for comparing the performance of our explicit numerical scheme to that of a neural network. During this initial analysis, we will plot the mean squared error 
+To proceed, we will study the solutions at two different times, $t_1$ and $t_2$ for both $\Delta x = 0.1$ and $\Delta x = 0.01$. We choose $t_1=0.1$ and $t_2=0.5$, where $u(x,t_1)$ is significantly curved and $u(x,t_2)$ is almost linear. These times will serve as the foundation for comparing the performance of our explicit numerical solver to that of the neural network. With the forementioned time periods and spatial resolutions, we compare the MSE of the two models, using equation \eqref{eq:MSE}. 
 
-$$ \frac{1}{N} \sum_{i=0}^{N-1} (u_i^n - u_{e,i}^n)^2 $$
+As a final study, we would like to plot the absolute difference between the numerical solutions and the analytical one for both $t_1$ and $t_2$. 
+\begin{align} \label{eq:absolute_difference}
+	\Delta u_i^n = u_i^n - u_{e,i}^n
+\end{align}
+Our main purpose of this is to see whether the neural network can circumvent one of the major drawbacks of the forward Euler scheme, namely the error caused by the discrete time steps advancing the solution more than it should. Solving the diffusion equation with forward Euler, we expect equation \eqref{eq:absolute_difference} to yield a negatively curved plot, with the boundaries being zero and the largest error occuring at $x=L/2$. This is due to the discretized solver advancing the solution by too much at each time step, affecting the succeeding calculations throughout the simulation. The biased error of the forward Euler scheme will cause big problems for more complex differential equations, where solutions don't converge to a stationary state. One major advantage of using neural networks will thus be if it yields unbiased errors that doesn't propagate throughout the simulation. \textcolor{red}{Kanskje litt dårlig forklart over, så skriv gjerne om}
 
-at $t_1$ and $t_2$ \textcolor{red}{using both $\Delta x=0.1$ and $\Delta x=0.01$}, where $\Delta t$ is calculated in the same way as before. This allows us to check whether the relative difference for the two mesh resolutions are identical, which we expect due to the fixed value of $\alpha$. We expect the difference between the numerical and analytical solutions at the two times to be negative for the explicit numerical scheme, due to discrete time steps advancing our model too much at each iteration. We repeat this analysis for the neural network as well and compare the two models. 
 
-\par For the neural network, the total error is given by the sum of squared residuals \eqref{eq:residual}. This accumulates the error in the approximated solution for each time step, just as is done for the error in forward euler. As a result, one can make a feasible comparison of the errors.
-
-\textcolor{red}{Hele seksjonen over kan skrives litt om når vi har fått på plass alt av resultater vi skal ha med etc.}
 
 \subsection*{Eigenvalues}
 TBD 
 
 \section{Results}
+
+\subsection*{Neural network}
+\textcolor{red}{Sigurd: Resultater fra NN testing}
 
 \subsection*{Error of Forward Euler scheme}
 
