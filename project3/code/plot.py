@@ -106,11 +106,12 @@ def MSE_FE(x, t, u, args):
 
     ax.plot(t, mse)
 
-    title = 'MSE of forward euler for each time step,' + '\n' 
-    title += f'with stability criteria ${round(args.t_step/args.x_step**2, 2)}$'
+    title = r'MSE of forward euler.' + '\n'
+    title += r'$\alpha={}$, '.format(args.stability_criterion) 
+    title += r'$\Delta x$ = ${}$'.format(args.x_step)
     xlabel = 't'
     ylabel = 'Error'
-    fname = 'MSE_FE'
+    fname = r'MSE_FE_dx_{}'.format(str(args.x_step).replace('.', ''))
 
     set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
     fig.set_tight_layout(True)
@@ -131,7 +132,7 @@ def error_x(x, t, u, args):
     title += 'at two time levels, using $\Delta x={}$'.format(args.x_step)
     xlabel = 'x'
     ylabel = 'Absolute error'
-    fname = r'error_FE_x_dx_{}'.format(args.x_step)
+    fname = r'error_FE_x_dx_{}'.format(str(args.x_step).replace('.', ''))
 
     set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
     fig.set_tight_layout(True)

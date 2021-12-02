@@ -223,30 +223,32 @@ TBD
 
 \subsection*{Error of Forward Euler scheme}
 
-To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the accumulated maximum absolute error, as described in Methods. \textcolor{red}{Er det lurere å kanskje ta summen istedenfor maxverdi? Er kanskje bedre for å sammenligne euler med NN? - Ja, vi maa endre til MSE.}
-
-\begin{table}[h]
-	\centering
-	\begin{tabular}{|l|l|l|l|}
-		\hline
-		\textbf{n}      & \textbf{5} & \textbf{10} & \textbf{50} \\ \hline
-		$\Delta x=0.1$  & 0.0061     & 0.0155       & 0.0838       \\ \hline
-		$\Delta x=0.01$ & 6.073$\cdot 10^{-5}$      & 1.536$\cdot 10^{-4}$       &   8.302$\cdot 10^{-4}$     \\ \hline
-	\end{tabular}
-\caption{Accumulated maximum absolute error between numerical solution and analytical solution of the 1D diffusion equation. The test is performed for two different spatial resolutions and for three number of time steps.}
-\label{tab:errors}
-\end{table}
-
-The test of accumulated error for $\Delta x=0.1$ and $\Delta x=0.01$ for different number of time steps $n$ is shown in Table \ref{tab:errors}. The accumulated error obviously increases when evaluating the error for more time steps because more individual errors are accumulated to the total error. Another feature is that reducing the spatial step $\Delta x$ significantly reduces the accumulated error. For instance, from Table \ref{tab:errors} we have, for $n=50$, a ratio of $0.838/8.302\cdot 10^{-4}=100.94$ for the two step sizes. Approximately the same factor is reproduced by the other time steps $n$ as well. This shows that reducing $\Delta x$ by a factor of 10 will reduce the accumulated error by a factor of 100. Hence, refining the spatial resolution will significantly improve the performance of the forward euler scheme. The results strongly indicate that the numerical solution converges to the analytical solution as $\Delta x \rightarrow 0$. \textcolor{red}{Skyldes ikke dette stability=0.5, siden $\Delta t\propto \Delta x^2$? Burde vi kommentere det? - Vi kan nevne at stability holdes fixed paa 0.5, slik at $\Delta t$ automatisk tilpasses. Men det gjelder uansett at naar $\Delta x \rightarrow 0$ saa vil feilen gaa mot null, fordi beregningen av gradienten blir mer presis.}
+To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the mean squared error to compare the approximated solutions with the analytical solution, both for forward euler and the neural network. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t=0.1$ and quickly reduces thereafter. Already at $t=0.5$ the MSE is converging towards zero. \textcolor{red}{Include analysis of Figure \ref{fig:FE_MSE} in beginning of discussion.}
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.5]{../output/plots/error_FE}
-	\caption{Maximum absolute error calculated for 50 uniform time steps from start to end, using $\Delta x=0.01$ and time step $\Delta t$ dictated by the stability criterion \ref{eq:stability}.}
-	\label{fig:error_dx001_n50}
+	\includegraphics[scale=0.5]{../output/plots/MSE_FE_dx_001.pdf}
+	\caption{Mean squared error of approximated solution by forward euler, using $\Delta x=0.01$ and time step $\Delta t$ dictated by the stability criterion \ref{eq:stability}.}
+	\label{fig:FE_MSE}
 \end{figure}
 
-\par A plot of the maximum absolute difference between the numerical and analytical solution for $\Delta x=0.01$ is shown in Figure \ref{fig:error_dx001_n50}. The time step is chosen to give a stability factor $\alpha=0.5$. Notice that the error for time step $n=0$ is zero. This is because the numerical solution for the first time step is simply the initial condition, yielding a perfect correspondance with the analytical solution. As time proceeds, the error quickly increases and reaches a maximum at around time $t=0.1$. This time step is early in the diffusion process, where the solution changes rather quickly. The forward euler scheme is first order accurate in time, $O(\Delta t)$, and second order accurate in space, $O(\Delta x^2)$, implying that the numerical solution is more sensitive to the temporal evolution than the spatial evolution. Hence, the forward euler scheme will produce larger errors for the initial time levels due to the rapid change in solution. At later time stages, after the maximum around $\Delta t=0.1$, the absolute error seems to decrease logarithmically. As the time approaches the end of the simulation, there is hardly any remaining diffusion as the solution is approximately linear. Despite being first order accurate in time, the forward euler scheme is able to reprocude this slowly changing solution with a high accuracy. Figure \ref{fig:error_dx001_n50} verifies this behaviour, illustrating the error converging to zero sufficiently deep into the diffusion process.
+Figure \ref{fig:NN_MSE} shows the MSE from the neural network with the architecture that provided best results. \textcolor{red}{Sigurd: Legg til MSE plottet her for det beste nettverket.}
+
+Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
+
+
+\begin{table}[]
+	\begin{tabular}{l|ll|ll|}
+		\cline{2-5}
+		& \multicolumn{2}{l|}{\textbf{$\Delta x=0.1$}}           & \multicolumn{2}{l|}{\textbf{$\Delta x=0.01$}}           \\ \cline{2-5} 
+		& \multicolumn{1}{l|}{\textbf{FE}}         & \textbf{NN} & \multicolumn{1}{l|}{\textbf{FE}}          & \textbf{NN} \\ \hline
+		\multicolumn{1}{|l|}{\textbf{$t_1=0.1$}} & \multicolumn{1}{l|}{$1.72\cdot 10^{-5}$} &             & \multicolumn{1}{l|}{$1.81\cdot 10^{-9}$}  &             \\ \hline
+		\multicolumn{1}{|l|}{\textbf{$t_2=0.5$}} & \multicolumn{1}{l|}{$1.50\cdot 10^{-7}$} &             & \multicolumn{1}{l|}{$1.69\cdot 10^{-11}$} &             \\ \hline
+	\end{tabular}
+\caption{MSE as function of spatial step $\Delta x$ for two different time levels, for forward euler scheme and neural network. Forward euler is abbreviated as FE and neural network as NN.}
+\label{tab:MSE_compare}
+\end{table}
+
 
 \subsection*{Error of Neural Network}
 
@@ -260,6 +262,15 @@ Figure \ref{fig:error_NN_10000} shows the error of the neural network when appro
  
 
 \section{Discussion}
+
+\subsection*{Performance of Forward Euler}
+Figure \ref{fig:FE_MSE} verifies that simulating the forward euler scheme of the diffusion equation with spatial step $\Delta x = 0.01$ yields an excellent correspondance between the numerical and analytical solution. The maximum error is obtained at an early time step, around $\Delta t = 0.1$. For time levels beyond this, the MSE decreases exponentially and eventually converges towards zero. Notice that the error is exactly zero initially, because the numerical scheme has enforced the solution at the initial time step to satisfy the initial condition from the analytical solution.
+\par The shape of the plot is in good correspondance with what was initially expected, as elaborated on in Methods. The large initial increase of the MSE is a result of the curved initial solution. The spatial gradients are significant and the approximation with finite differences becomes less accurate.
+In the beginning of the diffusion process, for low $t$, the solution changes rather quickly. The forward euler scheme is first order accurate in time, $O(\Delta t)$, and second order accurate in space, $O(\Delta x^2)$, implying that the numerical solution is more sensitive to the temporal evolution than the spatial evolution. Hence, the forward euler scheme will produce larger errors for the initial time levels due to the rapid change in solution \cite{Linge2017}.
+\par After time $t=0.1$ the MSE decreases. This can be explained by the discretization parameters $\Delta t$ and $\Delta x$. The magnitude of the gradients are diminished because the solution becomes more linear and less curved. As a result, the solution changes more slowly, allowing the finite difference scheme to approximate the changes more accurately both spatially and temporally. Eventually, the exact solution is approximately constant at zero. In this case, the gradients of the solution are indiscernible and the numerical scheme is able to approximate the solution with machine precision. Figure \ref{fig:FE_MSE} illustrates this by the MSE converging towards zero sufficiently deep into the diffusion process.
+
+\subsection*{Performance of neural network}
+
 \subsection*{Potential for solving differential equations}
 The forward euler method and neural networks are two quite different methods for solving differential equations. The former relies on discretization of the derivative to arrive at an explicit recursive set of equations to solve for each time step. The latter uses the residual error from the approximation as a basis for backpropagation to update weights and biases to improve the approximation to the actual solution. Figure \ref{fig:error_NN_40000} visualizes how bad the approximated solution of the initial run of the neural network is. Just after a few iterations though, the error decreases tremendously and goes below 0.083 (which is the total error obtained from forward euler) after around 100 iterations. After this, the total error fluctuates mildly but eventually converges towards zero.
  
