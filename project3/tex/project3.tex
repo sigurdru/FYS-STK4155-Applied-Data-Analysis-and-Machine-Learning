@@ -155,7 +155,7 @@ The loss function converges towards zero for the optimal parameters $\theta$, in
 \textcolor{red}{Burde vi flytte resultatene fra unit testen i appendix?}
 
 Before the numerical explicit scheme is applied to a particular problem, it is important to test that the discretized equations return expected results. Unit tests are constructed to test the implementation. This is done by manually calculating the solution of the first two time steps given the initial condition, and comparing the result with that obtained by the numerical scheme. Since the same recursive formula is used for all time steps, it is sufficient to test the two first time steps. To avoid too much computations we choose five equally sized intervals between $x=0$ and $x=L=1$, that is $\Delta x = 0.2$. The time step is set to $\Delta t = 0.01$, ensuring stability.
-For the first time step $j=1$, that is $t=\Delta t$, we have the following two boundary values and four interior points
+For time step $j$, that is $t=j\Delta t$, we have the following two boundary values and four interior points
 
 \begin{align*}
 	u_0^1 &= u_5^1 = 0 \\
@@ -163,37 +163,9 @@ For the first time step $j=1$, that is $t=\Delta t$, we have the following two b
 	&= 0.05u_{i+1}^0 + 0.9u_i^0 + 0.05u_{i-1}^0
 \end{align*}
 
-Using the initial condition $u_*^0 = \big(\sin(0),\:\sin(0.2\pi),\:\sin(0.4\pi),\:\sin(0.6\pi), \:\sin(0.8\pi),\:\sin(\pi)\big)$, we get
+The initial condition used is $u_*^0 = \big(\sin(0),\:\sin(0.2\pi),\:\sin(0.4\pi),\:\sin(0.6\pi), \:\sin(0.8\pi),\:\sin(\pi)\big)$. If the results of the code match those manually calculated up to machine precision, it verifies the internal functionality of our implementation of forward euler. The result of the unit test is provided in Table \ref{tab:unit_test} in Appendix.
 
-\begin{align*}
-	u_0^1 &= 0 \\
-	u_1^1 &= 0.531656755 \\
-	u_2^1 &= 0.8602387 \\
-	u_3^1 &= 0.8602387 \\
-	u_4^1 &= 0.531656755 \\
-	u_5^1 &= 0
-\end{align*}
 
-The forward euler scheme prints out the following values for the first time step
-\[ (0.,\:         0.53165676,\: 0.8602387,\:  0.8602387,\:  0.53165676,\: 0.        ) \]
-Hence, the result from forward euler is equal to the manual calulations up to machine precision.
-
-\par Using the values from the first time step, we can calculate the solution at second time step. The recursive formula makes the manual calculations straightforward.
-
-\begin{align*}
-	u_0^2 &= 0 \\
-	u_1^2 &= 0.480888053 \\
-	u_2^2 &= 0.778093215 \\
-	u_3^2 &= 0.778093215 \\
-	u_4^2 &= 0.480888053 \\
-	u_5^2 &= 0
-\end{align*}
-
-The forward euler scheme gives the following result for the second time step
-\[ (0.,\:         0.48088805,\: 0.77809321,\: 0.77809321,\: 0.48088805,\: 0.        ) \]
-Once again, the two approaches provide the same result up to machine precision. Thus, the internal functionality of forward euler is validated. It remains to verify the accuracy of the scheme by comparing it with the analytical solution of the diffusion equation \ref{eq:diffusion_equation_1D} with provided initial and boundary conditions.
-
-\textcolor{red}{Metoden kan skrives mer kompakt og tallene kan legges inn i én tabell.}
 
 \subsection*{Neural network setup}
 \textcolor{red}{Sigurd: Skriv hvordan du setter opp neural network her. Skriv også hva du kommer til å teste (dybde) og hva du ikke skal teste.}
@@ -232,7 +204,7 @@ TBD
 
 \subsection*{Error of Forward Euler scheme}
 
-To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the mean squared error to compare the approximated solutions with the analytical solution, both for forward euler and the neural network. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t=0.1$ and quickly reduces thereafter. Already at $t=0.5$ the MSE is converging towards zero. \textcolor{red}{Include analysis of Figure \ref{fig:FE_MSE} in beginning of discussion.}
+To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the mean squared error to compare the approximated solutions with the analytical solution, both for forward euler and the neural network. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t=0.1$ and quickly reduces thereafter. Already at $t=0.5$ the MSE is converging towards zero.
 
 \begin{figure}[h]
 	\centering
@@ -261,24 +233,26 @@ Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neur
 
 \subsection*{Error of Neural Network}
 
-Figure \ref{fig:error_NN_10000} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases extremely fast - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes agains. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
+\textcolor{red}{Basert paa gammel figur. Sigurd: kanskje dette maa skirves om, avhengig av de endelige resultatene dine.}
+Figure \ref{fig:error_NN_10000} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases considerably - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes again. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
 
-\par \textcolor{red}{PUT THIS IN DISUSSION?:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer [\textcolor{red}{https://arxiv.org/abs/1412.6980}]. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
 \subsection*{Comparison of error}
 
-\textcolor{red}{IS THIS THE RIGHT WAY TO COMPARE ERROR ??}
  
 
 \section{Discussion}
 
 \subsection*{Performance of Forward Euler}
-Figure \ref{fig:FE_MSE} verifies that simulating the forward euler scheme of the diffusion equation with spatial step $\Delta x = 0.01$ yields an excellent correspondance between the numerical and analytical solution. The maximum error is obtained at an early time step, around $\Delta t = 0.1$. For time levels beyond this, the MSE decreases exponentially and eventually converges towards zero. Notice that the error is exactly zero initially, because the numerical scheme has enforced the solution at the initial time step to satisfy the initial condition from the analytical solution.
+Figure \ref{fig:FE_MSE} verifies that simulating the forward euler scheme of the diffusion equation with spatial step $\Delta x = 0.01$ yields an excellent correspondance between the numerical and analytical solution. The maximum error is obtained at an early time step, around $\Delta t = 0.1$. For time levels beyond this, the MSE decreases exponentially and eventually converges towards zero. Notice that the error is exactly zero initially, because the numerical scheme has enforced the solution at the initial time step to satisfy the initial condition from the analytical solution. The maximum error is on the order of $10^{-9}$, yielding an excellent fit to the exact solution. One would not be able to distinguish the numerical solution from the exact solution if they were plotted together.
+
 \par The shape of the plot is in good correspondance with what was initially expected, as elaborated on in Methods. The large initial increase of the MSE is a result of the curved initial solution. The spatial gradients are significant and the approximation with finite differences becomes less accurate.
 In the beginning of the diffusion process, for low $t$, the solution changes rather quickly. The forward euler scheme is first order accurate in time, $O(\Delta t)$, and second order accurate in space, $O(\Delta x^2)$, implying that the numerical solution is more sensitive to the temporal evolution than the spatial evolution. Hence, the forward euler scheme will produce larger errors for the initial time levels due to the rapid change in solution \cite{Linge2017}.
 \par After time $t=0.1$ the MSE decreases. This can be explained by the discretization parameters $\Delta t$ and $\Delta x$. The magnitude of the gradients are diminished because the solution becomes more linear and less curved. As a result, the solution changes more slowly, allowing the finite difference scheme to approximate the changes more accurately both spatially and temporally. Eventually, the exact solution is approximately constant at zero. In this case, the gradients of the solution are indiscernible and the numerical scheme is able to approximate the solution with machine precision. Figure \ref{fig:FE_MSE} illustrates this by the MSE converging towards zero sufficiently deep into the diffusion process.
 
 \subsection*{Performance of neural network}
+
+\par \textcolor{red}{Et forsøk paa aa forklare fluktuasjonene i MSE for NN:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer [\textcolor{red}{https://arxiv.org/abs/1412.6980}]. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
 \subsection*{Potential for solving differential equations}
 The forward euler method and neural networks are two quite different methods for solving differential equations. The former relies on discretization of the derivative to arrive at an explicit recursive set of equations to solve for each time step. The latter uses the residual error from the approximation as a basis for backpropagation to update weights and biases to improve the approximation to the actual solution. Figure \ref{fig:error_NN_40000} visualizes how bad the approximated solution of the initial run of the neural network is. Just after a few iterations though, the error decreases tremendously and goes below 0.083 (which is the total error obtained from forward euler) after around 100 iterations. After this, the total error fluctuates mildly but eventually converges towards zero.
@@ -294,6 +268,27 @@ The forward euler method and neural networks are two quite different methods for
 
 
 \section{Conclusion}
+
+
+\section*{Appendix}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{l|ll|ll|}
+		\cline{2-5}
+		& \multicolumn{2}{l|}{\textbf{$j=1$}}                 & \multicolumn{2}{l|}{\textbf{$j=2$}}                  \\ \cline{2-5} 
+		& \multicolumn{1}{l|}{\textbf{Manual}} & \textbf{Code} & \multicolumn{1}{l|}{\textbf{Manual}} & \textbf{Code} \\ \hline
+		\multicolumn{1}{|l|}{$u_0^j$} & \multicolumn{1}{l|}{0}               & 0             & \multicolumn{1}{l|}{0}               & 0             \\ \hline
+		\multicolumn{1}{|l|}{$u_1^j$} & \multicolumn{1}{l|}{0.531656755}     & 0.53165676    & \multicolumn{1}{l|}{0.480888053}     & 0.48088805    \\ \hline
+		\multicolumn{1}{|l|}{$u_2^j$} & \multicolumn{1}{l|}{0.8602387}       & 0.8602387     & \multicolumn{1}{l|}{0.778093215}     & 0.77809321    \\ \hline
+		\multicolumn{1}{|l|}{$u_3^j$} & \multicolumn{1}{l|}{0.8602387}       & 0.8602387     & \multicolumn{1}{l|}{0.778093215}     & 0.77809321    \\ \hline
+		\multicolumn{1}{|l|}{$u_4^j$} & \multicolumn{1}{l|}{0.531656755}     & 0.53165676    & \multicolumn{1}{l|}{0.480888053}     & 0.48088805    \\ \hline
+		\multicolumn{1}{|l|}{$u_5^j$} & \multicolumn{1}{l|}{0}               & 0             & \multicolumn{1}{l|}{0}               & 0             \\ \hline
+	\end{tabular}
+	\caption{Unit test of implementation of Forward Euler scheme. Results from manual calculations are compared with the output of forward euler implementation, for time steps $j=1$ ($t = \Delta t$) and $j=2$ ($t = 2\Delta t$).}
+	\label{tab:unit_test}
+\end{table}
+
 
 \bibliographystyle{plain}
 \bibliography{refs}
