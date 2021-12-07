@@ -203,6 +203,7 @@ TBD
 \textcolor{red}{Sigurd: Resultater fra NN testing}
 
 \subsection*{Error of Forward Euler scheme}
+\textcolor{red}{Fiks seksjonering og tittel}
 
 To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the mean squared error to compare the approximated solutions with the analytical solution, both for forward euler and the neural network. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t=0.1$ and quickly reduces thereafter. Already at $t=0.5$ the MSE is converging towards zero.
 
