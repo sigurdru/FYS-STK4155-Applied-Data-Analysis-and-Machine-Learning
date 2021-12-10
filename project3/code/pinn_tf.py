@@ -12,6 +12,10 @@ def g0(t, x0):
     t (array): independent time variable
     x0 (array): initial condition
     """
+    print(np.shape(x0))
+    print(np.shape(t))
+    print(np.shape(tf.einsum('ik,jl->ij', tf.exp(-t), x0)))
+    exit()
     return tf.einsum('ik,jl->ij', tf.exp(-t), x0)
 
 def gNN(t, NN_model):
@@ -93,29 +97,29 @@ if __name__ == '__main__':
     t = np.linspace(T0, T1, N).reshape(-1,1) # independent time variable (np)
     t_tf = tf.linspace(T0_tf, T1_tf, N_tf) # independent time variable (tf)
     t_tf = tf.reshape(t_tf, [-1, 1]) # Convert to tf column vector
-
+    
     Q = np.random.randint(4, size=n**2).reshape(n,n)
     A = np.asmatrix((Q.T + Q)/2) # Make symmetric matrix
     A_tf = tf.convert_to_tensor(A, dtype=tf.float64)
 
     x0 = np.random.uniform(0, 1, size=n) # intial condition - NB: must be same dimension as NN_model (nr outputs)
-    #x0 = np.array(x0) / np.linalg.norm(x0)
-    print(x0)
-    exit()
+    x0 = np.array(x0) / np.linalg.norm(x0)
     x0 = tf.convert_to_tensor(x0, dtype=tf.float64)
-    x0 = tf.reshape(x0, [-1,1])
+    x0 = tf.reshape(x0, [-1,1]) #shape (n,1)
 
-    g0_test = g0(t, x0)
-    print('g0', g0_test.shape)
+    # g0_test = g0(t, x0)
+    # print('g0', g0_test.shape)
 
     NN_model = DE_NeuralNetwork(n)
     optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
-    epochs = 2000
+
+    # epochs = 2000
+    epochs = 4
+
     print(NN_model(t_tf).shape)
 
     gNN_test = gNN(t, NN_model)
     print('gN', gNN_test.shape)
-
     # Train neural network
     for e in range(epochs):
         loss_val, loss_grad = grad(t_tf, x0, A_tf, NN_model)
@@ -129,7 +133,8 @@ if __name__ == '__main__':
     eigvals_predict = rayleigh_quotient(g, A_tf)
 
     eigvals_true, eigvec_true = np.linalg.eig(A)
-
+    print(np.shape(eigvals_predict))
+    print(np.shape(eigvals_true))
     print('Predicted eigvals:', eigvals_predict.numpy())
     print('True eigenvalues:', eigvals_true)
 
