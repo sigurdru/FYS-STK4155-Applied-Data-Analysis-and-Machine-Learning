@@ -150,6 +150,26 @@ where $\eta$ is the learning rate, which can either be constant or variable, dep
 The loss function converges towards zero for the optimal parameters $\theta$, in which case the gradient of the loss function vanishes. As a result, the parameters will hardly update anymore through gradient descent, indicating that we have reached an optimal solution.
 
 
+\subsection*{Finding eigenvalues of symmetric matrices}
+Deep neural networks are capable of solving more or less any differential equation. A particular first order ODE of interest is 
+\begin{equation}
+	\frac{dx(t)}{dt} = -x(t) + f[x(t)],
+	\label{eq:diff_eig}
+\end{equation}
+where
+\[ f(x) = [x^TxA + (1 - x^TAx)I]x \]
+where $A$ is a real symmetric matrix of shape $(n\times n)$ and $t \ge 0$ represents time. The solution of the neural network is given by $x(t)$ with dimensions $(n_t\times n)$, where $n_t$ is the number of time steps. The ODE \ref{eq:diff_eig} is applicable for finding the eigenvalues of $A$. The method closely follows that given in \cite{yi2004neural}. An equilibrium point $\tilde{x}$ of a differential equation is a solution that is stationary, that is a state where the solution doesn't change anymore, mathematically expressed as $\frac{dx}{dt} = 0$. It can be shown that the equilibrium points of \ref{eq:diff_eig} span the eigenspace of $A$, implying that the equilibrium points are precisely the eigenvectors of $A$. That is, any $\tilde{x}$ that satisfies
+\begin{align*}
+	\frac{d\tilde{x}(t)}{dt} &= -\tilde{x} + f[\tilde{x}(t)] \\
+	&= -\tilde{x} + [\tilde{x}^T\tilde{x}A + (1 - \tilde{x}^TA\tilde{x})I]\tilde{x} \\
+	&= \tilde{x}^T\tilde{x}A\tilde{x} - \tilde{x}^TA\tilde{x}\tilde{x} = 0
+\end{align*}
+is an eigenvector of $A$. The rayleigh quotient formula can then be used to find the corresponding eigenvalue, given by
+\[ \lambda = \frac{\tilde{x}^T\tilde{x}}{\tilde{x}^T A \tilde{x}} \] \\
+
+An essential question is how the neural network should be initialized. That is, what trial solution of the form \ref{eq:NN_model} should be chosen? Convergence analysis reveal that any non-zero trial solution $x(0) \in \mathcal{R}^n$ will give a solution of \ref{eq:diff_eig} that converges to an eigenvector of $A$. Moreover, if $x(0)$ is not orthogonal to the subspace spanned by the largest eigenvector $\lambda_{\mathrm{max}}$ of $A$, then the solution $x(t)$ converges to an eigenvector corresponding to $\lambda_{\mathrm{max}}$.  \\
+
+
 \section{Method}
 \subsection*{Unit testing}
 \textcolor{red}{Burde vi flytte resultatene fra unit testen i appendix?}
@@ -194,8 +214,18 @@ Our main purpose of this is to see whether the neural network can circumvent one
 
 
 
-\subsection*{Eigenvalues}
-TBD 
+\subsection*{Finding eigenvalues}
+Using the neural network model \ref{eq:diff_eig} to find the eigenvalues of a real, symmetric matrix $A$ requires a trial solution \ref{eq:NN_model} to initiate the network. The trial solution must fulfill the convergence property to guarantee that we end up with the eigenvalues. Hence, we define the initial condition $x_0 \in \mathcal{R}^n$ to be a vector of randomly generated numbers between zero and one. Since we don't know the eigenspace corresponding to the largest eigenvalue a priori, we have no guarantee that the trial solution is not orthogonal to the eigenspace corresponding to the largest eigenvalue. The probability of non-orthogonality, though, can be increased by adding random perturbations.
+
+Even though a non-zero trial solution is the only requirement for convergence, there are strategies for improving the \textit{rate} of convergence. If we have some idea or preknowledge of a solution of the differential equation, incorporating this in the trial solution helps accelerate the learning of the neural network. The ODE \ref{eq:diff_eig} is of first order with a term involving $\frac{dx}{dt}$ on one side and a term involving $x$ on the other. This is reminiscent of an exponential solution. Therefore, a smart initialization strategy of \ref{eq:NN_model} is 
+
+\begin{align*}
+	x_{\theta}(t) &= g_0(x(t)) + f[x(t),N] \\
+	&= e^{-t}x_0 + (1 - e^{-t})N(x(t))
+\end{align*}
+
+This expression fulfills the condition of a trial solution, namely that it must return the initial condition $x_0$ for time $t=0$. Once we have a trial solution we feed it to the neural network, which will calculate the gradient $\frac{dx}{dt}$ and the resulting residual of $\ref{eq:diff_eig}$. The MSE of the residual act as the loss function that is to be optimized through gradient descent. The accuracy of the final output of the neural network is assessed by comparing with the result of numpy's own eigenvalue solver. 
+
 
 \section{Results}
 
