@@ -2,6 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import plot
 from PINN import PINN
+import NN_eig
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
@@ -124,6 +125,68 @@ def neural_network(args):
     # plot.NN_diffusion_error(loss_hist, args)
     # plot.NN_diffusion_solution(NN, args)
     plot.NN_diffusion_error_timesteps(NN, args)
+
+def neural_network_eig(args):
+    """
+    Finds eigenvalues and vectors with neural network
+    args:
+        args (argparse): Information handled by the argparser 
+    """
+    n = args.dimension    # Dimension
+    T = args.tot_time     # Final time
+    
+    N = 10000   # number of time points
+    Q = np.random.uniform(0, 1, size=(n,n))
+    A = (Q.T + Q) / 2
+    x0 = np.random.uniform(0, 1, n)
+    x0 = x0 / np.linalg.norm(x0)
+    t = np.linspace(0, T, N)
+    
+    # Problem formulation for tensorflow
+    Nt = args.N_t_points   # number of time points
+    A_tf = tf.convert_to_tensor(A, dtype=tf.float64)
+    x0_tf = tf.convert_to_tensor(x0, dtype=tf.float64)
+    start = tf.constant(0, dtype=tf.float64)
+    stop = tf.constant(T, dtype=tf.float64)
+    t_tf = tf.linspace(start, stop, Nt)
+    t_tf = tf.reshape(t_tf, [-1, 1])
+    
+    # Initial model and optimizer
+    model = NN_eig.DNModel(n)
+    optimizer = tf.keras.optimizers.Adam(0.005)
+    num_epochs = 2000
+    
+    for epoch in range(num_epochs):
+        cost, gradients = NN_eig.grad(model, A, x0_tf, t_tf)
+        optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+    
+        step = optimizer.iterations.numpy()
+        if step == 1:
+            print(f"Step: {step}, " + f"Loss: {tf.math.reduce_mean(cost.numpy())}")
+        if step % 100 == 0:
+            print(f"Step: {step}, " + f"Loss: {tf.math.reduce_mean(cost.numpy())}")
+    
+    # Call models
+    s = t.reshape(-1, 1)
+    g = NN_eig.trial_solution(model, x0_tf, s)
+    eig_nn = NN_eig.ray_quo(A_tf, g)
+
+    v, w = np.linalg.eig(A)
+    v_np = np.max(v)
+    w_np = w[:, np.argmax(v)]
+    if (np.sign(w_np) != np.sign(g[-1, :])).any:
+        w_np *= -1
+
+    print('A =', A)
+    print('x0 =', x0)
+    print('Eigvals Numpy:', v)
+    print('Max Eigval Numpy', v_np)
+    print('Eigvec Numpy:', w_np)
+    print('Final Rayleigh Quotient FFNN', eig_nn.numpy()[-1])
+    print('Absolute Error FFNN:', np.abs(np.max(v) - eig_nn.numpy()[-1]))
+    print('Percent Error FFNN', 100 *
+          np.abs((np.max(v) - eig_nn.numpy()[-1]) / np.max(v)))
+    plot.plot_eig(w_np, g, eig_nn, s, v, args)
 
 
 if __name__ == '__main__':

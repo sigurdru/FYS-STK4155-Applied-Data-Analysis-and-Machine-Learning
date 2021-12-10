@@ -80,9 +80,6 @@ class DNModel(tf.keras.Model):
 
 
 # Define problem
-# negative eigs:
-# tf.random.set_seed(42)
-tf.random.set_seed(222)
 
 n = 3    # Dimension
 T = 4    # Final time

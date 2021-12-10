@@ -223,3 +223,25 @@ def NN_diffusion_error_timesteps(model, args):
     plt.show()
     print(np.mean(np.sum((upred1-uexact1)**2)))
     print(np.mean(np.sum((upred2-uexact2)**2)))
+
+def plot_eig(w_np, g, eig_nn, s, v, args):
+    fig, ax = plt.subplots()
+    ax.axhline(w_np[0], color='b', ls=':', label=f'Numpy $v_1$={w_np[0]:.5f}')
+    ax.axhline(w_np[1], color='g', ls=':', label=f'Numpy $v_2$={w_np[1]:.5f}')
+    ax.axhline(w_np[2], color='r', ls=':', label=f'Numpy $v_3$={w_np[2]:.5f}')
+
+    ax.plot(s, g[:, 0], color='b', label=f'FFNN $v_1$={g[-1, 0]:.5f}')
+    ax.plot(s, g[:, 1], color='g', label=f'FFNN $v_2$={g[-1, 1]:.5f}')
+    ax.plot(s, g[:, 2], color='r', label=f'FFNN $v_3$={g[-1, 2]:.5f}')
+    ax.set_ylabel('Components of vector, $v$')
+    ax.set_xlabel('Time, $t$')
+    ax.legend(loc='center left', bbox_to_anchor=(1.04, 0.5),
+               fancybox=True, borderaxespad=0, ncol=1)
+
+    # Plot eigenvalues
+    fig, ax = plt.subplots()
+    ax.axhline(np.max(v), color='red', ls='--')
+    ax.plot(s, eig_nn)
+    ax.set_xlabel('Time, $t$')
+    ax.set_ylabel('Rayleigh Quotient, $r$')
+    plt.show()

@@ -17,7 +17,7 @@ def parse_args(args=None):
     add_arg('-m', '--method',
             type=str,
             default='Euler',
-            choices=['Euler', 'NN'],
+            choices=['Euler', 'NN', 'Eig'],
             help='Choose which prediction method to use.',
             )
 
@@ -98,11 +98,18 @@ def parse_args(args=None):
             help='Number of iterations for training'
             )
 
-    add_arg('-model', '--existing_model',
-            type=str,
-            default='None',
-            help='If you want to use existing model, it should be placed in the folder /NNmodels'
+    add_arg('-dim', '--dimension',
+            type=int,
+            default=3,
+            help='Dimensions of matrix in eigenvalue problem'
             )
+
+    add_arg('-N', '--N_t_points',
+            type=int,
+            default=101,
+            help='Eigenvalue problem: number of timepoints'
+            )
+
 
     add_arg('-act', '--activation_function',
             type=str,
@@ -165,6 +172,9 @@ def main():
 
     if args.method == 'NN':
         analysis.neural_network(args)
+    
+    if args.method == 'Eig':
+        analysis.neural_network_eig(args)    
 
 if __name__ == "__main__":
     main()
