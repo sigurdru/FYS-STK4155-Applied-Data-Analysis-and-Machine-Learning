@@ -110,6 +110,17 @@ def parse_args(args=None):
             help='Eigenvalue problem: number of timepoints'
             )
 
+    add_arg('-eta', '--learning_rate',
+            type=float,
+            default=0.005,
+            help='Eigenvalue problem: Learning rate for Adam optimizer.'
+            )
+
+    add_arg('-epochs', '--nr_epochs',
+            type=int,
+            default=2000,
+            help='Eigenvalue problem: Number of epochs for training neural network.'
+            )
 
     add_arg('-act', '--activation_function',
             type=str,

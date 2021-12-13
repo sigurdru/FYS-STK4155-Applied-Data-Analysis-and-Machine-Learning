@@ -37,6 +37,7 @@ def show_save(fig, fname, args):
     else:
         plt.clf()
     print("\n\n")
+
 def set_ax_info(ax, xlabel, ylabel, style='plain', title=None):
     """Write title and labels on an axis with the correct fontsizes.
 
@@ -224,24 +225,50 @@ def NN_diffusion_error_timesteps(model, args):
     print(np.mean(np.sum((upred1-uexact1)**2)))
     print(np.mean(np.sum((upred2-uexact2)**2)))
 
-def plot_eig(w_np, g, eig_nn, s, v, args):
+def plot_eig(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args):
     fig, ax = plt.subplots()
-    ax.axhline(w_np[0], color='b', ls=':', label=f'Numpy $v_1$={w_np[0]:.5f}')
-    ax.axhline(w_np[1], color='g', ls=':', label=f'Numpy $v_2$={w_np[1]:.5f}')
-    ax.axhline(w_np[2], color='r', ls=':', label=f'Numpy $v_3$={w_np[2]:.5f}')
+    ax.axhline(w_np[0], color='b', ls=':', label=r'Numpy $v_1$')
+    ax.axhline(w_np[1], color='g', ls=':', label=r'Numpy $v_2$')
+    ax.axhline(w_np[2], color='r', ls=':', label=r'Numpy $v_3$')
 
-    ax.plot(s, g[:, 0], color='b', label=f'FFNN $v_1$={g[-1, 0]:.5f}')
-    ax.plot(s, g[:, 1], color='g', label=f'FFNN $v_2$={g[-1, 1]:.5f}')
-    ax.plot(s, g[:, 2], color='r', label=f'FFNN $v_3$={g[-1, 2]:.5f}')
+    ax.plot(t, eigvec_fe[:, 0], color='b', ls='--',
+            label=r'Euler $v_1$')
+    ax.plot(t, eigvec_fe[:, 1], color='g', ls='--',
+            label=r'Euler $v_2$')
+    ax.plot(t, eigvec_fe[:, 2], color='r', ls='--',
+            label=r'Euler $v_3$')
+
+    ax.plot(s, eigvec_nn[:, 0], color='b', label=r'NN $v_1$')
+    ax.plot(s, eigvec_nn[:, 1], color='g', label=r'NN $v_2$')
+    ax.plot(s, eigvec_nn[:, 2], color='r', label=r'NN $v_3$')
     ax.set_ylabel('Components of vector, $v$')
     ax.set_xlabel('Time, $t$')
-    ax.legend(loc='center left', bbox_to_anchor=(1.04, 0.5),
-               fancybox=True, borderaxespad=0, ncol=1)
+    ax.set_title('Prediction of eigenvector corresponding to \
+                largest eigenvalue', fontsize=20)
+    ax.legend(loc='lower center', fancybox=True, 
+                borderaxespad=0, ncol=3)
+    
+    fname = r'eigvec_T%i_N%i' %(args.tot_time, args.N_t_points)
+    show_save(fig, fname, args)
 
     # Plot eigenvalues
     fig, ax = plt.subplots()
     ax.axhline(np.max(v), color='red', ls='--')
-    ax.plot(s, eig_nn)
+    ax.plot(t, eigval_fe)
+    ax.plot(s, eigval_nn)
+
     ax.set_xlabel('Time, $t$')
     ax.set_ylabel('Rayleigh Quotient, $r$')
-    plt.show()
+    ax.set_title('Prediction $r_{\\mathrm{final}}$ of \
+                largest eigenvalue $\\lambda_{\\mathrm{max}}$', fontsize=20)
+    lgd_numpy = "Numpy $\\lambda_{\\mathrm{max}} \\sim$ " + \
+    str(round(np.max(v), 5))
+    lgd_euler = "Euler $r_{\\mathrm{final}} \\sim$ " + \
+        str(round(eigval_fe[-1], 5))
+    lgd_nn = "NN $r_{\\mathrm{final}} \\sim$ " + \
+        str(round(eigval_nn.numpy()[-1], 5))
+    ax.legend([lgd_numpy, lgd_euler, lgd_nn], loc='lower center',
+            fancybox=True, borderaxespad=0, ncol=1)
+
+    fname = r'eigval_T%i_N%i' %(args.tot_time, args.N_t_points)
+    show_save(fig, fname, args)

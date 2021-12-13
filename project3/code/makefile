@@ -7,6 +7,10 @@ NN_regression:
 	python3 main.py -m NN -Nh 4 -Nn 20
 	python3 main.py -m NN -Nh 2 -Nn 20
 NN_eig:
-	python3 main.py -m Eig -T 4 -dim 3
+	python3 main.py -m Eig -T 5 -dim 3
+	python3 main.py -m Eig -T 5 -N 1000
+	python3 main.py -m Eig -T 5 -N 10
+	python3 main.py -m Eig -T 5 -N 5
+	python3 main.py -m Eig -T 5 -N 1000 -eta 0.1 -epochs 50
 
-all: Euler_regression NN_regression
+all: Euler_regression NN_regression NN_eig

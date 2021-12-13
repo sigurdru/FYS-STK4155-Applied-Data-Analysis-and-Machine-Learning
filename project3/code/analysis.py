@@ -135,7 +135,7 @@ def neural_network_eig(args):
     n = args.dimension    # Dimension
     T = args.tot_time     # Final time
     
-    N = 10000   # number of time points
+    N = args.N_t_points   # number of time points (FE)
     Q = np.random.uniform(0, 1, size=(n,n))
     A = (Q.T + Q) / 2
     x0 = np.random.uniform(0, 1, n)
@@ -143,7 +143,7 @@ def neural_network_eig(args):
     t = np.linspace(0, T, N)
     
     # Problem formulation for tensorflow
-    Nt = args.N_t_points   # number of time points
+    Nt = args.N_t_points   # number of time points (NN)
     A_tf = tf.convert_to_tensor(A, dtype=tf.float64)
     x0_tf = tf.convert_to_tensor(x0, dtype=tf.float64)
     start = tf.constant(0, dtype=tf.float64)
@@ -153,8 +153,8 @@ def neural_network_eig(args):
     
     # Initial model and optimizer
     model = NN_eig.DNModel(n)
-    optimizer = tf.keras.optimizers.Adam(0.005)
-    num_epochs = 2000
+    optimizer = tf.keras.optimizers.Adam(args.learning_rate) # 0.005
+    num_epochs = args.nr_epochs # 2000
     
     for epoch in range(num_epochs):
         cost, gradients = NN_eig.grad(model, A, x0_tf, t_tf)
@@ -169,7 +169,8 @@ def neural_network_eig(args):
     # Call models
     s = t.reshape(-1, 1)
     g = NN_eig.trial_solution(model, x0_tf, s)
-    eig_nn = NN_eig.ray_quo(A_tf, g)
+    eigval_nn = NN_eig.ray_quo(A_tf, g)
+    eigvec_fe, eigval_fe = NN_eig.euler_ray_quo(A, x0, T, N)
 
     v, w = np.linalg.eig(A)
     v_np = np.max(v)
@@ -179,14 +180,16 @@ def neural_network_eig(args):
 
     print('A =', A)
     print('x0 =', x0)
-    print('Eigvals Numpy:', v)
     print('Max Eigval Numpy', v_np)
     print('Eigvec Numpy:', w_np)
-    print('Final Rayleigh Quotient FFNN', eig_nn.numpy()[-1])
-    print('Absolute Error FFNN:', np.abs(np.max(v) - eig_nn.numpy()[-1]))
-    print('Percent Error FFNN', 100 *
-          np.abs((np.max(v) - eig_nn.numpy()[-1]) / np.max(v)))
-    plot.plot_eig(w_np, g, eig_nn, s, v, args)
+    print('Final Rayleigh Quotient NN', eigval_nn.numpy()[-1])
+    print('Final Rayleigh Quotient FE', eigval_fe[-1])
+    print('Relative Error NN', 100 *
+          np.abs((np.max(v) - eigval_nn.numpy()[-1]) / np.max(v)))
+    print('Relative Error FE', 100 *
+          np.abs((np.max(v) - eigval_fe[-1]) / np.max(v)))
+
+    plot.plot_eig(w_np, g, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args)
 
 
 if __name__ == '__main__':
