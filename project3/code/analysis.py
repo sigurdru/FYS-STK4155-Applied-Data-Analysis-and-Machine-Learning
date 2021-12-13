@@ -175,8 +175,7 @@ def neural_network_eig(args):
     v, w = np.linalg.eig(A)
     v_np = np.max(v)
     w_np = w[:, np.argmax(v)]
-    if (np.sign(w_np) != np.sign(g[-1, :])).any:
-        w_np *= -1
+    w_np = np.where(np.sign(w_np) == np.sign(g[-1,:]), w_np, -w_np)
 
     print('A =', A)
     print('x0 =', x0)
