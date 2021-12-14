@@ -26,9 +26,25 @@
 \maketitle
 \pagestyle{myplain}
 
+
+\section*{To do}
+\begin{itemize}
+	\item Abstract 
+	\item Introduksjon 
+	\item Fikse dimensjonene til $x(t)$ i teoriseksjonen for egenverdi. Må samsvare med python-scriptet. Se ligning \eqref{eq:diff_eig} 
+	\item NN: Skrive metode 
+	\item NN: Finne beste NN (Resultater)
+	\item Sammenlikne NN-FE feil og performance  
+	\item Fullfør analytisk utledning av difflikning
+	\item Diskjusjon: Lese gjennom og evt. endre "Potential for solving diff-eqs"
+	\item Konklusjon
+\end{itemize}
+
+
 \section{Introduction}
 
 We will in no way answer all questions linked to the aforementioned methods. So that anyone can reproduce or continue our studies, we list all the code, results and instructions on running the code in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}{https://github.com/sigurdru/FYS-STK4155/tree/main/project3}}.
+
 
 \section{Theory}
 In the theory-section we aim to give a brief explanation of the main concepts and terminology used in this report. 
@@ -63,7 +79,7 @@ u(L,t) &= 0 \ \ t\geq 0.
 \subsection{Analytical solution}
 An analytical solution of the 1D diffusion equation can be dervied using the method of separation of variables.
 \[ u(x,t) = X(x)T(t) \]
-The solution is separated into a function $X$ only depending on the independent variable $x$, and a function $T$ only depending on the independent variable $t$. Equation \ref{eq:diffusion_equation_1D} can then be rewritten as
+The solution is separated into a function $X$ only depending on the independent variable $x$, and a function $T$ only depending on the independent variable $t$. Equation \eqref{eq:diffusion_equation_1D} can then be rewritten as
 
 \begin{align*}
 	\frac{\partial^2 X(x)T(t)}{\partial x^2} &= \frac{\partial X(x)T(t)}{\partial t} \\
@@ -160,23 +176,25 @@ Deep neural networks are capable of solving more or less any differential equati
 \end{equation}
 where
 \[ f(x) = [x^TxA + (1 - x^TAx)I]x \]
-where $A$ is a real symmetric matrix of shape $(n\times n)$ and $t \ge 0$ represents time. The solution of the neural network is given by $x(t)$ with dimensions $(n_t\times n)$, where $n_t$ is the number of time steps. The ODE \ref{eq:diff_eig} is applicable for finding the eigenvalues of $A$. The method closely follows that given in \cite{yi2004neural}. An equilibrium point $\tilde{x}$ of a differential equation is a solution that is stationary, that is a state where the solution doesn't change anymore, mathematically expressed as $\frac{dx}{dt} = 0$. It can be shown that the equilibrium points of \ref{eq:diff_eig} span the eigenspace of $A$, implying that the equilibrium points are precisely the eigenvectors of $A$. That is, any $\tilde{x}$ that satisfies
+where $A$ is a real symmetric matrix of shape $(n\times n)$ and $t \ge 0$ represents time. The solution of the neural network is given by $x(t)$ with dimensions $(n_t\times n)$, where $n_t$ is the number of time steps. The ODE \eqref{eq:diff_eig} is applicable for finding the eigenvalues of $A$. The method closely follows that of Yi et. al. (2004) \cite{yi2004neural}. An equilibrium point $\tilde{x}$ of a differential equation is a solution that is stationary, that is a state where the solution doesn't change anymore, mathematically expressed as $\frac{dx}{dt} = 0$. It can be shown that the equilibrium points of \eqref{eq:diff_eig} span the eigenspace of $A$, implying that the equilibrium points are precisely the eigenvectors of $A$. That is, any $\tilde{x}$ that satisfies
 \begin{align*}
 	\frac{d\tilde{x}(t)}{dt} &= -\tilde{x} + f[\tilde{x}(t)] \\
 	&= -\tilde{x} + [\tilde{x}^T\tilde{x}A + (1 - \tilde{x}^TA\tilde{x})I]\tilde{x} \\
 	&= \tilde{x}^T\tilde{x}A\tilde{x} - \tilde{x}^TA\tilde{x}\tilde{x} = 0
 \end{align*}
 is an eigenvector of $A$. The rayleigh quotient formula can then be used to find the corresponding eigenvalue, given by
-\[ r = \frac{\tilde{x}^T\tilde{x}}{\tilde{x}^T A \tilde{x}} \]
+\begin{align} \label{eq:rayleigh_quotient}
+	r = \frac{\tilde{x}^T\tilde{x}}{\tilde{x}^T A \tilde{x}}
+\end{align}
 
-An essential question is how the neural network should be initialized. That is, what trial solution of the form \ref{eq:NN_model} should be chosen? Convergence analysis reveal that any non-zero trial solution $x(0) \in \mathcal{R}^n$ will give a solution of \ref{eq:diff_eig} that converges to an eigenvector of $A$. Moreover, if $x(0)$ is not orthogonal to the subspace spanned by the largest eigenvector $\lambda_{\mathrm{max}}$ of $A$, then the solution $x(t)$ converges to an eigenvector corresponding to $\lambda_{\mathrm{max}}$.  \\
+An essential question is how the neural network should be initialized. That is, what trial solution of the form \eqref{eq:NN_model} should be chosen? Convergence analysis reveal that any non-zero trial solution $x(0) \in \mathcal{R}^n$ will give a solution of \eqref{eq:diff_eig} that converges to an eigenvector of $A$. Moreover, if $x(0)$ is not orthogonal to the subspace spanned by the largest eigenvector $\lambda_{\mathrm{max}}$ of $A$, then the solution $x(t)$ converges to an eigenvector corresponding to $\lambda_{\mathrm{max}}$.
 
-The differential equation \ref{eq:diff_eig} is a first order nonlinear ODE. Generally, solving a nonlinear differential equation numerically is a comprehensive process involving discretization in time followed by linearization through an iterative method (e.g Newton's method). Explicit schemes are an exception though, as all nonlinear terms are of the previous time step, hence are known. This allow us to easily solve \ref{eq:diff_eig} numerically using the forward euler method. Discretizing the equation and solving for next time step $n+1$ gives
+The differential equation \eqref{eq:diff_eig} is a first order nonlinear ODE. Generally, solving a nonlinear differential equation numerically is a comprehensive process involving discretization in time followed by linearization through an iterative method (e.g Newton's method). Explicit schemes are an exception though, as all nonlinear terms are of the previous time step, hence are known. This allow us to easily solve \eqref{eq:diff_eig} numerically using the forward euler method. Discretizing the equation and solving for next time step $n+1$ gives
 
 \begin{align*}
 	\frac{x^{n+1}-x^n}{\Delta t} &= -x^n + f[x^n] \\
 	\frac{x^{n+1}-x^n}{\Delta t} &= (x^n)^T x^n A x^n - (x^n)^T A x^n x^n \\
-	x^{n+1} = x^n + \Delta t\big[ (x^n)^T x^n A x^n - (x^n)^T A x^n x^n \big]
+	x^{n+1} &= x^n + \Delta t\big[ (x^n)^T x^n A x^n - (x^n)^T A x^n x^n \big]
 \end{align*}
 
 Starting with a non-zero initial condition $x^0 = I(x)$, iteration over time steps will make the subsequent solutions converge towards the eigenvector corresponding to the largest eigenvalue of $A$, as long as the forward euler scheme is stable. The stability criteria depends on the discretization parameter $\Delta t$, and is to be approximated empirically. 
@@ -196,7 +214,7 @@ For time step $j$, that is $t=j\Delta t$, we have the following two boundary val
 	&= 0.05u_{i+1}^0 + 0.9u_i^0 + 0.05u_{i-1}^0
 \end{align*}
 
-The initial condition used is $u_*^0 = \big(\sin(0),\:\sin(0.2\pi),\:\sin(0.4\pi),\:\sin(0.6\pi), \:\sin(0.8\pi),\:\sin(\pi)\big)$. If the results of the code match those manually calculated up to machine precision, it verifies the internal functionality of our implementation of forward euler. The result of the unit test is provided in Table \ref{tab:unit_test} in Appendix.
+The initial condition used is $u_*^0 = \big(\sin(0),\:\sin(0.2\pi),\:\sin(0.4\pi),\:\sin(0.6\pi), \:\sin(0.8\pi),\:\sin(\pi)\big)$. If the results of the code match those manually calculated up to machine precision, it verifies the internal functionality of our implementation of forward euler. The results of the unit test are provided in Table \ref{tab:unit_test} in Appendix.
 
 
 
@@ -228,18 +246,20 @@ Our main purpose of this is to see whether the neural network can circumvent one
 
 
 \subsection*{Finding eigenvalues}
-Using the neural network model \ref{eq:diff_eig} to find the eigenvalues of a real, symmetric matrix $A$ requires a trial solution \ref{eq:NN_model} to initiate the network. The trial solution must fulfill the convergence property to guarantee that we end up with the eigenvalues. Hence, we define the initial condition $x_0 \in \mathcal{R}^n$ to be a vector of randomly generated numbers between zero and one. Since we don't know the eigenspace corresponding to the largest eigenvalue a priori, we have no guarantee that the trial solution is not orthogonal to the eigenspace corresponding to the largest eigenvalue. The probability of non-orthogonality, though, can be increased by adding random perturbations.
+Using the neural network model \eqref{eq:diff_eig} to find the eigenvalues of a real, symmetric matrix $A$ requires a trial solution \eqref{eq:NN_model} to initiate the network. The trial solution must fulfill the convergence property to guarantee that we end up with the eigenvalues. Hence, we define the initial condition $x_0 \in \mathcal{R}^n$ to be a vector of randomly generated numbers between zero and one. Since we don't know the eigenspace corresponding to the largest eigenvalue a priori, we have no guarantee that the trial solution is not orthogonal to the eigenspace corresponding to the largest eigenvalue. The probability of non-orthogonality, though, can be increased by adding random perturbations.
 
-Even though a non-zero trial solution is the only requirement for convergence, there are strategies for improving the \textit{rate} of convergence. If we have some idea or preknowledge of a solution of the differential equation, incorporating this in the trial solution helps accelerate the learning of the neural network. The ODE \ref{eq:diff_eig} is of first order with a term involving $\frac{dx}{dt}$ on one side and a term involving $x$ on the other. This is reminiscent of an exponential solution. Therefore, a smart initialization strategy of \ref{eq:NN_model} is 
+Even though a non-zero trial solution is the only requirement for convergence, there are strategies for improving the \textit{rate} of convergence. If we have some idea or preknowledge of a solution of the differential equation, incorporating this in the trial solution helps accelerate the learning of the neural network. The ODE \eqref{eq:diff_eig} is of first order with a term involving $\frac{dx}{dt}$ on one side and a term involving $x$ on the other. This is reminiscent of an exponential solution. Therefore, a smart initialization strategy of \eqref{eq:NN_model} is 
 
 \begin{align*}
 	g_{\theta}(t) &= g_0(x(t)) + f[x(t),N(x, \theta)] \\
 	&= e^{-t}x_0 + (1 - e^{-t})N(x(t), \theta)
 \end{align*}
 
-This expression fulfills the condition of a trial solution, namely that it must return the initial condition $x_0$ for time $t=0$. Once we have a trial solution we feed it to the neural network, which will calculate the gradient $\frac{dx}{dt}$ and the resulting residual of $\ref{eq:diff_eig}$. The MSE of the residual act as the loss function that is to be optimized through gradient descent. The accuracy of the final output of the neural network is assessed by comparing with the result of numpy's own eigenvalue solver. 
+This expression fulfills the condition of a trial solution, namely that it must return the initial condition $x_0$ for time $t=0$. Once we have a trial solution we feed it to the neural network, which will calculate the gradient $\frac{dx}{dt}$ and the resulting residual of $\eqref{eq:diff_eig}$. The MSE of the residual act as the loss function that is to be optimized through gradient descent. The accuracy of the final output of the neural network is assessed by comparing with the result of numpy's own eigenvalue solver. 
 
-For comparison purposes, the forward euler scheme is initiated with the same initial condition $x_0$ as for the neural network model, and using the same temporal domain. A total time of $T=5$ is consistently used for the simulations, as this seems to be sufficient for convergence and at the same time short enough to illustrate the details of the convergence. Unless specified, the learning rate of and number of epochs of the neural network is set to $0.005$ and $2000$, respectively.
+For comparison purposes, the forward euler scheme is initiated with the same initial condition $x_0$ as for the neural network model, and using the same temporal domain. A total time of $T=5$ is consistently used for the simulations, as this seems to be sufficient for convergence and at the same time short enough to illustrate the details of the convergence. Unless specified, the learning rate and the number of epochs of the neural network is set to $0.005$ and $2000$, respectively.
+
+For each simulation we perform, we find the eigenvector, $\mathbf{v}_\mathrm{max}=(v_1,\,v_2,\,v_3)$, with the largest corresponding eigenvalue, $\lambda_\mathrm{max}$. We then plot the computed value of the three eigenvector components, $v_1$, $v_2$ and $v_3$ as a function of time, for both Forward Euler and Neural network, and include the corresponding value obtained from numpy for comparison. For a given simulation we also plot the time evolution of the Rayleigh quotient, $r$ from equation \eqref{eq:rayleigh_quotient}, for the two forementioned methods, using numpy once again for comparison.   
 
 
 \section{Results}
@@ -254,7 +274,7 @@ To assess the accuracy of our implemented numerical scheme, we need to test the 
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.5]{../output/plots/MSE_FE_dx_001.pdf}
-	\caption{Mean squared error of approximated solution by forward euler, using $\Delta x=0.01$ and time step $\Delta t$ dictated by the stability criterion \ref{eq:stability}.}
+	\caption{Mean squared error of approximated solution by forward euler, using $\Delta x=0.01$ and time step $\Delta t$ dictated by the stability criterion \eqref{eq:stability}.}
 	\label{fig:FE_MSE}
 \end{figure}
 
@@ -263,7 +283,8 @@ Figure \ref{fig:NN_MSE} shows the MSE from the neural network with the architect
 Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
 
 
-\begin{table}[]
+\begin{table}[h]
+	\centering
 	\begin{tabular}{l|ll|ll|}
 		\cline{2-5}
 		& \multicolumn{2}{l|}{\textbf{$\Delta x=0.1$}}           & \multicolumn{2}{l|}{\textbf{$\Delta x=0.01$}}           \\ \cline{2-5} 
@@ -288,16 +309,16 @@ Figure \ref{fig:error_NN_10000} shows the error of the neural network when appro
 \subsection*{Eigenvalue problem}
 
 
-\begin{figure}[h]
+\begin{figure}[h!]
 	\centering
-	\includegraphics[scale=0.6]{../output/plots/eigvec_T5_N1000.pdf}
+	\includegraphics[scale=0.75]{../output/plots/eigvec_T5_N1000.pdf}
 	\caption{Predictions by forward euler (FE) and neural network (NN) of the eigenvector corresponding to the largest eigenvalue of a real, symmetric $3\times 3$ matrix. The horizontal dotted lines are the components of the eigenvector as found by numerical diagonalization by \code{numpy.linalg.eig}.}
 	\label{fig:eigvec_T5_N1000}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[h!]
 	\centering
-	\includegraphics[scale=0.6]{../output/plots/eigval_T5_N1000.pdf}
+	\includegraphics[scale=0.75]{../output/plots/eigval_T5_N1000.pdf}
 	\caption{Rayleigh quotients of forward euler (FE) and neural network (NN) representing predictions of the largest eigenvalue of a real, symmetric $3\times 3$ matrix. The horizontal dotted line is the largest eigenvalue as found by numerical diagonalization by \code{numpy.linalg.eig}.}
 	\label{fig:eigval_T5_N1000}
 \end{figure}
@@ -320,7 +341,7 @@ Figure \ref{fig:eigvec_T5_N1000} shows predictions of the eigenvector correspond
 		\caption{Rayleigh quotients}
 		\label{fig:eigval_T5_N100}
 	\end{subfigure}
-	\caption{Predictions by forward euler (FE) and neural network (NN) of largest eigenvalue and corresponding eigenvector of a real, symmetric $3\times 3$ matrix, using a time step $\Delta t = 0.05$.}
+	\caption{Predictions by forward euler (FE) and neural network (NN) of largest eigenvalue and corresponding eigenvector of a real, symmetric $3\times 3$ matrix, using a time step $\Delta t = 0.05$. The $x$ and $y$ axes are identical to those in figure \ref{fig:eigvec_T5_N1000} and \ref{fig:eigval_T5_N1000}}
 	\label{fig:eig_T5_N100}
 \end{figure}
 
@@ -341,7 +362,7 @@ Figure \ref{fig:eigvec_T5_N1000} shows predictions of the eigenvector correspond
 		\caption{Rayleigh quotients}
 		\label{fig:eigval_T5_N10}
 	\end{subfigure}
-	\caption{Predictions by forward euler (FE) and neural network (NN) of largest eigenvalue and corresponding eigenvector of a real, symmetric $3\times 3$ matrix, using a time step $\Delta t = 0.5$.}
+	\caption{Predictions by forward euler (FE) and neural network (NN) of largest eigenvalue and corresponding eigenvector of a real, symmetric $3\times 3$ matrix, using a time step $\Delta t = 0.5$. The $x$ and $y$ axes are identical to those in figure \ref{fig:eigvec_T5_N1000} and \ref{fig:eigval_T5_N1000}}
 	\label{fig:eig_T5_N10}
 \end{figure}
 
@@ -365,7 +386,7 @@ The graphs are less smooth due to larger timesteps and fewer estimates.
 		\caption{Rayleigh quotients}
 		\label{fig:eigval_T5_N1000_eta01}
 	\end{subfigure}
-	\caption{Predictions of largest eigenvalue and corresponding eigenvector by forward euler and neural network for a real, symmetric $3\times 3$ matrix, using a learning rate of $0.1$ and a time step $\Delta t = 0.005$.}
+	\caption{Predictions of largest eigenvalue and corresponding eigenvector by forward euler and neural network for a real, symmetric $3\times 3$ matrix, using a learning rate of $0.1$ and a time step $\Delta t = 0.005$. The $x$ and $y$ axes are identical to those in figure \ref{fig:eigvec_T5_N1000} and \ref{fig:eigval_T5_N1000}}
 	\label{fig:eig_T5_N1000_eta01}
 \end{figure}
 
@@ -385,7 +406,7 @@ The graphs are less smooth due to larger timesteps and fewer estimates.
 		\caption{Rayleigh quotients}
 		\label{fig:eigval_T5_N1000_epochs50}
 	\end{subfigure}
-	\caption{Predictions of largest eigenvalue and corresponding eigenvector by forward euler and neural network for a real, symmetric $3\times 3$ matrix, using a learning rate of $0.1$, $50$ epochs and a time step $\Delta t = 0.005$.}
+	\caption{Predictions of largest eigenvalue and corresponding eigenvector by forward euler and neural network for a real, symmetric $3\times 3$ matrix, using a learning rate of $0.1$, $50$ epochs and a time step $\Delta t = 0.005$. Other than negative eigenvector components in the left panel, and lower Rayleigh quotient in the right panel, the $x$ and $y$ axes are identical to those in figure \ref{fig:eigvec_T5_N1000} and \ref{fig:eigval_T5_N1000}}
 	\label{fig:eig_T5_N1000_epochs50}
 \end{figure}
 
@@ -408,7 +429,7 @@ Adjusting hyperparameters of the neural network has also been investigated. Figu
 		\caption{Rayleigh quotients}
 		\label{fig:eigval_T5_N6}
 	\end{subfigure}
-	\caption{Predictions of largest eigenvalue and corresponding eigenvector by forward euler and neural network for a real, symmetric $3\times 3$ matrix. A time step of $\Delta t = 0.83$ is used.}
+	\caption{Predictions of largest eigenvalue and corresponding eigenvector by forward euler and neural network for a real, symmetric $3\times 3$ matrix. A time step of $\Delta t = 0.83$ is used. Other than increased eigenvector component values for forward Euler on the left panel, the $x$ and $y$ axes are identical to those in figure \ref{fig:eigvec_T5_N1000} and \ref{fig:eigval_T5_N1000}}
 	\label{fig:eig_T5_N6}
 \end{figure}
 
@@ -433,12 +454,12 @@ Adjusting hyperparameters of the neural network has also been investigated. Figu
 	\label{fig:eig_T5_N5}
 \end{figure}
 
-Results for increasing the time steps even further are shown in Figure \ref{fig_eigvec_T5_N6} and Figure \ref{fig_eigvec_T5_N5}, for $\Delta t= 0.83$ and $\Delta t = 1$, respectively. The associated rayleigh quotients are provided in Figure \ref{fig_eigval_T5_N6} and Figure \ref{fig:eigval_T5_N5}. 
+Results for increasing the time steps even further are shown in Figure \ref{fig:eigvec_T5_N6} and Figure \ref{fig:eigvec_T5_N5}, for $\Delta t= 0.83$ and $\Delta t = 1$, respectively. These time steps correspond to $N=6$ and $N=5$ estimations, respectively. The associated rayleigh quotients are provided in Figure \ref{fig:eigval_T5_N6} and Figure \ref{fig:eigval_T5_N5}. 
 
 \textcolor{red}{Maybe put some of the eigenvalue-results in Appendix ??}
 
  
-
+\clearpage
 \section{Discussion}
 
 \subsection*{Performance of Forward Euler}
@@ -453,7 +474,7 @@ In the beginning of the diffusion process, for low $t$, the solution changes rat
 \par \textcolor{red}{Et forsøk paa aa forklare fluktuasjonene i MSE for NN:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer [\textcolor{red}{https://arxiv.org/abs/1412.6980}]. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
 \subsection*{Forward Euler and Neural Network to find eigenvalues}
-Forward euler and neural networks are two different numerical methods capable of the eigenvalues of a real, symmetric matrix $A$ by solving the ODE \ref{eq:diff_eig}. The two algorithms for solving differential equations are quite different, hence will yield different predictions of the largest eigenvalue. The result of forward euler is sensitive to the time step $\Delta t$. Thus, it is of interest to compare the accuracy of prediction of the two methods when the time step is altered.
+Forward euler and neural networks are two different numerical methods capable of the eigenvalues of a real, symmetric matrix $A$ by solving the ODE \eqref{eq:diff_eig}. The two algorithms for solving differential equations are quite different, hence will yield different predictions of the largest eigenvalue. The result of forward euler is sensitive to the time step $\Delta t$. Thus, it is of interest to compare the accuracy of prediction of the two methods when the time step is altered.
 
 % FE: N=1000, N=100, N=10
 Comparing Figure \ref{fig:eigvec_T5_N1000}, Figure \ref{fig:eigvec_T5_N100} and Figure \ref{fig:eigvec_T5_N10} for time steps $\Delta t = 0.005$, $\Delta t = 0.05$ and $\Delta t = 0.5$, respectively, we observe that the accuracy of forward euler consistently decreases for larger time steps. The result for $\Delta t=0.5$ is particularly biased with all components of the predicted eigenvector consistently missing their respective targets. The corresponding rayleigh quotients, shown in Figure \ref{fig:eigval_T5_N1000}, Figure \ref{fig:eigval_T5_N100} and Figure \ref{fig:eigval_T5_N10}, converge precisely to the largest eigenvalue calculated by \code{numpy.linalg.eig}. Thus, despite the lower accuracy - particularly for forward euler - both methods succeed in returning the largest eigenvalue with four decimal precision.
@@ -462,11 +483,11 @@ Comparing Figure \ref{fig:eigvec_T5_N1000}, Figure \ref{fig:eigvec_T5_N100} and 
 The neural network on the other hand, apparently looks unaffected by the increase in time step. In fact, it seems like the neural network has a more accurate convergence for $\Delta t = 0.5$ than $\Delta t = 0.05$ and $\Delta t = 0.005$. Still, this does not imply that the accuracy increases with larger time step in general, but it substantiates the fact that the convergence property of a neural network is more sensitive to other features than the time step. 
 
 % NN: Dependence on other params than time step
-In project 2 we studied some of the most sensitive parameters for a neural network to provide accurate predictions, including the learning rate, number of epochs and loss function. The dependence on the learning rate is illustrated by comparing Figure \ref{fig:eigvec_T5_N1000} with \ref{fig:eigvec_T5_N1000_eta01}. Increasing the learning rate from 0.005 to 0.1 has consequences for the result. The neural network now predicts an eigenvector whose components notably deviate from that of the true eigenvector. From Figure \ref{fig:eigval_T5_N1000_eta01} the rayleigh quotients corresponds quite well with the largest eigenvalue, just slightly less accurate. Additionally, if the number of epochs is reduced to 50, the consequences are even more severe, as shown in Figure \ref{fig:eigvec_T5_N1000_epochs50}. Now the predicted components completely misses the true components of the eigenvector. Figure \ref{fig:eigval_T5_N1000_epochs50} shows that the rayleigh quotients of the neural network apparently converges to a different value than the largest eigenvalue. Because forward euler only depends on $\Delta t$, it is unaffected by a change in the learning rate and number of epochs. Conclusively, the results indicate that a learning rate of $0.1$ and $50$ number of epochs is not a good architecture for a neural network for solving \ref{eq:diff_eig}.
+In project 2 we studied some of the most sensitive parameters for a neural network to provide accurate predictions, including the learning rate, number of epochs and loss function. The dependence on the learning rate is illustrated by comparing Figure \ref{fig:eigvec_T5_N1000} with \ref{fig:eigvec_T5_N1000_eta01}. Increasing the learning rate from 0.005 to 0.1 has consequences for the result. The neural network now predicts an eigenvector whose components notably deviate from that of the true eigenvector. From Figure \ref{fig:eigval_T5_N1000_eta01} the rayleigh quotients corresponds quite well with the largest eigenvalue, just slightly less accurate. Additionally, if the number of epochs is reduced to 50, the consequences are even more severe, as shown in Figure \ref{fig:eigvec_T5_N1000_epochs50}. Now the predicted components completely misses the true components of the eigenvector. Figure \ref{fig:eigval_T5_N1000_epochs50} shows that the rayleigh quotients of the neural network apparently converges to a different value than the largest eigenvalue. Because forward euler only depends on $\Delta t$, it is unaffected by a change in the learning rate and number of epochs. Conclusively, the results indicate that a learning rate of $0.1$ and $50$ number of epochs is not a good architecture for a neural network for solving \eqref{eq:diff_eig}.
 
 
 % FE & NN: N=1000, N=100, N=10
-Figure \ref{fig:eigvec_T5_N6} and Figure \ref{fig:eigvec_T5_N5}, for simulations of $\Delta t=0.83$ and $\Delta t = 1$ respectively, suggest that the result of forward euler has a critical region around $\Delta t = 1$. Already for $\Delta t = 0.83$ the predictions of the eigenvector components do not converge but rather oscillate in an inconsistent pattern. The corresponding rayleigh quotients, shown in Figure \ref{fig:eigval_T5_N6}, verify that forward euler is not able to converge to the true solution of \ref{eq:diff_eig} as $\Delta t$ approaches 1. All simulations so far have given a relative error less than $1\%$ between the final rayleigh quotient and the largest eigenvalue for forward euler. In comparison, the relative error for $\Delta t = 0.83$ is $22.1\%$.
+Figure \ref{fig:eigvec_T5_N6} and Figure \ref{fig:eigvec_T5_N5}, for simulations of $\Delta t=0.83$ and $\Delta t = 1$ respectively, suggest that the result of forward euler has a critical region around $\Delta t = 1$. Already for $\Delta t = 0.83$ the predictions of the eigenvector components do not converge but rather oscillate in an inconsistent pattern. The corresponding rayleigh quotients, shown in Figure \ref{fig:eigval_T5_N6}, verify that forward euler is not able to converge to the true solution of \eqref{eq:diff_eig} as $\Delta t$ approaches 1. All simulations so far have given a relative error less than $1\%$ between the final rayleigh quotient and the largest eigenvalue for forward euler. In comparison, the relative error for $\Delta t = 0.83$ is $22.1\%$.
 
 Increasing the time step to $\Delta t = 1$ makes a significant difference. The predicted components from forward euler still possess the oscillating behaviour, but now also seems to diverge over time. Clearly, a time step of $\Delta t=1$ is not a stable parameter option for forward euler. The concave shape of the rayleigh quotients in Figure \ref{fig:eigval_T5_N5} substantiates the hypothesis that forward euler diverges for time steps beyond one. The relative error between the final rayleigh quotient and the largest eigenvalue is in this case $39.5\%$, a large increase compared to the low increase in $\Delta t$. In comparison, the relative error for the neural network is only $0.03\%$. Taking all simulations into account, the neural network has excellent accuracy for $\Delta t < 1$. The accuracy is slightly reduced for $\Delta t = 1$, though. This indicates weak dependency on the time step, but this is completely deafed by the sensitivity to other hyperparameters such as learning rate and number of epochs.
 
@@ -480,16 +501,16 @@ The forward euler method and neural networks are two quite different methods for
  
 \par The forward euler method clearly has an advantage in its simple recursive formula and fast computation time. The proposed solution is calculated within a few milliseconds, with a total error of only 0.083. On the other hand, it is limited by a stability requirement in order to produce realistic results. This effectively puts a restriction on applicable mesh resolutions.
 
-\par A notable drawback of the neural network is the demanding training process. To compute an approximated solution of \ref{eq:diffusion_equation_1D} requires calculating gradients and accumulating chained derivatives backwards through the hidden layers. This is a significantly larger computational effort than calculating the simple recursive formula of the forward euler scheme. As a result, the neural network suffers from a large computational runtime. Still, if training sufficiently long, the neural network will produce a better solution than forward euler and eventually yield a near perfect approximation to the exact solution. 
+\par A notable drawback of the neural network is the demanding training process. To compute an approximated solution of \eqref{eq:diffusion_equation_1D} requires calculating gradients and accumulating chained derivatives backwards through the hidden layers. This is a significantly larger computational effort than calculating the simple recursive formula of the forward euler scheme. As a result, the neural network suffers from a large computational runtime. Still, if training sufficiently long, the neural network will produce a better solution than forward euler and eventually yield a near perfect approximation to the exact solution. 
 
-\par The forward euler scheme has proven to obtain good accuracy on the numerical solution. However, forward euler has an inherent disadvantage in that it is conditionally unstable with stability criteria given by \ref{eq:stability}. In general it means that the forward euler scheme is not a stable method for solving differential equations as it requires that we carefully assign the mesh discretization steps. Neural networks are not limited to any kind of discretization. Neural networks benefit from good convergence properties. That is, given enough time to train it is able to approximate the actual solution of a differential equation with an error of approximately zero. Moreover, the neural network model \ref{eq:NN_model} has the additional flexibility in that the function $f$ can be tweaked to give a better initial guess of the solution. 
+\par The forward euler scheme has proven to obtain good accuracy on the numerical solution. However, forward euler has an inherent disadvantage in that it is conditionally unstable with stability criteria given by \eqref{eq:stability}. In general it means that the forward euler scheme is not a stable method for solving differential equations as it requires that we carefully assign the mesh discretization steps. Neural networks are not limited to any kind of discretization. Neural networks benefit from good convergence properties. That is, given enough time to train it is able to approximate the actual solution of a differential equation with an error of approximately zero. Moreover, the neural network model \eqref{eq:NN_model} has the additional flexibility in that the function $f$ can be tweaked to give a better initial guess of the solution. 
 \par Overall, the method of choice for solving differential equations is a tradeoff between the accuracy of the approximated solution and the computational runtime. Forward euler is definitely the desired method if we want a quick representation of the solution. If the importance is how precise the representation is, a neural network is a better choice.
 
 \textcolor{red}{Det meste av diskusjonen over kan beholdes da det gjelder generelt, men de faktiske tallene nevnt maa oppdateres med resultatene fra MSE.}
 
 
 \subsection*{Eigenvalue problems}
-The potential of solving differential equations spans a large domain of mathematical problems. Particularly, the model \ref{eq:diff_eig} can be represented by a neural network or a forward euler scheme to approximate the eigenvalues of a real, symmetric matrix. Our experiments have shown that the neural network has no trouble finding an accurate approximation to the largest eigenvalue and the corresponding eigenvector given a suitable trial solution and network architecture. The parameter space of a neural network is large, and optimizing a solution requires an infeasible search over all parameters. Training for more epochs gives a more accurate prediction, but comes at the expense of a longer runtime, in which case forward euler can produce equally accurate results for a much shorter runtime.
+The potential of solving differential equations spans a large domain of mathematical problems. Particularly, the model \eqref{eq:diff_eig} can be represented by a neural network or a forward euler scheme to approximate the eigenvalues of a real, symmetric matrix. Our experiments have shown that the neural network has no trouble finding an accurate approximation to the largest eigenvalue and the corresponding eigenvector given a suitable trial solution and network architecture. The parameter space of a neural network is large, and optimizing a solution requires an infeasible search over all parameters. Training for more epochs gives a more accurate prediction, but comes at the expense of a longer runtime, in which case forward euler can produce equally accurate results for a much shorter runtime.
 
 The forward euler scheme gives a more accurate prediction then the neural network, in addition to converging faster, as long as the time step is sufficiently low. In this case, forward euler is the prevailing method for finding the largest eigenvalue of a real, symmetric matrix. However, the method has an inherent disadvantage in terms of stability. Our experiments indicate that forward euler diverges for $\Delta t \ge 1$. This marks a transition where the results of forward euler are deceptive and the neural network is the method of choice.
 
