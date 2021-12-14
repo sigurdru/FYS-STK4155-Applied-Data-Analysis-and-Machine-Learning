@@ -75,8 +75,60 @@ The core of the method now becomes clear. The independent variables are separate
 
 \[ \frac{1}{X}\frac{\partial^2 X(x)}{\partial x^2} = \frac{1}{T}\frac{\partial T(t)}{\partial t} = -k^2\]
 
-This is solved for the functions $X$ and $T$ separately. ...
+This is solved for the functions $X$ and $T$ separately. 
+
+\begin{align*}
+	\frac{1}{T} \frac{dT}{dt} &= -k^2 \\
+	\int \frac{1}{T}\:dT &= -\int k^2\:dt \\
+	\ln T &= -k^2 t + \hat{T_0} \\
+	T &= e^{-k^2t + \hat{T_0}} \\
+	&= T_0 e^{-k^2t}
+\end{align*}
+
+\begin{align}
+	\frac{1}{X} \frac{\partial^2 X}{\partial x^2} &= -k^2 \\
+	\frac{d^2 X}{dx^2} &= -k^2 X \\
+	X &= X_0 \sin(kx) + X_1 \cos(kx)
+\end{align}
+
+Here we have used the fact that a differential equation of the form $X'' = -X$ has a trigonometric solution. The general solution becomes
+
+\[ u(x,t) = X(x)T(t) = T_0 e^{-k^2 t} \big[X_0\sin(kx) + X_1 \cos(kx)\big] \]
+
+To obtain a specific solution we use the initial and boundary conditions to find the undetermined coefficients $T_0$, $X_0$ and $X_1$. At $x=0$ we have
+
+\begin{align*}
+	u(0,t) &= 0 \\
+	T_0 e^{-k^2 t} X_1 &= 0 
+\end{align*}
+
+The only possibility is $X_1 = 0$ because if $T_0=0$ then the general solution becomes time-independent, and does not describe the temporal variability of  \eqref{eq:diffusion_equation_1D}. At $x=L$ we have
+
+\begin{align*}
+	u(L,t) &= 0 \\
+	T_0 e^{-k^2 t} X_0 \sin(kL) &= 0
+\end{align*}
+
+Following the previous argument we can't have $X_0=0$ as this would imply independence of space. Instead, we must have 
+
+\begin{align*}
+	\sin(kL) &= 0 \\
+	kL &= n\pi \\
+	k &= \frac{n\pi}{L}, \quad n=0,1,2,\dots
+\end{align*}
+
+Defining a new constant $A=T_0 X_0$ we get the following solution for an eigenfrequency $n$.
+
+\[ u(x,t) = A e^{-k^2t} \sin(\frac{n\pi x}{L}) \]
+
+Because any linear combination of a solution is a also a solution, the full specific solution is given by the linear combination of all eigenfrequencies $n$.
+
+\[ u_n(x,t) = \sum_{n=1}^{\infty} A_n e^{-k_n^2 t} \sin(\frac{n\pi x}{L}) \]
+
+The coefficients $A_n$ are determined by the initial condition ...
+
 \textcolor{red}{Nevland: Fullfør utledning}
+
 
 \subsection*{Explicit forward Euler}
 In this section we want to cover the explicit forward Euler. By explicit we mean that the value at the next grid point is determined entirely by known or previously calculated values.
