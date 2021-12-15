@@ -51,29 +51,25 @@ In the theory-section we aim to give a brief explanation of the main concepts an
 \subsection{The diffusion equation}
 
 The full diffusion equation reads
-\begin{equation}
+\begin{equation*}
 \frac{\partial u(\mathbf{r}, t)}{\partial t} = \nabla \cdot \left[D(u, \mathbf{r})\nabla u(\mathbf{r}, t)\right],
-\end{equation}
+\end{equation*}
 where $\mathbf{r}$ is a positional vector and $D(u,r)$ the collective diffusion coefficient. If $D(u,\mathbf{r}) = 1$ the equation simplifies to a linear differential equation
-\begin{equation}
+\begin{equation*}
 \frac{\partial u}{\partial t} = \nabla^2u(\mathbf{r}, t),
-\end{equation}
-or
-\begin{equation}
-\label{eq:diffusion_equation}
-\left(\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}\right) u(x,y,z,t) = \frac{\partial u(x,y,z,t)}{\partial t}
-\end{equation}
-in cartesian coordinates. In this report we are going to study a one dimensional rod of length $L=1$. I.e. we need the one dimensional diffusion equation
+\end{equation*}
+
+In this report we are going to study a one dimensional rod of length $L=1$. I.e. we need the one dimensional diffusion equation
 \begin{align}
 \label{eq:diffusion_equation_1D}
 \frac{\partial^2 u(x,t)}{\partial x^2} &= \frac{\partial u(x,t)}{\partial t},
 \end{align}
 with boundary conditions
-\begin{align}
+\begin{align*}
 u(x,0) &= \sin(\pi x) \ \ 0\leq x\leq L,\\
 u(0,t) &= 0 \ \ t\geq 0 \text{ and} \\
 u(L,t) &= 0 \ \ t\geq 0.
-\end{align}
+\end{align*}
 
 \subsection{Analytical solution}
 
@@ -88,16 +84,7 @@ The analytical solution satisfying the given initial and boundary conditions is
 \subsection{Explicit forward Euler}
 In this section we want to cover the explicit forward Euler. By explicit we mean that the value at the next grid point is determined entirely by known or previously calculated values.
 
-The one-dimensional diffusion equation \eqref{eq:diffusion_equation_1D} reads 
-\begin{equation}
-\frac{\partial^2u(x, t)}{\partial x^2} = \frac{\partial u(x,t)}{\partial t} \ \ \text{or} \ \ u_{xx} = u_t.
-\end{equation}
-In this report we are going to study a one dimensional rod of length $L=1$, with boundary conditions
-\begin{align}
-	u(x,0) &= \sin(\pi x) \ \ 0\leq x\leq L,\\
-	u(0,t) &= 0 \ \ t\geq 0 \text{ and} \\
-	u(L,t) &= 0 \ \ t\geq 0.
-\end{align}
+In this report we are going to study the diffusion equation for a one dimensional rod of length $L=1$, given in equation \eqref{eq:diffusion_equation_1D}
 
 To approximate the solution, we have to discretize the position and time coordinates. We can choose  $\Delta x = L/N$ and $\Delta t$ as small steps in $x$-direction and time, respectively, where $N$ are the number of discretized points in $x$-direction. Then we can define the value domain of $t$ and $x$,
 \begin{equation*}
