@@ -521,6 +521,8 @@ The potential of solving differential equations spans a large domain of mathemat
 
 The forward euler scheme gives a more accurate prediction then the neural network, in addition to converging faster, as long as the time step is sufficiently low. In this case, forward euler is the prevailing method for finding the largest eigenvalue of a real, symmetric matrix. However, the method has an inherent disadvantage in terms of stability. Our experiments indicate that forward euler diverges for $\Delta t \ge 1$. This marks a transition where the results of forward euler are deceptive and the neural network is the method of choice.
 
+Most of the differential equations frequently applied in natural science, such as the diffusion equation, are simple enough for finite difference schemes to handle efficiently and accurately. However, for more intricate differential equations finite differencing may not give accurate approximations of gradients. Refining the mesh is a solution, but discretization parameters eventually become low enough to yield stability issues, particularly for forward euler. A refinement of the mesh is also necessary when simulating for very long time periods. For these particular cases, it seems like neural network is the prominent method and a great alternative to conventional numerical schemes. Hence, the method of choice is problem specific. 
+
 \textcolor{red}{Vikenes: Burde kommentere at NN vil være bedre/raskere for mer komplekse modeller, og at NN er best dersom man skal simulere over lange perioder.}
 
 
