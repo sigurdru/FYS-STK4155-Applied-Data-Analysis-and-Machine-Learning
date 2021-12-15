@@ -227,7 +227,7 @@ def NN_diffusion_error_timesteps(model, args):
     print('MSE at timestep %.2f: %f'%(t2, np.mean(np.sum((upred2-uexact2)**2))))
     show_save(fig, fname, args)
 
-def plot_eig(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args):
+def plot_eig_dim3(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args):
     fig, ax = plt.subplots()
     ax.axhline(w_np[0], color='b', ls=':', label=r'Numpy $v_1$')
     ax.axhline(w_np[1], color='g', ls=':', label=r'Numpy $v_2$')
@@ -273,4 +273,62 @@ def plot_eig(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args):
             fancybox=True, borderaxespad=0, ncol=1)
 
     fname = r'eigval_T%i_N%i' %(args.tot_time, args.N_t_points)
+    show_save(fig, fname, args)
+
+
+def plot_eig_dim6(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args):
+    # Plot Neural Network
+    fig, ax = plt.subplots()
+    clr = ['b', 'g', 'r', 'orange', 'purple', 'black']
+
+    for i in range(6):
+        ax.axhline(w_np[i], color=clr[i], ls=':', label=f'Numpy $v_{i+1}$')
+        ax.plot(s, eigvec_nn[:, i], color=clr[i], label=f'NN $v_{i+1}$')
+
+    ax.set_ylabel('Components of vector, $v$')
+    ax.set_xlabel('Time, $t$')
+    ax.set_title('Prediction of eigenvectors - Neural Network', fontsize=20)
+    ax.legend(loc='lower center', fancybox=True, 
+                borderaxespad=0, ncol=3)
+    
+    fname = r'NN_eigvec_T%i_N%i_dim6' %(args.tot_time, args.N_t_points)
+    show_save(fig, fname, args)
+
+    # Plot Forward Euler
+    fig, ax = plt.subplots()
+    clr = ['b', 'g', 'r', 'orange', 'purple', 'black']
+
+    for i in range(6):
+        ax.axhline(w_np[i], color=clr[i], ls=':', label=f'Numpy $v_{i+1}$')
+        ax.plot(t, eigvec_fe[:, i], color=clr[i], label=f'Euler $v_{i+1}$')
+
+    ax.set_ylabel('Components of vector, $v$')
+    ax.set_xlabel('Time, $t$')
+    ax.set_title('Prediction of eigenvectors - Forward Euler', fontsize=20)
+    ax.legend(loc='lower center', fancybox=True, 
+                borderaxespad=0, ncol=3)
+    
+    fname = r'NN_eigvec_T%i_N%i_dim6' %(args.tot_time, args.N_t_points)
+    show_save(fig, fname, args)
+
+    # Plot eigenvalues
+    fig, ax = plt.subplots()
+    ax.axhline(np.max(v), color='red', ls='--')
+    ax.plot(t, eigval_fe)
+    ax.plot(s, eigval_nn)
+
+    ax.set_xlabel('Time, $t$')
+    ax.set_ylabel('Rayleigh Quotient, $r$')
+    ax.set_title('Prediction $r_{\\mathrm{final}}$ of \
+                largest eigenvalue $\\lambda_{\\mathrm{max}}$', fontsize=20)
+    lgd_numpy = "Numpy $\\lambda_{\\mathrm{max}} \\sim$ " + \
+    str(round(np.max(v), 5))
+    lgd_euler = "Euler $r_{\\mathrm{final}} \\sim$ " + \
+        str(round(eigval_fe[-1], 5))
+    lgd_nn = "NN $r_{\\mathrm{final}} \\sim$ " + \
+        str(round(eigval_nn.numpy()[-1], 5))
+    ax.legend([lgd_numpy, lgd_euler, lgd_nn], loc='lower center',
+            fancybox=True, borderaxespad=0, ncol=1)
+
+    fname = r'eigval_T%i_N%i_dim6' %(args.tot_time, args.N_t_points)
     show_save(fig, fname, args)
