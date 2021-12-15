@@ -78,8 +78,9 @@ An analytical solution of the 1D diffusion equation can be dervied using the met
 For a complete derivation, please refer to the Appendix.
 The analytical solution satisfying the given initial and boundary conditions is
 
-\[ u(x,t) = e^{-\pi^2 t} \sin(\pi x) \]
-
+\begin{align} \label{eq:analytical_solution_diffusion}
+	u(x,t) = e^{-\pi^2 t} \sin(\pi x)
+\end{align}
 
 \subsection{Explicit forward Euler}
 In this section we want to cover the explicit forward Euler. By explicit we mean that the value at the next grid point is determined entirely by known or previously calculated values.
@@ -244,13 +245,15 @@ For each simulation we perform, we find the eigenvector, $\mathbf{v}_\mathrm{max
 \section{Results}
 
 \subsection{Neural network}
-\textcolor{red}{Sigurd: Resultater fra NN testing}
 
+Figure \ref{fig:NN_training_points} shows the data points used for training the network. One vertical line represents the spatial data points at one point in time.   
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\linewidth]{../output/plots/training_points.pdf}
-	\caption{In this plot ...} \label{fig:NN_training_points}
+	\caption{In this plot we highlight the data points used for training the neural network. Points on the boundary are highlighted, and we use $50$ points for $t=0$, and a total of $50$ points at $x=0$ and $x=1$, resulting in a total of $100$ boundary points.} \label{fig:NN_training_points}
 \end{figure}
+
+The loss of the network as a function of iterations is shown in figure \ref{fig:Error_NN_architecture} for three different architectures. Each network has $20$ nodes in each hidden layer, where the upper left panel has $2$ hidden layers, the upper right panel has $4$ hidden layers and the lower left panel has $8$ hidden layers. 
 
 \begin{figure}[h]
 	\minipage{0.49\textwidth}
@@ -263,14 +266,17 @@ For each simulation we perform, we find the eigenvector, $\mathbf{v}_\mathrm{max
 	\includegraphics[width=\linewidth]{../output/plots/NN_diffusion_error_Nn20_Nh8.pdf}
 	\endminipage\hfill
 	\minipage{0.49\textwidth}
-	\caption{Here ...} \label{fig:Error_NN_architecture}
+	\caption{Cost function of the neural network as a function of iterations, using $20$ hidden nodes in each network. The number of hidden layers in the network are $2,\,4$ and $8$, for the upper left, upper right and lower left panel, respectively.} \label{fig:Error_NN_architecture}
 	\endminipage
 \end{figure}
 
+Although there are large fluctuations of the loss for the network with $4$ hidden layers, we choose this architecture for further analysis. We only consider the network after the final iteration, and this architecture provided the lowest loss and MSE. A detailed study of different architectures is outside the scope of this report, and is nonetheless dependent of the particular PDE in question. Unless specified, the following results are all obtained with a neural network with $4$ hidden layers after $500$ iterations. 
+
+Figure \ref{fig:NN_architecture_solution} shows the output of the neural network. We clearly see the exponential decay of the initial sine function, as expected, eventually flattening out, as $t\to1$.   
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\linewidth]{../output/plots/NN_diffusion_solution_Nn20_Nh4.pdf}
-	\caption{In this plot ...} \label{fig:NN_architecture_solution}
+	\caption{The solution of the diffusion equation of the final neural network.} \label{fig:NN_architecture_solution}
 \end{figure}
 
 \begin{table}[h]
@@ -300,7 +306,6 @@ Figure \ref{fig:NN_MSE} shows the MSE from the neural network with the architect
 
 Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
 
-
 \begin{table}[h]
 	\centering
 	\begin{tabular}{l|ll|ll|}
@@ -313,6 +318,15 @@ Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neur
 \caption{MSE as function of spatial step $\Delta x$ for two different time levels, for forward euler scheme and neural network. Forward euler is abbreviated as FE and neural network as NN.}
 \label{tab:MSE_compare}
 \end{table}
+
+Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The time points shown in the plot are $t_1=0.1$ and $t_2=0.5$. The same plot when using $\Delta x=0.1$ has identical shape, and differs only by larger error values on the y-axis, and we have therefore chosen to omit it.  
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{../output/plots/error_FE_x_dx_0.01.pdf}
+	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
+	\label{fig:FE_absolute_difference}
+\end{figure}
 
 
 \subsection{Error of Neural Network}
