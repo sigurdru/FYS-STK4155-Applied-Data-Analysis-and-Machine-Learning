@@ -188,7 +188,10 @@ def neural_network_eig(args):
     print('Relative Error FE', 100 *
           np.abs((np.max(v) - eigval_fe[-1]) / np.max(v)))
 
-    plot.plot_eig(w_np, g, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args)
+    if args.dimension == 3:
+        plot.plot_eig_dim3(w_np, g, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args)
+    elif args.dimension == 6:
+        plot.plot_eig_dim6(w_np, g, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args)
 
 
 if __name__ == '__main__':
