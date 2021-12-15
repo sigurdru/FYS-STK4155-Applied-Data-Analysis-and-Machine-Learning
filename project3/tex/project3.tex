@@ -244,7 +244,7 @@ For each simulation we perform, we find the eigenvector, $\mathbf{v}_\mathrm{max
 
 \section{Results}
 
-\subsection{Neural network}
+\subsection{Determining a suitable Neural network}
 
 Figure \ref{fig:NN_training_points} shows the data points used for training the network. One vertical line represents the spatial data points at one point in time.   
 \begin{figure}[h]
@@ -270,7 +270,7 @@ The loss of the network as a function of iterations is shown in figure \ref{fig:
 	\endminipage
 \end{figure}
 
-Although there are large fluctuations of the loss for the network with $4$ hidden layers, we choose this architecture for further analysis. We only consider the network after the final iteration, and this architecture provided the lowest loss and MSE. A detailed study of different architectures is outside the scope of this report, and is nonetheless dependent of the particular PDE in question. Unless specified, the following results are all obtained with a neural network with $4$ hidden layers after $500$ iterations. 
+Although there are large fluctuations of the loss for the network with $4$ hidden layers, we choose this architecture for further analysis. Using logarithmic scales on the y-axes in figure \ref{fig:Error_NN_architecture}, the amplitudes of the oscillating losses appear bigger than they are in reality. We only consider the network after the final iteration, and this architecture provided the lowest loss and MSE. A detailed study of different architectures is outside the scope of this report, and is nonetheless dependent of the particular PDE in question. Unless specified, the following results are all obtained with a neural network with $4$ hidden layers after $500$ iterations. 
 
 Figure \ref{fig:NN_architecture_solution} shows the output of the neural network. We clearly see the exponential decay of the initial sine function, as expected, eventually flattening out, as $t\to1$.   
 \begin{figure}[h]
@@ -301,6 +301,7 @@ Figure \ref{fig:NN_architecture_solution} shows the output of the neural network
 	\end{tabular}
 \end{table}
 
+Using equation 
 
 \begin{figure}[h]
 	\centering
