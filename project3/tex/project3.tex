@@ -28,14 +28,14 @@
 
 \section*{To do}
 \begin{itemize}
-	\item Abstract. \textcolor{red}{Har prøvd meg på noe, gjerne se over.}
-	\item Introduksjon. \textcolor{red}{Har skrevet en koselig intro - gjerne se over den og...} 
-	\item Fikse dimensjonene til $x(t)$ i teoriseksjonen for egenverdi. Må samsvare med python-scriptet. Se ligning \eqref{eq:diff_eig}. \textcolor{red}{Sjekket med python-scriptet, dimensjon $n_t \times n$ stemmer.}
 	\item NN: Skrive metode 
 	\item NN: Finne beste NN (Resultater)
-	\item Sammenlikne NN-FE feil og performance  
-	\item Diskjusjon: Lese gjennom og evt. endre "Potential for solving diff-eqs"
-	\item Konklusjon
+	\item Sammenlikne NN-FE feil og performance 
+	\item Analytisk løsning av diffusjon i appendiks 
+	\item Kommentere feil egenverdi for NN 
+	\item Fjerne $\Delta t=1$ fra resultater  
+	\item Diskjusjon: Fjerne $\Delta t=1$ 
+	\item Konklusjon: 
 \end{itemize}
 
 \section{Introduction}
@@ -164,14 +164,14 @@ The loss function converges towards zero for the optimal parameters $\theta$, in
 
 
 \subsection*{Solving eigenvalue problems}
-Deep neural networks are capable of solving more or less any differential equation. A particular first order ODE of interest is 
+Deep neural networks are capable of solving more or less any differential equation. We will in this section follow the work of Yi et. al. (2004) \cite{yi2004neural} closely, using the same first ODE as them and closely following their methods for finding the eigenvalues. The first order ODE in question is given as     
 \begin{equation}
 	\frac{dx(t)}{dt} = -x(t) + f[x(t)],
 	\label{eq:diff_eig}
 \end{equation}
 where
 \[ f(x) = [x^TxA + (1 - x^TAx)I]x \]
-where $A$ is a real symmetric matrix of shape $(n\times n)$ and $t \ge 0$ represents time. The solution of the neural network is given by $x(t)$ with dimensions $(n_t\times n)$, where $n_t$ is the number of time steps. The ODE \eqref{eq:diff_eig} is applicable for finding the eigenvalues of $A$. The method closely follows that of Yi et. al. (2004) \cite{yi2004neural}. An equilibrium point $\tilde{x}$ of a differential equation is a solution that is stationary, that is a state where the solution doesn't change anymore, mathematically expressed as $\frac{dx}{dt} = 0$. It can be shown that the equilibrium points of \eqref{eq:diff_eig} span the eigenspace of $A$, implying that the equilibrium points are precisely the eigenvectors of $A$. That is, any $\tilde{x}$ that satisfies
+where $A$ is a real symmetric matrix of shape $(n\times n)$ and $t \ge 0$ represents time. The solution of the neural network is given by $x(t)$ with dimensions $(n_t\times n)$, where $n_t$ is the number of time steps. The ODE \eqref{eq:diff_eig} is applicable for finding the eigenvalues of $A$. An equilibrium point $\tilde{x}$ of a differential equation is a solution that is stationary, that is a state where the solution doesn't change anymore, mathematically expressed as $\frac{dx}{dt} = 0$. It can be shown that the equilibrium points of \eqref{eq:diff_eig} span the eigenspace of $A$, implying that the equilibrium points are precisely the eigenvectors of $A$. That is, any $\tilde{x}$ that satisfies
 \begin{align*}
 	\frac{d\tilde{x}(t)}{dt} &= -\tilde{x} + f[\tilde{x}(t)] \\
 	&= -\tilde{x} + [\tilde{x}^T\tilde{x}A + (1 - \tilde{x}^TA\tilde{x})I]\tilde{x} \\
@@ -428,47 +428,24 @@ Adjusting hyperparameters of the neural network has also been investigated. Figu
 	\label{fig:eig_T5_N6}
 \end{figure}
 
-
-\begin{figure}[h]
-	
-	\centering
-	\begin{subfigure}{0.49\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../output/plots/eigvec_T5_N5.pdf}
-		\caption{Eigenvectors}
-		\label{fig:eigvec_T5_N5}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.49\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../output/plots/eigval_T5_N5.pdf}
-		\caption{Rayleigh quotients}
-		\label{fig:eigval_T5_N5}
-	\end{subfigure}
-	\caption{Predictions of largest eigenvalue and corresponding eigenvector by forward euler and neural network for a real, symmetric $3\times 3$ matrix. A time step of $\Delta t = 1$ is used.}
-	\label{fig:eig_T5_N5}
-\end{figure}
-
-Results for increasing the time steps even further are shown in Figure \ref{fig:eigvec_T5_N6} and Figure \ref{fig:eigvec_T5_N5}, for $\Delta t= 0.83$ and $\Delta t = 1$, respectively. These time steps correspond to $N=6$ and $N=5$ estimations, respectively. The associated rayleigh quotients are provided in Figure \ref{fig:eigval_T5_N6} and Figure \ref{fig:eigval_T5_N5}. 
-
-\textcolor{red}{Maybe put some of the eigenvalue-results in Appendix ??}
+Results of a further increase in the time step is shown in Figure \ref{fig:eig_T5_N6}, using $\Delta t= 0.83$ corresponding to $N=6$ estimations, where the left panel shows the eigenvector components and the right panel shows the associated Rayleigh quotients. 
 
  
 \clearpage
 \section{Discussion}
 
-\subsection*{Performance of Forward Euler}
+\subsection*{Solving the diffusion equation with Forward Euler}
 Figure \ref{fig:FE_MSE} verifies that simulating the forward euler scheme of the diffusion equation with spatial step $\Delta x = 0.01$ yields an excellent correspondance between the numerical and analytical solution. The maximum error is obtained at an early time step, around $\Delta t = 0.1$. For time levels beyond this, the MSE decreases exponentially and eventually converges towards zero. Notice that the error is exactly zero initially, because the numerical scheme has enforced the solution at the initial time step to satisfy the initial condition from the analytical solution. The maximum error is on the order of $10^{-9}$, yielding an excellent fit to the exact solution. One would not be able to distinguish the numerical solution from the exact solution if they were plotted together.
 
 \par The shape of the plot is in good correspondance with what was initially expected, as elaborated on in Methods. The large initial increase of the MSE is a result of the curved initial solution. The spatial gradients are significant and the approximation with finite differences becomes less accurate.
 In the beginning of the diffusion process, for low $t$, the solution changes rather quickly. The forward euler scheme is first order accurate in time, $O(\Delta t)$, and second order accurate in space, $O(\Delta x^2)$, implying that the numerical solution is more sensitive to the temporal evolution than the spatial evolution. Hence, the forward euler scheme will produce larger errors for the initial time levels due to the rapid change in solution \cite{Linge2017}.
 \par After time $t=0.1$ the MSE decreases. This can be explained by the discretization parameters $\Delta t$ and $\Delta x$. The magnitude of the gradients are diminished because the solution becomes more linear and less curved. As a result, the solution changes more slowly, allowing the finite difference scheme to approximate the changes more accurately both spatially and temporally. Eventually, the exact solution is approximately constant at zero. In this case, the gradients of the solution are indiscernible and the numerical scheme is able to approximate the solution with machine precision. Figure \ref{fig:FE_MSE} illustrates this by the MSE converging towards zero sufficiently deep into the diffusion process.
 
-\subsection*{Performance of neural network}
+\subsection*{Solving the diffusion equation with a neural network}
 
 \par \textcolor{red}{Et forsøk paa aa forklare fluktuasjonene i MSE for NN:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer [\textcolor{red}{https://arxiv.org/abs/1412.6980}]. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
-\subsection*{Forward Euler and Neural Network to find eigenvalues}
+\subsection*{Using Forward Euler and Neural Network to find eigenvalues}
 Forward euler and neural networks are two different numerical methods capable of \textcolor{red}{finding} the eigenvalues of a real, symmetric matrix $A$ by solving the ODE in equation \eqref{eq:diff_eig}. The two algorithms for solving differential equations are quite different, and will therefore yield different predictions of the largest eigenvalue. The result of forward euler is sensitive to the time step $\Delta t$. Thus, it is of interest to compare the accuracy of prediction of the two methods when the time step is altered. \textcolor{red}{Skjønner ikke helt hva du vil frem til i siste setning}
 
 % FE: N=1000, N=100, N=10
@@ -493,17 +470,15 @@ In project 2 we studied some of the most sensitive parameters for a neural netwo
 
 
 % FE & NN: N=1000, N=100, N=10
-Figure \ref{fig:eigvec_T5_N6} and Figure \ref{fig:eigvec_T5_N5}, for simulations of $\Delta t=0.83$ and $\Delta t = 1$ respectively, suggest that the result of forward euler has a critical region around $\Delta t = 1$. Already for $\Delta t = 0.83$ the predictions of the eigenvector components do not converge but rather oscillate in an inconsistent pattern. The corresponding rayleigh quotients, shown in Figure \ref{fig:eigval_T5_N6}, verify that forward euler is not able to converge to the true solution of equation \eqref{eq:diff_eig} as $\Delta t$ approaches 1. All simulations with $\Delta t \leq 0.5$ have given a relative error less than $1\%$ between the final rayleigh quotient and the largest eigenvalue using forward euler. In comparison, the relative error for $\Delta t = 0.83$ is $22.1\%$.
+Figure \ref{fig:eigvec_T5_N6} shows that the eigenvector components do not converge but rather oscillate in an inconsistent pattern when we use Forward Euler with a time step $\Delta t =0.83$. There is a strong indication of diverging values for the eigenvector components, which would be more apparent if we either increased the duration of the simulation, or decreased the time step even further. 
 
-Increasing the time step to $\Delta t = 1$ makes a significant difference. The predicted components from forward euler still possess the oscillating behaviour, but now also seems to diverge over time. Clearly, a time step of $\Delta t=1$ is not a stable parameter option for forward euler. The concave shape of the rayleigh quotients in Figure \ref{fig:eigval_T5_N5} substantiates the hypothesis that forward euler diverges for time steps beyond one. The relative error between the final rayleigh quotient and the largest eigenvalue is in this case $39.5\%$, a large increase compared to the low increase in $\Delta t$. In comparison, the relative error for the neural network is only $0.03\%$. Taking all simulations into account, the neural network has excellent accuracy for $\Delta t < 1$. The accuracy is slightly reduced for $\Delta t = 1$, though. This indicates weak dependency on the time step, but this is completely deafed by the sensitivity to other hyperparameters such as learning rate and number of epochs.
+ The corresponding rayleigh quotients, shown in Figure \ref{fig:eigval_T5_N6}, verify that forward euler is not able to converge to the true solution of equation \eqref{eq:diff_eig} as $\Delta t$ is too large. All simulations with $\Delta t \leq 0.5$ have given a relative error less than $1\%$ between the final rayleigh quotient and the largest eigenvalue using forward euler. In comparison, the relative error for $\Delta t = 0.83$ is $22.1\%$.
 
-\textcolor{red}{Comment on pros and cons with each method.}
-\textcolor{red}{Vikenes: Burde vi kanskje droppe plottet med $\Delta t=1$? Vi har jo allerede elendige resultater med $\Delta t=0.83$, og det er ikke mulig å se hvordan NN gjør det i dette plottet.}
-
+Taking all simulations into account, the neural network has excellent accuracy for $\Delta t < 1$. This indicates weak dependency on the time step, but this is completely deafed by the sensitivity to other hyperparameters such as learning rate and number of epochs.
 
 
 
-\subsection*{Potential for solving differential equations}
+\subsection*{Potential for solving general differential equations}
 The forward euler method and neural networks are two quite different methods for solving differential equations. The former relies on discretization of the derivative to arrive at an explicit recursive set of equations to solve for each time step. The latter uses the residual error from the approximation as a basis for backpropagation to update weights and biases to improve the approximation to the actual solution. Figure \ref{fig:error_NN_40000} visualizes how bad the approximated solution of the initial run of the neural network is. Just after a few iterations though, the error decreases tremendously and goes below 0.083 (which is the total error obtained from forward euler) after around 100 iterations. After this, the total error fluctuates mildly but eventually converges towards zero.
  
 \par The forward euler method clearly has an advantage in its simple recursive formula and fast computation time. The proposed solution is calculated within a few milliseconds, with a total error of only 0.083. On the other hand, it is limited by a stability requirement in order to produce realistic results. This effectively puts a restriction on applicable mesh resolutions.
