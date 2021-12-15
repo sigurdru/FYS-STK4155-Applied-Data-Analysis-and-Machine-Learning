@@ -212,18 +212,20 @@ def NN_diffusion_error_timesteps(model, args):
     uexact1 = u_exact(xa, t1).reshape(-1, 1)
     uexact2 = u_exact(xa, t2).reshape(-1, 1)
 
-    # plt.plot(upred1, label='tpred = %f' % (t1))
-    # plt.plot(upred2, label='tpred = %f' % (t2))
-    # plt.plot(uexact1, label='texa = %f' % (t1))
-    # plt.plot(uexact2, label='texa = %f' % (t2))
-    # plt.legend()
-    # plt.show()
-    plt.plot(upred1 - uexact1, label='t = %f' %(t1))
-    plt.plot(upred2 - uexact2, label='t = %f' %(t2))
-    plt.legend()
-    plt.show()
-    print(np.mean(np.sum((upred1-uexact1)**2)))
-    print(np.mean(np.sum((upred2-uexact2)**2)))
+    fig, ax = plt.subplots()
+    ax.plot(upred1 - uexact1, label='t = %.2f' %(t1))
+    ax.plot(upred2 - uexact2, label='t = %.2f' %(t2))
+    title = r'Difference between analytical and output at timesteps %.2f and %.2f'\
+         % (t1, t2)
+    xlabel = 'x'
+    ylabel = r'$u_{p} - u_{a}$'
+    set_ax_info(ax, xlabel, ylabel, title=title)
+    
+    fname = 'NN_difference'
+    fname += '_Nt' + str(args.num_train_iter)
+    print('MSE at timestep %.2f: %f'%(t1, np.mean(np.sum((upred1-uexact1)**2))))
+    print('MSE at timestep %.2f: %f'%(t2, np.mean(np.sum((upred2-uexact2)**2))))
+    show_save(fig, fname, args)
 
 def plot_eig(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args):
     fig, ax = plt.subplots()

@@ -294,6 +294,24 @@ For each simulation we perform, we find the eigenvector, $\mathbf{v}_\mathrm{max
 	\end{tabular}
 \end{table}
 
+\begin{table}[]
+	\begin{tabular}{l|ll|}
+		\cline{2-3}
+		& \multicolumn{2}{l|}{Mean Square error} \\ \hline
+		\multicolumn{1}{|l|}{Number of training iterations} & \multicolumn{1}{l|}{t = 0.1} & t = 0.5 \\ \hline
+		\multicolumn{1}{|l|}{500}                           & \multicolumn{1}{l|}{0.0017}  & 0.0070  \\ \hline
+		\multicolumn{1}{|l|}{1000}                          & \multicolumn{1}{l|}{0.015}   & 0.00055 \\ \hline
+		\multicolumn{1}{|l|}{$10^4$}                          & \multicolumn{1}{l|}{$1.4\cdot 10^{-4}$}  & $9.5\cdot10^{-5}$  \\ \hline
+		\multicolumn{1}{|l|}{$5\cdot10^4$}                        & \multicolumn{1}{l|}{$1.0\cdot10^{-6}$}        & $3.0\cdot10^{-6}$        \\ \hline
+	\end{tabular}
+\end{table}
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{../output/plots/final_compare_NN.png}
+	\caption{In this plot ...} \label{fig:NN_relative_error}
+\end{figure}
 
 \clearpage
 \subsection{Error of Forward Euler scheme}

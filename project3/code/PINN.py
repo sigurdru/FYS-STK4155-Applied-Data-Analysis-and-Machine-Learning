@@ -2,14 +2,12 @@
 Physics Informed Neural Network
 """
 #Import important stuff
-import time
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-# from tensorflow.python.ops.candidate_sampling_ops import compute_accidental_hits
 
 class PINN:
     def __init__(self, args = None, DTYPE = 'float32',
@@ -50,7 +48,6 @@ class PINN:
         self.t_b = tf.random.uniform((N_b, 1), self.lb[0], self.ub[0], dtype=self.DTYPE)
         self.x_b = self.lb[1] + (self.ub[1] - self.lb[1]) * \
             tf.keras.backend.random_bernoulli((N_b, 1), 0.5, dtype=self.DTYPE)
-        # self.x_b = tf.random.uniform((N_b, 1), self.lb[1], self.ub[1], dtype=self.DTYPE)
         X_b = tf.concat([self.t_b, self.x_b], axis=1)
 
         self.u_b = self.fun_u_b(self.t_b, self.x_b)
@@ -158,6 +155,9 @@ class PINN:
     
     @tf.function
     def train_step(self):
+        """
+        Compute one training step and update weights and biases
+        """
         # Compute current loss and gradient w.r.t. parameters
         loss, grad_theta = self.get_grad()
 
@@ -165,48 +165,3 @@ class PINN:
         self.optim.apply_gradients(zip(grad_theta, self.model.trainable_variables))
 
         return loss
-
-if __name__ == '__main__':
-    NN = PINN()
-    N = 500
-    hist = []
-
-    for i in range(N+1):
-        loss = NN.train_step()
-
-        hist.append(loss.numpy())
-        print('It {:05d}: loss = {:10.8e}'.format(i, loss))
-    
-
-    # Set up meshgrid
-    N = 600
-    tspace = np.linspace(NN.lb[0], NN.ub[0], N + 1)
-    xspace = np.linspace(NN.lb[1], NN.ub[1], N + 1)
-    T, X = np.meshgrid(tspace, xspace)
-    Xgrid = np.vstack([T.flatten(), X.flatten()]).T
-    
-    # Determine predictions of u(t, x)
-    upred = NN.model(tf.cast(Xgrid, NN.DTYPE))
-    
-    # Reshape upred
-    U = upred.numpy().reshape(N+1, N+1)
-    
-    # Surface plot of solution u(t,x)
-    fig = plt.figure(figsize=(9, 6))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_surface(T, X, U, cmap='viridis')
-    ax.view_init(35, 35)
-    ax.set_xlabel('$t$')
-    ax.set_ylabel('$x$')
-    ax.set_zlabel('$u_\\theta(t,x)$')
-    ax.set_title('Solution of diffusion equation')
-    #plt.savefig('Burgers_Solution.pdf', bbox_inches='tight', dpi=300);
-    plt.show()
-
-    fig = plt.figure(figsize=(9, 6))
-    ax = fig.add_subplot(111)
-    #ax.semilogy(range(len(hist)), hist, 'k-')
-    ax.plot(range(len(hist)), hist, 'k-')
-    ax.set_xlabel('$n_{epoch}$')
-    ax.set_ylabel('$\\phi_{n_{epoch}}$')
-    plt.show()

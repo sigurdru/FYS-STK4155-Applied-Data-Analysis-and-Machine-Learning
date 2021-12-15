@@ -6,6 +6,10 @@ NN_regression:
 	python3 main.py -m NN -Nh 8 -Nn 20
 	python3 main.py -m NN -Nh 4 -Nn 20
 	python3 main.py -m NN -Nh 2 -Nn 20
+	python3 main.py -m NN -Nh 4 -Nn 20 -Nt 500
+	python3 main.py -m NN -Nh 4 -Nn 20 -Nt 1000
+	python3 main.py -m NN -Nh 4 -Nn 20 -Nt 10000
+	python3 main.py -m NN -Nh 4 -Nn 20 -Nt 50000
 NN_eig:
 	python3 main.py -m Eig -T 5 -dim 3
 	python3 main.py -m Eig -T 5 -N 1000
