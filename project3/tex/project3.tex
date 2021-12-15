@@ -21,7 +21,7 @@
 \affiliation{\large FYS-STK4155 – Applied Data Analysis and Machine Learning
 \\Autumn 2021\\Department of Physics\\University of Oslo\\\\\today}
 \begin{document}
-\abstract{This project investigates two numerical techniques for solving differential equations, forward euler and neural network. Conventional finite difference methods are efficient and accurate for solving not too intricate differential equations. Stability is an issue though, particularly for explicit schemes such as forward euler. Results from numerical simulations suggest that the output of a neural network is able to converge to the true solution. In contrast to forward euler, neural network is more or less unaffected by the time step. Instead, hyperparameters such as learning rate and epochs determine the accuracy and convergence property. Neural networks have their limitation of an extensive learning process, but offer a flexible and robust alternative to finite difference methods that is presumeably independent of temporal discretization. This opens for new possibilities in the field of differential equations.}
+\abstract{This project investigates two numerical techniques for solving differential equations, forward euler and neural network. Conventional finite difference methods are efficient and accurate for solving not too intricate differential equations. Stability is an issue though, particularly for explicit schemes such as forward euler. Results from numerical simulations suggest that the output of a neural network is able to converge to the true solution. In contrast to forward euler, neural network is more or less unaffected by the time step. Instead, hyperparameters such as learning rate and epochs determine the accuracy and convergence property. Neural networks have their limitation of an extensive learning process, but offer a flexible and robust alternative to finite difference methods that is presumeably independent of temporal discretization. This opens for new possibilities in the field of differential equations. Our results strongly suggest that neural networks are well suited for simulating differential equations over long time periods, being much less sensitive of small time steps which would increase efficiency and accuracy simultaneously.}
 \maketitle
 \pagestyle{myplain}
 
@@ -31,11 +31,7 @@
 	\item NN: Skrive metode 
 	\item NN: Finne beste NN (Resultater)
 	\item Sammenlikne NN-FE feil og performance 
-	\item Analytisk løsning av diffusjon i appendiks 
-	\item Kommentere feil egenverdi for NN 
-	\item Fjerne $\Delta t=1$ fra resultater  
-	\item Diskjusjon: Fjerne $\Delta t=1$ 
-	\item Konklusjon: 
+	\item Konklusjon 
 \end{itemize}
 
 \section{Introduction}
@@ -197,8 +193,7 @@ Starting with a non-zero initial condition $x^0 = I(x)$, iteration over time ste
 
 
 \section{Method}
-\subsection{Unit testing}
-\textcolor{red}{Burde vi flytte resultatene fra unit testen i appendix?}
+\subsection*{Unit testing}
 
 Before the numerical explicit scheme is applied to a particular problem, it is important to test that the discretized equations return expected results. Unit tests are constructed to test the implementation. This is done by manually calculating the solution of the first two time steps given the initial condition, and comparing the result with that obtained by the numerical scheme. Since the same recursive formula is used for all time steps, it is sufficient to test the two first time steps. To avoid too much computations we choose five equally sized intervals between $x=0$ and $x=L=1$, that is $\Delta x = 0.2$. The time step is set to $\Delta t = 0.01$, ensuring stability.
 For time step $j$, that is $t=j\Delta t$, we have the following two boundary values and four interior points
@@ -467,8 +462,8 @@ In the beginning of the diffusion process, for low $t$, the solution changes rat
 
 \par \textcolor{red}{Et forsøk paa aa forklare fluktuasjonene i MSE for NN:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer [\textcolor{red}{https://arxiv.org/abs/1412.6980}]. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
-\subsection{Using Forward Euler and Neural Network to find eigenvalues}
-Forward euler and neural networks are two different numerical methods capable of \textcolor{red}{finding} the eigenvalues of a real, symmetric matrix $A$ by solving the ODE in equation \eqref{eq:diff_eig}. The two algorithms for solving differential equations are quite different, and will therefore yield different predictions of the largest eigenvalue. The result of forward euler is sensitive to the time step $\Delta t$. Thus, it is of interest to compare the accuracy of prediction of the two methods when the time step is altered. \textcolor{red}{Skjønner ikke helt hva du vil frem til i siste setning}
+\subsection*{Using Forward Euler and Neural Network to find eigenvalues}
+Forward euler and neural networks are two different numerical methods capable of finding the eigenvalues of a real, symmetric matrix $A$ by solving the ODE in equation \eqref{eq:diff_eig}. The two algorithms for solving differential equations are quite different, and will therefore yield different predictions of the largest eigenvalue. The result of forward euler is sensitive to the time step $\Delta t$. Thus, it is of interest to compare the accuracy of prediction of the two methods when the time step is altered. 
 
 % FE: N=1000, N=100, N=10
 Comparing Figure \ref{fig:eigvec_T5_N1000}, Figure \ref{fig:eigvec_T5_N100} and Figure \ref{fig:eigvec_T5_N10} for time steps $\Delta t = 0.005$, $\Delta t = 0.05$ and $\Delta t = 0.5$, respectively, we observe that the accuracy of forward euler consistently decreases for larger time steps. The result for $\Delta t=0.5$ is particularly biased with all components of the predicted eigenvector consistently missing their respective targets. The corresponding rayleigh quotients, shown in Figure \ref{fig:eigval_T5_N1000}, Figure \ref{fig:eigval_T5_N100} and Figure \ref{fig:eigval_T5_N10}, converge precisely to the largest eigenvalue calculated by \code{numpy.linalg.eig}. Thus, despite the lower accuracy - particularly for forward euler - both methods succeed in returning the largest eigenvalue with four decimal precision.
@@ -530,7 +525,9 @@ Vi hadde nettopp fullført oppgave d) ang. egenverdi
 
 \section{Appendix}
 
-\subsection{Derivation of analytical solution}
+\section*{Appendix}
+
+\subsection*{Analytical solution of the diffusion equation}
 By using the concept of separation of variables, the solution can be expressed as
 \[ u(x,t) = X(x)T(t) \]
 The solution is separated into a function $X$ only depending on the independent variable $x$, and a function $T$ only depending on the independent variable $t$. Equation \eqref{eq:diffusion_equation_1D} can then be rewritten as
@@ -631,7 +628,8 @@ Finally, this gives the following analytical solution of \eqref{eq:diffusion_equ
 
 \[ u(x,t) = e^{-\pi^2 t} \sin(\pi x) \]
 
-
+\subsection*{Forward Euler unit test results}
+The results of the unit test for the Forward Euler scheme is given in table \ref{tab:unit_test}.  
 \begin{table}[h]
 	\centering
 	\begin{tabular}{l|ll|ll|}
