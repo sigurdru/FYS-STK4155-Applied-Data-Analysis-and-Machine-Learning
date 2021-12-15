@@ -85,7 +85,7 @@ The analytical solution satisfying the given initial and boundary conditions is
 \[ u(x,t) = e^{-\pi^2 t} \sin(\pi x) \]
 
 
-\subsection*{Explicit forward Euler}
+\subsection{Explicit forward Euler}
 In this section we want to cover the explicit forward Euler. By explicit we mean that the value at the next grid point is determined entirely by known or previously calculated values.
 
 The one-dimensional diffusion equation \eqref{eq:diffusion_equation_1D} reads 
@@ -159,7 +159,7 @@ where $\eta$ is the learning rate, which can either be constant or variable, dep
 The loss function converges towards zero for the optimal parameters $\theta$, in which case the gradient of the loss function vanishes. As a result, the parameters will hardly update anymore through gradient descent, indicating that we have reached an optimal solution.
 
 
-\subsection*{Solving eigenvalue problems}
+\subsection{Solving eigenvalue problems}
 Deep neural networks are capable of solving more or less any differential equation. We will in this section follow the work of Yi et. al. (2004) \cite{yi2004neural} closely, using the same first ODE as them and closely following their methods for finding the eigenvalues. The first order ODE in question is given as     
 \begin{equation}
 	\frac{dx(t)}{dt} = -x(t) + f[x(t)],
@@ -208,12 +208,12 @@ The initial condition used is $u_*^0 = \big(\sin(0),\:\sin(0.2\pi),\:\sin(0.4\pi
 
 
 
-\subsection*{Neural network setup}
+\subsection{Neural network setup}
 \textcolor{red}{Sigurd: Skriv hvordan du setter opp neural network her. Skriv også hva du kommer til å teste (dybde) og hva du ikke skal teste.}
 
 \textcolor{red}{Vetle og Vetle tenker at det er fint å bruke loss for å finne beste NN, og når det er funnet så regner vi ut MSE o.l. med metoden under for sammenlikning.}
 
-\subsection*{Accuracy assessment}
+\subsection{Accuracy assessment}
 The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution and how does it compare to the neural network? To address these questions we will present some concrete methods for studying the solvers.
 
 As discussed in the theory section, following equation \eqref{eq:stability}, $\alpha=0.5$ produce stable solutions for the diffusion equation. Throughout this report we will therefore use a time step of $\Delta t = \alpha \Delta x^2 = 0.5\cdot \Delta x^2$ for different choices of spatial resolution, and not consider other stability factors. We will limit our study to two spatial resolutions, namely $\Delta x = 0.1$ and $\Delta x = 0.01$.  
@@ -235,7 +235,7 @@ Our main purpose of this is to see whether the neural network can circumvent one
 
 
 
-\subsection*{Finding eigenvalues}
+\subsection{Finding eigenvalues}
 Using the neural network model \eqref{eq:diff_eig} to find the eigenvalues of a real, symmetric matrix $A$ requires a trial solution \eqref{eq:NN_model} to initiate the network. The trial solution must fulfill the convergence property to guarantee that we end up with the eigenvalues. Hence, we define the initial condition $x_0 \in \mathcal{R}^n$ to be a vector of randomly generated numbers between zero and one. Since we don't know the eigenspace corresponding to the largest eigenvalue a priori, we have no guarantee that the trial solution is not orthogonal to the eigenspace corresponding to the largest eigenvalue. The probability of non-orthogonality, though, can be increased by adding random perturbations.
 
 Even though a non-zero trial solution is the only requirement for convergence, there are strategies for improving the \textit{rate} of convergence. If we have some idea or preknowledge of a solution of the differential equation, incorporating this in the trial solution helps accelerate the learning of the neural network. The ODE \eqref{eq:diff_eig} is of first order with a term involving $\frac{dx}{dt}$ on one side and a term involving $x$ on the other. This is reminiscent of an exponential solution. Therefore, a smart initialization strategy of \eqref{eq:NN_model} is 
@@ -254,10 +254,10 @@ For each simulation we perform, we find the eigenvector, $\mathbf{v}_\mathrm{max
 
 \section{Results}
 
-\subsection*{Neural network}
+\subsection{Neural network}
 \textcolor{red}{Sigurd: Resultater fra NN testing}
 
-\subsection*{Error of Forward Euler scheme}
+\subsection{Error of Forward Euler scheme}
 
 To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the mean squared error to compare the approximated solutions with the analytical solution, both for forward euler and the neural network. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t=0.1$ and quickly reduces thereafter. Already at $t=0.5$ the MSE is converging towards zero.
 
@@ -287,16 +287,16 @@ Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neur
 \end{table}
 
 
-\subsection*{Error of Neural Network}
+\subsection{Error of Neural Network}
 
 \textcolor{red}{Basert paa gammel figur. Sigurd: kanskje dette maa skirves om, avhengig av de endelige resultatene dine.}
 Figure \ref{fig:error_NN_10000} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases considerably - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes again. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
 
 
-\subsection*{Comparison of error}
+\subsection{Comparison of error}
 
 
-\subsection*{Eigenvalue problem}
+\subsection{Eigenvalue problem}
 
 
 \begin{figure}[h!]
@@ -429,14 +429,14 @@ Results of a further increase in the time step is shown in Figure \ref{fig:eig_T
 \clearpage
 \section{Discussion}
 
-\subsection*{Solving the diffusion equation with Forward Euler}
+\subsection{Solving the diffusion equation with Forward Euler}
 Figure \ref{fig:FE_MSE} verifies that simulating the forward euler scheme of the diffusion equation with spatial step $\Delta x = 0.01$ yields an excellent correspondance between the numerical and analytical solution. The maximum error is obtained at an early time step, around $\Delta t = 0.1$. For time levels beyond this, the MSE decreases exponentially and eventually converges towards zero. Notice that the error is exactly zero initially, because the numerical scheme has enforced the solution at the initial time step to satisfy the initial condition from the analytical solution. The maximum error is on the order of $10^{-9}$, yielding an excellent fit to the exact solution. One would not be able to distinguish the numerical solution from the exact solution if they were plotted together.
 
 \par The shape of the plot is in good correspondance with what was initially expected, as elaborated on in Methods. The large initial increase of the MSE is a result of the curved initial solution. The spatial gradients are significant and the approximation with finite differences becomes less accurate.
 In the beginning of the diffusion process, for low $t$, the solution changes rather quickly. The forward euler scheme is first order accurate in time, $O(\Delta t)$, and second order accurate in space, $O(\Delta x^2)$, implying that the numerical solution is more sensitive to the temporal evolution than the spatial evolution. Hence, the forward euler scheme will produce larger errors for the initial time levels due to the rapid change in solution \cite{Linge2017}.
 \par After time $t=0.1$ the MSE decreases. This can be explained by the discretization parameters $\Delta t$ and $\Delta x$. The magnitude of the gradients are diminished because the solution becomes more linear and less curved. As a result, the solution changes more slowly, allowing the finite difference scheme to approximate the changes more accurately both spatially and temporally. Eventually, the exact solution is approximately constant at zero. In this case, the gradients of the solution are indiscernible and the numerical scheme is able to approximate the solution with machine precision. Figure \ref{fig:FE_MSE} illustrates this by the MSE converging towards zero sufficiently deep into the diffusion process.
 
-\subsection*{Solving the diffusion equation with a neural network}
+\subsection{Solving the diffusion equation with a neural network}
 
 \par \textcolor{red}{Et forsøk paa aa forklare fluktuasjonene i MSE for NN:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer [\textcolor{red}{https://arxiv.org/abs/1412.6980}]. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
@@ -473,7 +473,7 @@ Taking all simulations into account, the neural network has excellent accuracy f
 
 
 
-\subsection*{Potential for solving general differential equations}
+\subsection{Potential for solving general differential equations}
 The forward euler method and neural networks are two quite different methods for solving differential equations. The former relies on discretization of the derivative to arrive at an explicit recursive set of equations to solve for each time step. The latter uses the residual error from the approximation as a basis for backpropagation to update weights and biases to improve the approximation to the actual solution. Figure \ref{fig:error_NN_40000} visualizes how bad the approximated solution of the initial run of the neural network is. Just after a few iterations though, the error decreases tremendously and goes below 0.083 (which is the total error obtained from forward euler) after around 100 iterations. After this, the total error fluctuates mildly but eventually converges towards zero.
  
 \par The forward euler method clearly has an advantage in its simple recursive formula and fast computation time. The proposed solution is calculated within a few milliseconds, with a total error of only 0.083. On the other hand, it is limited by a stability requirement in order to produce realistic results. This effectively puts a restriction on applicable mesh resolutions.
@@ -486,17 +486,22 @@ The forward euler method and neural networks are two quite different methods for
 \textcolor{red}{Det meste av diskusjonen over kan beholdes da det gjelder generelt, men de faktiske tallene nevnt maa oppdateres med resultatene fra MSE.}
 
 
-\subsection*{Eigenvalue problems}
+\subsection{Eigenvalue problems}
 The potential of solving differential equations spans a large domain of mathematical problems. Particularly, the model \eqref{eq:diff_eig} can be represented by a neural network or a forward euler scheme to approximate the eigenvalues of a real, symmetric matrix. Our experiments have shown that the neural network has no trouble finding an accurate approximation to the largest eigenvalue and the corresponding eigenvector given a suitable trial solution and network architecture. The parameter space of a neural network is large, and optimizing a solution requires an infeasible search over all parameters. Training for more epochs gives a more accurate prediction, but comes at the expense of a longer runtime, in which case forward euler can produce equally accurate results for a much shorter runtime. Nonetheless, the optionality to tune the various parameters of a neural network makes it a flexible method for finding approximate solutions.
 
 The forward euler scheme gives a more accurate prediction then the neural network, in addition to converging faster, as long as the time step is sufficiently low. In this case, forward euler is the prevailing method for finding the largest eigenvalue of a real, symmetric matrix. However, the method has an inherent disadvantage in terms of stability. Our experiments indicate that forward euler diverges for $\Delta t \ge 1$. This marks a transition where the results of forward euler are deceptive and the neural network is the method of choice.
+
+Most of the differential equations frequently applied in natural science, such as the diffusion equation, are simple enough for finite difference schemes to handle efficiently and accurately. However, for more intricate differential equations finite differencing may not give accurate approximations of gradients. Refining the mesh is a solution, but discretization parameters eventually become low enough to yield stability issues, particularly for forward euler. A refinement of the mesh is also necessary when simulating for very long time periods. For these particular cases, it seems like neural network is the prominent method and a great alternative to conventional numerical schemes. Hence, the method of choice is problem specific. 
 
 \textcolor{red}{Vikenes: Burde kommentere at NN vil være bedre/raskere for mer komplekse modeller, og at NN er best dersom man skal simulere over lange perioder.}
 
 
 
 \section{Conclusion}
+Hei, i prosjekt 3 har vi valgt oppgaven om diff-likninger.
+Vi hadde nettopp fullført oppgave d) ang. egenverdi
 
+\section{Appendix}
 
 \section*{Appendix}
 
