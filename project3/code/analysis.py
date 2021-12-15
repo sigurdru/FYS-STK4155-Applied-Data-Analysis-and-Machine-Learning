@@ -121,10 +121,10 @@ def neural_network(args):
         loss = NN.train_step()
         loss_hist.append(loss.numpy())
 
-    plot.testing_data(NN, args)
+    # plot.testing_data(NN, args)
     plot.NN_diffusion_error(loss_hist, args)
-    plot.NN_diffusion_solution(NN, args)
-    plot.NN_diffusion_error_timesteps(NN, args)
+    # plot.NN_diffusion_solution(NN, args)
+    # plot.NN_diffusion_error_timesteps(NN, args)
 
 def neural_network_eig(args):
     """

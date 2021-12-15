@@ -184,11 +184,11 @@ def NN_diffusion_solution(model, args):
 def NN_diffusion_error(loss_hist, args):
     # Plotting
     fig, ax = plt.subplots()
-    ax.plot(loss_hist)
+    ax.plot(np.log10(loss_hist))
 
     title = r'Error of neural N$_{layers} = %i$ N$_{nodes} = %i$' % (args.num_hidden_layers, args.num_neurons_per_layer)
     xlabel = 'iterations'
-    ylabel = 'error'
+    ylabel = r'$\log_{10}$(cost)'
     set_ax_info(ax, xlabel, ylabel, title=title)
 
     fname = 'NN_diffusion_error'
@@ -212,12 +212,12 @@ def NN_diffusion_error_timesteps(model, args):
     uexact1 = u_exact(xa, t1).reshape(-1, 1)
     uexact2 = u_exact(xa, t2).reshape(-1, 1)
 
-    plt.plot(upred1, label='tpred = %f' % (t1))
-    plt.plot(upred2, label='tpred = %f' % (t2))
-    plt.plot(uexact1, label='texa = %f' % (t1))
-    plt.plot(uexact2, label='texa = %f' % (t2))
-    plt.legend()
-    plt.show()
+    # plt.plot(upred1, label='tpred = %f' % (t1))
+    # plt.plot(upred2, label='tpred = %f' % (t2))
+    # plt.plot(uexact1, label='texa = %f' % (t1))
+    # plt.plot(uexact2, label='texa = %f' % (t2))
+    # plt.legend()
+    # plt.show()
     plt.plot(upred1 - uexact1, label='t = %f' %(t1))
     plt.plot(upred2 - uexact2, label='t = %f' %(t2))
     plt.legend()
