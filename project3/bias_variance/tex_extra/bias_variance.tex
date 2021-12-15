@@ -44,14 +44,14 @@
 	
 	
 	\section{Introduction}
-	The goal of this exercise is to analyse the bias-variance tradeoff using three different machine learning methods. This will provide valuable information of the potential of different methods to solve a particular problem, as well as generalizing to other problems. The training process is at the core of machine learning, ultimately determining how applicable the method is for a set of problems. During training, we want the algorithm to learn important features of the data in order to replicate the structure of the data. However, training for too long causes the algorithm to be too tailored at solving the particular problem trained at, but generalizes poorly to other, but similar, kinds of problems. To mitigate the loss of generalization, training should stop when the error starts increasing for the test set. The resulting model gives a fair balance between biasedness and overfitting.
+	The goal of this exercise is to analyse the bias-variance tradeoff using three different machine learning methods. This will provide valuable information of the potential of different methods to solve a particular problem, as well as generalizing to other problems \textcolor{red}{Hvilke problemer?}. The training process is at the core of machine learning, ultimately determining how applicable the method is for a set of problems. During training, we want the algorithm to pick up on important features of the data in order to replicate the structure of the data. However, training for too long causes the algorithm to be too tailored at solving the particular problem it has been trained at, and generalizes poorly to other, but similar, kinds of data. To mitigate the loss of generalization, training should stop when the error starts increasing for the test set. The resulting model gives a fair balance between biasedness and overfitting.
 	
 	\section{Support Vector Machines}
 	A machine learning method to be used in this exercise is Support Vector Machines. This method has not been covered in the previous project, so we will provide a brief description of its functionality. \\
 	
 	Support vector machines is first and foremost a classification method, but can be generalized to regression problems. The idea is to expand a linear decision boundary with a margin $M$ to improve prediction on non-separable classes and nonlinear functions. A general linear regression model is on the form
 	\[ f(x) = \beta_0 + x^T\beta \]
-	For linear regression the goal is to find the parameters $\beta$ that minimize the squared distance between the model prediction and the target values. For support vector machines the minimization strategy is more extensive. The appropriate cost function penalizes wrong predictions, but ignores the ones with a small residual. This greatly reduces the number of computations needed by the model. We have the following error measure
+	For linear regression the goal is to find the parameters $\beta$ that minimize the squared difference between the model prediction and the target values. For support vector machines the minimization strategy is more extensive. The appropriate cost function penalizes wrong predictions, but ignores the ones with a small residual. This greatly reduces the number of computations needed by the model. We have the following error measure
 	\[ V_{\epsilon}(r) = \begin{cases}
 		0 & |r| < \epsilon \\
 		|r| - \epsilon & \text{else}
@@ -60,7 +60,7 @@
 	where $r = y - f(x)$ is the prediction error and $\epsilon$ is a constant definining the residual threshold of where to ignore the error. The cost function to minimize involves the error measure $V$ and a penalization term
 	
 	\[ H(\beta) = \sum_{i=1}^N V_{\epsilon}(r_i) + \frac{\lambda}{2} ||\beta||^2 \]
-	Support vector machines is a constrained optimization method, since we want to minimize the squared deviation between the predictions and targets \textit{subject} to a prescribes margin $M$ in the hyperplane. By introducing slack parameters $\xi$ and $\xi^*$ we allow for errors withinb the margin. Minimizing the loss with respect to all relevant parameters, we get a constrained optimization problem to be solved for relevant parameters, including $\xi$, $\xi^*$, $w$ and $b$. A mathematical derivation is given in \cite{Hastie2009}.
+	Support vector machines is a constrained optimization method, since we want to minimize the squared deviation between the predictions and targets \textit{subject} to a prescribed margin $M$ in the hyperplane. By introducing slack parameters $\xi$ and $\xi^*$ we allow for errors within the margin. Minimizing the loss with respect to all relevant parameters, we get a constrained optimization problem to be solved for relevant parameters, including $\xi$, $\xi^*$, $w$ and $b$. A mathematical derivation is given in \cite{Hastie2009}. \textcolor{red}{bib mangler.}
 	
 	
 	
@@ -229,8 +229,10 @@
 	Support vector machine certainly has an advantage by its excellent scores on the test set for a wide range of model complexities. A particular feature is that both low bias and low variance is achieved for high model complexities, at least compared to linear regression and neural network.
 	
 	Experiments show that using RBF-kernel with $\epsilon=0.2$ the variance does not attain any significant increase for model complexity. This is an important feature of the bias-variance tradeoff characteristic for support vector machines, as opposed to linear regression and neural network, which provides great performance with low bias and low variance for middle to high complexities. This is verified by the simultaneous analysis of $C$ and $\epsilon$ in Figure \ref{fig:SVM_3d_bias} and \ref{fig:SVM_3d_var}, and also from scientific experiments \cite{valentini2004bias}.
+	\textcolor{red}{Mangler bib-fil}
 	
 	The bias-variance tradeoff is not too sensitive, meaning that the gradient of bias and gradient of variance remains low for low and high model complexities, respectively. Though, support vector machine has a significant disadvantage of a large runtime. This is particularly the case using radial basis function kernel combined with a large $C$. Increasing $C$ even further may reveal tendencies of overfitting comparable to linear regression and neural network, but is not investigated due to infeasible computations. From the simultaneous analysis of $C$ and $\epsilon$, we found that the value of $\epsilon$ is very susceptible to the bias. The method is quite sensitive to the number of training samples and linear regression or neural network would probably be a better choice for larger datasets than FrankeFunction \cite{valentini2004bias}.
+	\textcolor{red}{Mangler bib-fil}
 	
 	
 	
