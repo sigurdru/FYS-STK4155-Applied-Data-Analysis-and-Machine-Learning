@@ -21,36 +21,19 @@
 \affiliation{\large FYS-STK4155 – Applied Data Analysis and Machine Learning
 \\Autumn 2021\\Department of Physics\\University of Oslo\\\\\today}
 \begin{document}
-\abstract{This project investigates two numerical techniques for solving differential equations, forward euler and neural network. Conventional finite difference methods are efficient and accurate for solving not too intricate differential equations. Stability is an issue though, particularly for explicit schemes such as forward euler. Results from numerical simulations suggest that the output of a neural network is able to converge to the true solution. In contrast to forward euler, neural network is more or less unaffected by the time step. Instead, hyperparameters such as learning rate and epochs determine the accuracy and convergence property. Neural networks have their limitation of an extensive learning process, but offer a flexible and robust alternative to finite difference methods that is presumeably independent of temporal discretization. This opens for new possibilities in the field of differential equations. Our results strongly suggest that neural networks are well suited for simulating differential equations over long time periods, being much less sensitive of small time steps which would increase efficiency and accuracy simultaneously.}
+\abstract{This project investigates two numerical techniques for solving differential equations, forward euler and neural network. Conventional finite difference methods are efficient and accurate for solving not too intricate differential equations. Stability is an issue though, particularly for explicit schemes such as forward euler. Results from numerical simulations suggest that the output of a neural network is able to converge to the true solution. In contrast to forward euler, neural network is more or less unaffected by the time step. Instead, hyperparameters such as learning rate and epochs determine the accuracy and convergence property. Neural networks have their limitation of an extensive learning process, but offer a flexible and robust alternative to finite difference methods that is presumeably independent of temporal discretization. This opens for new possibilities in the field of differential equations. Our results strongly suggest that neural networks are well suited for simulating differential equations where larger time steps are of interest. For simple differential equations, such as the one dimensional diffusion equation studied in this report, we have found that forward Euler yields a lower MSE than that of the neural network we have set up, in addition to a considerable faster run time.}
 \maketitle
 \pagestyle{myplain}
 
-\section*{To Do}
-Hovedrapport:
-\begin{itemize}
-	\item Nevland: makefile 
-\end{itemize}
-
-
-Ekstraoppgave:
-\begin{itemize}
-	\item Nevland: Readme 
-	\item Nevland: makefile 
-	\item Nevland: docstrings
-\end{itemize}
-
-
-
 \section{Introduction}
-
-We will in no way answer all questions linked to the aforementioned methods. So that anyone can reproduce or continue our studies, we list all the code, results and instructions on running the code in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}{https://github.com/sigurdru/FYS-STK4155/tree/main/project3}}.
 
 Neural network is a trending machine learning method due to its ability to solve a wide range of problems. By calculating the error at the output layer with an appropriate loss function, the weights and biases are updated accordingly to provide the best possible approximation to the true solution of the problem. The inner workings a neural network is considered a black box, difficult to justify theoretically, but its flexibility and wide applicability makes it a relevant method for approaching more unconventional tasks. This includes solving differential equations, which will be the main purpose for this project. 
 
-The benefit of solving differential equations with neural network is that we don't need to know the analytical solution. By starting with a suitable guess of a solution, the neural network will converge towards the analytical solution given an appropriate loss function that initiaites gradient descent. Hence, neural networks are flexible enough to solve complex differential equations, including ODEs and PDEs. The focus in this project will be on solving a one dimensional diffusion equation. This is a PDE with a rather intricate analytical solution. It is of interest to investigate the potential for solving this PDE with a neural network.
+When using conventional numerical schemes, e.g. forward Euler or Runge Kutta, the method of choice is often highly dependent on stability conditions. For some differential equations, this can be a huge challenge. The benefit of solving differential equations with neural network is that they are flexible enough to handle a multitude of such conditions. The focus in this project will be on solving a one dimensional diffusion equation and comparing the performance of a neural network to that of forward Euler. 
 
-A natural extension is to consider another differential equation with another applicablility. We will consider a first order ODE whose solution is the eigenvector corresponding to the largest eigenvalue of a real, symmetric matrix. Solving this differential equation will reveal the potential for a neural network to find eigenvalues of symmetric matrices. The result will be compared with traditional numerical methods for solving differential equations, particularly the forward euler method. A critical discussion of the methods will then be presented with focus on flexibility and computational efficiency. An overarching question considered is if neural networks can compete with state-of-the-art numerical methods for solving differential equations.
+A natural extension is to consider another differential equation with another applicablility. We will consider a first order ODE whose solution is the eigenvector corresponding to the largest eigenvalue of a real, symmetric matrix. Solving this differential equation will reveal the potential for a neural network to find eigenvalues of symmetric matrices. The result will be compared with traditional numerical methods for solving differential equations, particularly the forward euler method. A critical discussion of the methods will then be presented with focus on flexibility and computational efficiency. An overarching question considered is if neural networks can compete with the vanilla numerical method, forward Euler. 
 
+We list all the code, results and instructions on running the code in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}{https://github.com/sigurdru/FYS-STK4155/tree/main/project3}}.
 
 \section{Theory}
 In the theory-section we aim to give a brief explanation of the main concepts and terminology used in this report. 
@@ -509,7 +492,6 @@ An additional simulation using a $6\times 6$ matrix has also been conducted. Fig
 
 The reason for the latter choice is based on the previous simulations with $\Delta t=0.005$, as both forward euler and neural network converge long before $T=5$. Reducing the simulation time makes it easier to illustrate the convergence property of the six eigenvector components.
  
- 
 \clearpage
 \section{Discussion}
 
@@ -554,41 +536,15 @@ Figure \ref{fig:eigvec_T5_N6} shows that the eigenvector components do not conve
 
 
 \section{Conclusion}
-Ting å ha med:
-\begin{itemize}
-	\item FE er bedre enn NN for diffusion equation - hvorfor (MSE-konkret, enklere, raskere)
-	\item NN - ikke samme bias som for FE 
-	\item Én setning - diffusjon er easy peazy, NN kan ha større timesteps 
-	\item Én setning - NN mer fleksibel 
-	\item Eig: FE-timestep, NN-eta-epochs 
-	\item eig: Euler lettere 
-\end{itemize}
 
-Simulations of forward Euler and neural network on the diffusion equation reveal that forward Euler is the prominent method. For $\Delta x = 0.01$ and time $t=0.5$, forward Euler returns an MSE of $1.69 \cdot 10^{-11}$ compared to an MSE of $3.0\cdot 10^{-6}$ for neural network. Forward Euler is a simpler numerical technique than neural network, and runs considerably faster for the diffusion problem. The difference between the analytical solution and numerical solutions is consistently negative for forward Euler at the time levels $t_1 = 0.1$ and $t_2=0.5$. The neural network, on the other hand, has both a positive and negative difference. A neural network is thus more robust against large spatial gradients. 
+Simulations of forward Euler and neural network on the diffusion equation reveal that forward Euler is the prominent method. For $\Delta x = 0.01$ and time $t=0.5$, forward Euler returns an MSE of $1.69 \cdot 10^{-11}$ compared to an MSE of $3.0\cdot 10^{-6}$ for neural network. Forward Euler is a simpler numerical technique than neural network, and runs considerably faster for the diffusion problem. The difference between the analytical solution and numerical solutions is consistently negative for forward Euler at the time levels $t_1 = 0.1$ and $t_2=0.5$. The neural network, on the other hand, has both a positive and negative difference. A neural network is thus more robust against large gradients. We emphasize that optimazation of the neural network could have lead to a better result. 
 
-The simplicity of the diffusion equation makes forward Euler a suitable numerical method for this particular problem. More intricate differential equations, though, require more complex numerical methods than a simple forward Euler scheme. Neural networks can be generated as complex as desired, making it the prominent method for solving differential equations of higher complexity.
-
-
-Figure \ref{fig:FE_MSE} shows that simulating the forward euler scheme of the diffusion equation with spatial step $\Delta x = 0.01$ yields an excellent correspondance between the numerical and analytical solution. The maximum error is obtained at an early time step, around $t = 0.1$. For time levels beyond this, the MSE decreases exponentially and eventually converges towards zero. 
-
-Figure \ref{fig:FE_MSE} shows that the error is exactly zero initially, because the numerical scheme has enforced the solution at the initial time step to satisfy the initial condition from the analytical solution. The maximum error is on the order of $10^{-9}$, yielding an excellent fit to the exact solution. One would not be able to distinguish the numerical solution from the exact solution if they were plotted together.
-
-Overall, the method of choice for solving differential equations is a tradeoff between the accuracy of the approximated solution and the computational runtime. Forward euler is definitely the desired method if we want a quick representation of the solution. If the importance is how precise the representation is, a neural network is a better choice.
 
 The potential of solving differential equations spans a large domain of mathematical problems. Particularly, the model \eqref{eq:diff_eig} can be represented by a neural network or a forward euler scheme to approximate the eigenvalues of a real, symmetric matrix. Our experiments have shown that the neural network has no trouble finding an accurate approximation to the largest eigenvalue and the corresponding eigenvector given a suitable trial solution and network architecture. The parameter space of a neural network is large, and optimizing a solution requires an infeasible search over all parameters. Training for more epochs gives a more accurate prediction, but comes at the expense of a longer runtime, in which case forward euler can produce equally accurate results for a much shorter runtime. Nonetheless, the optionality to tune the various parameters of a neural network makes it a flexible method for finding approximate solutions.
 
-The forward euler scheme gives a more accurate prediction then the neural network, in addition to converging faster, as long as the time step is sufficiently low. In this case, forward euler is the prevailing method for finding the largest eigenvalue of a real, symmetric matrix. However, the method has an inherent disadvantage in terms of stability. Our experiments indicate that forward euler diverges for $\Delta t \ge 1$. This marks a transition where the results of forward euler are deceptive and the neural network is the method of choice.
+The forward euler scheme gives a more accurate prediction than the neural network, in addition to converging faster, as long as the time step is sufficiently low. In this case, forward euler is the prevailing method for finding the largest eigenvalue of a real, symmetric matrix. However, the method has an inherent disadvantage in terms of stability. Our experiments indicate that forward euler diverges for $\Delta t \ge 1$. This marks a transition where the results of forward euler are deceptive and the neural network is the method of choice.
 
-Most of the differential equations frequently applied in natural science, such as the diffusion equation, are simple enough for finite difference schemes to handle efficiently and accurately. However, for more intricate differential equations finite differencing may not give accurate approximations of gradients. Refining the mesh is a solution, but this is computationally expensive. For situations where we want to simulate for a very long period refining the mesh may not be a feasible option. For these particular cases, it seems like neural network is the prominent method and a great alternative to conventional numerical schemes. Hence, the method of choice is problem specific. 
-
-\textcolor{red}{Gammel}
-In this project we have particularly studied the diffusion equation, a rather simple PDE. It has a closed form expression for the analytical solution, so strictly speaking it is not necessary to solve the equation numerically. Still, it is a good representation for comparing numerical methods. Our results have proven that forward euler clearly outperforms neural network in terms of MSE between approximated and analytical solution, as long as it fulfills the stability requirement \eqref{eq:stability}. The potential for finding eigenvalues by solving the first order ODE \eqref{eq:diff_eig} has also been studied, in which case forward euler and neural network perform comparably well, although forward euler generally runs faster. 
-
-The two differential equations studied in this project are linear and rather simple differential equations. In a general case, differential equations can be much more intrinsic. In such cases, numerical schemes and particularly forward euler encounter problems with accurate finite differences. Neural networks, on the other hand, can according to the universal approximation theorem approximate any function to arbitrary accuracy without any stability constraint on the time step. Hence, neural network is a more flexible numerical technique with a wide applicablility.
-
-Figure \ref{fig:FE_eigvec_T2_N1000_dim6}, Figure \ref{fig:NN_eigvec_T2_N1000_dim6} and Figure \ref{fig:eigval_T2_N1000_dim6} simulates the same ODE as before, but with a $6\times 6$ symmetric matrix, using $\Delta t=0.005$ once again. The plot shows that neither forward Euler nor the neural network have problems with convergence. Apparently, the predicted components of the eigenvector are near perfect for both methods after time $T=2$. The stochastic initialization of the neural network will yield different results for different simulations, some that may give notable deviations. Nonetheless, the rayleigh quotient converges to the largest eigenvalue with forth decimal precision for both neural network and forward euler. The only noticable difference is that forward euler has a smoother convergence, while the neural network seems to possess some minor low-frequency fluctuations. The simulation illustrates that forward euler is slightly more consistent for small time steps $\Delta t$, even for higher dimensional matrices.
-
-Taking all simulations into account, the neural network has excellent accuracy for $\Delta t < 1$. This indicates weak dependency on the time step, but this is completely deafed by the sensitivity to other hyperparameters such as learning rate and number of epochs.
+Overall, the method of choice for solving differential equations is a tradeoff between the accuracy of the approximated solution and the computational runtime. Forward euler is definitely the desired method if we want a quick representation of the solution. If the importance is how precise the representation is, a neural network is a better choice.
 
 \section{Appendix}
 
