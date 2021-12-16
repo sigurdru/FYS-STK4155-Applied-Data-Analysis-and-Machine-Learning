@@ -515,30 +515,21 @@ The reason for the latter choice is based on the previous simulations with $\Del
 
 \subsection{Solving the diffusion equation with Forward Euler}
 
-\textcolor{red}{Sigurd: Skriv om under og kort ned}
-\textcolor{red}{1: Konsekvent negativ. 2: Størst feil på mest kritiske punkter. 3: Minimere dt.}
-The shape of the plot is in good correspondance with what was initially expected, as elaborated on in Methods. The large initial increase of the MSE is a result of the curved initial solution. The spatial gradients are significant and the approximation with finite differences becomes less accurate.
-In the beginning of the diffusion process, for low $t$, the solution changes rather quickly. The forward euler scheme is first order accurate in time, $O(\Delta t)$, and second order accurate in space, $O(\Delta x^2)$, implying that the numerical solution is more sensitive to the temporal evolution than the spatial evolution. Hence, the forward euler scheme will produce larger errors for the initial time levels due to the rapid change in solution \cite{Linge2017}.
-
-After time $t=0.1$ the MSE decreases. This can be explained by the discretization parameters $\Delta t$ and $\Delta x$. The magnitude of the gradients are diminished because the solution becomes more linear and less curved. As a result, the solution changes more slowly, allowing the finite difference scheme to approximate the changes more accurately both spatially and temporally. Eventually, the exact solution is approximately constant at zero. In this case, the gradients of the solution are indiscernible and the numerical scheme is able to approximate the solution with machine precision. Figure \ref{fig:FE_MSE} illustrates this by the MSE converging towards zero sufficiently deep into the diffusion process.
+We don't have much to discuss when it comes to implementation of forward Euler. All results was as expected, namely decreasing the time step $\Delta t$ gave us a lower MSE, to get it even lower one could experiment with lower values of $\Delta t$. Also, as we discussed, the output was constantly below the analytical solution for both timesteps in figure \ref{fig:FE_absolute_difference}.
 
 \subsection{Solving the diffusion equation with a neural network}
 
-One reason that the loss in figure \ref{fig:Error_NN_architecture} flucuates instead of decreasing monotonically could be that we use the Adam optimizer \cite{kingma2017adam}. As mentioned, this is due to a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. 
-\textcolor{red}{Sigurd. 1: Ikke optimalisert nettverket, ikke grundig arkitekturanalyse, f.eks. aktivering, learning rate, design etc.}
-\textcolor{red}{2: Ikke perfekt boundaries. 3: skjeve differanser(bias). 4. ulempe at boundaries ikke er satt}
+When solving the diffusion equation with the neural network we only explored how the number of hidden layers affected the loss function. There are several things one could study to optimize the results. For instance different activation function, number of hidden nodes in each layer, learning rate and initialization of weights and biases. Also since we know the initial and boundary conditions are known, it would be favorable to find a way to implement this, so that the network returns correct values at those points. This was only implemented in the loss function as regularization terms. 
 
-\subsection{Comparing }
-\textcolor{red}{Vikenes: Kommentere at $t_1$ gir lavere MSE enn $t_2$ for NN. Kan sees fra differansegrafen.}
+One thing we noticed was that the loss in figure \ref{fig:Error_NN_architecture}, fluctuates instead of decreasing monotonically. We believe this could due to the use of Adam optimizer, as discussed by Kingma et. al. \cite{kingma2017adam}. The reason for this is due to the stochastic nature of Adam.
 
-One noteworthy aspect of the neural network results, was that the MSE at $t_1=0.1$ was three times lower than it was at $t_2=0.5$. This is easily seen from figure \ref{fig:NN_relative_error}, where the difference between the numerical and analytical solution is distributed more evenly between positive and negative values for $t_1$. The reason for this however is not apparent. One possible explanation might be that as the network trains and it converges to the analytical solution, the gradients at larger $t$ values are smaller, adjusting the corresponding    
+\subsection{Comparison between Forward Euler and neural network}
 
-\textcolor{red}{1: Ikke samme bias for NN som for FE. 2: Lavere MSE og diff for FE(kommentar - diffusjon er jævla snill). 3: Potential. 4: Konvergenstid}
+One noteworthy aspect of the neural network results, was that the MSE at $t_1=0.1$ was three times lower than it was at $t_2=0.5$. This is easily seen from figure \ref{fig:NN_relative_error}, where the difference between the numerical and analytical solution is distributed more evenly between positive and negative values for $t_1$. The reason for this however is not apparent. One possible explanation might be that as the network trains and it converges to the analytical solution, the gradients at larger $t$ values are smaller and the corresponding weights and biases are thus adjusted by smaller amounts.     
 
+One key difference between the two methods considered is the bias in the error, shown in figures \ref{fig:FE_absolute_difference} \ref{fig:NN_relative_error}. Using a Neural network does not yield a symmetric error that is purely negative, but there is a bias towards higher values near $x=0$ and lower values near $x=1$, compared to the analytical solution. At both times, for $x\gtrsim0.8$, the difference increases towards zero again. A major drawback of the neural network however, is that it is a much more intricate method of solving simple differential equations. Despite longer computational time and more calculations, the neural network is outperformed by the forward Euler method for the one dimensional diffusion equation we have considered in this reoprt.  
 
- 
-
-
+In general, the error of the neural network is not largest at $x=1/2$ where the gradients are largest, which is the case for forward Euler. This could be very benifitial when modeling intricate differential equations, where the solution is highly sensitive to deviations near the largest gradients. Having analysed the diffusion equation only, we are not capable of addressing a potentially huge advantage of neural networks, namely the robustness of a neural network as it encounters other differential equations with high complexity. Performing the analyses on other differential equations is therefore an \textcolor{red}{important} way to proceed. As the complexity increases, it is also interesting for further studies to compare a neural network with better numerical schemes, e.g. Runge Kutta 4, as forward Euler is known for its lack of accuracy.   
 
 
 \subsection{Potential for solving general differential equations}
