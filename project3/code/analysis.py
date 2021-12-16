@@ -78,9 +78,6 @@ def forward_euler(args):
         u[n+1, Nx] = BC_r
 
     if args.test_error:
-        max_error = plot.max_error_tot(x, t, u_m_final, args)
-        print(f'Numerical error for dx={args.x_step}, accumulated for n={args.num_plots} time steps:', max_error)
-
         all_mse = plot.MSE_FE(x, t, u, args)
         print('MSE forward euler t=0.1:', all_mse[t == 0.1])
         print('MSE forward euler t=0.5:', all_mse[t == 0.5])
@@ -143,7 +140,7 @@ def neural_network_eig(args):
 
     Args:
         args (argparse): Information handled by the argparser 
-        
+
     """
     n = args.dimension    # Dimension
     T = args.tot_time     # Final time

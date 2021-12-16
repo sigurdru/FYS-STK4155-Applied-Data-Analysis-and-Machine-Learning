@@ -56,9 +56,21 @@ def set_ax_info(ax, xlabel, ylabel, style='plain', title=None):
     ax.legend(fontsize=15)
 
 def Euler_solution(x, t, u, args):
+    """Plot numerical solution of Forward Euler 
+    for 1D diffusion equation at different time steps.
+    
+    Args:
+        x (array): spatial domain
+        t (array): time domain
+        u (array): numerical solution at desired time steps
+        args (argparse): Information handled by the argparser
+        
+    """
     fig, ax = plt.subplots()
+
     for n in u.keys():
         ax.plot(x, u[n], label=r'$t={}$'.format(t[n]))
+
     title = 'Forward-Euler Solution of 1D diffusion equation'
     xlabel = '$x$'
     ylabel = '$u(x,t)$'
@@ -67,40 +79,20 @@ def Euler_solution(x, t, u, args):
     fig.set_tight_layout(True)
     show_save(fig, fname, args)
 
-def max_error_tot(x, t, u, args):
-    """Plot max absolute error for given time steps, and
-    return the accumulated max absolute error.
-
+def MSE_FE(x, t, u, args):
+    """Calculates and plots MSE of numerical solution
+    of forward euler.
+    
     Args:
-        x (array): x-coordinate
-        t (array): time dimension
-        u (dict): dictionary of solutions at given time step
-        args: argparse arguments
+        x (array): spatial domain
+        t (array): time domain
+        u (array): numerical solution
+        args (argparse): Information handled by the argparser
 
     Returns:
-        (int): accumulated max absolute error
+        (array): MSE between analytical and numerical solution
+        
     """
-    fig, ax = plt.subplots()
-
-    t_n = [t[n] for n in u.keys()]
-    error_n = [np.abs(u[n] - u_exact(x, t[n])).max() for n in u.keys()]
-    tot_error = np.sum(error_n)
-
-    ax.plot(t_n, error_n, 'o--')
-    
-    title = 'Error between numerical and analytical solution' + '\n' 
-    title += 'at different times, using $\Delta x={}$'.format(args.x_step)
-    xlabel = 'Time [s]'
-    ylabel = 'Max absolute error'
-    fname = 'error_FE'
-
-    set_ax_info(ax, xlabel, ylabel, style='sci', title=title)
-    fig.set_tight_layout(True)
-    show_save(fig, fname, args)
-
-    return tot_error
-
-def MSE_FE(x, t, u, args):
     fig, ax = plt.subplots()
 
     mse = [np.sum( (u[n, :] - u_exact(x, t[n]))**2 )/len(x) for n in range(len(t))]
@@ -121,6 +113,16 @@ def MSE_FE(x, t, u, args):
     return np.array(mse)
 
 def error_x(x, t, u, args):
+    """Calculates and plots difference between numerical and
+    analytical soluton for two given time steps.
+    
+    Args:
+        x (array): spatial domain
+        t (array): time domain
+        u (array): numerical solution at desired time steps
+        args (argparse): Information handled by the argparser
+        
+    """
     fig, ax = plt.subplots()
 
     t_n = [t[n] for n in u.keys()]
@@ -140,8 +142,13 @@ def error_x(x, t, u, args):
     show_save(fig, fname, args)
 
 def testing_data(model, args):
-    """
+    """2D plot of initial state of neural network.
     
+    Args:
+        model (tf.keras.Sequential): deep neural network model \
+                            with provided layers and parameters.
+        args (argparse): Information handled by the argparser.
+
     """
     t_0, x_0, u_0 = model.t_0, model.x_0, model.u_0
     t_b, x_b, u_b = model.t_b, model.x_b, model.u_b
@@ -160,6 +167,15 @@ def testing_data(model, args):
     show_save(fig, fname, args)
 
 def NN_diffusion_solution(model, args):
+    """3D surface plot of solution of diffusion equation
+    obtained by neural network.
+
+    Args:
+        model (tf.keras.Sequential): deep neural network model \
+                            with provided layers and parameters.
+        args (argparse): Information handled by the argparser.
+
+    """
     Nx = 20
     Nt = 2000
     tspace = np.linspace(model.lb[0], model.ub[0], Nx + 1)
@@ -182,6 +198,14 @@ def NN_diffusion_solution(model, args):
     show_save(fig, fname, args)
 
 def NN_diffusion_error(loss_hist, args):
+    """Plots loss of neural network for
+    each training iteration.
+
+    Args:
+        loss_hist (list): loss for each iteration
+        args (argparse): Information handled by the argparser.
+    
+    """
     # Plotting
     fig, ax = plt.subplots()
     ax.plot(np.log10(loss_hist))
@@ -197,6 +221,15 @@ def NN_diffusion_error(loss_hist, args):
     show_save(fig, fname, args)
 
 def NN_diffusion_error_timesteps(model, args):
+    """Plots difference between output of neural network and 
+    analytical solution for time steps t=0.1 and t=0.5.
+    
+    Args:
+        model (tf.keras.Sequential): deep neural network model \
+                            with provided layers and parameters.
+        args (argparse): Information handled by the argparser.
+
+    """
     Nx = 100
     Nt = Nx
     t1 = 0.1
@@ -213,10 +246,9 @@ def NN_diffusion_error_timesteps(model, args):
     uexact2 = u_exact(xa, t2).reshape(-1, 1)
 
     fig, ax = plt.subplots()
-    ax.plot(upred1 - uexact1, label='t = %.2f' %(t1))
-    ax.plot(upred2 - uexact2, label='t = %.2f' %(t2))
-    title = r'Difference between analytical and output at timesteps %.2f and %.2f'\
-         % (t1, t2)
+    ax.plot(xa, upred1 - uexact1, label='t = %.2f' %(t1))
+    ax.plot(xa, upred2 - uexact2, label='t = %.2f' %(t2))
+    title = r'Difference between analytical and output for $\Delta$x = 0.01'
     xlabel = 'x'
     ylabel = r'$u_{p} - u_{a}$'
     set_ax_info(ax, xlabel, ylabel, title=title)
@@ -227,7 +259,24 @@ def NN_diffusion_error_timesteps(model, args):
     print('MSE at timestep %.2f: %f'%(t2, np.mean(np.sum((upred2-uexact2)**2))))
     show_save(fig, fname, args)
 
-def plot_eig_dim3(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args):
+def plot_eig_dim3(w_np, eigvec_nn, eigvec_fe, eigval_nn, 
+                eigval_fe, s, t, v, args):
+    """Plots predicted eigenvector and corresponding rayleigh 
+    quotients for a 3x3 real, symmetric matrix,
+    for neural network and forward euler.
+
+    Args:
+        w_np (array): true eigenvector
+        eigvec_nn (array): predicted eigenvector from neural network
+        eigvec_fe (array): predicted eigenvector from forward euler
+        eigval_nn (array): rayleigh quotient from neural network
+        eigval_fe (array): rayleigh quotient from forward euler
+        s (array): time domain
+        t (array): reshaped time domain
+        v (array): eigenvalues of matrix
+        args (argparse): Information handled by the argparser.
+
+    """
     fig, ax = plt.subplots()
     ax.axhline(w_np[0], color='b', ls=':', label=r'Numpy $v_1$')
     ax.axhline(w_np[1], color='g', ls=':', label=r'Numpy $v_2$')
@@ -277,6 +326,22 @@ def plot_eig_dim3(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, arg
 
 
 def plot_eig_dim6(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args):
+    """Plots predicted eigenvector and corresponding rayleigh 
+    quotients for a 6x6 real, symmetric matrix,
+    for neural network and forward euler.
+
+    Args:
+        w_np (array): true eigenvector
+        eigvec_nn (array): predicted eigenvector from neural network
+        eigvec_fe (array): predicted eigenvector from forward euler
+        eigval_nn (array): rayleigh quotient from neural network
+        eigval_fe (array): rayleigh quotient from forward euler
+        s (array): time domain
+        t (array): reshaped time domain
+        v (array): eigenvalues of matrix
+        args (argparse): Information handled by the argparser.
+
+    """
     # Plot Neural Network
     fig, ax = plt.subplots()
     clr = ['b', 'g', 'r', 'orange', 'purple', 'black']
