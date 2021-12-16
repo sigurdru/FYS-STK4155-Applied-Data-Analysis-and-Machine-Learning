@@ -97,7 +97,7 @@ This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. Experi
 	\alpha \le \frac{1}{2}.
 \end{equation} 
 
-Even though $\alpha = 0.5$ is at the transition between stable and unstable solutions, experiments show that it is a safe choice for the diffusion equation that produces stable solutions \cite{Linge2017}. Thus, the stability factor $\alpha=0.5$ is used as default in this project. 
+Even though $\alpha = 0.5$ is at the transition between stable and unstable solutions, experiments show that it is a safe choice for the diffusion equation that produces stable solutions \cite{Linge2017}. 
 
 \subsection{Solving Differential equations with deep learning}
 Many of the concepts we use in this section are covered in a previous report \cite{project2}. There, in the theory section, we cover central concepts like deep neural networks, cost functions, gradient descent, etc. In this report we will follow closely the work by Maziar Raissi et.al. \cite{raissi2017physics} and this Jupyter-Notebook \footnote{\texttt{https://colab.research.google.com/github/janblechschmidt/PDEsByNNs/blob/main/PINN \_Solver \textcolor{red}{Sigurd: Legg jupyter som referanse, fjern footnote}.ipynb\#scrollTo=1PlqQM9aZEkd}}. This method works with any partial differential equation (PDE), however we limit ourselves to the diffusion equation in one dimension \eqref{eq:diffusion_equation_1D} which we are going to study in this report. 
@@ -139,42 +139,47 @@ The loss function converges towards zero for the optimal parameters $\theta$, in
 
 
 \subsection{Solving eigenvalue problems}
-Deep neural networks are capable of solving more or less any differential equation. We will in this section follow the work of Yi et. al. (2004) \cite{yi2004neural} closely, using the same first ODE as them and closely following their methods for finding the eigenvalues. The first order ODE in question is given as     
+\textcolor{red}{Nevland: Vektornotasjon på alle vektorer.}
+
+Deep neural networks are capable of solving more or less any differential equation. We will in this section follow the work of Yi et. al. (2004) \cite{yi2004neural} closely, using the same first ODE as them and closely follow their methods for finding the eigenvalues. The first order ODE in question is given as     
 \begin{equation}
 	\frac{dx(t)}{dt} = -x(t) + f[x(t)],
 	\label{eq:diff_eig}
 \end{equation}
 where
-\[ f(x) = [x^TxA + (1 - x^TAx)I]x \]
+\begin{align}
+	f(x) = [x^TxA + (1 - x^TAx)I]x
+\end{align}
+
 where $A$ is a real symmetric matrix of shape $(n\times n)$ and $t \ge 0$ represents time. The solution of the neural network is given by $x(t)$ with dimensions $(n_t\times n)$, where $n_t$ is the number of time steps. The ODE \eqref{eq:diff_eig} is applicable for finding the eigenvalues of $A$. An equilibrium point $\tilde{x}$ of a differential equation is a solution that is stationary, that is a state where the solution doesn't change anymore, mathematically expressed as $\frac{dx}{dt} = 0$. It can be shown that the equilibrium points of \eqref{eq:diff_eig} span the eigenspace of $A$, implying that the equilibrium points are precisely the eigenvectors of $A$. That is, any $\tilde{x}$ that satisfies
 \begin{align}
-	\frac{d\tilde{x}(t)}{dt} &= -\tilde{x} + f[\tilde{x}(t)] \\
-	&= -\tilde{x} + [\tilde{x}^T\tilde{x}A + (1 - \tilde{x}^TA\tilde{x})I]\tilde{x} \\
-	&= \tilde{x}^T\tilde{x}A\tilde{x} - \tilde{x}^TA\tilde{x}\tilde{x} = 0
+	\frac{d\tilde{x}(t)}{dt} &= -\tilde{x} + f[\tilde{x}(t)] \nonumber \\
+	&= -\tilde{x} + [\tilde{x}^T\tilde{x}A + (1 - \tilde{x}^TA\tilde{x})I]\tilde{x} \nonumber \\
+	&= \tilde{x}^T\tilde{x}A\tilde{x} - \tilde{x}^TA\tilde{x}\tilde{x} = 0,
 \end{align}
 is an eigenvector of $A$. The rayleigh quotient formula can then be used to find the corresponding eigenvalue, given by
 \begin{align} \label{eq:rayleigh_quotient}
-	r = \frac{\tilde{x}^T\tilde{x}}{\tilde{x}^T A \tilde{x}}
+	r = \frac{\tilde{x}^T\tilde{x}}{\tilde{x}^T A \tilde{x}}.
 \end{align}
 
-An essential question is how the neural network should be initialized. That is, what trial solution of the form \eqref{eq:NN_model} should be chosen? Convergence analysis reveal that any non-zero trial solution $x(0) \in \mathcal{R}^n$ will give a solution of \eqref{eq:diff_eig} that converges to an eigenvector of $A$. Moreover, if $x(0)$ is not orthogonal to the subspace spanned by the largest eigenvector $\lambda_{\mathrm{max}}$ of $A$, then the solution $x(t)$ converges to an eigenvector corresponding to $\lambda_{\mathrm{max}}$.
+An essential question is how the neural network should be initialized. That is, what trial solution of the form \eqref{eq:NN_model} should be chosen? Convergence analysis reveal that any non-zero trial solution $x(0) \in \mathbb{R}^n$ will give a solution of \eqref{eq:diff_eig} that converges to an eigenvector of $A$. Moreover, if $x(0)$ is not orthogonal to the subspace spanned by the largest eigenvector $\lambda_{\mathrm{max}}$ of $A$, then the solution $x(t)$ converges to the corresponding eigenvector.
 
 The differential equation \eqref{eq:diff_eig} is a first order nonlinear ODE. Generally, solving a nonlinear differential equation numerically is a comprehensive process involving discretization in time followed by linearization through an iterative method (e.g Newton's method). Explicit schemes are an exception though, as all nonlinear terms are of the previous time step, hence are known. This allow us to easily solve \eqref{eq:diff_eig} numerically using the forward euler method. Discretizing the equation and solving for next time step $n+1$ gives
 
 \begin{align}
-	\frac{x^{n+1}-x^n}{\Delta t} &= -x^n + f[x^n] \\
-	\frac{x^{n+1}-x^n}{\Delta t} &= (x^n)^T x^n A x^n - (x^n)^T A x^n x^n \\
-	x^{n+1} &= x^n + \Delta t\big[ (x^n)^T x^n A x^n - (x^n)^T A x^n x^n \big]
+	\frac{x^{n+1}-x^n}{\Delta t} &= -x^n + f[x^n] \nonumber \\
+	&= (x^n)^T x^n A x^n - (x^n)^T A x^n x^n, \\
+	\Rightarrow x^{n+1} &= x^n + \Delta t\big[ (x^n)^T x^n A x^n - (x^n)^T A x^n x^n \big].
 \end{align}
 
-Starting with a non-zero initial condition $x^0 = I(x)$, iteration over time steps will make the subsequent solutions converge towards the eigenvector corresponding to the largest eigenvalue of $A$, as long as the forward euler scheme is stable. The stability criteria depends on the discretization parameter $\Delta t$, and is to be approximated empirically. 
+Starting with a non-zero initial condition $x^0 = I(x)$, convergence is fulfilled as long as the forward euler scheme is stable. The stability criteria depends on the discretization parameter $\Delta t$, and is to be approximated empirically. 
 
 
 
 \section{Method}
-\subsection*{Unit testing}
+\subsection{Unit testing}
 
-Before the numerical explicit scheme is applied to a particular problem, it is important to test that the discretized equations return expected results. Unit tests are constructed to test the implementation. This is done by manually calculating the solution of the first two time steps given the initial condition, and comparing the result with that obtained by the numerical scheme. Since the same recursive formula is used for all time steps, it is sufficient to test the two first time steps. To avoid too much computations we choose five equally sized intervals between $x=0$ and $x=L=1$, that is $\Delta x = 0.2$. The time step is set to $\Delta t = 0.01$, ensuring stability.
+Before the forward Euler scheme is applied to a particular problem, it is important to test that the discretized equations return expected results. Unit tests are constructed to test the implementation. This is done by manually calculating the solution of the first two time steps given the initial condition, and comparing the result with that obtained by the numerical scheme. Since the same recursive formula is used for all time steps, it is sufficient to test the two first time steps. To avoid too much computations we choose five equally sized intervals between $x=0$ and $x=L=1$, that is $\Delta x = 0.2$. The time step is set to $\Delta t = 0.01$, ensuring stability.
 For time step $j$, that is $t=j\Delta t$, we have the following two boundary values and four interior points
 
 \begin{align*}
@@ -183,69 +188,84 @@ For time step $j$, that is $t=j\Delta t$, we have the following two boundary val
 	&= 0.05u_{i+1}^0 + 0.9u_i^0 + 0.05u_{i-1}^0
 \end{align*}
 
-The initial condition used is $u_*^0 = \big(\sin(0),\:\sin(0.2\pi),\:\sin(0.4\pi),\:\sin(0.6\pi), \:\sin(0.8\pi),\:\sin(\pi)\big)$. If the results of the code match those manually calculated up to machine precision, it verifies the internal functionality of our implementation of forward euler. The results of the unit test are provided in Table \ref{tab:unit_test} in Appendix.
+The initial condition used is $u_*^0 = \big(\sin(0),\:\sin(0.2\pi),\:\sin(0.4\pi),\:\sin(0.6\pi), \:\sin(0.8\pi),\:\sin(\pi)\big)$. If the results of the code match those manually calculated up to machine precision, it verifies the internal functionality of our implementation of forward euler. The results of the unit test are provided in Table \ref{tab:unit_test} in Appendix \ref{app:unit_test}.
 
 
 
 \subsection{Neural network setup}
 
-Our first step when designing our neural network is to decide on a architecture. We have studied this more in-depth in a previous report \cite{project2}. Because of this we will only briefly investigate how the depth (number of hidden layers) affects the loss \eqref{eq:NN_loss}. We use similar architecture as in \cite{raissi2017physics}, namely 20 nodes in each hidden layer, with hyperbolic tangent as activation function in each hidden node. The depth we will test for is $N_h\in[2,4,8]$ hidden layers, then choose the architecture with minimal loss after 500 training iterations. We also plot how the loss evolves as a function of iterations. The network is set up using TensorFlow dense layers with standard initialization Glorot normal (also called Xavier normal initializer). As optimizer we use Adam, which is a stochastic gradient decent method based on adaptive estimation of first- and second-order moments. Because of previous success with dynamic learning rate in the preceding project \cite{project2}, we implement TensorFlow's piecewise constant decay schedule. Specifically we use learning rate $10^{-2}$ for the first 1000 steps, $10^{-3}$ from iterations 1000 to 3000 and $5 \cdot 10^{-4}$ for additional steps.
+Our first step when designing our neural network is to decide on a architecture. We have studied this more in-depth in a previous report \cite{project2}. Because of this we will only briefly investigate how the depth (number of hidden layers) affects the loss \eqref{eq:NN_loss}. We use similar architecture as Raissi et. al. (2017) \cite{raissi2017physics}, namely 20 nodes in each hidden layer, with hyperbolic tangent as activation function in each hidden node. The depth we will test for is $N_h\in\{2,4,8\}$ hidden layers, then choose the architecture with minimal loss after 500 training iterations. We also plot how the loss evolves as a function of iterations to see the evolution of training. The network is set up using TensorFlow with linearly stacked dense layers (sequential) with standard Glorot normal initialization (also called Xavier normal initializer). As optimizer we use Adam, which is a stochastic gradient decent method based on adaptive estimation of first- and second-order moments. Because of previous success with dynamic learning rate in the preceding project \cite{project2}, we implement TensorFlow's piecewise constant decay schedule. Specifically we use learning rate $10^{-2}$ for the first 1000 steps, $10^{-3}$ from iterations 1000 to 3000 and $5 \cdot 10^{-4}$ for succeeding steps.
 
-To train the network we need data. In figure \ref{fig:NN_training_points} we display the data points used for training. Here we choose 50 randomly distributed datapoints for $t=0$ and $x\in[0,1]$, another 50 points for $t\in[0,1]$ and $x\in\{0,1\}$, also randomly (uniformly) distributed. This is to make sure we also test for boundary points when calculating the loss \eqref{eq:NN_loss}, and will act as a regularization. Next we also choose $10^4$ randomly distributed datapoints $(t_i, x_i)$, where $t,x\in[0,1]$. 
+To train the network we need data, and we will use random data points uniformly distributed. In figure \ref{fig:NN_training_points} we display the data points used for training. Here we choose 50 data points for $t=0$ and $x\in[0,1]$, and another 50 points for $t\in[0,1]$ and $x\in\{0,1\}$. This is to make sure we also test for boundary points when calculating the loss \eqref{eq:NN_loss}, and will act as a regularization. Next we also choose $10^4$ data points $(t_i, x_i)$, where $t_i,x_i\in[0,1]$. 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\linewidth]{../output/plots/training_points.pdf}
-	\caption{In this plot we highlight the data points used for training the neural network. Points on the boundary are highlighted, and we use $50$ points for $t=0$, and a total of $50$ points at $x=0$ and $x=1$, resulting in a total of $100$ boundary points.} \label{fig:NN_training_points}
+	\caption{In this plot we highlight the data points used for training the neural network. Points on the boundary are highlighted, and we use $50$ points for $t=0$, and a total of $50$ points at $x=0$ and $x=1$, resulting in a total of $100$ boundary points. We use $10^4$ data points not at the boundary.} \label{fig:NN_training_points}
 \end{figure}
 
+\textcolor{red}{Vikenes: Flyttes til sammenlikning}
 After choosing the network with smallest loss after 500 iterations, we start to compare it with Forward Euler. We do this by comparing the MSE at two different timesteps $t\in\{0.1, 0.5\}$. We can then increase the number of training iterations and see how this affects the MSE, ideally it will be below that of Forward Euler. We also plot the difference between analytical $u_a$ solution and output $u_p$ of the network ($u_p - u_a$). This is so we can see how the output differ from the analytical solution.
 
-\subsection{Accuracy assessment}
-The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution and how does it compare to the neural network? To address these questions we will present some concrete methods for studying the solvers.
+\subsection{Forward Euler}
 
 As discussed in the theory section, following equation \eqref{eq:stability}, $\alpha=0.5$ produce stable solutions for the diffusion equation. Throughout this report we will therefore use a time step of $\Delta t = \alpha \Delta x^2 = 0.5\cdot \Delta x^2$ for different choices of spatial resolution, and not consider other stability factors. We will limit our study to two spatial resolutions, namely $\Delta x = 0.1$ and $\Delta x = 0.01$.  
 
-The first analysis we perform is the time evolution of the mean squared error (MSE) of the forward Euler solution. The MSE at a given time step, $j$, is given as 
+The first analysis we perform is the time evolution of the mean squared error (MSE) of the forward Euler solution. The MSE at a particular time step, $j$, is given as 
 \begin{align} \label{eq:MSE}
-	\mathrm{MSE_j} = \frac{1}{N}\sum_{i=0}^N (u_i^j - u_{e,i}^j)^2 
+	\mathrm{MSE_j} = \frac{1}{N}\sum_{i=0}^{N-1} (u_i^j - u_{e,i}^j)^2 
 \end{align}
-where $u_e$ denotes the analytical solution. We expect the MSE to be zero initially, as numerical solution for the first time step is simply the initial condition. Proceeding, we expect an increasing MSE up to a certain point. Our boundary conditions results in the diffusion equation approaching $u(x,t)=0$ as $t$ increases, causing the MSE to eventually decline after a certain time. Combined with the unit tests, this serves as a simple method of validating our result.  
-\textcolor{red}{Skal vi plotte dette for NN også?}
+where $u_e$ denotes the analytical solution and $N$ is the number of spatial points. By construction the MSE should be zero at $t=0$. Subsequently, we expect an increasing MSE. Our boundary conditions results in the diffusion equation approaching $u(x,t)=0$ as $t$ increases, causing the MSE to eventually decline after a certain time. Combined with the unit test, this serves as a simple method of validating our result.  
+
+\textcolor{red}{Vikenes: Flytt det under til sammenlikning}
 
 To proceed, we will study the solutions at two different times, $t_1$ and $t_2$ for both $\Delta x = 0.1$ and $\Delta x = 0.01$. We choose $t_1=0.1$ and $t_2=0.5$, where $u(x,t_1)$ is significantly curved and $u(x,t_2)$ is almost linear. These times will serve as the foundation for comparing the performance of our explicit numerical solver to that of the neural network. With the forementioned time periods and spatial resolutions, we compare the MSE of the two models, using equation \eqref{eq:MSE}. 
 
+\textcolor{red}{Vikenes: Bruk NN-notasjon for likning under. Må stemme med plot}
 As a final study, we would like to plot the absolute difference between the numerical solutions and the analytical one for both $t_1$ and $t_2$. 
 \begin{align} \label{eq:absolute_difference}
 	\Delta u_i^n = u_i^n - u_{e,i}^n
 \end{align}
-Our main purpose of this is to see whether the neural network can circumvent one of the major drawbacks of the forward Euler scheme, namely the error caused by the discrete time steps advancing the solution more than it should. Solving the diffusion equation with forward Euler, we expect equation \eqref{eq:absolute_difference} to yield a negatively curved plot, with the boundaries being zero and the largest error occuring at $x=L/2$. This is due to the discretized solver advancing the solution by too much at each time step, affecting the succeeding calculations throughout the simulation. The biased error of the forward Euler scheme will cause big problems for more complex differential equations, where solutions don't converge to a stationary state. One major advantage of using neural networks will thus be if it yields unbiased errors that doesn't propagate throughout the simulation. \textcolor{red}{Kanskje litt dårlig forklart over, så skriv gjerne om}
-
+Our main purpose of this is to see whether the neural network can circumvent one of the major drawbacks of the forward Euler scheme, giving an output that is either consistently above or below the actual solution. For more volitale differential equations, such errors can propagate throughout the simulation, resulting in a poor fit. One potential advantage of using neural networks will thus be if it yields unbiased errors. 
 
 
 \subsection{Finding eigenvalues}
-The matrix we will consider for our initial analysis is a real symmetric matrix, $A$, with dimensions $(3\cross3)$ \footnote{We didn't realize that it should have been a $(6\cross6)$ matrix until after the report was finished. This has been cleared with Morten}. In the end we will perform one simulation with a $(6\cross6)$ matrix to study differences for higher dimensions. 
+The matrix we will consider for our initial analysis is a real symmetric matrix, $A$, with dimensions $(3\cross3)$ \footnote{We didn't realize that it should have been a $(6\cross6)$ matrix until after the report was finished. This has been cleared with Morten.}. In the end we will perform one simulation with a $(6\cross6)$ matrix to study differences for higher dimensions. 
 
-Using the neural network model \eqref{eq:diff_eig} to find the eigenvalues of $A$ requires a trial solution \eqref{eq:NN_model} to initiate the network. The trial solution must fulfill the convergence property to guarantee that we end up with the eigenvalues. Hence, we define the initial condition $x_0 \in \mathcal{R}^n$ to be a vector of randomly generated numbers between zero and one. Since we don't know the eigenspace corresponding to the largest eigenvalue a priori, we have no guarantee that the trial solution is not orthogonal to the eigenspace corresponding to the largest eigenvalue. The probability of non-orthogonality, though, can be increased by adding random perturbations.
+Using the neural network model \eqref{eq:diff_eig} to find the eigenvalues of $A$ requires a trial solution \eqref{eq:NN_model} to initiate the network. The trial solution must fulfill the convergence property to guarantee that we end up with the eigenvalues, as mentioned in the theory section. Hence, we define the initial condition $x_0 \in \mathbb{R}^n$ \textcolor{red}{Nevland: Vektordimensjon} to be a vector of randomly generated numbers between zero and one. Since we don't know the eigenspace corresponding to the largest eigenvalue a priori, we have no guarantee that the trial solution is non-orthogonal to the eigenspace corresponding to the largest eigenvalue. To increase the probability of non-orthogonality, we can add random perturbations.
 
-Even though a non-zero trial solution is the only requirement for convergence, there are strategies for improving the \textit{rate} of convergence. If we have some idea or preknowledge of a solution of the differential equation, incorporating this in the trial solution helps accelerate the learning of the neural network. The ODE \eqref{eq:diff_eig} is of first order with a term involving $\frac{dx}{dt}$ on one side and a term involving $x$ on the other. This is reminiscent of an exponential solution. Therefore, a smart initialization strategy of \eqref{eq:NN_model} is 
+Even though a non-zero trial solution is the only requirement for convergence, there are strategies for improving the \textit{rate} of convergence. If we have some preknowledge of a solution of the differential equation, incorporating this in the trial solution helps accelerate the learning of the neural network. The ODE \eqref{eq:diff_eig} is of first order with a term involving $dx/dt$ on one side and a term involving $x$ on the other. This is reminiscent of an exponential solution. Therefore, a smart initialization strategy of \eqref{eq:NN_model} is 
 
-\begin{align*}
-	g_{\theta}(t) &= g_0(x(t)) + f[x(t),N(x, \theta)] \\
-	&= e^{-t}x_0 + (1 - e^{-t})N(x(t), \theta)
-\end{align*}
+\begin{align}
+	g_{\theta}(t) &= g_0(x(t)) + f[x(t),N(x, \theta)] \nonumber \\
+	&= e^{-t}x_0 + (1 - e^{-t})N(x(t), \theta).
+\end{align}
 
-This expression fulfills the condition of a trial solution, namely that it must return the initial condition $x_0$ for time $t=0$. Once we have a trial solution we feed it to the neural network, which will calculate the gradient $\frac{dx}{dt}$ and the resulting residual of $\eqref{eq:diff_eig}$. The MSE of the residual act as the loss function that is to be optimized through gradient descent. The accuracy of the final output of the neural network is assessed by comparing with the result of numpy's own eigenvalue solver. 
+This expression fulfills the condition of a trial solution, namely that it must return the initial condition $x_0$ for time $t=0$. Once we have a trial solution we feed it to the neural network, which will calculate the gradient, $dx/dt$, and the resulting residual of $\eqref{eq:diff_eig}$. The MSE of the residual act as the loss function that is to be optimized through gradient descent. The accuracy of the final output of the neural network is assessed by comparing with the result of numpy's own eigenvalue solver. 
 
-For comparison purposes, the forward euler scheme is initiated with the same initial condition $x_0$ as for the neural network model, and using the same temporal domain. A total time of $T=5$ is consistently used for the simulations, as this seems to be sufficient for convergence and at the same time short enough to illustrate the details of the convergence. Unless specified, the learning rate and the number of epochs of the neural network is set to $0.005$ and $2000$, respectively.
+For comparison purposes, the forward euler scheme is initiated with the same initial condition $x_0$ as for the neural network model, and using the same temporal domain. Unless specified, a total time of $T=5$ is used, with a learning rate and number of epochs set to $0.005$ and $2000$ respectively, for the neural network.
 
-For each simulation we perform, we find the eigenvector, $\mathbf{v}_\mathrm{max}=(v_1,\,v_2,\,v_3)$, with the largest corresponding eigenvalue, $\lambda_\mathrm{max}$. We then plot the computed value of the three eigenvector components, $v_1$, $v_2$ and $v_3$ as a function of time, for both Forward Euler and Neural network, and include the corresponding value obtained from numpy for comparison. For a given simulation we also plot the time evolution of the Rayleigh quotient, $r$ from equation \eqref{eq:rayleigh_quotient}, for the two forementioned methods, using numpy once again for comparison.   
+For each simulation, we find the eigenvector, $\mathbf{v}_\mathrm{max}=(v_1,\,v_2,\,v_3)$, with the largest corresponding eigenvalue, $\lambda_\mathrm{max}$. We then plot the computed value of the three eigenvector components as a function of time, for both Forward Euler and Neural network. For a given simulation we also plot the time evolution of the Rayleigh quotient \eqref{eq:rayleigh_quotient}, for the two forementioned methods.   
 
 
 \section{Results}
 
 \subsection{Finding a suitable Neural network}
 
-The loss of the network as a function of iterations is shown in figure \ref{fig:Error_NN_architecture} for three different architectures. Each network has $20$ nodes in each hidden layer, where the upper left panel has $2$ hidden layers, the upper right panel has $4$ hidden layers and the lower left panel has $8$ hidden layers. 
+Table \ref{tab:NN_architecture_loss} shows the loss of the neural network after $500$ iterations for the three different network architectures. We see that $4$ hidden layers clearly yields the lowest value for the final loss. \textcolor{red}{Vikenes: tabelltekst}
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|c|l|}
+		\hline
+		Architecture & Loss   \\ \hline
+		$8\cross20$         & 0.0048 \\ \hline
+		$4\cross20$         & 0.00079 \\ \hline
+		$2\cross20$         & 0.0022 \\ \hline
+	\end{tabular}
+	\caption{tabll}
+	\label{tab:NN_architecture_loss}
+\end{table}
+
+The loss of the network as a function of iterations is shown in figure \ref{fig:Error_NN_architecture} for three different architectures, using $2$, $4$ and $8$ hidden layers for the upper left, upper right and lower left panel, respectively. 
 
 \begin{figure}[h]
 	\minipage{0.49\textwidth}
@@ -262,21 +282,8 @@ The loss of the network as a function of iterations is shown in figure \ref{fig:
 	\endminipage
 \end{figure}
 
-Although there are large fluctuations of the loss for the network with $4$ hidden layers, we choose this architecture for further analysis. Using logarithmic scales on the y-axes in figure \ref{fig:Error_NN_architecture}, the amplitudes of the oscillating losses appear bigger than they are in reality. We only consider the network after the final iteration, and this architecture provided the lowest loss and MSE. A detailed study of different architectures is outside the scope of this report, and is nonetheless dependent of the particular PDE in question. Unless specified, the following results are all obtained with a neural network with $4$ hidden layers after $500$ iterations. \textcolor{red}{Kanskje flyttes til metode/diskusjon}
+We notice large fluctuations of the loss for the network with $4$ hidden layers. Using logarithmic scales on the y-axes in figure \ref{fig:Error_NN_architecture}, the amplitudes of the oscillating losses appear bigger than they are in reality. As planned, we choose the network with $N_h=4$ for further analysis, as it yields the lowest MSE after $500$ iterations. A detailed study of different architectures is outside the scope of this report, and is nonetheless dependent of the particular PDE in question. 
 
-Table \ref{tab:NN_architecture_loss} shows the loss of the neural network after $500$ iterations for the three different network architectures. We see that $4$ hidden layers clearly yields the lowest value for the final loss. 
-\begin{table}[h]
-	\centering
-	\begin{tabular}{|l|l|}
-		\hline
-		Architecture & Loss   \\ \hline
-		$8\cross20$         & 0.00476 \\ \hline
-		$4\cross20$         & 0.00079 \\ \hline
-		$2\cross20$         & 0.00224 \\ \hline
-	\end{tabular}
-	\caption{tabll}
-	\label{tab:NN_architecture_loss}
-\end{table}
 
 Figure \ref{fig:NN_architecture_solution} shows the output of the neural network. We clearly see the exponential decay of the initial sine function, as expected, eventually flattening out, as $t\to1$.   
 \begin{figure}[h]
@@ -286,10 +293,11 @@ Figure \ref{fig:NN_architecture_solution} shows the output of the neural network
 \end{figure}
 
 
-\clearpage
 \subsection{Error of Forward Euler scheme}
 
-To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. We use the mean squared error to compare the numerical solution from forward Euler with the analytical solution at each time step. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t_1=0.1$ and quickly reduces thereafter. Already at $t_2=0.5$ the MSE is fairly close to zero. This shows that the two time steps we later use for explicit comparison between our two methods are well suited, encapsulating the highest and lowest MSE regions of the explicit numerical solver.   
+To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme (note the scaling of the y-axis). Keeping in mind that we choose the time step to give a stability factor of $\alpha=0.5$. 
+
+The MSE in figure \ref{fig:FE_MSE} increases significantly for early time steps, reaching a peak at around $t_1=0.1$ and quickly reduces thereafter. At $t_2=0.5$ the MSE is significantly lower compared to $t_1$.  
 
 \begin{figure}[h]
 	\centering
@@ -315,9 +323,13 @@ To assess the accuracy of our implemented numerical scheme, we need to test the 
 	\caption{In this plot ...} \label{fig:NN_relative_error}
 \end{figure}
 
-Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The corresponding plot for the neural network is shown in figure \ref{fig:NN_relative_error}. Using $\Delta x=0.1$ for forward Euler yielded an identically shaped plot as figure \ref{fig:FE_absolute_difference}, but with increased values on the y-axis, and we have therefore chosen to omit it. 
+Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The corresponding plot for the neural network is shown in figure \ref{fig:NN_relative_error}. Using $\Delta x=0.1$ for forward Euler yielded an identically shaped plot as figure \ref{fig:FE_absolute_difference}, but with increased values on the $y$-axis, and we have therefore chosen to omit it. 
 
-Figure \ref{fig:Error_NN_architecture} highlighted the dependency on the number of training iterations for the neural network. Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network at $t_1$ and $t_2$ after four different number of training iterations. Except from an increase for $t_1$ when we go from $500$ to $1000$ training iterations, the MSE decreases as we increase the number of iterations. 
+\textcolor{red}{Vikenes: Kommenter plott litt}
+
+Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network at $t_1$ and $t_2$ after four different number of training iterations. Except from an increase for $t_1$ when we go from $500$ to $1000$ training iterations, the MSE decreases as we increase the number of iterations. The increase is likely due to the fluctuations we saw in figure \ref{fig:Error_NN_architecture}.
+
+\textcolor{red}{Sigurd: Tabelltekst}
 
 \begin{table}[h]
 	\centering
@@ -334,7 +346,7 @@ Figure \ref{fig:Error_NN_architecture} highlighted the dependency on the number 
 	\label{tab:NN_MSE_iterations}
 \end{table}
 
-Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. \textcolor{red}{Vikenes: Legg til NN for $\Delta x = 0.01$.}
+Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$. With forward Euler we have included both spatial steps $\Delta x$, while we only consider $\Delta x=0.01$ for the neural network. 
 
 \begin{table}[h]
 	\centering
@@ -352,24 +364,26 @@ Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neur
 \subsection{Eigenvalue problem}
 
 
-\begin{figure}[h!]
+\begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.75]{../output/plots/eigvec_T5_N1000.pdf}
-	\caption{Predictions by forward euler (FE) and neural network (NN) of the eigenvector corresponding to the largest eigenvalue of a real, symmetric $3\times 3$ matrix. The horizontal dotted lines are the components of the eigenvector as found by numerical diagonalization by \code{numpy.linalg.eig}.}
+	\caption{Predictions by forward euler (FE) and neural network (NN) of the eigenvector corresponding to the largest eigenvalue of a real, symmetric $3\times 3$ matrix. The horizontal dotted lines are the components of the eigenvector as found by NumPy.}
 	\label{fig:eigvec_T5_N1000}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.75]{../output/plots/eigval_T5_N1000.pdf}
-	\caption{Rayleigh quotients of forward euler (FE) and neural network (NN) representing predictions of the largest eigenvalue of a real, symmetric $3\times 3$ matrix. The horizontal dotted line is the largest eigenvalue as found by numerical diagonalization by \code{numpy.linalg.eig}.}
+	\caption{Rayleigh quotients of forward euler (FE) and neural network (NN) representing predictions of the largest eigenvalue of a real, symmetric $3\times 3$ matrix. The horizontal dotted line is the largest eigenvalue as found by NumPy.}
 	\label{fig:eigval_T5_N1000}
 \end{figure}
 
-Figure \ref{fig:eigvec_T5_N1000} shows predictions of the eigenvector corresponding to the largest eigenvalue of a symmetric $(3\times 3)$ matrix $A$ of randomly assigned values between 0 and 1. The simulation is run for a total time of $T=5$ with $N=1000$ estimations in time, providing a time step of $\Delta t = 0.005$. The prediction from both forward euler and neural network converges to the true eigenvector, as found by diagonalization with \code{numpy.linalg.eig}. The largest eigenvalue is shown in Figure \ref{fig:eigval_T5_N1000} together with the rayleigh quotients estimated by forward euler and the neural network.
+Figure \ref{fig:eigvec_T5_N1000} shows predictions of the eigenvector corresponding to the largest eigenvalue of a symmetric $(3\times 3)$ matrix $A$ of randomly assigned values between zero and one. The simulation is run for a total time of $T=5$ with $N=1000$ estimations in time, providing a time step of $\Delta t = 0.005$. The prediction from both forward euler and neural network converges to the true eigenvector, as obtained from NumPy. The largest eigenvalue is shown in Figure \ref{fig:eigval_T5_N1000} together with the rayleigh quotients estimated by forward euler and the neural network.
 
+\textcolor{red}{Nevland: Skriv at figurene fremover har små akser, men at de er delvis uendra. Skriv hvorfor vi gjør det.}
+
+\textcolor{red}{Nevland: Fjern $\Delta t=0.05$. Husk diskusjon}
 \begin{figure}[h]
-	
 	\centering
 	\begin{subfigure}{0.49\textwidth}
 		\centering
@@ -408,6 +422,7 @@ Figure \ref{fig:eigvec_T5_N1000} shows predictions of the eigenvector correspond
 	\caption{Predictions by forward euler (FE) and neural network (NN) of largest eigenvalue and corresponding eigenvector of a real, symmetric $3\times 3$ matrix, using a time step $\Delta t = 0.5$. The $x$ and $y$ axes are identical to those in figure \ref{fig:eigvec_T5_N1000} and \ref{fig:eigval_T5_N1000}}
 	\label{fig:eig_T5_N10}
 \end{figure}
+
 
 
 Figure \ref{fig:eigvec_T5_N100} and \ref{fig:eigvec_T5_N10} shows predictions of the same eigenvector of the same matrix $A$ in Figure \ref{fig:eigvec_T5_N1000} but with a time step of $\Delta t = 0.05$ and $\Delta t = 0.5$, respectively. The largest eigenvalue and rayleigh quotients are shown in Figure \ref{fig:eigval_T5_N100} and \ref{fig:eigval_T5_N10}.
@@ -456,8 +471,8 @@ The graphs are less smooth due to larger timesteps and fewer estimates.
 
 Adjusting hyperparameters of the neural network has also been investigated. Figure \ref{fig:eigvec_T5_N1000_eta01} shows the predicted eigenvector using a time step of $\Delta t = 0.005$ and a learning rate of $0.1$. The associated rayleigh quotients is shown in Figure \ref{fig:eigval_T5_N1000_eta01}. Predictions of the same eigenvector is shown in Figure \ref{fig:eigvec_T5_N1000_epochs50}, with the learning rate retained at $0.1$ but the number of epochs reduced from $2000$ to $50$. The associated rayleigh quotients are shown in Figure \ref{fig:eigval_T5_N1000_epochs50}.
 
+
 \begin{figure}[h]
-	
 	\centering
 	\begin{subfigure}{0.49\textwidth}
 		\centering
@@ -476,7 +491,7 @@ Adjusting hyperparameters of the neural network has also been investigated. Figu
 	\label{fig:eig_T5_N6}
 \end{figure}
 
-Results of a further increase in the time step is shown in Figure \ref{fig:eig_T5_N6}, using $\Delta t= 0.83$ corresponding to $N=6$ estimations, where the left panel shows the eigenvector components and the right panel shows the associated Rayleigh quotients. 
+\textcolor{red}{Nevland: Flytt figur 13 oppover} Results of a further increase in the time step is shown in Figure \ref{fig:eig_T5_N6}, using $\Delta t= 0.83$ corresponding to $N=6$ estimations, where the left panel shows the eigenvector components and the right panel shows the associated Rayleigh quotients. 
 
 \begin{figure}[h]
 	\centering
@@ -501,9 +516,10 @@ Results of a further increase in the time step is shown in Figure \ref{fig:eig_T
 	\centering
 	\includegraphics[scale=0.6]{../output/plots/eigval_T2_N1000_dim6.pdf}
 	\caption{Rayleigh quotient corresponding to the largest eigenvalue of a real, symmetric $6\times 6$ matrix.}
+	\label{fig:eigval_T2_N1000_dim6}
 \end{figure}
 
-An additional simulation using a $6\times 6$ matrix has also been conducted. Figure \ref{fig:eigvec_T2_N1000_dim6} shows the predicted eigenvector for forward euler (\ref{fig:FE_eigvec_T2_N1000_dim6}) and neural network (\ref{fig:NN_eigvec_T2_N1000_dim6}), and Figure \ref{fig:eigval_T2_N1000_dim6} the rayleigh coefficient corresponding to the largest eigenvalue of a $6\times 6$ symmetric matrix. A time step of $0.005$ have been used and a total time of $T=2$. The reason for the latter choice is based on the previous simulations with $\Delta t=0.005$, as both forward euler and neural network converge long before $T=5$. Reducing the simulation time makes it easier to illustrate the convergence property of the six eigenvector components.
+\textcolor{red}{Nevland: Stack 6x6 figurer} An additional simulation using a $6\times 6$ matrix has also been conducted. Figure \ref{fig:eigvec_T2_N1000_dim6} shows the predicted eigenvector for forward euler (\ref{fig:FE_eigvec_T2_N1000_dim6}) and neural network (\ref{fig:NN_eigvec_T2_N1000_dim6}), and Figure \ref{fig:eigval_T2_N1000_dim6} the rayleigh coefficient corresponding to the largest eigenvalue of a $6\times 6$ symmetric matrix. A time step of $\Delta t = 0.005$ have been used and a total time of $T=2$. \textcolor{red}{Nevland: Skriv eksplisitt begrunnelse for T=2} The reason for the latter choice is based on the previous simulations with $\Delta t=0.005$, as both forward euler and neural network converge long before $T=5$. Reducing the simulation time makes it easier to illustrate the convergence property of the six eigenvector components.
  
  
 \clearpage
