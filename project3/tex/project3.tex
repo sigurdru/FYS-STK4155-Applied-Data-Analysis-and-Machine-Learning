@@ -244,7 +244,7 @@ For each simulation we perform, we find the eigenvector, $\mathbf{v}_\mathrm{max
 
 \section{Results}
 
-\subsection{Determining a suitable Neural network}
+\subsection{Finding a suitable Neural network}
 
 Figure \ref{fig:NN_training_points} shows the data points used for training the network. One vertical line represents the spatial data points at one point in time.   
 \begin{figure}[h]
@@ -289,25 +289,6 @@ Figure \ref{fig:NN_architecture_solution} shows the output of the neural network
 	\end{tabular}
 \end{table}
 
-\begin{table}[]
-	\begin{tabular}{l|ll|}
-		\cline{2-3}
-		& \multicolumn{2}{l|}{Mean Square error} \\ \hline
-		\multicolumn{1}{|l|}{Number of training iterations} & \multicolumn{1}{l|}{t = 0.1} & t = 0.5 \\ \hline
-		\multicolumn{1}{|l|}{500}                           & \multicolumn{1}{l|}{0.0017}  & 0.0070  \\ \hline
-		\multicolumn{1}{|l|}{1000}                          & \multicolumn{1}{l|}{0.015}   & 0.00055 \\ \hline
-		\multicolumn{1}{|l|}{$10^4$}                          & \multicolumn{1}{l|}{$1.4\cdot 10^{-4}$}  & $9.5\cdot10^{-5}$  \\ \hline
-		\multicolumn{1}{|l|}{$5\cdot10^4$}                        & \multicolumn{1}{l|}{$1.0\cdot10^{-6}$}        & $3.0\cdot10^{-6}$        \\ \hline
-	\end{tabular}
-\end{table}
-
-Using equation 
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=\linewidth]{../output/plots/final_compare_NN.png}
-	\caption{In this plot ...} \label{fig:NN_relative_error}
-\end{figure}
 
 \clearpage
 \subsection{Error of Forward Euler scheme}
@@ -323,7 +304,52 @@ To assess the accuracy of our implemented numerical scheme, we need to test the 
 
 Figure \ref{fig:NN_MSE} shows the MSE from the neural network with the architecture that provided best results. \textcolor{red}{Sigurd: Legg til MSE plottet her for det beste nettverket.}
 
+
+
+
+
+\subsection{Error of Neural Network}
+
+\textcolor{red}{Basert paa gammel figur. Sigurd: kanskje dette maa skirves om, avhengig av de endelige resultatene dine.}
+Figure \ref{fig:error_NN_10000} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases considerably - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes again. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
+
+
+\subsection{Comparison of error}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{../output/plots/error_FE_x_dx_0.01.pdf}
+	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
+	\label{fig:FE_absolute_difference}
+\end{figure}
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{../output/plots/final_compare_NN.png}
+	\caption{In this plot ...} \label{fig:NN_relative_error}
+\end{figure}
+
 Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
+
+
+Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The time points shown in the plot are $t_1=0.1$ and $t_2=0.5$. The same plot when using $\Delta x=0.1$ has identical shape, and differs only by larger error values on the y-axis, and we have therefore chosen to omit it.  
+
+
+\begin{table}[]
+	\begin{tabular}{l|ll|}
+		\cline{2-3}
+		& \multicolumn{2}{l|}{Mean Square error} \\ \hline
+		\multicolumn{1}{|l|}{Number of training iterations} & \multicolumn{1}{l|}{t = 0.1} & t = 0.5 \\ \hline
+		\multicolumn{1}{|l|}{500}                           & \multicolumn{1}{l|}{0.0017}  & 0.0070  \\ \hline
+		\multicolumn{1}{|l|}{1000}                          & \multicolumn{1}{l|}{0.015}   & 0.00055 \\ \hline
+		\multicolumn{1}{|l|}{$10^4$}                          & \multicolumn{1}{l|}{$1.4\cdot 10^{-4}$}  & $9.5\cdot10^{-5}$  \\ \hline
+		\multicolumn{1}{|l|}{$5\cdot10^4$}                        & \multicolumn{1}{l|}{$1.0\cdot10^{-6}$}        & $3.0\cdot10^{-6}$        \\ \hline
+	\end{tabular}
+\end{table}
+
+Using equation 
+
 
 \begin{table}[h]
 	\centering
@@ -337,25 +363,6 @@ Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neur
 \caption{MSE as function of spatial step $\Delta x$ for two different time levels, for forward euler scheme and neural network. Forward euler is abbreviated as FE and neural network as NN.}
 \label{tab:MSE_compare}
 \end{table}
-
-Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The time points shown in the plot are $t_1=0.1$ and $t_2=0.5$. The same plot when using $\Delta x=0.1$ has identical shape, and differs only by larger error values on the y-axis, and we have therefore chosen to omit it.  
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale=0.6]{../output/plots/error_FE_x_dx_0.01.pdf}
-	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
-	\label{fig:FE_absolute_difference}
-\end{figure}
-
-
-\subsection{Error of Neural Network}
-
-\textcolor{red}{Basert paa gammel figur. Sigurd: kanskje dette maa skirves om, avhengig av de endelige resultatene dine.}
-Figure \ref{fig:error_NN_10000} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases considerably - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes again. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
-
-
-\subsection{Comparison of error}
-
 
 \subsection{Eigenvalue problem}
 
