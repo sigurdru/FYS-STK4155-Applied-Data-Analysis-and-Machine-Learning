@@ -3,7 +3,6 @@ from tqdm import tqdm
 import plot
 from PINN import PINN
 import NN_eig
-import matplotlib.pyplot as plt
 import tensorflow as tf
 
 

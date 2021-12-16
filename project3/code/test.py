@@ -1,8 +1,6 @@
 import numpy as np
-from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 import tensorflow as tf
-import sys
 import os
 
 from tensorflow.python.ops.gen_array_ops import size
