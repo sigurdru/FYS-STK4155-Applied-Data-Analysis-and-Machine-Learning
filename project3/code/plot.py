@@ -3,7 +3,6 @@ In this file we perform all plotting in this project.
 """
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm import tqdm
 import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

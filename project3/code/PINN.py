@@ -2,7 +2,6 @@
 Physics Informed Neural Network
 """
 #Import important stuff
-import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
 import os

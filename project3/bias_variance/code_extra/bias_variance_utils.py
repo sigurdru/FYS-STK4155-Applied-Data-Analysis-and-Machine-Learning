@@ -1,14 +1,32 @@
 import numpy as np
 
 def MSE(target, pred):
-    #target = target.reshape(target.shape[0], 1)
+    """Returns mean squared error between target and prediction.
+    
+    Args:
+        target (array): target function
+        pred (array): predictions
+        
+    """ 
     return np.mean(np.mean((target - pred)**2, axis=1, keepdims=True))
 
 def bias(target, pred):
-    #target = target.reshape(target.shape[0], 1)
+    """Returns bias of prediction.
+    
+    Args:
+        target (array): target function
+        pred (array): predictions
+        
+    """ 
     return np.mean((target - np.mean(pred, axis=1, keepdims=True))**2)
 
 def variance(pred):
+    """Returns variance of prediction.
+    
+    Args:
+        pred (array): predictions
+        
+    """ 
     return np.mean((pred - np.mean(pred, axis=1, keepdims=True))**2)
 
 def xyz_1D(x, y, z):

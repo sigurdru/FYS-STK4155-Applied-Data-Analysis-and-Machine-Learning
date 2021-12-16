@@ -49,9 +49,19 @@ def set_ax_info(ax, xlabel, ylabel, style=None, title=None):
     ax.legend(fontsize=15)
 
 
-def bias_var(mses, biases, vars, fig, ax, args):
-    if args.method in ['OLS', 'Ridge', 'Lasso']:
-        xaxis = range(1, args.nr_complexity+1)
+def bias_var_linreg(mses, biases, vars, fig, ax, args):
+    """Plotting function for linear regression methods.
+    
+    Args:
+        mses (dict): MSE for each complexity
+        biases (dict): bias for each complexity
+        vars (dict): variance for each complexity
+        fig: matplotlib figure instance
+        ax: matplotlib ax instance
+        args (argparse): arguments from argparse
+        
+    """
+    xaxis = range(1, args.nr_complexity+1)
 
     ax.plot(xaxis, mses.values(), c='b', label='mse')
     ax.plot(xaxis, biases.values(), c='g', label='bias')
@@ -67,6 +77,16 @@ def bias_var(mses, biases, vars, fig, ax, args):
     show_save(fig, fname, args)
 
 def bias_var_regularization(biases, vars, fig, ax, args):
+    """Plotting function for Ridge and Lasso including regularization.
+
+    Args:
+        biases (dict): biases for each complexity
+        vars (dict): variances for each complexity
+        fig: matplotlib figure instance
+        ax: matplotlib ax instance
+        args (argparse): arguments from argparse
+
+    """
     xaxis = range(1, args.nr_complexity+1)
     clrs_map = {0.001:'b', 0.01:'r', 0.1:'g', 1:'orange', 10:'black'}
     ax.plot(xaxis, biases.values(), c=clrs_map[args.regularization], \
@@ -86,6 +106,17 @@ def bias_var_regularization(biases, vars, fig, ax, args):
 
 
 def bias_var_NN(mses, biases, vars, fig, ax, args):
+    """Plotting function for Neural Network.
+
+    Args:
+        mses (dict): MSEs for each complexity
+        biases (dict): biases for each complexity
+        vars (dict): variances for each complexity
+        fig: matplotlib figure instance
+        ax: matplotlib ax instance
+        args (argparse): arguments from argparse
+        
+    """
     xaxis = [len(h) for h in args.nr_hidden_layers_nodes]
 
     ax.plot(xaxis, mses.values(), '--o', c='b', label='mse')
@@ -104,6 +135,17 @@ def bias_var_NN(mses, biases, vars, fig, ax, args):
 
 
 def bias_var_svm(mses, biases, vars, fig, ax, args):
+    """Plotting function for Support Vector Machine.
+
+    Args:
+        mses (dict): MSEs for each complexity
+        biases (dict): biases for each complexity
+        vars (dict): variances for each complexity
+        fig: matplotlib figure instance
+        ax: matplotlib ax instance
+        args (argparse): arguments from argparse
+        
+    """
     xaxis = np.array(args.C_regularization).astype(float)
 
     ax.semilogx(xaxis, mses.values(), c='b', label='mse')
@@ -120,6 +162,15 @@ def bias_var_svm(mses, biases, vars, fig, ax, args):
     show_save(fig, fname, args)
 
 def bias_var_svm_3D(biases, vars, args):
+    """3D surface plot over regularization parameters C
+    and epsilon for Support Vector Machine.
+    
+    Args:
+        biases (dict): biases for each complexity
+        vars (dict): variances for each complexity
+        args (argparse): arguments from argparse
+        
+    """
     fig_bias, ax_bias = plt.subplots(subplot_kw={"projection": "3d"})
     fig_var, ax_var = plt.subplots(subplot_kw={"projection": "3d"})
 
