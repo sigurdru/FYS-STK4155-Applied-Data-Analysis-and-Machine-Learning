@@ -18,9 +18,19 @@ class PINN:
         """
         Args:
             args (argparse): Information handled by the argparser
-            DTYPE (str): datatype
-        """
+            DTYPE (str): datatype used
+            N_0 (int): number of initial points
+            N_b (int): number of points on boundary
+            N_r (int): number of interior points
+            tmin (float): start time
+            tmax (float): end time
+            xmin (float): start position
+            xmax (float): end position
+            num_hidden_layers (int): number of hidden layers
+            num_neurons_per_layer (int): number of neurons per layer
+            activation (str): activation function in hidden layers
 
+        """
         # Set random seed for reproducible results
         if args:
             tf.random.set_seed(args.seed)
@@ -95,27 +105,39 @@ class PINN:
         self.optim = tf.keras.optimizers.Adam(learning_rate=lr)
 
     def fun_u_0(self, t, x):
-        """
-        Returns initial conditions u(0,x)
+        """Returns initial conditions u(0,x).
+
+        Args:
+            t (array): time domain
+            x (array): spatial domain
+
         """ 
         return tf.sin(self.pi*x)
 
     def fun_u_b(self, t, x):
-        """
-        Return boundary condition
-        """
+        """Returns boundary conditions.
+
+        Args:
+            t (array): time domain
+            x (array): spatial domain
+
+        """ 
         n = x.shape[0]
         return tf.zeros((n,1), dtype=self.DTYPE)
 
     def fun_r(self, u_t, u_xx):
-        """
-        return residual of the PDE
+        """Returns residual of the PDE.
+
+        Args:
+            u_t (array): first order time derivative of solution
+            u_xx (array): second order spatial derivative of solution
+
         """
         return u_t - u_xx
 
     def get_r(self):
-        """
-        Get the residual
+        """Return residual of numerical solution.
+
         """
         with tf.GradientTape(persistent=True) as tape:
             t, x = self.X_r[:, 0:1], self.X_r[:, 1:2]
@@ -133,8 +155,8 @@ class PINN:
         return self.fun_r(u_t, u_xx)
 
     def compute_loss(self):
-        """
-        Compute loss
+        """Compute loss using mean squared loss function.
+
         """
         r = self.get_r()
         phi_r = tf.reduce_mean(tf.square(r))
@@ -148,8 +170,8 @@ class PINN:
         return loss
 
     def get_grad(self):
-        """
-        Get gradient
+        """Cacluate gradient of loss function.
+
         """
         with tf.GradientTape(persistent=True) as tape:
             tape.watch(self.model.trainable_variables)
@@ -157,12 +179,12 @@ class PINN:
         
         g = tape.gradient(loss, self.model.trainable_variables)
         del tape
+
         return loss, g
     
     @tf.function
     def train_step(self):
-        """
-        Compute one training step and update weights and biases
+        """Run one training step and update weights and biases.
         """
         # Compute current loss and gradient w.r.t. parameters
         loss, grad_theta = self.get_grad()
