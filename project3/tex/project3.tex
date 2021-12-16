@@ -155,7 +155,6 @@ The loss function converges towards zero for the optimal parameters $\theta$, in
 
 
 \subsection{Solving eigenvalue problems}
-\textcolor{red}{Nevland: Vektornotasjon på alle vektorer.}
 
 Deep neural networks are capable of solving more or less any differential equation. We will in this section follow the work of Yi et. al. (2004) \cite{yi2004neural} closely, using the same first order ODE as them and closely follow their methods for finding the eigenvalues. The first order ODE in question is given as     
 \begin{equation}
@@ -514,7 +513,7 @@ Adjusting hyperparameters of the neural network has also been investigated. Figu
 	\label{fig:eigval_T2_N1000_dim6}
 \end{figure}
 
-\textcolor{red}{Nevland: Stack 6x6 figurer} An additional simulation using a $6\times 6$ matrix has also been conducted. Figure \ref{fig:FE_eigvec_T2_N1000_dim6} and Figure \ref{fig:NN_eigvec_T2_N1000_dim6} shows the predicted eigenvector for forward euler and neural network, repsectively, and Figure \ref{fig:eigval_T2_N1000_dim6} the rayleigh coefficient corresponding to the largest eigenvalue of a $6\times 6$ symmetric matrix. A time step of $\Delta t = 0.005$ have been used and a total time of $T=2$. \textcolor{red}{The reason for the latter choice is based on experiments with a $(6 \cross 6)$ matrix indicating convergence long before $T=5$. Simulating for a shorter time period better illustrates the convergence of the eigenvector.}
+An additional simulation using a $6\times 6$ matrix has also been conducted. Figure \ref{fig:FE_eigvec_T2_N1000_dim6} and Figure \ref{fig:NN_eigvec_T2_N1000_dim6} shows the predicted eigenvector for forward euler and neural network, repsectively, and Figure \ref{fig:eigval_T2_N1000_dim6} the rayleigh coefficient corresponding to the largest eigenvalue of a $6\times 6$ symmetric matrix. A time step of $\Delta t = 0.005$ have been used and a total time of $T=2$. \textcolor{red}{The reason for the latter choice is based on experiments with a $(6 \cross 6)$ matrix indicating convergence long before $T=5$. Simulating for a shorter time period better illustrates the convergence of the eigenvector.}
 
 The reason for the latter choice is based on the previous simulations with $\Delta t=0.005$, as both forward euler and neural network converge long before $T=5$. Reducing the simulation time makes it easier to illustrate the convergence property of the six eigenvector components.
  
