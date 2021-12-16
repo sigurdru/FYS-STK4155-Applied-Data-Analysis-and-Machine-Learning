@@ -127,7 +127,7 @@ def error_x(x, t, u, args):
     error_x = [u[n] - u_exact(x, t[n]) for n in u.keys()]
 
     for i, e in enumerate(error_x):
-        ax.plot(x, e, '--', label=r't={}'.format(t_n[i]))
+        ax.plot(x, e, label=r't={:.1f}'.format(t_n[i]))
     
     title = 'Error between numerical and analytical solution' + '\n' 
     title += 'at two time levels, using $\Delta x={}$'.format(args.x_step)

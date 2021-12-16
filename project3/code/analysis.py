@@ -16,6 +16,15 @@ def IC(x):
     return np.sin(np.pi*x)
 
 def forward_euler(args):
+    """Forward euler method to solve 1D diffusion equation.
+    
+    Args:
+        args (argparse): Information handled by the argparser
+        
+    Returns:
+        u (array): numerical solution for all time steps
+
+    """
     #Importing stuff from argparse
     T = args.tot_time
     dx = args.x_step
@@ -85,9 +94,11 @@ def forward_euler(args):
 
 def neural_network(args):
     """
-    Solves the diffusion equation using neural natwork
-    args:
+    Solves the diffusion equation using neural natwork.
+
+    Args:
         args (argparse): Information handled by the argparser 
+
     """
     # Setup of Neural Network
     #set default values
@@ -121,16 +132,18 @@ def neural_network(args):
         loss = NN.train_step()
         loss_hist.append(loss.numpy())
 
-    # plot.testing_data(NN, args)
-    # plot.NN_diffusion_error(loss_hist, args)
-    # plot.NN_diffusion_solution(NN, args)
+    plot.testing_data(NN, args)
+    plot.NN_diffusion_error(loss_hist, args)
+    plot.NN_diffusion_solution(NN, args)
     plot.NN_diffusion_error_timesteps(NN, args)
 
 def neural_network_eig(args):
     """
-    Finds eigenvalues and vectors with neural network
-    args:
+    Finds eigenvalues and vectors with neural network.
+
+    Args:
         args (argparse): Information handled by the argparser 
+        
     """
     n = args.dimension    # Dimension
     T = args.tot_time     # Final time
