@@ -1,5 +1,6 @@
 Euler_regression:
 	python3 main.py -m Euler
+	python3 main.py -m Euler -study_times -sc 0.5 -dx 0.01
 	python3 main.py -m Euler -TE -sc 0.5 -dx 0.01
 	python3 main.py -m Euler -TE -sc 0.5 -dx 0.1
 NN_regression:
