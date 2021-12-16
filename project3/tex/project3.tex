@@ -51,13 +51,13 @@ In the theory-section we aim to give a brief explanation of the main concepts an
 \subsection{The diffusion equation}
 
 The full diffusion equation reads
-\begin{equation*}
+\begin{equation}
 \frac{\partial u(\mathbf{r}, t)}{\partial t} = \nabla \cdot \left[D(u, \mathbf{r})\nabla u(\mathbf{r}, t)\right],
-\end{equation*}
+\end{equation}
 where $\mathbf{r}$ is a positional vector and $D(u,r)$ the collective diffusion coefficient. If $D(u,\mathbf{r}) = 1$ the equation simplifies to a linear differential equation
-\begin{equation*}
+\begin{equation}
 \frac{\partial u}{\partial t} = \nabla^2u(\mathbf{r}, t),
-\end{equation*}
+\end{equation}
 
 In this report we are going to study a one dimensional rod of length $L=1$. I.e. we need the one dimensional diffusion equation
 \begin{align}
@@ -65,11 +65,11 @@ In this report we are going to study a one dimensional rod of length $L=1$. I.e.
 \frac{\partial^2 u(x,t)}{\partial x^2} &= \frac{\partial u(x,t)}{\partial t},
 \end{align}
 with boundary conditions
-\begin{align*}
+\begin{align}
 u(x,0) &= \sin(\pi x) \ \ 0\leq x\leq L,\\
 u(0,t) &= 0 \ \ t\geq 0 \text{ and} \\
 u(L,t) &= 0 \ \ t\geq 0.
-\end{align*}
+\end{align}
 
 \subsection{Analytical solution}
 
@@ -88,9 +88,9 @@ In this section we want to cover the explicit forward Euler. By explicit we mean
 In this report we are going to study the diffusion equation for a one dimensional rod of length $L=1$, given in equation \eqref{eq:diffusion_equation_1D}
 
 To approximate the solution, we have to discretize the position and time coordinates. We can choose  $\Delta x = L/N$ and $\Delta t$ as small steps in $x$-direction and time, respectively, where $N$ are the number of discretized points in $x$-direction. Then we can define the value domain of $t$ and $x$,
-\begin{equation*}
+\begin{equation}
 t_j = j\Delta t, \ \ j\in \mathbb{N}_0 \ \ \wedge \ \ x_i = i\Delta x, \ \ \{i \in \mathbb{N}_0 | i \leq N\}.
-\end{equation*}
+\end{equation}
 
 The algorithm for explicit forward Euler in one dimension (from \cite{lectures2015} chapter 10.2.1) reads
 \begin{equation}
@@ -113,9 +113,9 @@ Even though $\alpha = 0.5$ is at the transition between stable and unstable solu
 Many of the concepts we use in this section are covered in a previous report \cite{project2}. There, in the theory section, we cover central concepts like deep neural networks, cost functions, gradient descent, etc. In this report we will follow closely the work by Maziar Raissi et.al. \cite{raissi2017physics} and this Jupyter-Notebook\footnote{\texttt{https://colab.research.google.com/github/janblechschmidt/PDEsByNNs/blob/main/PINN \_Solver.ipynb\#scrollTo=1PlqQM9aZEkd}}. This method works with any partial differential equation (PDE), however for simplicity we will look at the diffusion equation in one dimension \eqref{eq:diffusion_equation_1D}. 
 
 The idea is that we have some neural network $N$ with parameters $\theta$, including $x$ and $t$ as inputs, which returns $u_{\theta}(x,t)$. After training the neural network, one obtains the parameters $\hat{\theta}$ that best approximates its output with the actual solution, $u(x,t)$, of the PDE
-\begin{align*}
+\begin{align}
 	u_{\hat{\theta}} (x, t) \approx u(x, t).
-\end{align*}
+\end{align}
 
 The process starts by defining a trial function $u_{\theta}(x,t)$ which is an initial guess of the actual solution $u(x,y)$, defined as
 
@@ -133,15 +133,16 @@ where $u_0$ is a function specifically designed to satisfy the initial and bound
 
 Ideally this should be zero, impying a perfect reproduction of the actual solution. The residual becomes our main object for training, as it gives a measure of how good the neural network approximates the actual solution. For the neural network to improve its predictions a loss function is required, which is to minimized. For this we use the mean sum of squared residuals, including the initial and boundary points, across all data samples $n$. 
 
-\begin{align*}
+\begin{align}
 	L(x, t, \theta) = \frac{1}{n} \sum_{i=1}^n [r_\theta(x_i,t_i)]^2 + \frac{1}{n_B}\sum_{i=1}^{n_B} (u_{\theta}(x_b,t_i) - u(x_b,t_i))^2 + \frac{1}{n_I} \sum_{i=1}^{n_I} (u_{\theta}(x_i,0) - u(x_i,0))^2,
-\end{align*}
+	\label{eq:NN_loss}
+\end{align}
 where $n_B$ and $n_I$ is the number of training points on the boundary and the initial time step, respectively. Boundary points are given by $x_b$.
 Optimization is then done through gradient descent, minimizing the loss with respect to the parameters $\theta$
 
-\begin{align*}
+\begin{equation}
 	\theta \leftarrow \theta - \eta \nabla_{\theta}L(x,t,\theta),
-\end{align*}
+\end{equation}
 
 where $\eta$ is the learning rate, which can either be constant or variable, depending on the optimization strategy.
 The loss function converges towards zero for the optimal parameters $\theta$, in which case the gradient of the loss function vanishes. As a result, the parameters will hardly update anymore through gradient descent, indicating that we have reached an optimal solution.
@@ -156,11 +157,11 @@ Deep neural networks are capable of solving more or less any differential equati
 where
 \[ f(x) = [x^TxA + (1 - x^TAx)I]x \]
 where $A$ is a real symmetric matrix of shape $(n\times n)$ and $t \ge 0$ represents time. The solution of the neural network is given by $x(t)$ with dimensions $(n_t\times n)$, where $n_t$ is the number of time steps. The ODE \eqref{eq:diff_eig} is applicable for finding the eigenvalues of $A$. An equilibrium point $\tilde{x}$ of a differential equation is a solution that is stationary, that is a state where the solution doesn't change anymore, mathematically expressed as $\frac{dx}{dt} = 0$. It can be shown that the equilibrium points of \eqref{eq:diff_eig} span the eigenspace of $A$, implying that the equilibrium points are precisely the eigenvectors of $A$. That is, any $\tilde{x}$ that satisfies
-\begin{align*}
+\begin{align}
 	\frac{d\tilde{x}(t)}{dt} &= -\tilde{x} + f[\tilde{x}(t)] \\
 	&= -\tilde{x} + [\tilde{x}^T\tilde{x}A + (1 - \tilde{x}^TA\tilde{x})I]\tilde{x} \\
 	&= \tilde{x}^T\tilde{x}A\tilde{x} - \tilde{x}^TA\tilde{x}\tilde{x} = 0
-\end{align*}
+\end{align}
 is an eigenvector of $A$. The rayleigh quotient formula can then be used to find the corresponding eigenvalue, given by
 \begin{align} \label{eq:rayleigh_quotient}
 	r = \frac{\tilde{x}^T\tilde{x}}{\tilde{x}^T A \tilde{x}}
@@ -170,11 +171,11 @@ An essential question is how the neural network should be initialized. That is, 
 
 The differential equation \eqref{eq:diff_eig} is a first order nonlinear ODE. Generally, solving a nonlinear differential equation numerically is a comprehensive process involving discretization in time followed by linearization through an iterative method (e.g Newton's method). Explicit schemes are an exception though, as all nonlinear terms are of the previous time step, hence are known. This allow us to easily solve \eqref{eq:diff_eig} numerically using the forward euler method. Discretizing the equation and solving for next time step $n+1$ gives
 
-\begin{align*}
+\begin{align}
 	\frac{x^{n+1}-x^n}{\Delta t} &= -x^n + f[x^n] \\
 	\frac{x^{n+1}-x^n}{\Delta t} &= (x^n)^T x^n A x^n - (x^n)^T A x^n x^n \\
 	x^{n+1} &= x^n + \Delta t\big[ (x^n)^T x^n A x^n - (x^n)^T A x^n x^n \big]
-\end{align*}
+\end{align}
 
 Starting with a non-zero initial condition $x^0 = I(x)$, iteration over time steps will make the subsequent solutions converge towards the eigenvector corresponding to the largest eigenvalue of $A$, as long as the forward euler scheme is stable. The stability criteria depends on the discretization parameter $\Delta t$, and is to be approximated empirically. 
 
@@ -197,9 +198,17 @@ The initial condition used is $u_*^0 = \big(\sin(0),\:\sin(0.2\pi),\:\sin(0.4\pi
 
 
 \subsection{Neural network setup}
-\textcolor{red}{Sigurd: Skriv hvordan du setter opp neural network her. Skriv også hva du kommer til å teste (dybde) og hva du ikke skal teste.}
 
-\textcolor{red}{Vetle og Vetle tenker at det er fint å bruke loss for å finne beste NN, og når det er funnet så regner vi ut MSE o.l. med metoden under for sammenlikning.}
+Our first step when designing our neural network is to decide on a architecture. We have studied this more in-depth in a previous report \cite{project2}. Because of this we will only briefly investigate how the depth (number of hidden layers) affects the loss \eqref{eq:NN_loss}. We use similar architecture as in \cite{raissi2017physics}, namely 20 nodes in each hidden layer, with hyperbolic tangent as activation function in each hidden node. The depth we will test for is $N_h\in[2,4,8]$ hidden layers, then choose the architecture with minimal loss after 500 training iterations. We also plot how the loss evolves as a function of iterations. The network is set up using TensorFlow dense layers with standard initialization Glorot normal (also called Xavier normal initializer). As optimizer we use Adam, which is a stochastic gradient decent method based on adaptive estimation of first- and second-order moments. Because of previous success with dynamic learning rate in the preceding project \cite{project2}, we implement TensorFlow's piecewise constant decay schedule. Specifically we use learning rate $10^{-2}$ for the first 1000 steps, $10^{-3}$ from iterations 1000 to 3000 and $5 \cdot 10^{-4}$ for additional steps.
+
+Figure \ref{fig:NN_training_points} shows the data points used for training the network. One vertical line represents the spatial data points at one point in time.   
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=\linewidth]{../output/plots/training_points.pdf}
+	\caption{In this plot we highlight the data points used for training the neural network. Points on the boundary are highlighted, and we use $50$ points for $t=0$, and a total of $50$ points at $x=0$ and $x=1$, resulting in a total of $100$ boundary points.} \label{fig:NN_training_points}
+\end{figure}
+
+After choosing the network with smallest loss after 500 iterations, we start to compare it with Forward Euler. We do this by comparing the MSE at two different timesteps $t\in[0.1, 0.5]$. We can then increase the number of training iterations and see how this affects the MSE, ideally it will be below that of Forward Euler. We also plot the difference between analytical $u_a$ solution and output $u_p$ of the network ($u_p - u_a$). This is so we can see how the output differ from the analytical solution.
 
 \subsection{Accuracy assessment}
 The unit test shows that the forward euler scheme works as expected, but to what accuracy can it reproduce the analytical solution and how does it compare to the neural network? To address these questions we will present some concrete methods for studying the solvers.
@@ -245,13 +254,6 @@ For each simulation we perform, we find the eigenvector, $\mathbf{v}_\mathrm{max
 \section{Results}
 
 \subsection{Finding a suitable Neural network}
-
-Figure \ref{fig:NN_training_points} shows the data points used for training the network. One vertical line represents the spatial data points at one point in time.   
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=\linewidth]{../output/plots/training_points.pdf}
-	\caption{In this plot we highlight the data points used for training the neural network. Points on the boundary are highlighted, and we use $50$ points for $t=0$, and a total of $50$ points at $x=0$ and $x=1$, resulting in a total of $100$ boundary points.} \label{fig:NN_training_points}
-\end{figure}
 
 The loss of the network as a function of iterations is shown in figure \ref{fig:Error_NN_architecture} for three different architectures. Each network has $20$ nodes in each hidden layer, where the upper left panel has $2$ hidden layers, the upper right panel has $4$ hidden layers and the lower left panel has $8$ hidden layers. 
 
