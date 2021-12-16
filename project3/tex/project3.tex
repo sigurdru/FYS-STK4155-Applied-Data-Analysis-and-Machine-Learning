@@ -307,7 +307,7 @@ To assess the accuracy of our implemented numerical scheme, we need to test the 
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.75\linewidth]{../output/plots/error_FE_x_dx_0.01.pdf}
+	\includegraphics[width=0.75\linewidth]{../output/plots/error_FE_x_dx_001.pdf}
 	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
 	\label{fig:FE_absolute_difference}
 \end{figure}
@@ -319,25 +319,26 @@ To assess the accuracy of our implemented numerical scheme, we need to test the 
 	\caption{In this plot ...} \label{fig:NN_relative_error}
 \end{figure}
 
+Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The corresponding plot for the neural network is shown in figure \ref{fig:NN_relative_error}. Using $\Delta x=0.1$ for forward Euler yielded an identically shaped plot as figure \ref{fig:FE_absolute_difference}, but with increased values on the y-axis, and we have therefore chosen to omit it. 
 
-Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The time points shown in the plot are $t_1=0.1$ and $t_2=0.5$. The same plot when using $\Delta x=0.1$ has identical shape, and differs only by larger error values on the y-axis, and we have therefore chosen to omit it.  
+Figure \ref{fig:Error_NN_architecture} highlighted the dependency on the number of training iterations for the neural network. Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network at $t_1$ and $t_2$ after four different number of training iterations. Except from an increase for $t_1$ when we go from $500$ to $1000$ training iterations, the MSE decreases as we increase the number of iterations. 
 
-Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
-
-\begin{table}[]
+\begin{table}[h]
+	\centering
 	\begin{tabular}{l|ll|}
 		\cline{2-3}
 		& \multicolumn{2}{l|}{Mean Square error} \\ \hline
-		\multicolumn{1}{|l|}{Number of training iterations} & \multicolumn{1}{l|}{t = 0.1} & t = 0.5 \\ \hline
+		\multicolumn{1}{|l|}{Number of training iterations} & \multicolumn{1}{l|}{$t_1 = 0.1$} & $t_2 = 0.5$ \\ \hline
 		\multicolumn{1}{|l|}{500}                           & \multicolumn{1}{l|}{0.0017}  & 0.0070  \\ \hline
 		\multicolumn{1}{|l|}{1000}                          & \multicolumn{1}{l|}{0.015}   & 0.00055 \\ \hline
 		\multicolumn{1}{|l|}{$10^4$}                          & \multicolumn{1}{l|}{$1.4\cdot 10^{-4}$}  & $9.5\cdot10^{-5}$  \\ \hline
 		\multicolumn{1}{|l|}{$5\cdot10^4$}                        & \multicolumn{1}{l|}{$1.0\cdot10^{-6}$}        & $3.0\cdot10^{-6}$        \\ \hline
 	\end{tabular}
+	\caption{MSE NN }
+	\label{tab:NN_MSE_iterations}
 \end{table}
 
-Using equation 
-
+Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
 
 \begin{table}[h]
 	\centering
