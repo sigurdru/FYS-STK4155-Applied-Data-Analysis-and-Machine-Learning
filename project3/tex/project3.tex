@@ -587,6 +587,16 @@ Most of the differential equations frequently applied in natural science, such a
 
 
 \section{Conclusion}
+Ting å ha med:
+\begin{itemize}
+	\item FE er bedre enn NN for diffusion equation - hvorfor (MSE-konkret, enklere, raskere)
+	\item NN - ikke samme bias som for FE 
+	\item Én setning - diffusjon er easy peazy, NN kan ha større timesteps 
+	\item Én setning - NN mer fleksibel 
+	\item Eig: FE-timestep, NN-eta-epochs 
+	\item eig: Euler lettere 
+\end{itemize}
+
 Figure \ref{fig:FE_MSE} shows that simulating the forward euler scheme of the diffusion equation with spatial step $\Delta x = 0.01$ yields an excellent correspondance between the numerical and analytical solution. The maximum error is obtained at an early time step, around $t = 0.1$. For time levels beyond this, the MSE decreases exponentially and eventually converges towards zero. 
 
 Figure \ref{fig:FE_MSE} shows that the error is exactly zero initially, because the numerical scheme has enforced the solution at the initial time step to satisfy the initial condition from the analytical solution. The maximum error is on the order of $10^{-9}$, yielding an excellent fit to the exact solution. One would not be able to distinguish the numerical solution from the exact solution if they were plotted together.
