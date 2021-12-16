@@ -246,10 +246,9 @@ def NN_diffusion_error_timesteps(model, args):
     uexact2 = u_exact(xa, t2).reshape(-1, 1)
 
     fig, ax = plt.subplots()
-    ax.plot(upred1 - uexact1, label='t = %.2f' %(t1))
-    ax.plot(upred2 - uexact2, label='t = %.2f' %(t2))
-    title = r'Difference between analytical and output at timesteps %.2f and %.2f'\
-         % (t1, t2)
+    ax.plot(xa, upred1 - uexact1, label='t = %.2f' %(t1))
+    ax.plot(xa, upred2 - uexact2, label='t = %.2f' %(t2))
+    title = r'Difference between analytical and output for $\Delta$x = 0.01'
     xlabel = 'x'
     ylabel = r'$u_{p} - u_{a}$'
     set_ax_info(ax, xlabel, ylabel, title=title)
