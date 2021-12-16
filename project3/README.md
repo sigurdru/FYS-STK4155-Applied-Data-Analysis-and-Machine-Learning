@@ -3,7 +3,7 @@ The work of Vetle Nevland, Vetle Viknes and Sigurd Sørlie Rustad in FYS-STK4155
 
 The report [project3.pdf](https://github.com/sigurdru/FYS-STK4155/blob/main/project3/tex/project3.pdf) is found in the tex directory.
 
-The solution to the additional exercise is located in the folder ```bias_variance```.
+The solution to the additional exercise is located in the folder [bias_variance](https://github.com/sigurdru/FYS-STK4155/tree/main/project3/bias_variance).
 
 Code dependencies:
 - Python 3.8.10
