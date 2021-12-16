@@ -219,27 +219,26 @@ To train the network we need data, and we will use random data points uniformly 
 	\caption{In this plot we highlight the data points used for training the neural network. Points on the boundary are highlighted, and we use $50$ points for $t=0$, and a total of $50$ points at $x=0$ and $x=1$, resulting in a total of $100$ boundary points. We use $10^4$ data points not at the boundary.} \label{fig:NN_training_points}
 \end{figure}
 
-\textcolor{red}{Vikenes: Flyttes til sammenlikning}
-After choosing the network with smallest loss after 500 iterations, we start to compare it with Forward Euler. We do this by comparing the MSE at two different timesteps $t\in\{0.1, 0.5\}$. We can then increase the number of training iterations and see how this affects the MSE, ideally it will be below that of Forward Euler. We also plot the difference between analytical $u_a$ solution and output $u_p$ of the network ($u_p - u_a$). This is so we can see how the output differ from the analytical solution.
-
 \subsection{Forward Euler}
 
 As discussed in the theory section, following equation \eqref{eq:stability}, $\alpha=0.5$ produce stable solutions for the diffusion equation. Throughout this report we will therefore use a time step of $\Delta t = \alpha \Delta x^2 = 0.5\cdot \Delta x^2$ for different choices of spatial resolution, and not consider other stability factors. We will limit our study to two spatial resolutions, namely $\Delta x = 0.1$ and $\Delta x = 0.01$.  
 
 The first analysis we perform is the time evolution of the mean squared error (MSE) of the forward Euler solution. The MSE at a particular time step, $j$, is given as 
 \begin{align} \label{eq:MSE}
-	\mathrm{MSE_j} = \frac{1}{N}\sum_{i=0}^{N-1} (u_i^j - u_{e,i}^j)^2 
+	\mathrm{MSE_j} = \frac{1}{N}\sum_{i=0}^{N-1} (u_{p,i}^j - u_{a,i}^j)^2 
 \end{align}
 where $u_e$ denotes the analytical solution and $N$ is the number of spatial points. By construction the MSE should be zero at $t=0$. Subsequently, we expect an increasing MSE. Our boundary conditions results in the diffusion equation approaching $u(x,t)=0$ as $t$ increases, causing the MSE to eventually decline after a certain time. Combined with the unit test, this serves as a simple method of validating our result.  
 
-\textcolor{red}{Vikenes: Flytt det under til sammenlikning}
 
-To proceed, we will study the solutions at two different times, $t_1$ and $t_2$ for both $\Delta x = 0.1$ and $\Delta x = 0.01$. We choose $t_1=0.1$ and $t_2=0.5$, where $u(x,t_1)$ is significantly curved and $u(x,t_2)$ is almost linear. These times will serve as the foundation for comparing the performance of our explicit numerical solver to that of the neural network. With the forementioned time periods and spatial resolutions, we compare the MSE of the two models, using equation \eqref{eq:MSE}. 
+\subsection{Comparing numerical results}
+\textcolor{red}{MÅ LESES GJENNOM ETTERPÅ}
+To proceed, we will study the results of the two numerical solvers at two different times, and we choose $t_1=0.1$ and $t_2=0.5$, where $u(x,t_1)$ is significantly curved and $u(x,t_2)$ is almost linear. These times will serve as the foundation for comparing the performance of our explicit numerical solver to that of the neural network. 
 
-\textcolor{red}{Vikenes: Bruk NN-notasjon for likning under. Må stemme med plot}
-As a final study, we would like to plot the absolute difference between the numerical solutions and the analytical one for both $t_1$ and $t_2$. 
+Using the aformentioned time points, we will compare the resulting MSE of the two methods, where we use both $\Delta x = 0.1$ and $\Delta x = 0.01$ for forward Euler. For the neural network we will only consider $\Delta x = 0.01$, but we will calculate the final MSE after four different traing iterations, namely $N_t\in\{500,\,1000,\,10^4,\,5\cdot10^4\}$, to see how increasing iterations affect the score.   
+
+As a final study, we are going to plot the difference between the analytical solution and the two numerical solutions at $t_1$ and $t_2$, as a function of $x\in[0,\,1]$ 
 \begin{align} \label{eq:absolute_difference}
-	\Delta u_i^n = u_i^n - u_{e,i}^n
+	\Delta u(t) = u_{p}(t) - u_{a}(t)
 \end{align}
 Our main purpose of this is to see whether the neural network can circumvent one of the major drawbacks of the forward Euler scheme, giving an output that is either consistently above or below the actual solution. For more volitale differential equations, such errors can propagate throughout the simulation, resulting in a poor fit. One potential advantage of using neural networks will thus be if it yields unbiased errors. 
 
@@ -267,7 +266,7 @@ For each simulation, we find the eigenvector, $\mathbf{v}_\mathrm{max}=(v_1,\,v_
 
 \subsection{Finding a suitable Neural network}
 
-Table \ref{tab:NN_architecture_loss} shows the loss of the neural network after $500$ iterations for the three different network architectures. We see that $4$ hidden layers clearly yields the lowest value for the final loss. \textcolor{red}{Vikenes: tabelltekst}
+Table \ref{tab:NN_architecture_loss} shows the loss of the neural network after $500$ iterations for the three different network architectures. We see that $4$ hidden layers clearly yields the lowest value for the final loss. 
 \begin{table}[h]
 	\centering
 	\begin{tabular}{|c|l|}
@@ -277,7 +276,7 @@ Table \ref{tab:NN_architecture_loss} shows the loss of the neural network after 
 		$4\cross20$         & 0.00079 \\ \hline
 		$2\cross20$         & 0.0022 \\ \hline
 	\end{tabular}
-	\caption{tabll}
+	\caption{Computed loss, equation \eqref{eq:NN_loss}, of the neural network after $500$ training iterations. The first number in the first column represents the number of hidden layers of the network, while the second number is the number of hidden nodes in each layer, which is $20$ for all three networks. $N_h=4$ yields the lowest MSE.}
 	\label{tab:NN_architecture_loss}
 \end{table}
 
@@ -324,28 +323,7 @@ The MSE in figure \ref{fig:FE_MSE} increases significantly for early time steps,
 
 
 \subsection{Comparison of error}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.75\linewidth]{../output/plots/error_FE_x_dx_001.pdf}
-	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
-	\label{fig:FE_absolute_difference}
-\end{figure}
-
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.8\linewidth]{../output/plots/final_compare_NN.png}
-	\caption{In this plot ...} \label{fig:NN_relative_error}
-\end{figure}
-
-Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The corresponding plot for the neural network is shown in figure \ref{fig:NN_relative_error}. Using $\Delta x=0.1$ for forward Euler yielded an identically shaped plot as figure \ref{fig:FE_absolute_difference}, but with increased values on the $y$-axis, and we have therefore chosen to omit it. 
-
-\textcolor{red}{Vikenes: Kommenter plott litt}
-
-Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network at $t_1$ and $t_2$ after four different number of training iterations. Except from an increase for $t_1$ when we go from $500$ to $1000$ training iterations, the MSE decreases as we increase the number of iterations. The increase is likely due to the fluctuations we saw in figure \ref{fig:Error_NN_architecture}.
-
-\textcolor{red}{Vikenes: Tabelltekst}
+Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network at $t_1$ and $t_2$ after four different number of training iterations. Except from an increase for $t_1$ when we go from $500$ to $1000$ training iterations, the MSE decreases as we increase the number of iterations. The increase is likely due to the fluctuations we saw in figure \ref{fig:Error_NN_architecture}. We will therefore use the output of the neural network after $5\cdot10^4$ training iterations for the remaining analysis on the diffusion equation, as this yielded the best result. 
 
 \begin{table}[h]
 	\centering
@@ -358,9 +336,33 @@ Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network 
 		\multicolumn{1}{|l|}{$10^4$}                          & \multicolumn{1}{l|}{$1.4\cdot 10^{-4}$}  & $9.5\cdot10^{-5}$  \\ \hline
 		\multicolumn{1}{|l|}{$5\cdot10^4$}                        & \multicolumn{1}{l|}{$1.0\cdot10^{-6}$}        & $3.0\cdot10^{-6}$        \\ \hline
 	\end{tabular}
-	\caption{MSE NN }
+	\caption{MSE of the neural network at two different times, using four different training iterations.}
 	\label{tab:NN_MSE_iterations}
 \end{table}
+
+\textcolor{red}{Kommentere at $t_1$ gir lavere MSE enn $t_2$ for NN. Kan sees fra differansegrafen.}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.75\linewidth]{../output/plots/error_FE_x_dx_001.pdf}
+	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
+	\label{fig:FE_absolute_difference}
+\end{figure}
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{../output/plots/final_compare_NN.png}
+	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by the neural network at two different points in time, after $5\cdot10^4$ training iterations. The neural network has $N_h=4$ hidden layers.} \label{fig:NN_relative_error}
+\end{figure}
+
+Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The corresponding plot for the neural network is shown in figure \ref{fig:NN_relative_error}. Using $\Delta x=0.1$ for forward Euler yielded an identically shaped plot as figure \ref{fig:FE_absolute_difference}, but with increased values on the $y$-axis, and we have therefore chosen to omit it. 
+
+In figure \ref{fig:FE_absolute_difference} we see the expected feature of forward euler, lying below the analytical solutions throughout the simulation. Comparing with figure \ref{fig:NN_relative_error}, we note that at $t_1=0.1$ the difference is positive for $x\lesssim0.3$, while it is negative for larger $x$ values. Similarly, we get a positive difference at $t_2=0.5$ for the lower values of $x$. Although there is a slight bias in the difference from the neural network, neither time points yielded a completely negative solution. \textcolor{red}{Kanskje fjerne siste setning?}   
+
+\textcolor{red}{DISKUSJON: SKRIV AT FE ER VERST I MIDTEN!}
+
+
 
 Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$. With forward Euler we have included both spatial steps $\Delta x$, while we only consider $\Delta x=0.01$ for the neural network. 
 
@@ -376,6 +378,10 @@ Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neur
 \caption{MSE as function of spatial step $\Delta x$ for two different time levels, for forward euler scheme and neural network. Forward euler is abbreviated as FE and neural network as NN.}
 \label{tab:MSE_compare}
 \end{table}
+
+In table \ref{tab:MSE_compare} we see that forward Euler yields much lower MSE values for $\Delta x = 0.01$ than the neural network. For $t_1=0.1$ and $t_2=0.5$ the MSE of the neural network exceeds the MSE of forward Euler by factors of $\sim10^3$ and $\sim10^5$, respectively. At $t_2=0.5$ the MSE of the neural network with $\Delta x = 0.01$ is approximately $20$ times greater than the MSE of forward Euler with $\Delta x=0.1$, i.e. $10$ times fewer data points. 
+
+\textcolor{red}{Er sammenlikningen over ok?}
 
 \subsection{Eigenvalue problem}
 
