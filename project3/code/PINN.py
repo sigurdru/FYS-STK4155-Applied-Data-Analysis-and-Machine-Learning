@@ -10,10 +10,16 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 class PINN:
+    """Physics-informed neural network"""
     def __init__(self, args = None, DTYPE = 'float32',
                 N_0=50, N_b=50, N_r=10000,
                 tmin = 0., tmax = 1., xmin = 0., xmax = 1.,
                 num_hidden_layers=8, num_neurons_per_layer=20, activation='tanh'):
+        """
+        Args:
+            args (argparse): Information handled by the argparser
+            DTYPE (str): datatype
+        """
 
         # Set random seed for reproducible results
         if args:
