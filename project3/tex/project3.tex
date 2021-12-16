@@ -270,7 +270,7 @@ The loss of the network as a function of iterations is shown in figure \ref{fig:
 	\endminipage
 \end{figure}
 
-Although there are large fluctuations of the loss for the network with $4$ hidden layers, we choose this architecture for further analysis. Using logarithmic scales on the y-axes in figure \ref{fig:Error_NN_architecture}, the amplitudes of the oscillating losses appear bigger than they are in reality. We only consider the network after the final iteration, and this architecture provided the lowest loss and MSE. A detailed study of different architectures is outside the scope of this report, and is nonetheless dependent of the particular PDE in question. Unless specified, the following results are all obtained with a neural network with $4$ hidden layers after $500$ iterations. 
+Although there are large fluctuations of the loss for the network with $4$ hidden layers, we choose this architecture for further analysis. Using logarithmic scales on the y-axes in figure \ref{fig:Error_NN_architecture}, the amplitudes of the oscillating losses appear bigger than they are in reality. We only consider the network after the final iteration, and this architecture provided the lowest loss and MSE. A detailed study of different architectures is outside the scope of this report, and is nonetheless dependent of the particular PDE in question. Unless specified, the following results are all obtained with a neural network with $4$ hidden layers after $500$ iterations. \textcolor{red}{Kanskje flyttes til metode/diskusjon}
 
 Figure \ref{fig:NN_architecture_solution} shows the output of the neural network. We clearly see the exponential decay of the initial sine function, as expected, eventually flattening out, as $t\to1$.   
 \begin{figure}[h]
@@ -293,7 +293,7 @@ Figure \ref{fig:NN_architecture_solution} shows the output of the neural network
 \clearpage
 \subsection{Error of Forward Euler scheme}
 
-To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the mean squared error to compare the approximated solutions with the analytical solution, both for forward euler and the neural network. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t=0.1$ and quickly reduces thereafter. Already at $t=0.5$ the MSE is converging towards zero.
+To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. We use the mean squared error to compare the numerical solution from forward Euler with the analytical solution at each time step. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t_1=0.1$ and quickly reduces thereafter. Already at $t_2=0.5$ the MSE is fairly close to zero. This shows that the two time steps we later use for explicit comparison between our two methods are well suited, encapsulating the highest and lowest MSE regions of the explicit numerical solver.   
 
 \begin{figure}[h]
 	\centering
@@ -302,23 +302,12 @@ To assess the accuracy of our implemented numerical scheme, we need to test the 
 	\label{fig:FE_MSE}
 \end{figure}
 
-Figure \ref{fig:NN_MSE} shows the MSE from the neural network with the architecture that provided best results. \textcolor{red}{Sigurd: Legg til MSE plottet her for det beste nettverket.}
-
-
-
-
-
-\subsection{Error of Neural Network}
-
-\textcolor{red}{Basert paa gammel figur. Sigurd: kanskje dette maa skirves om, avhengig av de endelige resultatene dine.}
-Figure \ref{fig:error_NN_10000} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases considerably - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes again. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
-
 
 \subsection{Comparison of error}
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.6]{../output/plots/error_FE_x_dx_0.01.pdf}
+	\includegraphics[width=0.75\linewidth]{../output/plots/error_FE_x_dx_0.01.pdf}
 	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
 	\label{fig:FE_absolute_difference}
 \end{figure}
@@ -326,15 +315,14 @@ Figure \ref{fig:error_NN_10000} shows the error of the neural network when appro
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\linewidth]{../output/plots/final_compare_NN.png}
+	\includegraphics[width=0.8\linewidth]{../output/plots/final_compare_NN.png}
 	\caption{In this plot ...} \label{fig:NN_relative_error}
 \end{figure}
-
-Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
 
 
 Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The time points shown in the plot are $t_1=0.1$ and $t_2=0.5$. The same plot when using $\Delta x=0.1$ has identical shape, and differs only by larger error values on the y-axis, and we have therefore chosen to omit it.  
 
+Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
 
 \begin{table}[]
 	\begin{tabular}{l|ll|}
