@@ -272,7 +272,7 @@ The loss of the network as a function of iterations is shown in figure \ref{fig:
 	\endminipage
 \end{figure}
 
-Although there are large fluctuations of the loss for the network with $4$ hidden layers, we choose this architecture for further analysis. Using logarithmic scales on the y-axes in figure \ref{fig:Error_NN_architecture}, the amplitudes of the oscillating losses appear bigger than they are in reality. We only consider the network after the final iteration, and this architecture provided the lowest loss and MSE. A detailed study of different architectures is outside the scope of this report, and is nonetheless dependent of the particular PDE in question. Unless specified, the following results are all obtained with a neural network with $4$ hidden layers after $500$ iterations. 
+Although there are large fluctuations of the loss for the network with $4$ hidden layers, we choose this architecture for further analysis. Using logarithmic scales on the y-axes in figure \ref{fig:Error_NN_architecture}, the amplitudes of the oscillating losses appear bigger than they are in reality. We only consider the network after the final iteration, and this architecture provided the lowest loss and MSE. A detailed study of different architectures is outside the scope of this report, and is nonetheless dependent of the particular PDE in question. Unless specified, the following results are all obtained with a neural network with $4$ hidden layers after $500$ iterations. \textcolor{red}{Kanskje flyttes til metode/diskusjon}
 
 Figure \ref{fig:NN_architecture_solution} shows the output of the neural network. We clearly see the exponential decay of the initial sine function, as expected, eventually flattening out, as $t\to1$.   
 \begin{figure}[h]
@@ -295,7 +295,7 @@ Figure \ref{fig:NN_architecture_solution} shows the output of the neural network
 \clearpage
 \subsection{Error of Forward Euler scheme}
 
-To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. In this project we use the mean squared error to compare the approximated solutions with the analytical solution, both for forward euler and the neural network. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t=0.1$ and quickly reduces thereafter. Already at $t=0.5$ the MSE is converging towards zero.
+To assess the accuracy of our implemented numerical scheme, we need to test the how well the produced solution fits the analytical solution. We use the mean squared error to compare the numerical solution from forward Euler with the analytical solution at each time step. Figure \ref{fig:FE_MSE} shows the MSE as function of time for the forward euler scheme. The time step is chosen to give a stability factor $\alpha=0.5$. The error increases significantly for early time steps, reaches a peak at around $t_1=0.1$ and quickly reduces thereafter. Already at $t_2=0.5$ the MSE is fairly close to zero. This shows that the two time steps we later use for explicit comparison between our two methods are well suited, encapsulating the highest and lowest MSE regions of the explicit numerical solver.   
 
 \begin{figure}[h]
 	\centering
@@ -304,23 +304,12 @@ To assess the accuracy of our implemented numerical scheme, we need to test the 
 	\label{fig:FE_MSE}
 \end{figure}
 
-Figure \ref{fig:NN_MSE} shows the MSE from the neural network with the architecture that provided best results. \textcolor{red}{Sigurd: Legg til MSE plottet her for det beste nettverket.}
-
-
-
-
-
-\subsection{Error of Neural Network}
-
-\textcolor{red}{Basert paa gammel figur. Sigurd: kanskje dette maa skirves om, avhengig av de endelige resultatene dine.}
-Figure \ref{fig:error_NN_10000} shows the error of the neural network when approximating the solution $u_{\theta}$ to the actual solution $u$ as a function of training iterations. Initially, the error decreases considerably - it reduces by a factor of ten for just a couple of iterations, and the approximated solution improves significantly. Afterwards, the error decreases by a much slower rate with some minor fluctuations. Some time after 100 iterations the error is subject to a large jump, but quickly diminishes again. For later iterations the error slowly converges towards zero, possessing some irregular, minor fluctuations. 
-
 
 \subsection{Comparison of error}
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.6]{../output/plots/error_FE_x_dx_0.01.pdf}
+	\includegraphics[width=0.75\linewidth]{../output/plots/error_FE_x_dx_001.pdf}
 	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
 	\label{fig:FE_absolute_difference}
 \end{figure}
@@ -328,30 +317,30 @@ Figure \ref{fig:error_NN_10000} shows the error of the neural network when appro
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\linewidth]{../output/plots/final_compare_NN.png}
+	\includegraphics[width=0.8\linewidth]{../output/plots/final_compare_NN.png}
 	\caption{In this plot ...} \label{fig:NN_relative_error}
 \end{figure}
 
-Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
+Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The corresponding plot for the neural network is shown in figure \ref{fig:NN_relative_error}. Using $\Delta x=0.1$ for forward Euler yielded an identically shaped plot as figure \ref{fig:FE_absolute_difference}, but with increased values on the y-axis, and we have therefore chosen to omit it. 
 
+Figure \ref{fig:Error_NN_architecture} highlighted the dependency on the number of training iterations for the neural network. Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network at $t_1$ and $t_2$ after four different number of training iterations. Except from an increase for $t_1$ when we go from $500$ to $1000$ training iterations, the MSE decreases as we increase the number of iterations. 
 
-Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The time points shown in the plot are $t_1=0.1$ and $t_2=0.5$. The same plot when using $\Delta x=0.1$ has identical shape, and differs only by larger error values on the y-axis, and we have therefore chosen to omit it.  
-
-
-\begin{table}[]
+\begin{table}[h]
+	\centering
 	\begin{tabular}{l|ll|}
 		\cline{2-3}
 		& \multicolumn{2}{l|}{Mean Square error} \\ \hline
-		\multicolumn{1}{|l|}{Number of training iterations} & \multicolumn{1}{l|}{t = 0.1} & t = 0.5 \\ \hline
+		\multicolumn{1}{|l|}{Number of training iterations} & \multicolumn{1}{l|}{$t_1 = 0.1$} & $t_2 = 0.5$ \\ \hline
 		\multicolumn{1}{|l|}{500}                           & \multicolumn{1}{l|}{0.0017}  & 0.0070  \\ \hline
 		\multicolumn{1}{|l|}{1000}                          & \multicolumn{1}{l|}{0.015}   & 0.00055 \\ \hline
 		\multicolumn{1}{|l|}{$10^4$}                          & \multicolumn{1}{l|}{$1.4\cdot 10^{-4}$}  & $9.5\cdot10^{-5}$  \\ \hline
 		\multicolumn{1}{|l|}{$5\cdot10^4$}                        & \multicolumn{1}{l|}{$1.0\cdot10^{-6}$}        & $3.0\cdot10^{-6}$        \\ \hline
 	\end{tabular}
+	\caption{MSE NN }
+	\label{tab:NN_MSE_iterations}
 \end{table}
 
-Using equation 
-
+Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
 
 \begin{table}[h]
 	\centering
@@ -535,7 +524,7 @@ In the beginning of the diffusion process, for low $t$, the solution changes rat
 
 \subsection{Solving the diffusion equation with a neural network}
 
-\par \textcolor{red}{Et forsøk paa aa forklare fluktuasjonene i MSE for NN:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer [\textcolor{red}{https://arxiv.org/abs/1412.6980}]. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
+\par \textcolor{red}{Et forsøk paa aa forklare fluktuasjonene i MSE for NN:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer \cite{kingma2017adam}. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
 \subsection*{Using Forward Euler and Neural Network to find eigenvalues}
 Forward euler and neural networks are two different numerical methods capable of finding the eigenvalues of a real, symmetric matrix $A$ by solving the ODE in equation \eqref{eq:diff_eig}. The two algorithms for solving differential equations are quite different, and will therefore yield different predictions of the largest eigenvalue. The result of forward euler is sensitive to the time step $\Delta t$. Thus, it is of interest to compare the accuracy of prediction of the two methods when the time step is altered. 
@@ -566,7 +555,7 @@ Figure \ref{fig:eigvec_T5_N6} shows that the eigenvector components do not conve
 
 The corresponding rayleigh quotients, shown in Figure \ref{fig:eigval_T5_N6}, verify that forward euler is not able to converge to the true solution of equation \eqref{eq:diff_eig} as $\Delta t$ is too large. All simulations with $\Delta t \leq 0.5$ have given a relative error less than $1\%$ between the final rayleigh quotient and the largest eigenvalue using forward euler. In comparison, the relative error for $\Delta t = 0.83$ is $22.1\%$.
  
-All simulations so far have been conducted for a symmetric $3\times 3$ matrix. It is of interest to compare the two methods for a higher dimensional matrix as well. This is an important step towards generalization of the ability of forward euler and neural network to find eigenvalues of symmetric matrices of arbitrary shape. Figure \ref{fig:eigvec_T2_N1000_dim6} and Figure \ref{fig:eigval_T2_N1000_dim6} simulates for a $6\times 6$ symmetric matrix. The plot shows that neither forward euler nor neural network have problems with convergence. The only remarkable difference is that the predicted components of the eigenvector are slightly positively biased for the neural network, whereas for forward euler they converge perfectly. The stochastic initialization of the neural network will yield different results for different simulations. Hence, one should expect the average among multiple simulations to give a better approximation to the true eigenvector. Nonetheless, the rayleigh quotient converges to the largest eigenvalue, with third and forth decimal precision for neural network and forward euler, respectively. The simulation illustrates that forward euler is more consistent for small time steps $\Delta t$, even for higher dimensional matrices.
+All simulations so far have been conducted for a symmetric $3\times 3$ matrix. It is of interest to compare the two methods for a higher dimensional matrix as well. This is an important step towards generalization of the ability of forward euler and neural network to find eigenvalues of symmetric matrices of arbitrary shape. Figure \ref{fig:eigvec_T2_N1000_dim6} and Figure \ref{fig:eigval_T2_N1000_dim6} simulates for a $6\times 6$ symmetric matrix. The plot shows that neither forward euler nor neural network have problems with convergence. Apparently, the predicted components of the eigenvector are near perfect for both methods after time $T=2$. The stochastic initialization of the neural network will yield different results for different simulations, some that may give notable deviations. Nonetheless, the rayleigh quotient converges to the largest eigenvalue with forth decimal precision for both neural network and forward euler. The only noticable difference is that forward euler has a smoother convergence, while the neural network seems to possess some minor low-frequency fluctuations. The simulation illustrates that forward euler is slightly more consistent for small time steps $\Delta t$, even for higher dimensional matrices.
 
 Taking all simulations into account, the neural network has excellent accuracy for $\Delta t < 1$. This indicates weak dependency on the time step, but this is completely deafed by the sensitivity to other hyperparameters such as learning rate and number of epochs.
 
