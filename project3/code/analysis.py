@@ -202,13 +202,3 @@ def neural_network_eig(args):
     elif args.dimension == 6:
         plot.plot_eig_dim6(w_np, g, eigvec_fe, eigval_nn, eigval_fe, s, t, v, args)
 
-
-if __name__ == '__main__':
-    BC_l = 0
-    BC_r = 0
-
-    # u, x, t = forward_euler(L, T, IC, BC_l, BC_r, dx, dt, user_action=plot_sols)
-    #u, x, t = forward_euler(L, T, IC, BC_l, BC_r, dx, dt, user_action=store_solution)
-    # test_space_steps()
-
-

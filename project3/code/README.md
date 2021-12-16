@@ -1,8 +1,8 @@
-# Code of project 2
+# Code of project 3
 This README includes a description of code structure and every file in repo.
 
 # Dataflow
-As in last project, the `main.py` is the only file run directly, and takes many commandline arguments. These arguments determine what functions are run, and parameter values. Run `main.py -h` to get a list of possible arguments and values. `main.py` calls on one of the three defined functions in `analysis.py`. One solves the diffusion equation with forward Euler, one with neural network and the last solves an eigenvalue problem with neural network. The results are plotted from `plot.py`. 
+As in the last two projects, the `main.py` is the only file run directly, and takes many commandline arguments. These arguments determine what functions are run, and parameter values. Run `main.py -h` to get a list of possible arguments and values. `main.py` calls on one of the three defined functions in `analysis.py`. One solves the diffusion equation with forward Euler, one with neural network and the last solves an eigenvalue problem with neural network. The results are plotted from `plot.py`. 
 
 The makefile contains the commands used to generate all the plots in the rapport. Running `make all` should reproduce all results in rapport. This will take about 20min.
 
