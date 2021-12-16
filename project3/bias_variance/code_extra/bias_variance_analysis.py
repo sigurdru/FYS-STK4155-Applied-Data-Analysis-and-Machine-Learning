@@ -18,7 +18,20 @@ simplefilter("ignore", category=ConvergenceWarning)
 
 
 def run_linear_regression(bs_model, fig, ax, args):
-
+    """Runs bias-variance calculations for linear regression,
+    including plotting.
+    
+    Args:
+        bs_model (Bootstrap): model from Bootstrap class
+        fig: matplotlib figure instance
+        ax: matplotlib axis instance
+        
+    Returns:
+        mse_all (array): mse for all complexities
+        bias_all (array): bias for all complexities
+        var_all (array): variance for all complexities
+        
+    """
     mse_all = {}
     bias_all = {}
     var_all = {}
@@ -41,24 +54,37 @@ def run_linear_regression(bs_model, fig, ax, args):
         var_all[d] = var
 
     if args.method == 'OLS':
-        bias_variance_plot.bias_var(mse_all, bias_all, var_all, fig, ax, args)
+        bias_variance_plot.bias_var_linreg(mse_all, bias_all, var_all, fig, ax, args)
 
     elif args.method in ['Ridge', 'Lasso']:
 
-        if args.plot_type == 'regularization': 
+        if args.plot_type == 'regularization':
             bias_variance_plot.bias_var_regularization(bias_all, var_all, fig, ax, args)
             args.regularization *= 10
             mses, biases, vars = run_linear_regression(bs_model, fig, ax, args)
         
         elif args.plot_type == 'standard':
-            bias_variance_plot.bias_var(mse_all, bias_all, var_all, fig, ax, args)
+            bias_variance_plot.bias_var_linreg(mse_all, bias_all, var_all, fig, ax, args)
 
 
     return mse_all, bias_all, var_all
 
 
 def run_neural_network(bs_model, fig, ax, args):
-
+    """Runs bias-variance calculations for neural network,
+    including plotting.
+    
+    Args:
+        bs_model (Bootstrap): model from Bootstrap class
+        fig: matplotlib figure instance
+        ax: matplotlib axis instance
+        
+    Returns:
+        mse_all (array): mse for all complexities
+        bias_all (array): bias for all complexities
+        var_all (array): variance for all complexities
+        
+    """
     mse_all = {}
     bias_all = {}
     var_all = {}
@@ -80,6 +106,20 @@ def run_neural_network(bs_model, fig, ax, args):
 
     
 def run_support_vector_machine(bs_model, fig, ax, args):
+    """Runs bias-variance calculations for support vector machine,
+    including plotting.
+    
+    Args:
+        bs_model (Bootstrap): model from Bootstrap class
+        fig: matplotlib figure instance
+        ax: matplotlib axis instance
+        
+    Returns:
+        mse_all (array): mse for all complexities
+        bias_all (array): bias for all complexities
+        var_all (array): variance for all complexities
+        
+    """
     Cs = np.array(args.C_regularization).astype(float)
     epsilons = np.array(args.epsilon).astype(float)
 
