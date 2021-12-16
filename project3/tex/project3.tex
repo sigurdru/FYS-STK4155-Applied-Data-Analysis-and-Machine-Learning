@@ -25,6 +25,22 @@
 \maketitle
 \pagestyle{myplain}
 
+\section*{To Do}
+Hovedrapport:
+\begin{itemize}
+	\item Nevland: makefile 
+	\item Sigurd: Readme x 2 (én kode, én standard)
+\end{itemize}
+
+
+Ekstraoppgave:
+\begin{itemize}
+	\item Nevland: Readme 
+	\item Nevland: makefile 
+	\item Nevland: docstrings
+\end{itemize}
+
+
 
 \section{Introduction}
 
@@ -100,7 +116,7 @@ This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. Experi
 Even though $\alpha = 0.5$ is at the transition between stable and unstable solutions, experiments show that it is a safe choice for the diffusion equation that produces stable solutions \cite{Linge2017}. 
 
 \subsection{Solving Differential equations with deep learning}
-Many of the concepts we use in this section are covered in a previous report \cite{project2}. There, in the theory section, we cover central concepts like deep neural networks, cost functions, gradient descent, etc. In this report we will follow closely the work by Maziar Raissi et.al. \cite{raissi2017physics} and this Jupyter-Notebook \footnote{\texttt{https://colab.research.google.com/github/janblechschmidt/PDEsByNNs/blob/main/PINN \_Solver \textcolor{red}{Sigurd: Legg jupyter som referanse, fjern footnote}.ipynb\#scrollTo=1PlqQM9aZEkd}}. This method works with any partial differential equation (PDE), however we limit ourselves to the diffusion equation in one dimension \eqref{eq:diffusion_equation_1D} which we are going to study in this report. 
+Many of the concepts we use in this section are covered in a previous report \cite{project2}. There, in the theory section, we cover central concepts like deep neural networks, cost functions, gradient descent, etc. In this report we will follow closely the work by Maziar Raissi et.al. \cite{raissi2017physics} and this Jupyter-Notebook \footnote{\texttt{https://colab.research.google.com/github/janblechschmidt/PDEsByNNs/blob/main/PINN \_Solver.ipynb\#scrollTo=1PlqQM9aZEkd}}. \textcolor{red}{Sigurd: Legg jupyter som referanse, fjern footnote} This method works with any partial differential equation (PDE), however we limit ourselves to the diffusion equation in one dimension \eqref{eq:diffusion_equation_1D} which we are going to study in this report. 
 
 The idea is that we have some neural network $N$ with parameters $\theta$, including $x$ and $t$ as inputs, which returns $u_{\theta}(x,t)$. After training the neural network, one obtains the parameters $\hat{\theta}$ that best approximates its output with the actual solution, $u(x,t)$, of the PDE
 \begin{align}
@@ -329,7 +345,7 @@ Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:abs
 
 Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network at $t_1$ and $t_2$ after four different number of training iterations. Except from an increase for $t_1$ when we go from $500$ to $1000$ training iterations, the MSE decreases as we increase the number of iterations. The increase is likely due to the fluctuations we saw in figure \ref{fig:Error_NN_architecture}.
 
-\textcolor{red}{Sigurd: Tabelltekst}
+\textcolor{red}{Vikenes: Tabelltekst}
 
 \begin{table}[h]
 	\centering
