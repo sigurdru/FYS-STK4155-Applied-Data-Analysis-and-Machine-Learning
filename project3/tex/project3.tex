@@ -597,6 +597,11 @@ Ting å ha med:
 	\item eig: Euler lettere 
 \end{itemize}
 
+Simulations of forward Euler and neural network on the diffusion equation reveal that forward Euler is the prominent method. For $\Delta x = 0.01$ and time $t=0.5$, forward Euler returns an MSE of $1.69 \cdot 10^{-11}$ compared to an MSE of $3.0\cdot 10^{-6}$ for neural network. Forward Euler is a simpler numerical technique than neural network, and runs considerably faster for the diffusion problem. The difference between the analytical solution and numerical solutions is consistently negative for forward Euler at the time levels $t_1 = 0.1$ and $t_2=0.5$. The neural network, on the other hand, has both a positive and negative difference. A neural network is thus more robust against large spatial gradients. 
+
+The simplicity of the diffusion equation makes forward Euler a suitable numerical method for this particular problem. More intricate differential equations, though, require more complex numerical methods than a simple forward Euler scheme. Neural networks can be generated as complex as desired, making it the prominent method for solving differential equations of higher complexity.
+
+
 Figure \ref{fig:FE_MSE} shows that simulating the forward euler scheme of the diffusion equation with spatial step $\Delta x = 0.01$ yields an excellent correspondance between the numerical and analytical solution. The maximum error is obtained at an early time step, around $t = 0.1$. For time levels beyond this, the MSE decreases exponentially and eventually converges towards zero. 
 
 Figure \ref{fig:FE_MSE} shows that the error is exactly zero initially, because the numerical scheme has enforced the solution at the initial time step to satisfy the initial condition from the analytical solution. The maximum error is on the order of $10^{-9}$, yielding an excellent fit to the exact solution. One would not be able to distinguish the numerical solution from the exact solution if they were plotted together.
