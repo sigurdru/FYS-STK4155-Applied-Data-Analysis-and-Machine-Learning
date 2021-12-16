@@ -486,6 +486,33 @@ Adjusting hyperparameters of the neural network has also been investigated. Figu
 
 Results of a further increase in the time step is shown in Figure \ref{fig:eig_T5_N6}, using $\Delta t= 0.83$ corresponding to $N=6$ estimations, where the left panel shows the eigenvector components and the right panel shows the associated Rayleigh quotients. 
 
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/plots/FE_eigvec_T2_N1000_dim6.pdf}
+		\caption{Forward Euler}
+		\label{fig:FE_eigvec_T2_N1000_dim6}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/plots/NN_eigvec_T2_N1000_dim6.pdf}
+		\caption{Neural network}
+		\label{fig:NN_eigvec_T2_N1000_dim6}
+	\end{subfigure}
+	\caption{Predictions of eigenvector corresponding to the largest eigenvalue for a real, symmetric $6\times 6$ matrix. A time step of $\Delta t = 0.005$ and a total time $T=2$ is used.}
+	\label{fig:eigvec_T2_N1000_dim6}
+\end{figure}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{../output/plots/eigval_T2_N1000_dim6.pdf}
+	\caption{Rayleigh quotient corresponding to the largest eigenvalue of a real, symmetric $6\times 6$ matrix.}
+\end{figure}
+
+An additional simulation using a $6\times 6$ matrix has also been conducted. Figure \ref{fig:eigvec_T2_N1000_dim6} shows the predicted eigenvector for forward euler (\ref{fig:FE_eigvec_T2_N1000_dim6}) and neural network (\ref{fig:NN_eigvec_T2_N1000_dim6}), and Figure \ref{fig:eigval_T2_N1000_dim6} the rayleigh coefficient corresponding to the largest eigenvalue of a $6\times 6$ symmetric matrix. A time step of $0.005$ have been used and a total time of $T=2$. The reason for the latter choice is based on the previous simulations with $\Delta t=0.005$, as both forward euler and neural network converge long before $T=5$. Reducing the simulation time makes it easier to illustrate the convergence property of the six eigenvector components.
+ 
  
 \clearpage
 \section{Discussion}
@@ -528,7 +555,9 @@ In project 2 we studied some of the most sensitive parameters for a neural netwo
 % FE & NN: N=1000, N=100, N=10
 Figure \ref{fig:eigvec_T5_N6} shows that the eigenvector components do not converge but rather oscillate in an inconsistent pattern when we use Forward Euler with a time step $\Delta t =0.83$. There is a strong indication of diverging values for the eigenvector components, which would be more apparent if we either increased the duration of the simulation, or decreased the time step even further. 
 
- The corresponding rayleigh quotients, shown in Figure \ref{fig:eigval_T5_N6}, verify that forward euler is not able to converge to the true solution of equation \eqref{eq:diff_eig} as $\Delta t$ is too large. All simulations with $\Delta t \leq 0.5$ have given a relative error less than $1\%$ between the final rayleigh quotient and the largest eigenvalue using forward euler. In comparison, the relative error for $\Delta t = 0.83$ is $22.1\%$.
+The corresponding rayleigh quotients, shown in Figure \ref{fig:eigval_T5_N6}, verify that forward euler is not able to converge to the true solution of equation \eqref{eq:diff_eig} as $\Delta t$ is too large. All simulations with $\Delta t \leq 0.5$ have given a relative error less than $1\%$ between the final rayleigh quotient and the largest eigenvalue using forward euler. In comparison, the relative error for $\Delta t = 0.83$ is $22.1\%$.
+ 
+All simulations so far have been conducted for a symmetric $3\times 3$ matrix. It is of interest to compare the two methods for a higher dimensional matrix as well. This is an important step towards generalization of the ability of forward euler and neural network to find eigenvalues of symmetric matrices of arbitrary shape. Figure \ref{fig:eigvec_T2_N1000_dim6} and Figure \ref{fig:eigval_T2_N1000_dim6} simulates for a $6\times 6$ symmetric matrix. The plot shows that neither forward euler nor neural network have problems with convergence. The only remarkable difference is that the predicted components of the eigenvector are slightly positively biased for the neural network, whereas for forward euler they converge perfectly. The stochastic initialization of the neural network will yield different results for different simulations. Hence, one should expect the average among multiple simulations to give a better approximation to the true eigenvector. Nonetheless, the rayleigh quotient converges to the largest eigenvalue, with third and forth decimal precision for neural network and forward euler, respectively. The simulation illustrates that forward euler is more consistent for small time steps $\Delta t$, even for higher dimensional matrices.
 
 Taking all simulations into account, the neural network has excellent accuracy for $\Delta t < 1$. This indicates weak dependency on the time step, but this is completely deafed by the sensitivity to other hyperparameters such as learning rate and number of epochs.
 
@@ -559,8 +588,9 @@ Most of the differential equations frequently applied in natural science, such a
 
 
 \section{Conclusion}
-Hei, i prosjekt 3 har vi valgt oppgaven om diff-likninger.
-Vi hadde nettopp fullført oppgave d) ang. egenverdi
+In this project we have particularly studied the diffusion equation, a rather simple PDE. It has a closed form expression for the analytical solution, so strictly speaking it is not necessary to solve the equation numerically. Still, it is a good representation for comparing numerical methods. Our results have proven that forward euler clearly outperforms neural network in terms of MSE between approximated and analytical solution, as long as it fulfills the stability requirement \eqref{eq:stability}. The potential for finding eigenvalues by solving the first order ODE \eqref{eq:diff_eig} has also been studied, in which case forward euler and neural network perform comparably well, although forward euler generally runs faster. 
+
+The two differential equations studied in this project are linear and rather simple differential equations. In a general case, differential equations can be much more intrinsic. In such cases, numerical schemes and particularly forward euler encounter problems with accurate finite differences. Neural networks, on the other hand, can according to the universal approximation theorem approximate any function to arbitrary accuracy without any stability constraint on the time step. Hence, neural network is a more flexible numerical technique with a wide applicablility.
 
 \section{Appendix}
 

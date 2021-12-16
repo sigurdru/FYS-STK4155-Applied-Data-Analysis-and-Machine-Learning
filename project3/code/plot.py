@@ -308,7 +308,7 @@ def plot_eig_dim6(w_np, eigvec_nn, eigvec_fe, eigval_nn, eigval_fe, s, t, v, arg
     ax.legend(loc='lower center', fancybox=True, 
                 borderaxespad=0, ncol=3)
     
-    fname = r'NN_eigvec_T%i_N%i_dim6' %(args.tot_time, args.N_t_points)
+    fname = r'FE_eigvec_T%i_N%i_dim6' %(args.tot_time, args.N_t_points)
     show_save(fig, fname, args)
 
     # Plot eigenvalues
