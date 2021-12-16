@@ -26,14 +26,6 @@
 \pagestyle{myplain}
 
 
-\section*{To do}
-\begin{itemize}
-	\item NN: Skrive metode 
-	\item NN: Finne beste NN (Resultater)
-	\item Sammenlikne NN-FE feil og performance 
-	\item Konklusjon 
-\end{itemize}
-
 \section{Introduction}
 
 We will in no way answer all questions linked to the aforementioned methods. So that anyone can reproduce or continue our studies, we list all the code, results and instructions on running the code in our GitHub repository\footnote{\href{https://github.com/sigurdru/FYS-STK4155/tree/main/project2}{https://github.com/sigurdru/FYS-STK4155/tree/main/project3}}.
@@ -54,7 +46,7 @@ The full diffusion equation reads
 \begin{equation}
 \frac{\partial u(\mathbf{r}, t)}{\partial t} = \nabla \cdot \left[D(u, \mathbf{r})\nabla u(\mathbf{r}, t)\right],
 \end{equation}
-where $\mathbf{r}$ is a positional vector and $D(u,r)$ the collective diffusion coefficient. If $D(u,\mathbf{r}) = 1$ the equation simplifies to a linear differential equation
+where $\mathbf{r}$ is a positional vector and $D(u,\mathbf{r})$ the collective diffusion coefficient. If $D(u,\mathbf{r}) = 1$ the equation simplifies to a linear differential equation
 \begin{equation}
 \frac{\partial u}{\partial t} = \nabla^2u(\mathbf{r}, t),
 \end{equation}
@@ -75,7 +67,7 @@ u(L,t) &= 0 \ \ t\geq 0.
 
 
 An analytical solution of the 1D diffusion equation can be dervied using the method of separation of variables.
-For a complete derivation, please refer to the Appendix.
+For a complete derivation, please refer to the Appendix \ref{app:1D_diff_eq}.
 The analytical solution satisfying the given initial and boundary conditions is
 
 \begin{align} \label{eq:analytical_solution_diffusion}
@@ -85,9 +77,7 @@ The analytical solution satisfying the given initial and boundary conditions is
 \subsection{Explicit forward Euler}
 In this section we want to cover the explicit forward Euler. By explicit we mean that the value at the next grid point is determined entirely by known or previously calculated values.
 
-In this report we are going to study the diffusion equation for a one dimensional rod of length $L=1$, given in equation \eqref{eq:diffusion_equation_1D}
-
-To approximate the solution, we have to discretize the position and time coordinates. We can choose  $\Delta x = L/N$ and $\Delta t$ as small steps in $x$-direction and time, respectively, where $N$ are the number of discretized points in $x$-direction. Then we can define the value domain of $t$ and $x$,
+To approximate the solution of equation \eqref{eq:diffusion_equation_1D}, we have to discretize the position and time coordinates. We can choose  $\Delta x = L/N$ and $\Delta t$ as small steps in $x$-direction and time, respectively, where $N$ are the number of discretized points in $x$-direction. Then we can define the value domain of $t$ and $x$,
 \begin{equation}
 t_j = j\Delta t, \ \ j\in \mathbb{N}_0 \ \ \wedge \ \ x_i = i\Delta x, \ \ \{i \in \mathbb{N}_0 | i \leq N\}.
 \end{equation}
@@ -95,22 +85,22 @@ t_j = j\Delta t, \ \ j\in \mathbb{N}_0 \ \ \wedge \ \ x_i = i\Delta x, \ \ \{i \
 The algorithm for explicit forward Euler in one dimension (from \cite{lectures2015} chapter 10.2.1) reads
 \begin{equation}
 \label{eq:forward_euler}
-u_{i, j+1} = \alpha u_{i-1, j} + (1 - 2\alpha) u_{i,j} + \alpha u_{i+1, j}
+u_{i, j+1} = \alpha\, u_{i-1, j} + (1 - 2\alpha) u_{i,j} + \alpha\, u_{i+1, j}
 \end{equation}
 where
-\begin{equation*}
+\begin{equation}
 \alpha = \frac{\Delta t}{\Delta x^2}.
-\end{equation*}
+\end{equation}
 This has a local approximate error of $O(\Delta t)$ and $O(\Delta x ^2)$. Experiments show that the following bound on $\alpha$ ensures stability.
 \begin{equation}
 	\label{eq:stability}
-	\alpha = \frac{\Delta t}{\Delta x^2} \le \frac{1}{2}.
+	\alpha \le \frac{1}{2}.
 \end{equation} 
 
 Even though $\alpha = 0.5$ is at the transition between stable and unstable solutions, experiments show that it is a safe choice for the diffusion equation that produces stable solutions \cite{Linge2017}. Thus, the stability factor $\alpha=0.5$ is used as default in this project. 
 
-\section{Solving Differential equations with deep learning}
-Many of the concepts we use in this section are covered in a previous report \cite{project2}. There, in the theory section, we cover central concepts like deep neural networks, cost functions, gradient descent, etc. In this report we will follow closely the work by Maziar Raissi et.al. \cite{raissi2017physics} and this Jupyter-Notebook\footnote{\texttt{https://colab.research.google.com/github/janblechschmidt/PDEsByNNs/blob/main/PINN \_Solver.ipynb\#scrollTo=1PlqQM9aZEkd}}. This method works with any partial differential equation (PDE), however for simplicity we will look at the diffusion equation in one dimension \eqref{eq:diffusion_equation_1D}. 
+\subsection{Solving Differential equations with deep learning}
+Many of the concepts we use in this section are covered in a previous report \cite{project2}. There, in the theory section, we cover central concepts like deep neural networks, cost functions, gradient descent, etc. In this report we will follow closely the work by Maziar Raissi et.al. \cite{raissi2017physics} and this Jupyter-Notebook \footnote{\texttt{https://colab.research.google.com/github/janblechschmidt/PDEsByNNs/blob/main/PINN \_Solver \textcolor{red}{Sigurd: Legg jupyter som referanse, fjern footnote}.ipynb\#scrollTo=1PlqQM9aZEkd}}. This method works with any partial differential equation (PDE), however we limit ourselves to the diffusion equation in one dimension \eqref{eq:diffusion_equation_1D} which we are going to study in this report. 
 
 The idea is that we have some neural network $N$ with parameters $\theta$, including $x$ and $t$ as inputs, which returns $u_{\theta}(x,t)$. After training the neural network, one obtains the parameters $\hat{\theta}$ that best approximates its output with the actual solution, $u(x,t)$, of the PDE
 \begin{align}
@@ -123,7 +113,7 @@ The process starts by defining a trial function $u_{\theta}(x,t)$ which is an in
 	u_{\theta}(x,t) = u_0(x, t) + f\big(x, N(x,\theta)\big),
 	\label{eq:NN_model}
 \end{align}
-where $u_0$ is a function specifically designed to satisfy the initial and boundary conditions of the PDE. The function $f$ is the part that is to be optimized by the algorithm. It depends on $x$ and the parameters $\theta$ through the neural network $N$, and should return 0 for the initial and boundary conditions. Constructing the function $f$ should beneficially incorporate prior knowledge about how the solution behaves, because this will accelerate the learning process.
+where $u_0$ is a function specifically designed to satisfy the initial and boundary conditions of the PDE. The function $f$ is the part that is to be optimized by the algorithm. It depends on $x$ and the parameters $\theta$ through the neural network $N$, and should return zero for the initial and boundary conditions. Constructing the function $f$ should beneficially incorporate prior knowledge about how the solution behaves, because this will accelerate the learning process.
 
 \par We then define the residual $r_\theta(t, x)$, which is the output of the neural network inserted back into the PDE \eqref{eq:diffusion_equation_1D}
 \begin{align}
@@ -131,21 +121,21 @@ where $u_0$ is a function specifically designed to satisfy the initial and bound
 	\label{eq:residual}
 \end{align}
 
-Ideally this should be zero, impying a perfect reproduction of the actual solution. The residual becomes our main object for training, as it gives a measure of how good the neural network approximates the actual solution. For the neural network to improve its predictions a loss function is required, which is to minimized. For this we use the mean sum of squared residuals, including the initial and boundary points, across all data samples $n$. 
+Ideally this should be zero, implying a perfect reproduction of the actual solution. The residual becomes our main object for training, as it gives a measure of how good the neural network approximates the actual solution. For the neural network to improve its predictions a loss function is required, which is to minimized. For this we use the mean sum of squared residuals, including the initial and boundary points, across all data samples $n$ 
 
 \begin{align}
-	L(x, t, \theta) = \frac{1}{n} \sum_{i=1}^n [r_\theta(x_i,t_i)]^2 + \frac{1}{n_B}\sum_{i=1}^{n_B} (u_{\theta}(x_b,t_i) - u(x_b,t_i))^2 + \frac{1}{n_I} \sum_{i=1}^{n_I} (u_{\theta}(x_i,0) - u(x_i,0))^2,
+	L(x, t, \theta) = \frac{1}{n} \sum_{i=1}^n [r_\theta(x_i,t_i)]^2 + \frac{1}{n_B}\sum_{i=1}^{n_B} (u_{\theta}(x_b,t_i) - u(x_b,t_i))^2 + \frac{1}{n_I} \sum_{i=1}^{n_I} (u_{\theta}(x_i,0) - u(x_i,0))^2.
 	\label{eq:NN_loss}
 \end{align}
-where $n_B$ and $n_I$ is the number of training points on the boundary and the initial time step, respectively. Boundary points are given by $x_b$.
-Optimization is then done through gradient descent, minimizing the loss with respect to the parameters $\theta$
+Note, because we know the initial and boundary conditions we include them in the loss function, and they will act as regularization terms. $n_B$ and $n_I$ is the number of training points on the boundary and the initial time step, respectively. The boundary points are denoted by $x_b$.
+Optimization is then done through a form of gradient descent, minimizing the loss with respect to the parameters $\theta$
 
 \begin{equation}
 	\theta \leftarrow \theta - \eta \nabla_{\theta}L(x,t,\theta),
 \end{equation}
 
 where $\eta$ is the learning rate, which can either be constant or variable, depending on the optimization strategy.
-The loss function converges towards zero for the optimal parameters $\theta$, in which case the gradient of the loss function vanishes. As a result, the parameters will hardly update anymore through gradient descent, indicating that we have reached an optimal solution.
+The loss function converges towards zero for the optimal parameters $\theta$, in which case the gradient of the loss function vanishes. As a result, the parameters will hardly update anymore, indicating that we have reached an optimal solution.
 
 
 \subsection{Solving eigenvalue problems}
@@ -344,16 +334,16 @@ Figure \ref{fig:Error_NN_architecture} highlighted the dependency on the number 
 	\label{tab:NN_MSE_iterations}
 \end{table}
 
-Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. 
+Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$ and two different spatial steps $\Delta x$. \textcolor{red}{Vikenes: Legg til NN for $\Delta x = 0.01$.}
 
 \begin{table}[h]
 	\centering
-	\begin{tabular}{l|ll|ll|}
+	\begin{tabular}{l|cc|cc|}
 		\cline{2-5}
-		& \multicolumn{2}{l|}{\textbf{$\Delta x=0.1$}}           & \multicolumn{2}{l|}{\textbf{$\Delta x=0.01$}}           \\ \cline{2-5} 
+		& \multicolumn{2}{c|}{\textbf{$\Delta x=0.1$}}           & \multicolumn{2}{c|}{\textbf{$\Delta x=0.01$}}           \\ \cline{2-5} 
 		& \multicolumn{1}{l|}{\textbf{FE}}         & \textbf{NN} & \multicolumn{1}{l|}{\textbf{FE}}          & \textbf{NN} \\ \hline
-		\multicolumn{1}{|l|}{\textbf{$t_1=0.1$}} & \multicolumn{1}{l|}{$1.72\cdot 10^{-5}$} &             & \multicolumn{1}{l|}{$1.81\cdot 10^{-9}$}  &             \\ \hline
-		\multicolumn{1}{|l|}{\textbf{$t_2=0.5$}} & \multicolumn{1}{l|}{$1.50\cdot 10^{-7}$} &             & \multicolumn{1}{l|}{$1.69\cdot 10^{-11}$} &             \\ \hline
+		\multicolumn{1}{|l|}{\textbf{$t_1=0.1$}} & \multicolumn{1}{l|}{$1.72\cdot 10^{-5}$} & -            & \multicolumn{1}{l|}{$1.81\cdot 10^{-9}$}  & $1.0\cdot10^{-6}$            \\ \hline
+		\multicolumn{1}{|l|}{\textbf{$t_2=0.5$}} & \multicolumn{1}{l|}{$1.50\cdot 10^{-7}$} & -            & \multicolumn{1}{l|}{$1.69\cdot 10^{-11}$} & $3.0\cdot10^{-6}$             \\ \hline
 	\end{tabular}
 \caption{MSE as function of spatial step $\Delta x$ for two different time levels, for forward euler scheme and neural network. Forward euler is abbreviated as FE and neural network as NN.}
 \label{tab:MSE_compare}
@@ -596,9 +586,7 @@ The two differential equations studied in this project are linear and rather sim
 
 \section{Appendix}
 
-\section*{Appendix}
-
-\subsection*{Analytical solution of the diffusion equation}
+\subsection{Analytical solution of the diffusion equation} \label{app:1D_diff_eq}
 By using the concept of separation of variables, the solution can be expressed as
 \[ u(x,t) = X(x)T(t) \]
 The solution is separated into a function $X$ only depending on the independent variable $x$, and a function $T$ only depending on the independent variable $t$. Equation \eqref{eq:diffusion_equation_1D} can then be rewritten as
@@ -699,7 +687,7 @@ Finally, this gives the following analytical solution of \eqref{eq:diffusion_equ
 
 \[ u(x,t) = e^{-\pi^2 t} \sin(\pi x) \]
 
-\subsection*{Forward Euler unit test results}
+\subsection{Forward Euler unit test results} \label{app:unit_test}
 The results of the unit test for the Forward Euler scheme is given in table \ref{tab:unit_test}.  
 \begin{table}[h]
 	\centering
