@@ -156,7 +156,7 @@ The loss function converges towards zero for the optimal parameters $\theta$, in
 \subsection{Solving eigenvalue problems}
 \textcolor{red}{Nevland: Vektornotasjon på alle vektorer.}
 
-Deep neural networks are capable of solving more or less any differential equation. We will in this section follow the work of Yi et. al. (2004) \cite{yi2004neural} closely, using the same first ODE as them and closely follow their methods for finding the eigenvalues. The first order ODE in question is given as     
+Deep neural networks are capable of solving more or less any differential equation. We will in this section follow the work of Yi et. al. (2004) \cite{yi2004neural} closely, using the same first order ODE as them and closely follow their methods for finding the eigenvalues. The first order ODE in question is given as     
 \begin{equation}
 	\frac{dx(t)}{dt} = -x(t) + f[x(t)],
 	\label{eq:diff_eig}
@@ -218,27 +218,26 @@ To train the network we need data, and we will use random data points uniformly 
 	\caption{In this plot we highlight the data points used for training the neural network. Points on the boundary are highlighted, and we use $50$ points for $t=0$, and a total of $50$ points at $x=0$ and $x=1$, resulting in a total of $100$ boundary points. We use $10^4$ data points not at the boundary.} \label{fig:NN_training_points}
 \end{figure}
 
-\textcolor{red}{Vikenes: Flyttes til sammenlikning}
-After choosing the network with smallest loss after 500 iterations, we start to compare it with Forward Euler. We do this by comparing the MSE at two different timesteps $t\in\{0.1, 0.5\}$. We can then increase the number of training iterations and see how this affects the MSE, ideally it will be below that of Forward Euler. We also plot the difference between analytical $u_a$ solution and output $u_p$ of the network ($u_p - u_a$). This is so we can see how the output differ from the analytical solution.
-
 \subsection{Forward Euler}
 
 As discussed in the theory section, following equation \eqref{eq:stability}, $\alpha=0.5$ produce stable solutions for the diffusion equation. Throughout this report we will therefore use a time step of $\Delta t = \alpha \Delta x^2 = 0.5\cdot \Delta x^2$ for different choices of spatial resolution, and not consider other stability factors. We will limit our study to two spatial resolutions, namely $\Delta x = 0.1$ and $\Delta x = 0.01$.  
 
 The first analysis we perform is the time evolution of the mean squared error (MSE) of the forward Euler solution. The MSE at a particular time step, $j$, is given as 
 \begin{align} \label{eq:MSE}
-	\mathrm{MSE_j} = \frac{1}{N}\sum_{i=0}^{N-1} (u_i^j - u_{e,i}^j)^2 
+	\mathrm{MSE_j} = \frac{1}{N}\sum_{i=0}^{N-1} (u_{p,i}^j - u_{a,i}^j)^2 
 \end{align}
 where $u_e$ denotes the analytical solution and $N$ is the number of spatial points. By construction the MSE should be zero at $t=0$. Subsequently, we expect an increasing MSE. Our boundary conditions results in the diffusion equation approaching $u(x,t)=0$ as $t$ increases, causing the MSE to eventually decline after a certain time. Combined with the unit test, this serves as a simple method of validating our result.  
 
-\textcolor{red}{Vikenes: Flytt det under til sammenlikning}
 
-To proceed, we will study the solutions at two different times, $t_1$ and $t_2$ for both $\Delta x = 0.1$ and $\Delta x = 0.01$. We choose $t_1=0.1$ and $t_2=0.5$, where $u(x,t_1)$ is significantly curved and $u(x,t_2)$ is almost linear. These times will serve as the foundation for comparing the performance of our explicit numerical solver to that of the neural network. With the forementioned time periods and spatial resolutions, we compare the MSE of the two models, using equation \eqref{eq:MSE}. 
+\subsection{Comparing numerical results}
+\textcolor{red}{MÅ LESES GJENNOM ETTERPÅ}
+To proceed, we will study the results of the two numerical solvers at two different times, and we choose $t_1=0.1$ and $t_2=0.5$, where $u(x,t_1)$ is significantly curved and $u(x,t_2)$ is almost linear. These times will serve as the foundation for comparing the performance of our explicit numerical solver to that of the neural network. 
 
-\textcolor{red}{Vikenes: Bruk NN-notasjon for likning under. Må stemme med plot}
-As a final study, we would like to plot the absolute difference between the numerical solutions and the analytical one for both $t_1$ and $t_2$. 
+Using the aformentioned time points, we will compare the resulting MSE of the two methods, where we use both $\Delta x = 0.1$ and $\Delta x = 0.01$ for forward Euler. For the neural network we will only consider $\Delta x = 0.01$, but we will calculate the final MSE after four different traing iterations, namely $N_t\in\{500,\,1000,\,10^4,\,5\cdot10^4\}$, to see how increasing iterations affect the score.   
+
+As a final study, we are going to plot the difference between the analytical solution and the two numerical solutions at $t_1$ and $t_2$, as a function of $x\in[0,\,1]$ 
 \begin{align} \label{eq:absolute_difference}
-	\Delta u_i^n = u_i^n - u_{e,i}^n
+	\Delta u(t) = u_{p}(t) - u_{a}(t)
 \end{align}
 Our main purpose of this is to see whether the neural network can circumvent one of the major drawbacks of the forward Euler scheme, giving an output that is either consistently above or below the actual solution. For more volitale differential equations, such errors can propagate throughout the simulation, resulting in a poor fit. One potential advantage of using neural networks will thus be if it yields unbiased errors. 
 
@@ -246,7 +245,7 @@ Our main purpose of this is to see whether the neural network can circumvent one
 \subsection{Finding eigenvalues}
 The matrix we will consider for our initial analysis is a real symmetric matrix, $A$, with dimensions $(3\cross3)$ \footnote{We didn't realize that it should have been a $(6\cross6)$ matrix until after the report was finished. This has been cleared with Morten.}. In the end we will perform one simulation with a $(6\cross6)$ matrix to study differences for higher dimensions. 
 
-Using the neural network model \eqref{eq:diff_eig} to find the eigenvalues of $A$ requires a trial solution \eqref{eq:NN_model} to initiate the network. The trial solution must fulfill the convergence property to guarantee that we end up with the eigenvalues, as mentioned in the theory section. Hence, we define the initial condition $x_0 \in \mathbb{R}^n$ \textcolor{red}{Nevland: Vektordimensjon} to be a vector of randomly generated numbers between zero and one. Since we don't know the eigenspace corresponding to the largest eigenvalue a priori, we have no guarantee that the trial solution is non-orthogonal to the eigenspace corresponding to the largest eigenvalue. To increase the probability of non-orthogonality, we can add random perturbations.
+Using the neural network model \eqref{eq:diff_eig} to find the eigenvalues of $A$ requires a trial solution \eqref{eq:NN_model} to initiate the network. The trial solution must fulfill the convergence property to guarantee that we end up with the eigenvalues, as mentioned in the theory section. Hence, we define the initial condition $x_0 \in \mathbb{R}^n$ to be a vector of randomly generated numbers between zero and one. Since we don't know the eigenspace corresponding to the largest eigenvalue a priori, we have no guarantee that the trial solution is non-orthogonal to the eigenspace corresponding to the largest eigenvalue. To increase the probability of non-orthogonality, we can add random perturbations.
 
 Even though a non-zero trial solution is the only requirement for convergence, there are strategies for improving the \textit{rate} of convergence. If we have some preknowledge of a solution of the differential equation, incorporating this in the trial solution helps accelerate the learning of the neural network. The ODE \eqref{eq:diff_eig} is of first order with a term involving $dx/dt$ on one side and a term involving $x$ on the other. This is reminiscent of an exponential solution. Therefore, a smart initialization strategy of \eqref{eq:NN_model} is 
 
@@ -266,7 +265,7 @@ For each simulation, we find the eigenvector, $\mathbf{v}_\mathrm{max}=(v_1,\,v_
 
 \subsection{Finding a suitable Neural network}
 
-Table \ref{tab:NN_architecture_loss} shows the loss of the neural network after $500$ iterations for the three different network architectures. We see that $4$ hidden layers clearly yields the lowest value for the final loss. \textcolor{red}{Vikenes: tabelltekst}
+Table \ref{tab:NN_architecture_loss} shows the loss of the neural network after $500$ iterations for the three different network architectures. We see that $4$ hidden layers clearly yields the lowest value for the final loss. 
 \begin{table}[h]
 	\centering
 	\begin{tabular}{|c|l|}
@@ -276,7 +275,7 @@ Table \ref{tab:NN_architecture_loss} shows the loss of the neural network after 
 		$4\cross20$         & 0.00079 \\ \hline
 		$2\cross20$         & 0.0022 \\ \hline
 	\end{tabular}
-	\caption{tabll}
+	\caption{Computed loss, equation \eqref{eq:NN_loss}, of the neural network after $500$ training iterations. The first number in the first column represents the number of hidden layers of the network, while the second number is the number of hidden nodes in each layer, which is $20$ for all three networks. $N_h=4$ yields the lowest MSE.}
 	\label{tab:NN_architecture_loss}
 \end{table}
 
@@ -323,28 +322,7 @@ The MSE in figure \ref{fig:FE_MSE} increases significantly for early time steps,
 
 
 \subsection{Comparison of error}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.75\linewidth]{../output/plots/error_FE_x_dx_001.pdf}
-	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
-	\label{fig:FE_absolute_difference}
-\end{figure}
-
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.8\linewidth]{../output/plots/final_compare_NN.png}
-	\caption{In this plot ...} \label{fig:NN_relative_error}
-\end{figure}
-
-Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The corresponding plot for the neural network is shown in figure \ref{fig:NN_relative_error}. Using $\Delta x=0.1$ for forward Euler yielded an identically shaped plot as figure \ref{fig:FE_absolute_difference}, but with increased values on the $y$-axis, and we have therefore chosen to omit it. 
-
-\textcolor{red}{Vikenes: Kommenter plott litt}
-
-Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network at $t_1$ and $t_2$ after four different number of training iterations. Except from an increase for $t_1$ when we go from $500$ to $1000$ training iterations, the MSE decreases as we increase the number of iterations. The increase is likely due to the fluctuations we saw in figure \ref{fig:Error_NN_architecture}.
-
-\textcolor{red}{Vikenes: Tabelltekst}
+Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network at $t_1$ and $t_2$ after four different number of training iterations. Except from an increase for $t_1$ when we go from $500$ to $1000$ training iterations, the MSE decreases as we increase the number of iterations. The increase is likely due to the fluctuations we saw in figure \ref{fig:Error_NN_architecture}. We will therefore use the output of the neural network after $5\cdot10^4$ training iterations for the remaining analysis on the diffusion equation, as this yielded the best result. 
 
 \begin{table}[h]
 	\centering
@@ -357,9 +335,33 @@ Table \ref{tab:NN_MSE_iterations} shows the resulting MSE of the neural network 
 		\multicolumn{1}{|l|}{$10^4$}                          & \multicolumn{1}{l|}{$1.4\cdot 10^{-4}$}  & $9.5\cdot10^{-5}$  \\ \hline
 		\multicolumn{1}{|l|}{$5\cdot10^4$}                        & \multicolumn{1}{l|}{$1.0\cdot10^{-6}$}        & $3.0\cdot10^{-6}$        \\ \hline
 	\end{tabular}
-	\caption{MSE NN }
+	\caption{MSE of the neural network at two different times, using four different training iterations.}
 	\label{tab:NN_MSE_iterations}
 \end{table}
+
+\textcolor{red}{Kommentere at $t_1$ gir lavere MSE enn $t_2$ for NN. Kan sees fra differansegrafen.}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.75\linewidth]{../output/plots/error_FE_x_dx_001.pdf}
+	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by forward euler at two different points in time.}
+	\label{fig:FE_absolute_difference}
+\end{figure}
+
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.8\linewidth]{../output/plots/final_compare_NN.png}
+	\caption{The difference between the analytical solution of the diffusion equation and the solution obtained by the neural network at two different points in time, after $5\cdot10^4$ training iterations. The neural network has $N_h=4$ hidden layers.} \label{fig:NN_relative_error}
+\end{figure}
+
+Figure \ref{fig:FE_absolute_difference} shows the plot of equation \eqref{eq:absolute_difference}, i.e. the numerical solution of the diffusion equation from forward Euler, subtracted by the analytical solution in equation \eqref{eq:analytical_solution_diffusion}. The corresponding plot for the neural network is shown in figure \ref{fig:NN_relative_error}. Using $\Delta x=0.1$ for forward Euler yielded an identically shaped plot as figure \ref{fig:FE_absolute_difference}, but with increased values on the $y$-axis, and we have therefore chosen to omit it. 
+
+In figure \ref{fig:FE_absolute_difference} we see the expected feature of forward euler, lying below the analytical solutions throughout the simulation. Comparing with figure \ref{fig:NN_relative_error}, we note that at $t_1=0.1$ the difference is positive for $x\lesssim0.3$, while it is negative for larger $x$ values. Similarly, we get a positive difference at $t_2=0.5$ for the lower values of $x$. Although there is a slight bias in the difference from the neural network, neither time points yielded a completely negative solution. \textcolor{red}{Kanskje fjerne siste setning?}   
+
+\textcolor{red}{DISKUSJON: SKRIV AT FE ER VERST I MIDTEN!}
+
+
 
 Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neural network at two selected time steps $t$. With forward Euler we have included both spatial steps $\Delta x$, while we only consider $\Delta x=0.01$ for the neural network. 
 
@@ -375,6 +377,10 @@ Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neur
 \caption{MSE as function of spatial step $\Delta x$ for two different time levels, for forward euler scheme and neural network. Forward euler is abbreviated as FE and neural network as NN.}
 \label{tab:MSE_compare}
 \end{table}
+
+In table \ref{tab:MSE_compare} we see that forward Euler yields much lower MSE values for $\Delta x = 0.01$ than the neural network. For $t_1=0.1$ and $t_2=0.5$ the MSE of the neural network exceeds the MSE of forward Euler by factors of $\sim10^3$ and $\sim10^5$, respectively. At $t_2=0.5$ the MSE of the neural network with $\Delta x = 0.01$ is approximately $20$ times greater than the MSE of forward Euler with $\Delta x=0.1$, i.e. $10$ times fewer data points. 
+
+\textcolor{red}{Er sammenlikningen over ok?}
 
 \subsection{Eigenvalue problem}
 
@@ -395,28 +401,7 @@ Table \ref{tab:MSE_compare} compares the MSE obtained for forward euler and neur
 
 Figure \ref{fig:eigvec_T5_N1000} shows predictions of the eigenvector corresponding to the largest eigenvalue of a symmetric $(3\times 3)$ matrix $A$ of randomly assigned values between zero and one. The simulation is run for a total time of $T=5$ with $N=1000$ estimations in time, providing a time step of $\Delta t = 0.005$. The prediction from both forward euler and neural network converges to the true eigenvector, as obtained from NumPy. The largest eigenvalue is shown in Figure \ref{fig:eigval_T5_N1000} together with the rayleigh quotients estimated by forward euler and the neural network.
 
-\textcolor{red}{Nevland: Skriv at figurene fremover har små akser, men at de er delvis uendra. Skriv hvorfor vi gjør det.}
-
-\textcolor{red}{Nevland: Fjern $\Delta t=0.05$. Husk diskusjon}
-\begin{figure}[h]
-	\centering
-	\begin{subfigure}{0.49\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../output/plots/eigvec_T5_N100.pdf}
-		\caption{Eigenvectors}
-		\label{fig:eigvec_T5_N100}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.49\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../output/plots/eigval_T5_N100.pdf}
-		\caption{Rayleigh quotients}
-		\label{fig:eigval_T5_N100}
-	\end{subfigure}
-	\caption{Predictions by forward euler (FE) and neural network (NN) of largest eigenvalue and corresponding eigenvector of a real, symmetric $3\times 3$ matrix, using a time step $\Delta t = 0.05$. The $x$ and $y$ axes are identical to those in figure \ref{fig:eigvec_T5_N1000} and \ref{fig:eigval_T5_N1000}}
-	\label{fig:eig_T5_N100}
-\end{figure}
-
+\textcolor{red}{Nevland: The subsequent figures in this section are horizontally stacked so the axes labels are small. However, the dimensions are similar to that of Figure \ref{fig:eigvec_T5_N1000} and Figure \ref{fig:eigval_T5_N1000}. The reason that we discard vertical alignment of figures is to make the results more compact.}
 
 \begin{figure}[h]
 	
@@ -440,8 +425,29 @@ Figure \ref{fig:eigvec_T5_N1000} shows predictions of the eigenvector correspond
 
 
 
-Figure \ref{fig:eigvec_T5_N100} and \ref{fig:eigvec_T5_N10} shows predictions of the same eigenvector of the same matrix $A$ in Figure \ref{fig:eigvec_T5_N1000} but with a time step of $\Delta t = 0.05$ and $\Delta t = 0.5$, respectively. The largest eigenvalue and rayleigh quotients are shown in Figure \ref{fig:eigval_T5_N100} and \ref{fig:eigval_T5_N10}.
-The graphs are less smooth due to larger timesteps and fewer estimates. 
+Figure \ref{fig:eigvec_T5_N10} shows predictions of the same eigenvector of the same matrix $A$ in Figure \ref{fig:eigvec_T5_N1000} but with a time step of $\Delta t = 0.5$. The largest eigenvalue and rayleigh quotients are shown in Figure \ref{fig:eigval_T5_N10}.
+The graphs are less smooth due to a larger timestep and fewer estimates. 
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/plots/eigvec_T5_N6.pdf}
+		\caption{Eigenvectors}
+		\label{fig:eigvec_T5_N6}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../output/plots/eigval_T5_N6.pdf}
+		\caption{Rayleigh quotients}
+		\label{fig:eigval_T5_N6}
+	\end{subfigure}
+	\caption{Predictions of largest eigenvalue and corresponding eigenvector by forward euler and neural network for a real, symmetric $3\times 3$ matrix. A time step of $\Delta t = 0.83$ is used. Other than increased eigenvector component values for forward Euler on the left panel, the $x$ and $y$ axes are identical to those in figure \ref{fig:eigvec_T5_N1000} and \ref{fig:eigval_T5_N1000}}
+	\label{fig:eig_T5_N6}
+\end{figure}
+
+Results of a further increase in the time step is shown in Figure \ref{fig:eig_T5_N6}, using $\Delta t= 0.83$ corresponding to $N=6$ estimations, where the left panel shows the eigenvector components and the right panel shows the associated Rayleigh quotients. 
 
 \begin{figure}[h]
 	
@@ -486,45 +492,18 @@ The graphs are less smooth due to larger timesteps and fewer estimates.
 
 Adjusting hyperparameters of the neural network has also been investigated. Figure \ref{fig:eigvec_T5_N1000_eta01} shows the predicted eigenvector using a time step of $\Delta t = 0.005$ and a learning rate of $0.1$. The associated rayleigh quotients is shown in Figure \ref{fig:eigval_T5_N1000_eta01}. Predictions of the same eigenvector is shown in Figure \ref{fig:eigvec_T5_N1000_epochs50}, with the learning rate retained at $0.1$ but the number of epochs reduced from $2000$ to $50$. The associated rayleigh quotients are shown in Figure \ref{fig:eigval_T5_N1000_epochs50}.
 
-
 \begin{figure}[h]
 	\centering
-	\begin{subfigure}{0.49\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../output/plots/eigvec_T5_N6.pdf}
-		\caption{Eigenvectors}
-		\label{fig:eigvec_T5_N6}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.49\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../output/plots/eigval_T5_N6.pdf}
-		\caption{Rayleigh quotients}
-		\label{fig:eigval_T5_N6}
-	\end{subfigure}
-	\caption{Predictions of largest eigenvalue and corresponding eigenvector by forward euler and neural network for a real, symmetric $3\times 3$ matrix. A time step of $\Delta t = 0.83$ is used. Other than increased eigenvector component values for forward Euler on the left panel, the $x$ and $y$ axes are identical to those in figure \ref{fig:eigvec_T5_N1000} and \ref{fig:eigval_T5_N1000}}
-	\label{fig:eig_T5_N6}
+	\includegraphics[scale=0.6]{../output/plots/FE_eigvec_T2_N1000_dim6.pdf}
+	\caption{Predictions of eigenvector corresponding to the largest eigenvalue for a real, symmetric $6\times 6$ matrix using Forward Euler. A time step of $\Delta t = 0.005$ and a total time $T=2$ is used.}
+	\label{fig:FE_eigvec_T2_N1000_dim6}
 \end{figure}
 
-\textcolor{red}{Nevland: Flytt figur 13 oppover} Results of a further increase in the time step is shown in Figure \ref{fig:eig_T5_N6}, using $\Delta t= 0.83$ corresponding to $N=6$ estimations, where the left panel shows the eigenvector components and the right panel shows the associated Rayleigh quotients. 
-
 \begin{figure}[h]
 	\centering
-	\begin{subfigure}{0.49\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../output/plots/FE_eigvec_T2_N1000_dim6.pdf}
-		\caption{Forward Euler}
-		\label{fig:FE_eigvec_T2_N1000_dim6}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.49\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../output/plots/NN_eigvec_T2_N1000_dim6.pdf}
-		\caption{Neural network}
-		\label{fig:NN_eigvec_T2_N1000_dim6}
-	\end{subfigure}
-	\caption{Predictions of eigenvector corresponding to the largest eigenvalue for a real, symmetric $6\times 6$ matrix. A time step of $\Delta t = 0.005$ and a total time $T=2$ is used.}
-	\label{fig:eigvec_T2_N1000_dim6}
+	\includegraphics[scale=0.6]{../output/plots/NN_eigvec_T2_N1000_dim6.pdf}
+	\caption{Predictions of eigenvector corresponding to the largest eigenvalue for a real, symmetric $6\times 6$ matrix using Neural network. A time step of $\Delta t = 0.005$ and a total time $T=2$ is used.}
+	\label{fig:NN_eigvec_T2_N1000_dim6}
 \end{figure}
 
 \begin{figure}[h]
@@ -534,7 +513,9 @@ Adjusting hyperparameters of the neural network has also been investigated. Figu
 	\label{fig:eigval_T2_N1000_dim6}
 \end{figure}
 
-\textcolor{red}{Nevland: Stack 6x6 figurer} An additional simulation using a $6\times 6$ matrix has also been conducted. Figure \ref{fig:eigvec_T2_N1000_dim6} shows the predicted eigenvector for forward euler (\ref{fig:FE_eigvec_T2_N1000_dim6}) and neural network (\ref{fig:NN_eigvec_T2_N1000_dim6}), and Figure \ref{fig:eigval_T2_N1000_dim6} the rayleigh coefficient corresponding to the largest eigenvalue of a $6\times 6$ symmetric matrix. A time step of $\Delta t = 0.005$ have been used and a total time of $T=2$. \textcolor{red}{Nevland: Skriv eksplisitt begrunnelse for T=2} The reason for the latter choice is based on the previous simulations with $\Delta t=0.005$, as both forward euler and neural network converge long before $T=5$. Reducing the simulation time makes it easier to illustrate the convergence property of the six eigenvector components.
+\textcolor{red}{Nevland: Stack 6x6 figurer} An additional simulation using a $6\times 6$ matrix has also been conducted. Figure \ref{fig:FE_eigvec_T2_N1000_dim6} and Figure \ref{fig:NN_eigvec_T2_N1000_dim6} shows the predicted eigenvector for forward euler and neural network, repsectively, and Figure \ref{fig:eigval_T2_N1000_dim6} the rayleigh coefficient corresponding to the largest eigenvalue of a $6\times 6$ symmetric matrix. A time step of $\Delta t = 0.005$ have been used and a total time of $T=2$. \textcolor{red}{The reason for the latter choice is based on experiments with a $(6 \cross 6)$ matrix indicating convergence long before $T=5$. Simulating for a shorter time period better illustrates the convergence of the eigenvector.}
+
+The reason for the latter choice is based on the previous simulations with $\Delta t=0.005$, as both forward euler and neural network converge long before $T=5$. Reducing the simulation time makes it easier to illustrate the convergence property of the six eigenvector components.
  
  
 \clearpage
@@ -552,6 +533,9 @@ In the beginning of the diffusion process, for low $t$, the solution changes rat
 \par \textcolor{red}{Et forsøk paa aa forklare fluktuasjonene i MSE for NN:} The reason that the error flucuates instead of decreasing monotonically is that we use the Adam optimizer \cite{kingma2017adam}. This is a type of stochastic optimization method, providing more favorable features than traditional stochastic methods. The stochasticity allows the neural network to explore more of the convex parameter space by trying out new, potentially worse solutions. The hope is that, after escaping the local optima, that we find an even better solution at some later stage. The apparent jump in Figure \ref{fig:error_NN_10000} is an example of escaping a local optima at the expense of further exploration. In this case, it does not seem like the new solutions lead to better performance than the previous optima. It eventually converges to zero, which is something the solutions prior to the jump did as well. 
 
 \subsection*{Using Forward Euler and Neural Network to find eigenvalues}
+
+\textcolor{red}{Nevland: Husk aa endre diskusjon for $\Delta t=0.05$.}
+
 Forward euler and neural networks are two different numerical methods capable of finding the eigenvalues of a real, symmetric matrix $A$ by solving the ODE in equation \eqref{eq:diff_eig}. The two algorithms for solving differential equations are quite different, and will therefore yield different predictions of the largest eigenvalue. The result of forward euler is sensitive to the time step $\Delta t$. Thus, it is of interest to compare the accuracy of prediction of the two methods when the time step is altered. 
 
 % FE: N=1000, N=100, N=10
